@@ -1,0 +1,15 @@
+{
+  "name": "spectacular",
+  "version": "0.1.0",
+  "description": "A spectacular tool for collaborating on interface specifications.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pburls/spectacular.git"
+  },
+  "author": "Patrick Burls",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pburls/spectacular/issues"
+  },
+  "homepage": "https://github.com/pburls/spectacular#readme"
+}
