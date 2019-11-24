@@ -1,6 +1,11 @@
-def getCurrentVersion(version) {
-    def currentRevision = "git rev-parse HEAD".execute().text
-    def branch = "git branch -r --contains $currentRevision".execute().text
-    if (branch.contains("origin/master")) return version
-    return currentRevision.trim()
+allprojects {
+    buildscript {
+        repositories {
+            mavenCentral()
+            jcenter()
+        }
+    }
+    repositories {
+        mavenCentral()
+    }
 }

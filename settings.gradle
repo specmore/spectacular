@@ -1,2 +1,2 @@
 rootProject.name = 'spectacular'
-//include 'components-service'
+include 'github-service'
