@@ -2,6 +2,11 @@
   "name": "spectacular",
   "version": "0.1.0",
   "description": "A spectacular tool for collaborating on interface specifications.",
+  "scripts": {
+    "start": "webpack-dev-server --mode development --open",
+    "build": "webpack --mode production",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pburls/spectacular.git"
