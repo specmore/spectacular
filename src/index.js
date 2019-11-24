@@ -1,15 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Segment } from 'semantic-ui-react';
+import { Container } from 'semantic-ui-react';
+import CatalogueList from './components/catalogue-list';
 import './index.css';
 
 console.log('hello world!');
 
 const Index = () => (
 <div>
-    <Segment>
-        Spectacular
-    </Segment>
+    <Container>
+        <CatalogueList/>
+    </Container>
 </div>);
 
 ReactDOM.render(<Index />, document.getElementById("root"));
