@@ -8,7 +8,7 @@ buildscript {
 }
 
 
-apply plugin: 'java'
+apply plugin: 'groovy'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
@@ -24,4 +24,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	//groovy + spock
+	implementation "org.codehaus.groovy:groovy-all:2.5.7"
+	testImplementation "org.spockframework:spock-core:1.3-groovy-2.5"
+	testImplementation "org.spockframework:spock-spring:1.3-groovy-2.5"
 }
