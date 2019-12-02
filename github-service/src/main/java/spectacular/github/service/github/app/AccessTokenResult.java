@@ -3,14 +3,14 @@ package spectacular.github.service.github.app;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public class AccessTokenResult {
     private final String token;
-    private final LocalDateTime expirationDateTime;
+    private final ZonedDateTime expirationDateTime;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public AccessTokenResult(@JsonProperty("token") String token, @JsonProperty("expires_at") LocalDateTime expirationDateTime) {
+    public AccessTokenResult(@JsonProperty("token") String token, @JsonProperty("expires_at") ZonedDateTime expirationDateTime) {
         this.token = token;
         this.expirationDateTime = expirationDateTime;
     }
@@ -19,7 +19,7 @@ public class AccessTokenResult {
         return token;
     }
 
-    public LocalDateTime getExpirationDateTime() {
+    public ZonedDateTime getExpirationDateTime() {
         return expirationDateTime;
     }
 }
