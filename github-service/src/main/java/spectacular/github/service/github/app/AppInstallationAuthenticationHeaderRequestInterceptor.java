@@ -8,8 +8,21 @@ import org.springframework.http.client.ClientHttpResponse;
 import java.io.IOException;
 
 public class AppInstallationAuthenticationHeaderRequestInterceptor implements ClientHttpRequestInterceptor {
+    private final AppInstallationService appInstallationService;
+    private final AppInstallationContextProvider appInstallationContextProvider;
+
+    public AppInstallationAuthenticationHeaderRequestInterceptor(AppInstallationService appInstallationService, AppInstallationContextProvider appInstallationContextProvider) {
+        this.appInstallationService = appInstallationService;
+        this.appInstallationContextProvider = appInstallationContextProvider;
+    }
+
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-        return null;
+        var installationId = appInstallationContextProvider.getInstallationId();
+        var accessToken = appInstallationService.getAccessTokenForInstallation(installationId);
+
+        request.getHeaders().setBearerAuth(accessToken.getToken());
+
+        return execution.execute(request, body);
     }
 }
