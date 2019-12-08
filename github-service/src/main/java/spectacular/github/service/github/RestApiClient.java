@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import spectacular.github.service.github.app.GitHubAppAuthenticationHeaderRequestInterceptor;
 import spectacular.github.service.github.domain.Repository;
 
 public class RestApiClient {
@@ -16,8 +17,8 @@ public class RestApiClient {
 
     private final RestTemplate restTemplate;
 
-    public RestApiClient(@Value("${github.api.root-url}") String rootUrl, RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder.rootUri(rootUrl).build();
+    public RestApiClient(@Value("${github.api.root-url}") String rootUrl, RestTemplateBuilder restTemplateBuilder, GitHubAppAuthenticationHeaderRequestInterceptor gitHubAppAuthenticationHeaderRequestInterceptor) {
+        this.restTemplate = restTemplateBuilder.rootUri(rootUrl).additionalInterceptors(gitHubAppAuthenticationHeaderRequestInterceptor).build();
     }
 
     public String getRepositoryContent(Repository repo, String path, String ref) {
@@ -26,7 +27,6 @@ public class RestApiClient {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", RAW_CONTENT_ACCEPT_HEADER);
-        //headers.setBearerAuth(authToken);
         HttpEntity entity = new HttpEntity(headers);
 
         String contentUri = uriComponentsBuilder.buildAndExpand(repo.getNameWithOwner(), path).toUriString();
