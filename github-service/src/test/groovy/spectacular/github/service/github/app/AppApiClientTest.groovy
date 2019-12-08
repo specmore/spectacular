@@ -2,7 +2,6 @@ package spectacular.github.service.github.app
 
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpRequest
@@ -17,7 +16,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-@RestClientTest(components = AppApiClient.class, properties = "github.api.app.installation.id=99")
+@RestClientTest(components = AppApiClient.class)
 class AppApiClientTest extends Specification {
     @Autowired
     private AppApiClient client
