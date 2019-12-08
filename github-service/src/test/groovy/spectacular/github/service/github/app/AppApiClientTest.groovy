@@ -25,9 +25,6 @@ class AppApiClientTest extends Specification {
     @Autowired
     private MockRestServiceServer server
 
-    @Value('${github.api.app.installation.id}')
-    private String appInstallationId
-
     @SpringBean
     GitHubAppAuthenticationHeaderRequestInterceptor gitHubAppAuthenticationHeaderRequestInterceptor = Mock()
 
@@ -37,12 +34,13 @@ class AppApiClientTest extends Specification {
                 "    \"token\": \"v1.d06c824bec3807ca411fa6cfc6fd53a37ac54be3\",\n" +
                 "    \"expires_at\": \"2019-12-03T00:11:08Z\"\n" +
                 "}"
+        def String appInstallationId = 101
         this.server.expect(requestTo("/installations/${appInstallationId}/access_tokens"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(responseContent, MediaType.APPLICATION_JSON));
 
         when: "the access token is retrieved by the AppApiClient"
-        def accessToken = client.createNewAppInstallationAccessToken()
+        def accessToken = client.createNewAppInstallationAccessToken(appInstallationId)
 
         then: "the access token object has the token and expiration time"
         accessToken

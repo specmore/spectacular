@@ -14,16 +14,14 @@ public class AppApiClient {
     private static final String APP_INSTALLATION_PATH = "installations/{installationId}/access_tokens";
 
     private final RestTemplate restTemplate;
-    private final String appInstallationId;
 
-    public AppApiClient(@Value("${github.api.root-url}") String rootUrl, RestTemplateBuilder restTemplateBuilder, GitHubAppAuthenticationHeaderRequestInterceptor gitHubAppAuthenticationHeaderRequestInterceptor, @Value("${github.api.app.installation.id}") String appInstallationId) {
-        this.appInstallationId = appInstallationId;
+    public AppApiClient(@Value("${github.api.root-url}") String rootUrl, RestTemplateBuilder restTemplateBuilder, GitHubAppAuthenticationHeaderRequestInterceptor gitHubAppAuthenticationHeaderRequestInterceptor) {
         this.restTemplate = restTemplateBuilder.rootUri(rootUrl).additionalInterceptors(gitHubAppAuthenticationHeaderRequestInterceptor).build();
     }
 
-    public AccessTokenResult createNewAppInstallationAccessToken() {
+    public AccessTokenResult createNewAppInstallationAccessToken(String installationId) {
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(APP_INSTALLATION_PATH);
-        String accessTokenUri = uriComponentsBuilder.buildAndExpand(appInstallationId).toUriString();
+        String accessTokenUri = uriComponentsBuilder.buildAndExpand(installationId).toUriString();
 
         HttpHeaders headers = new HttpHeaders();
         HttpEntity entity = new HttpEntity(headers);
