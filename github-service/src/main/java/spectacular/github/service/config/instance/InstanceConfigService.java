@@ -16,7 +16,7 @@ public class InstanceConfigService {
         this.restApiClient = restApiClient;
     }
 
-    public InstanceConfig getInstanceConfigForRepositoryAndInstallation(Repository repository, int installationId) throws IOException {
+    public InstanceConfig getInstanceConfigForRepositoryAndInstallation(Repository repository, String installationId) throws IOException {
         var fileContents = restApiClient.getRepositoryContent(repository, INSTANCE_CONFIG_FILE_PATH, null);
 
         var mapper = new ObjectMapper(new YAMLFactory());
