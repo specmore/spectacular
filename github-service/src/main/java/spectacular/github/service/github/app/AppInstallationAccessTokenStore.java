@@ -1,8 +1,11 @@
 package spectacular.github.service.github.app;
 
+import org.springframework.stereotype.Repository;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Repository
 public class AppInstallationAccessTokenStore {
     private final Map<String, AccessTokenResult> accessTokenMap = new HashMap<>();
 

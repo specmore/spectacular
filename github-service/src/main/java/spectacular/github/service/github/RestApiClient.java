@@ -6,11 +6,13 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import spectacular.github.service.github.app.GitHubAppAuthenticationHeaderRequestInterceptor;
 import spectacular.github.service.github.domain.Repository;
 
+@Component
 public class RestApiClient {
     private static final String REPO_CONTENT_PATH = "/repos/{repo}/contents/{path}";
     private static final String RAW_CONTENT_ACCEPT_HEADER = "application/vnd.github.3.raw";

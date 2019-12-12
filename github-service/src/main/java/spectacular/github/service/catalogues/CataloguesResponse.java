@@ -1,15 +1,17 @@
 package spectacular.github.service.catalogues;
 
+import spectacular.github.service.config.instance.Catalogue;
+
 import java.util.List;
 
 public class CataloguesResponse {
-    private final List<CatalogueItem> catalogueItems;
+    private final List<Catalogue> catalogues;
 
-    public CataloguesResponse(List<CatalogueItem> catalogueItems) {
-        this.catalogueItems = catalogueItems;
+    public CataloguesResponse(List<Catalogue> catalogues) {
+        this.catalogues = catalogues;
     }
 
-    public List<CatalogueItem> getCatalogueItems() {
-        return catalogueItems;
+    public List<Catalogue> getCatalogues() {
+        return catalogues;
     }
 }
