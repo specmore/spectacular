@@ -11,7 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 public class AppApiClient {
 
-    private static final String APP_INSTALLATION_PATH = "installations/{installationId}/access_tokens";
+    private static final String APP_INSTALLATION_PATH = "/installations/{installationId}/access_tokens";
 
     private final RestTemplate restTemplate;
 
