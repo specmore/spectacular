@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import spectacular.github.service.github.app.AppInstallationAuthenticationHeaderRequestInterceptor;
 import spectacular.github.service.github.app.GitHubAppAuthenticationHeaderRequestInterceptor;
 import spectacular.github.service.github.domain.Repository;
 
@@ -19,8 +20,8 @@ public class RestApiClient {
 
     private final RestTemplate restTemplate;
 
-    public RestApiClient(@Value("${github.api.root-url}") String rootUrl, RestTemplateBuilder restTemplateBuilder, GitHubAppAuthenticationHeaderRequestInterceptor gitHubAppAuthenticationHeaderRequestInterceptor) {
-        this.restTemplate = restTemplateBuilder.rootUri(rootUrl).additionalInterceptors(gitHubAppAuthenticationHeaderRequestInterceptor).build();
+    public RestApiClient(@Value("${github.api.root-url}") String rootUrl, RestTemplateBuilder restTemplateBuilder, AppInstallationAuthenticationHeaderRequestInterceptor appInstallationAuthenticationHeaderRequestInterceptor) {
+        this.restTemplate = restTemplateBuilder.rootUri(rootUrl).additionalInterceptors(appInstallationAuthenticationHeaderRequestInterceptor).build();
     }
 
     public String getRepositoryContent(Repository repo, String path, String ref) {
