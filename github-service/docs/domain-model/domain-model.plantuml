@@ -1,0 +1,109 @@
+@startuml
+
+class "CatalogueController" {
+  catalogueService : CatalogueService
+  appInstallationContextProvider : AppInstallationContextProvider
+  getCatalogues(String, String, String) : CataloguesResponse
+}
+
+class "CatalogueService" {
+  instanceConfigService : InstanceConfigService
+  getCatalogueItemsForAppConfig(Repository) : List<Catalogue>
+}
+
+class "CataloguesResponse" {
+  catalogues : List<Catalogue>
+}
+
+class "Catalogue" {
+  repo : String
+  name : String
+}
+
+class "InstanceConfig" {
+  installationId : String
+  repository : Repository
+  instanceConfigManifest : InstanceConfigManifest
+}
+
+class "InstanceConfigManifest" {
+  catalogues : List<Catalogue>
+}
+
+class "InstanceConfigService" {
+  restApiClient : RestApiClient
+  appInstallationContextProvider : AppInstallationContextProvider
+  getInstanceConfigForRepository(Repository) : InstanceConfig
+}
+
+class "AccessTokenResult" {
+  token : String
+  expirationDateTime : ZonedDateTime
+}
+
+class "AppApiClient" {
+  restTemplate : RestTemplate
+  createNewAppInstallationAccessToken(String) : AccessTokenResult
+}
+
+class "AppAuthenticationService" {
+  appId : String
+  privateKeyFilePath : String
+  generateJWT() : String
+}
+
+class "AppInstallationAccessTokenStore" {
+  accessTokenMap : Map<String, AccessTokenResult>
+  putAccessTokenForInstallation(AccessTokenResult, String)
+  getAccessTokenForInstallation(String) : AccessTokenResult
+}
+
+class "AppInstallationAuthenticationHeaderRequestInterceptor" {
+  appInstallationService : AppInstallationService
+  appInstallationContextProvider : AppInstallationContextProvider
+  intercept(HttpRequest, byte[], ClientHttpRequestExecution) : ClientHttpResponse
+}
+
+class "AppInstallationContextProvider" {
+  installationId : String
+}
+
+class "AppInstallationService" {
+  appApiClient : AppApiClient
+  appInstallationAccessTokenStore : AppInstallationAccessTokenStore
+  getAccessTokenForInstallation(String) : AccessTokenResult
+}
+
+class "GitHubAppAuthenticationHeaderRequestInterceptor" {
+  appAuthenticationService : AppAuthenticationService
+  logger : Logger
+  intercept(HttpRequest, byte[], ClientHttpRequestExecution) : ClientHttpResponse
+}
+
+class "Repository" {
+  owner : String
+  name : String
+}
+
+class "RestApiClient" {
+  restTemplate : RestTemplate
+  getRepositoryContent(Repository, String, String) : String
+}
+
+"CatalogueController" --> "CatalogueService" : catalogueService
+"CatalogueController" --> "AppInstallationContextProvider" : appInstallationContextProvider
+"CatalogueService" --> "InstanceConfigService" : instanceConfigService
+"CataloguesResponse" --> "*" "Catalogue" : catalogues
+"InstanceConfig" --> "Repository" : repository
+"InstanceConfig" --> "InstanceConfigManifest" : instanceConfigManifest
+"InstanceConfigManifest" --> "*" "Catalogue" : catalogues
+"InstanceConfigService" --> "RestApiClient" : restApiClient
+"InstanceConfigService" --> "AppInstallationContextProvider" : appInstallationContextProvider
+"AppInstallationAccessTokenStore" --> "AccessTokenResult" : accessTokenMap
+"AppInstallationAuthenticationHeaderRequestInterceptor" --> "AppInstallationService" : appInstallationService
+"AppInstallationAuthenticationHeaderRequestInterceptor" --> "AppInstallationContextProvider" : appInstallationContextProvider
+"AppInstallationService" --> "AppApiClient" : appApiClient
+"AppInstallationService" --> "AppInstallationAccessTokenStore" : appInstallationAccessTokenStore
+"GitHubAppAuthenticationHeaderRequestInterceptor" --> "AppAuthenticationService" : appAuthenticationService
+
+@enduml

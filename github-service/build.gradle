@@ -7,7 +7,6 @@ buildscript {
 	}
 }
 
-
 apply plugin: 'groovy'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
@@ -31,4 +30,7 @@ dependencies {
 	implementation "org.codehaus.groovy:groovy-all:2.5.7"
 	testImplementation "org.spockframework:spock-core:1.3-groovy-2.5"
 	testImplementation "org.spockframework:spock-spring:1.3-groovy-2.5"
+
+	// plantuml generation
+	implementation group: 'ch.ifocusit', name: 'plantuml-builder', version: '1.3'
 }
