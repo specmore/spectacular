@@ -10,19 +10,26 @@ import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 
 @Service
 public class AppAuthenticationService {
     private final String appId;
-    private final String privateKeyFileContent;
+    private final String privateKeyFilePath;
 
-    public AppAuthenticationService(@Value("${github.api.app.id}") String appId, @Value("${github.api.app.private-key}") String privateKeyFileContent) {
+    public AppAuthenticationService(@Value("${github.api.app.id}") String appId, @Value("${github.api.app.private-key-file-path}") String privateKeyFilePath) {
         this.appId = appId;
-        this.privateKeyFileContent = privateKeyFileContent;
+        this.privateKeyFilePath = privateKeyFilePath;
     }
 
-    public String generateJWT() throws JOSEException {
+    public String generateJWT() throws JOSEException, IOException {
+        Path path = Path.of(privateKeyFilePath);
+        String privateKeyFileContent = Files.readString(path);
+
         var jwk = JWK.parseFromPEMEncodedObjects(privateKeyFileContent);
 
         if(!jwk.isPrivate() || jwk.getKeyType() != KeyType.RSA) return "";

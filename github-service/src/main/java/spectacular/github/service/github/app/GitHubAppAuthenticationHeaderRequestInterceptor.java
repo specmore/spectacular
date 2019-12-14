@@ -1,6 +1,8 @@
 package spectacular.github.service.github.app;
 
 import com.nimbusds.jose.JOSEException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -15,6 +17,7 @@ public class GitHubAppAuthenticationHeaderRequestInterceptor implements ClientHt
 
     private final AppAuthenticationService appAuthenticationService;
     private static final String APP_INSTALLATION_ACCEPT_HEADER = "application/vnd.github.machine-man-preview+json";
+    Logger logger = LoggerFactory.getLogger(GitHubAppAuthenticationHeaderRequestInterceptor.class);
 
     @Autowired
     public GitHubAppAuthenticationHeaderRequestInterceptor(AppAuthenticationService appAuthenticationService) {
@@ -27,7 +30,7 @@ public class GitHubAppAuthenticationHeaderRequestInterceptor implements ClientHt
             var jwt = appAuthenticationService.generateJWT();
             request.getHeaders().setBearerAuth(jwt);
         } catch (JOSEException e) {
-            //todo log here
+            logger.error("app JWT creation failed", e);
         }
 
         request.getHeaders().set("Accept", APP_INSTALLATION_ACCEPT_HEADER);
