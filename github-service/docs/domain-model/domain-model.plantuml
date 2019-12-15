@@ -1,4 +1,4 @@
-@startuml
+@startuml domain-model
 
 class "CatalogueController" {
   catalogueService : CatalogueService
