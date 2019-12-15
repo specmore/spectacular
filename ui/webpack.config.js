@@ -31,5 +31,12 @@ const miniCssExtractPlugin = new MiniCssExtractPlugin({
     output: {
         filename: '[name].[contenthash].js',
         path: path.resolve(__dirname, 'dist')
+    },
+    devServer: {
+        proxy: {
+            '/api': {
+                target: 'http://localhost:5000'
+            }
+        }
     }
 };
