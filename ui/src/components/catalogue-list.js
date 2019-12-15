@@ -25,7 +25,7 @@ const CatalogueList = () => {
 
   return (
     <Item.Group>
-      {catalogues.map(catalogue => (<CatalogueItem {...catalogue} />))}
+      {catalogues.map(catalogue => (<CatalogueItem key={catalogue.repo} {...catalogue} />))}
     </Item.Group>
   );
 };
