@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Dimmer, Loader, Item, Segment } from 'semantic-ui-react'
+import { Dimmer, Loader, Item, Segment, Message } from 'semantic-ui-react'
 import {fetchCatalogueListForInstallationConfig} from '../api-client';
 
 
@@ -40,6 +40,16 @@ const CatalogueList = ({installationId, configRepo}) => {
         (<Dimmer inverted active>
           <Loader content='Loading' />
         </Dimmer>
+      </Segment>
+    );
+  }
+
+  if (errorMessage) {
+    return (
+      <Segment>
+        <Message negative>
+          <Message.Header>{errorMessage}</Message.Header>
+        </Message>
       </Segment>
     );
   }
