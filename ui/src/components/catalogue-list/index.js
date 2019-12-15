@@ -1,30 +1,33 @@
-import React from "react";
-import { Image, Item } from 'semantic-ui-react'
+import React, { useState } from "react";
+import { Item } from 'semantic-ui-react'
 
-const CatalogueList = () => (
-  <Item.Group>
-    <Item>
-      <Item.Content>
-        <Item.Header>Header 1</Item.Header>
-        <Item.Meta>Meta</Item.Meta>
-        <Item.Description>
-            Description1
-        </Item.Description>
-        <Item.Extra>Additional Details</Item.Extra>
-      </Item.Content>
-    </Item>
 
-    <Item>
-      <Item.Content>
-        <Item.Header>Header 2</Item.Header>
-        <Item.Meta>Meta</Item.Meta>
-        <Item.Description>
-            Description2
-        </Item.Description>
-        <Item.Extra>Additional Details</Item.Extra>
-      </Item.Content>
-    </Item>
-  </Item.Group>
+const CatalogueItem = ({name, repo}) => (
+  <Item>
+    <Item.Content>
+      <Item.Header>{name}</Item.Header>
+      <Item.Meta>...</Item.Meta>
+      <Item.Description>
+          ...
+      </Item.Description>
+      <Item.Extra>{repo}</Item.Extra>
+    </Item.Content>
+  </Item>
 );
+
+const CatalogueList = () => {
+  const [catalogues, setCatalogues] = useState([{
+    "repo": "pburls/specs-test",
+    "name": "Test Catalogue 1"
+}]);
+  const [isLoading, setIsLoading] = useState([]);
+
+
+  return (
+    <Item.Group>
+      {catalogues.map(catalogue => (<CatalogueItem {...catalogue} />))}
+    </Item.Group>
+  );
+};
 
 export default CatalogueList;
