@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Item } from 'semantic-ui-react'
+import React, { useState, useEffect } from "react";
+import { Dimmer, Loader, Item, Segment } from 'semantic-ui-react'
+import {fetchCatalogueListForInstallationConfig} from '../api-client';
 
 
 const CatalogueItem = ({name, repo}) => (
@@ -15,18 +16,40 @@ const CatalogueItem = ({name, repo}) => (
   </Item>
 );
 
-const CatalogueList = () => {
-  const [catalogues, setCatalogues] = useState([{
-    "repo": "pburls/specs-test",
-    "name": "Test Catalogue 1"
-}]);
-  const [isLoading, setIsLoading] = useState([]);
+const CatalogueList = ({installationId, configRepo}) => {
+  const [catalogues, setCatalogues] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
+  const fetchCatalogueData = async (installationId, configRepo) => {
+    try {
+      const cataloguesData = await fetchCatalogueListForInstallationConfig(installationId, configRepo);
+      setCatalogues(cataloguesData.catalogues);
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("An error occurred while fetching catalogues.");
+    }
+  }
+
+  useEffect(() => {
+    fetchCatalogueData(installationId, configRepo);
+  }, [installationId, configRepo])
+
+  if (!catalogues && !errorMessage) {
+    return (
+      <Segment>
+        (<Dimmer inverted active>
+          <Loader content='Loading' />
+        </Dimmer>
+      </Segment>
+    );
+  }
 
   return (
-    <Item.Group>
-      {catalogues.map(catalogue => (<CatalogueItem key={catalogue.repo} {...catalogue} />))}
-    </Item.Group>
+    <Segment>      
+      <Item.Group>
+        {catalogues.map(catalogue => (<CatalogueItem key={catalogue.repo} {...catalogue} />))}
+      </Item.Group>
+    </Segment>
   );
 };
 
