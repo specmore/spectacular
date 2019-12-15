@@ -7,7 +7,7 @@ import './index.css';
 const Index = () => (
 <div>
     <Container>
-        <CatalogueList/>
+        <CatalogueList installationId={5521529} configRepo={"pburls/specs-app"}/>
     </Container>
 </div>);
 
