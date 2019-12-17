@@ -24,7 +24,13 @@ const miniCssExtractPlugin = new MiniCssExtractPlugin({
             {
                 test:/\.css$/,
                 use:['style-loader', MiniCssExtractPlugin.loader, 'css-loader']
-            }
+            },
+            {
+                test: /\.(jpg|png)$/,
+                use: {
+                  loader: 'url-loader',
+                },
+            },
         ]
     },
     plugins: [htmlPlugin, miniCssExtractPlugin],

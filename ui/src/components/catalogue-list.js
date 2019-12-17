@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Dimmer, Loader, Item, Segment, Message } from 'semantic-ui-react'
-import {fetchCatalogueListForInstallationConfig} from '../api-client';
+import { fetchCatalogueListForInstallationConfig } from '../api-client';
+import { sleep } from '../utils';
+import EmptyCatalogueItemImage from '../assets/images/empty-catalogue-item.png';
 
 
 const CatalogueItem = ({name, repo}) => (
   <Item>
     <Item.Content>
       <Item.Header>{name}</Item.Header>
-      <Item.Meta>...</Item.Meta>
-      <Item.Description>
-          ...
-      </Item.Description>
-      <Item.Extra>{repo}</Item.Extra>
+      <Item.Description>{repo}</Item.Description>
     </Item.Content>
   </Item>
 );
@@ -36,30 +34,27 @@ const CatalogueList = ({installationId, configRepo}) => {
 
   if (!catalogues && !errorMessage) {
     return (
-      <Segment>
-        (<Dimmer inverted active>
+      <React.Fragment>
+        <Dimmer inverted active>
           <Loader content='Loading' />
         </Dimmer>
-      </Segment>
+        <img src={EmptyCatalogueItemImage} />
+      </React.Fragment>
     );
   }
 
   if (errorMessage) {
     return (
-      <Segment>
-        <Message negative>
-          <Message.Header>{errorMessage}</Message.Header>
-        </Message>
-      </Segment>
+      <Message negative>
+        <Message.Header>{errorMessage}</Message.Header>
+      </Message>
     );
   }
 
-  return (
-    <Segment>      
-      <Item.Group>
-        {catalogues.map(catalogue => (<CatalogueItem key={catalogue.repo} {...catalogue} />))}
-      </Item.Group>
-    </Segment>
+  return (  
+    <Item.Group>
+      {catalogues.map((catalogue, index) => (<CatalogueItem key={index} {...catalogue} />))}
+    </Item.Group>
   );
 };
 
