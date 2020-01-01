@@ -24,6 +24,7 @@ stages:
       displayName: Build an image
       inputs:
         command: build
+        buildContext: '.'
         dockerfile: 'github-service/Dockerfile'
         tags: |
           $(tag)
