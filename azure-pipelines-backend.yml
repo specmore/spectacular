@@ -3,17 +3,20 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- master
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - github-service/*
 
 resources:
 - repo: self
 
 variables:
-  # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: 'b49e6e37-26c8-421e-ac20-c8ea6239311e'
-  imageRepository: 'pburlsspectacular'
+  imageRepository: 'spectacular-backend'
   containerRegistry: 'spectacular.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/github-service/Dockerfile'
   tag: '$(Build.BuildId)'
   
   # Agent VM image name
@@ -33,7 +36,7 @@ stages:
       inputs:
         command: buildAndPush
         repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
+        dockerfile: 'github-service/Dockerfile'
         buildContext: '.'
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
