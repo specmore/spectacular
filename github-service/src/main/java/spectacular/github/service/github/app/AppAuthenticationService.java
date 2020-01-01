@@ -7,6 +7,8 @@ import com.nimbusds.jose.jwk.KeyType;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import java.util.Date;
 
 @Service
 public class AppAuthenticationService {
+    private static final Logger logger = LoggerFactory.getLogger(AppAuthenticationService.class);
     private final String appId;
     private final String privateKeyFilePath;
 
@@ -51,6 +54,8 @@ public class AppAuthenticationService {
 
         var signedJWT = new SignedJWT(header, claims);
         signedJWT.sign(jwsSigner);
+
+        logger.info("Generated and signed new App JWT for AppId: '{}' issued at '{}' and expiring at '{}'.", appId, claims.getIssueTime(), claims.getExpirationTime());
 
         return signedJWT.serialize();
     }

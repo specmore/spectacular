@@ -15,8 +15,8 @@ public class AppApiClient {
 
     private final RestTemplate restTemplate;
 
-    public AppApiClient(@Value("${github.api.root-url}") String rootUrl, RestTemplateBuilder restTemplateBuilder, GitHubAppAuthenticationHeaderRequestInterceptor gitHubAppAuthenticationHeaderRequestInterceptor) {
-        this.restTemplate = restTemplateBuilder.rootUri(rootUrl).additionalInterceptors(gitHubAppAuthenticationHeaderRequestInterceptor).build();
+    public AppApiClient(@Value("${github.api.root-url}") String rootUrl, RestTemplateBuilder restTemplateBuilder, GitHubAppAuthenticationHeaderRequestInterceptor gitHubAppAuthenticationHeaderRequestInterceptor, AppApiResponseErrorHandler appApiResponseErrorHandler) {
+        this.restTemplate = restTemplateBuilder.rootUri(rootUrl).additionalInterceptors(gitHubAppAuthenticationHeaderRequestInterceptor).errorHandler(appApiResponseErrorHandler).build();
     }
 
     public AccessTokenResult createNewAppInstallationAccessToken(String installationId) {

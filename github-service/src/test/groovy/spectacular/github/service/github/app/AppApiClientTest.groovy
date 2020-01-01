@@ -27,7 +27,10 @@ class AppApiClientTest extends Specification {
     @SpringBean
     GitHubAppAuthenticationHeaderRequestInterceptor gitHubAppAuthenticationHeaderRequestInterceptor = Mock()
 
-    def "CreateNewAppInstallationAccessToken"() {
+    @SpringBean
+    AppApiResponseErrorHandler appApiResponseErrorHandler = Mock()
+
+    def "CreateNewAppInstallationAccessToken returns a valid access token result for valid response"() {
         given: "a valid access token response"
         def responseContent = "{\n" +
                 "    \"token\": \"v1.d06c824bec3807ca411fa6cfc6fd53a37ac54be3\",\n" +
