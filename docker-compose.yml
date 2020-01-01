@@ -1,0 +1,19 @@
+version: '3'
+services:
+    web:
+        build: ./ui
+        ports:
+        - "8080:80"
+        depends_on: 
+            - backend
+        environment:
+            - API_LOCATION=http://backend
+    backend:
+        build:
+            context: .
+            dockerfile: ./github-service/Dockerfile
+        environment: 
+            - GITHUB_APP_ID=${APP_ID:?APP_ID needs to be set in a .env file with a GitHub app id}
+            - GITHUB_APP_PRIVATE_KEY_FILE_PATH=/usr/spectacular/github.private-key.pem
+        volumes:
+            - ${APP_PRIVATE_KEY_FILE_PATH:?APP_PRIVATE_KEY_FILE_PATH needs to be set in a .env file with the location of a .pem private key provided for the GitHub app}:/usr/spectacular/github.private-key.pem:ro

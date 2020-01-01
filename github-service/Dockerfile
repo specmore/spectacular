@@ -11,12 +11,11 @@ RUN gradle build
 ### 
 FROM openjdk:11-jre
 
-VOLUME ["/usr/spectacular"]
 ENV GITHUB_APP_PRIVATE_KEY_FILE_PATH=/usr/spectacular/github.private-key.pem
 
 COPY --from=build app/github-service/build/libs/github-service.jar /app.jar
 
-EXPOSE 5000
+EXPOSE 80
 
-CMD [ "-jar", "/app.jar" ]
+CMD [ "-jar", "/app.jar", "--server.port=80" ]
 ENTRYPOINT [ "java" ]
