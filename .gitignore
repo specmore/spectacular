@@ -61,7 +61,7 @@ typings/
 .next
 
 # webpack build output
-/dist/
+dist/
 
 # Ignore Gradle project-specific cache directory
 .gradle
