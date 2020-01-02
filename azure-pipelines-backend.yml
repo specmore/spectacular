@@ -17,6 +17,8 @@ variables:
   dockerRegistryServiceConnection: 'b49e6e37-26c8-421e-ac20-c8ea6239311e'
   imageRepository: 'spectacular-backend'
   containerRegistry: 'spectacular.azurecr.io'
+  imagePullSecret: 'spectacular-auth'
+  manifestArtifactName: 'backend-manifests'
   tag: '$(Build.BuildId)'
   
   # Agent VM image name
@@ -41,3 +43,39 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
+    - upload: github-service/manifests
+      artifact: $(manifestArtifactName)
+
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Build
+
+  jobs:
+  - deployment: Deploy
+    condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
+    displayName: Deploy
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'spectacular.spectacular-dev'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              secretName: $(imagePullSecret)
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+              
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              manifests: |
+                $(Pipeline.Workspace)/$(manifestArtifactName)/deployment.yml
+                $(Pipeline.Workspace)/$(manifestArtifactName)/service.yml
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(tag)

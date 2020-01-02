@@ -11,6 +11,6 @@ spec:
     spec:
       containers:
         - name: spectacular-backend 
-          image: spectacular.azurecr.io/spectacularbackend
+          image: spectacular.azurecr.io/spectacular-backend
           ports:
           - containerPort: 80
