@@ -1,0 +1,16 @@
+apiVersion : apps/v1beta1
+kind: Deployment
+metadata:
+  name: spectacular-backend 
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: spectacular-backend 
+    spec:
+      containers:
+        - name: spectacular-backend 
+          image: spectacular.azurecr.io/spectacularbackend
+          ports:
+          - containerPort: 80

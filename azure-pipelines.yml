@@ -38,12 +38,13 @@ stages:
       inputs:
         command: buildAndPush
         repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
+        dockerfile: 'github-service/Dockerfile'
+        buildContext: '.'
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
           
-    - upload: manifests
+    - upload: github-service/manifests
       artifact: manifests
 
 - stage: Deploy
