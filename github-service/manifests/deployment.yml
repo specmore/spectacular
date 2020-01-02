@@ -22,13 +22,14 @@ spec:
               secretKeyRef:
                 name: github-app
                 key: app-id
-            volumeMounts:
-            - name: private-key-volume
-              mountPath: "/usr/spectacular/"
-              readOnly: true
+          volumeMounts:
+          - name: private-key-volume
+            mountPath: "/usr/spectacular/"
+            readOnly: true
       volumes:
       - name: private-key-volume
         secret:
           secretName: github-app
           items:
           - key: private-key.pem
+            path: private-key.pem
