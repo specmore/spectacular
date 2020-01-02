@@ -14,3 +14,21 @@ spec:
           image: spectacular.azurecr.io/spectacular-backend
           ports:
           - containerPort: 80
+          env:
+          - name: GITHUB_APP_PRIVATE_KEY_FILE_PATH
+            value: "/usr/spectacular/private-key.pem"
+          - name: GITHUB_APP_ID
+            valueFrom:
+              secretKeyRef:
+                name: github-app
+                key: app-id
+            volumeMounts:
+            - name: private-key-volume
+              mountPath: "/usr/spectacular/"
+              readOnly: true
+      volumes:
+      - name: private-key-volume
+        secret:
+          secretName: github-app
+          items:
+          - key: private-key.pem
