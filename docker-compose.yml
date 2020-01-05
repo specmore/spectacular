@@ -8,6 +8,7 @@ services:
             - backend
         environment:
             - API_LOCATION=http://backend
+        command: /bin/bash -c "envsubst < /etc/nginx/conf.d/web.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
     backend:
         build:
             context: .

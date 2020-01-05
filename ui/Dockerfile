@@ -26,6 +26,3 @@ COPY --from=build /usr/src/app/dist /usr/share/nginx/html
 
 # Copy and web config template
 COPY web.template.conf /etc/nginx/conf.d/web.template
-
-# Substitute env vars
-RUN sh -c "envsubst < /etc/nginx/conf.d/web.template > /etc/nginx/conf.d/default.conf"
