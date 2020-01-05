@@ -16,4 +16,4 @@ spec:
           - containerPort: 80
           env:
           - name: API_LOCATION
-            value: "spectacular-backend"
+            value: "http://spectacular-backend"
