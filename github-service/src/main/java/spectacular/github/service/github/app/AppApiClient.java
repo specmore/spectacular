@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -16,7 +17,12 @@ public class AppApiClient {
     private final RestTemplate restTemplate;
 
     public AppApiClient(@Value("${github.api.root-url}") String rootUrl, RestTemplateBuilder restTemplateBuilder, GitHubAppAuthenticationHeaderRequestInterceptor gitHubAppAuthenticationHeaderRequestInterceptor, AppApiResponseErrorHandler appApiResponseErrorHandler) {
-        this.restTemplate = restTemplateBuilder.rootUri(rootUrl).additionalInterceptors(gitHubAppAuthenticationHeaderRequestInterceptor).errorHandler(appApiResponseErrorHandler).build();
+        this.restTemplate = restTemplateBuilder
+                .rootUri(rootUrl)
+                .requestFactory(HttpComponentsClientHttpRequestFactory.class)
+                .additionalInterceptors(gitHubAppAuthenticationHeaderRequestInterceptor)
+                .errorHandler(appApiResponseErrorHandler)
+                .build();
     }
 
     public AccessTokenResult createNewAppInstallationAccessToken(String installationId) {

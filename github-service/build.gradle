@@ -22,6 +22,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
+	implementation 'org.apache.httpcomponents:httpclient'
 	implementation 'com.nimbusds:nimbus-jose-jwt:8.2.1'
 	implementation 'org.bouncycastle:bcpkix-jdk15on:1.64'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
