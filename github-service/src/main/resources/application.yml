@@ -1,0 +1,16 @@
+server:
+  port: 5000
+github:
+  api:
+    app:
+      id: ${GITHUB_APP_ID:testId}
+      private-key-file-path: ${GITHUB_APP_PRIVATE_KEY_FILE_PATH:testPath}
+    root-url: https://api.github.com
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${GITHUB_APP_CLIENT_ID:testClientId}
+            client-secret: ${GITHUB_APP_CLIENT_SECRET:testClientSecret}
