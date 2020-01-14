@@ -16,5 +16,7 @@ services:
         environment: 
             - GITHUB_APP_ID=${APP_ID:?APP_ID needs to be set in a .env file with a GitHub app id}
             - GITHUB_APP_PRIVATE_KEY_FILE_PATH=/usr/spectacular/github.private-key.pem
+            - GITHUB_APP_CLIENT_ID=${CLIENT_ID:?CLIENT_ID needs to be set in a .env file with a GitHub app client id}
+            - GITHUB_APP_CLIENT_SECRET=${CLIENT_SECRET:?CLIENT_SECRET needs to be set in a .env file with a GitHub app client secret}
         volumes:
             - ${APP_PRIVATE_KEY_FILE_PATH:?APP_PRIVATE_KEY_FILE_PATH needs to be set in a .env file with the location of a .pem private key provided for the GitHub app}:/usr/spectacular/github.private-key.pem:ro
