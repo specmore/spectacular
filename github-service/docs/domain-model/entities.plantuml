@@ -1,0 +1,63 @@
+@startuml entities
+
+enum TargetType {
+    Organization
+    User
+}
+
+entity Repository {
+    owner : String
+    name : String
+}
+
+entity Installation {
+    installationId : int
+    appId : int
+    targetType : TargetType
+    targetId : int
+    repositories : List<Repository>
+    instanceConfigs : List<InstanceConfig>
+}
+
+Installation -> TargetType
+Installation --> "*" Repository
+
+class InstanceConfig {
+  installationId : String
+  repository : Repository
+  instanceConfigManifest : InstanceConfigManifest
+}
+
+Installation --> "*" InstanceConfig
+InstanceConfig --> Repository
+
+class InstanceConfigManifest {
+  catalogues : List<Catalogue>
+}
+
+InstanceConfig --> InstanceConfigManifest
+
+entity Catalogue {
+    name : String
+    repository : Repository
+    catalogueManifest : CatalogueManifest
+}
+
+InstanceConfigManifest --> "*" Catalogue
+Catalogue --> Repository
+
+entity CatalogueManifest {
+    specs : List<SpecFile>
+}
+
+Catalogue --> CatalogueManifest
+
+entity SpecFile {
+    repository : Repository
+    filePath : String
+}
+
+CatalogueManifest --> "*" SpecFile
+SpecFile --> Repository
+
+@enduml
