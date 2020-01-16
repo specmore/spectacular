@@ -3,7 +3,7 @@ package spectacular.github.service.config.instance
 
 import spectacular.github.service.github.RestApiClient
 import spectacular.github.service.github.app.AppInstallationContextProvider
-import spectacular.github.service.github.domain.Repository
+import spectacular.github.service.common.Repository
 import spock.lang.Specification
 
 class InstanceConfigServiceTest extends Specification {

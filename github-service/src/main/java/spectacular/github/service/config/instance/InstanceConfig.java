@@ -1,6 +1,6 @@
 package spectacular.github.service.config.instance;
 
-import spectacular.github.service.github.domain.Repository;
+import spectacular.github.service.common.Repository;
 
 public class InstanceConfig {
     private final String installationId;

@@ -4,13 +4,13 @@ import ch.ifocusit.plantuml.classdiagram.ClassDiagramBuilder;
 import spectacular.github.service.catalogues.CatalogueController;
 import spectacular.github.service.catalogues.CatalogueService;
 import spectacular.github.service.catalogues.CataloguesResponse;
+import spectacular.github.service.common.Repository;
 import spectacular.github.service.config.instance.Catalogue;
 import spectacular.github.service.config.instance.InstanceConfig;
 import spectacular.github.service.config.instance.InstanceConfigManifest;
 import spectacular.github.service.config.instance.InstanceConfigService;
 import spectacular.github.service.github.RestApiClient;
 import spectacular.github.service.github.app.*;
-import spectacular.github.service.github.domain.Repository;
 
 public class GenerateDomainModel {
     public static void main (String args[]) {

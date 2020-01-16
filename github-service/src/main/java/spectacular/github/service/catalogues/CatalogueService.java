@@ -3,7 +3,7 @@ package spectacular.github.service.catalogues;
 import org.springframework.stereotype.Service;
 import spectacular.github.service.config.instance.Catalogue;
 import spectacular.github.service.config.instance.InstanceConfigService;
-import spectacular.github.service.github.domain.Repository;
+import spectacular.github.service.common.Repository;
 
 import java.io.IOException;
 import java.util.List;

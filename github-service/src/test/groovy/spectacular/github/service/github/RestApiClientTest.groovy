@@ -2,7 +2,6 @@ package spectacular.github.service.github
 
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpRequest
@@ -10,7 +9,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.test.web.client.MockRestServiceServer
 import spectacular.github.service.github.app.AppInstallationAuthenticationHeaderRequestInterceptor
-import spectacular.github.service.github.domain.Repository
+import spectacular.github.service.common.Repository
 import spock.lang.Specification
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header

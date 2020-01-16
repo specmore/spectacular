@@ -5,9 +5,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.springframework.stereotype.Service;
 import spectacular.github.service.github.RestApiClient;
 import spectacular.github.service.github.app.AppInstallationContextProvider;
-import spectacular.github.service.github.domain.Repository;
+import spectacular.github.service.common.Repository;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class InstanceConfigService {
@@ -27,5 +28,10 @@ public class InstanceConfigService {
         var mapper = new ObjectMapper(new YAMLFactory());
         var manifest = mapper.readValue(fileContents, InstanceConfigManifest.class);
         return new InstanceConfig(appInstallationContextProvider.getInstallationId(), repository, manifest);
+    }
+
+    public List<Repository> findInstanceConfigRepositoriesForInstallation() {
+        var searchCodeResults = restApiClient.findFiles(INSTANCE_CONFIG_FILE_PATH);
+        return null;
     }
 }

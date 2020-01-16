@@ -1,4 +1,4 @@
-package spectacular.github.service.github.domain;
+package spectacular.github.service.common;
 
 public class Repository {
     private final String owner;

@@ -1,10 +1,11 @@
 package spectacular.github.service.catalogues;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import spectacular.github.service.github.app.AppInstallationContextProvider;
-import spectacular.github.service.github.domain.Repository;
+import spectacular.github.service.common.Repository;
 
 import java.io.IOException;
 
@@ -19,7 +20,7 @@ public class CatalogueController {
     }
 
     @GetMapping("api/{installationId}/{configOwner}/{configRepoName}/catalogues")
-    public CataloguesResponse getCatalogues(@PathVariable("installationId") String installationId, @PathVariable("configOwner") String repoOwner, @PathVariable("configRepoName") String repoName) throws IOException {
+    public CataloguesResponse getCatalogues(@PathVariable("installationId") String installationId, @PathVariable("configOwner") String repoOwner, @PathVariable("configRepoName") String repoName, Authentication authentication) throws IOException {
         //todo: move installationId to a header and set context using a interceptor
         appInstallationContextProvider.setInstallationId(installationId);
         var configRepository = new Repository(repoOwner, repoName);
