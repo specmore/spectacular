@@ -9,14 +9,16 @@ public class SearchCodeResultItem {
     private final String url;
     private final String gitUrl;
     private final String htmlUrl;
+    private final Repository repository;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public SearchCodeResultItem(@JsonProperty("name") String name, @JsonProperty("path") String path, @JsonProperty("url") String url, @JsonProperty("git_url") String gitUrl, @JsonProperty("html_url") String htmlUrl) {
+    public SearchCodeResultItem(@JsonProperty("name") String name, @JsonProperty("path") String path, @JsonProperty("url") String url, @JsonProperty("git_url") String gitUrl, @JsonProperty("html_url") String htmlUrl, @JsonProperty("repository") Repository repository) {
         this.name = name;
         this.path = path;
         this.url = url;
         this.gitUrl = gitUrl;
         this.htmlUrl = htmlUrl;
+        this.repository = repository;
     }
 
     public String getName() {
@@ -37,5 +39,9 @@ public class SearchCodeResultItem {
 
     public String getHtmlUrl() {
         return htmlUrl;
+    }
+
+    public Repository getRepository() {
+        return repository;
     }
 }
