@@ -5,9 +5,10 @@ import CatalogueList from './components/catalogue-list';
 import MenuBar from './components/menu-bar';
 import FooterBar from './components/footer-bar';
 import './index.css';
+import { BrowserRouter as Router } from "react-router-dom"
 
 const Index = () => (
-<div>
+<Router>
   <MenuBar/>
   <Container style={{ marginTop: '4em' }}>
     <Segment>
@@ -15,6 +16,6 @@ const Index = () => (
     </Segment>
   </Container>
   <FooterBar/>
-</div>);
+</Router>);
 
 ReactDOM.render(<Index />, document.getElementById("root"));
