@@ -18,7 +18,7 @@ const UserMenuBarItem = () => {
 
     useEffect(() => {
         fetchInfoUserData();
-    })
+    }, [])
 
     if (user) {
         return (
