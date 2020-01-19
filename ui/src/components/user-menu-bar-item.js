@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Dropdown, Icon } from 'semantic-ui-react';
+import { Dropdown } from 'semantic-ui-react';
 import { fetchUserInfo } from '../api-client';
 
 const UserMenuBarItem = () => {
@@ -24,8 +24,8 @@ const UserMenuBarItem = () => {
         return (
             <Dropdown item pointing text={user.name}>
               <Dropdown.Menu>
-                <Dropdown.Item>Signed in as {user.login}</Dropdown.Item>
-                <Dropdown.Item>Sign out</Dropdown.Item>
+                <Dropdown.Item as='a' href={user.profile_url}>Signed in as {user.login}</Dropdown.Item>
+                <Dropdown.Item as='a' href="/logout">Sign out</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
         );
