@@ -44,10 +44,7 @@ const miniCssExtractPlugin = new MiniCssExtractPlugin({
                 target: 'http://localhost:5000'
             },
             '/login': {
-                target: 'http://localhost:5000'
-            },
-            '/oauth2': {
-                target: 'http://localhost:5000'
+                target: 'http://localhost:5001'
             }
         }
     }

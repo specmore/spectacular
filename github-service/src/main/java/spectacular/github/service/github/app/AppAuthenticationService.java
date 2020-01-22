@@ -47,7 +47,7 @@ public class AppAuthenticationService {
         JWTClaimsSet claims = new JWTClaimsSet.Builder()
                 .issuer(appId)
                 .issueTime(now)
-                .expirationTime(new Date(now.getTime() + 1000*60*10)) // expires in 10 minutes
+                .expirationTime(new Date(now.getTime() + 1000*60*10 - 1000)) // expires in (10 minutes - 1 second)
                 .build();
 
         JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).build();
