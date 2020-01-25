@@ -8,6 +8,6 @@ export const fetchCatalogueListForInstallationConfig = async (installationId, co
 }
 
 export const fetchUserInfo = async () => {
-    const response = await axios.get(`/api/user`);
+    const response = await axios.get(`/login`);
     return response.data;
 }

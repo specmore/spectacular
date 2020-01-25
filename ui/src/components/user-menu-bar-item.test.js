@@ -11,9 +11,11 @@ describe("UserMenuBarItem component", () => {
     // given a mocked successful user response 
     const userResponse = { 
         data: {
-          "login": "pburls",
+          "sub": "pburls",
           "name": "Patrick Burls",
-          "avatar_url": "https://avatars2.githubusercontent.com/u/11502284?v=4"
+          "picture": "https://avatars2.githubusercontent.com/u/11502284?v=4",
+          "origin":"github",
+          "exp":1580050167
         }
     };
     

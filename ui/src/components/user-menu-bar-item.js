@@ -24,8 +24,8 @@ const UserMenuBarItem = () => {
         return (
             <Dropdown item pointing text={user.name}>
               <Dropdown.Menu>
-                <Dropdown.Item as='a' href={user.profile_url}>Signed in as {user.login}</Dropdown.Item>
-                <Dropdown.Item as='a' href="/logout">Sign out</Dropdown.Item>
+                <Dropdown.Item as='a' href={user.profile_url}>Signed in as {user.sub}</Dropdown.Item>
+                <Dropdown.Item as='a' href="/login?logout=true">Sign out</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
         );
