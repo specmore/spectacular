@@ -29,7 +29,7 @@ public class JWTCookieToAuthorizationHeaderFilter extends OncePerRequestFilter {
         String authorisationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (jwtCookie == null) logger.debug("JWT cookie not found with name: " + jwtCookieName);
-        if (jwtCookie != null) logger.debug("Found JWT cookie: " + jwtCookie.toString());
+        if (jwtCookie != null) logger.debug("Found JWT cookie.");
         if (authorisationHeader == null) logger.debug("No authorisation header found.");
         if (authorisationHeader != null) logger.debug("An authorisation header already set.");
 
