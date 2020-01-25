@@ -27,6 +27,9 @@ public class GitHubServiceApplication {
 	@Value("${security.authentication.jwt.signature-secret}")
 	private String jwtSigningSecret;
 
+	@Value("${security.authentication.jwt.cookies-name}")
+	private String jwtCookieName;
+
 	@Bean
 	public JwtDecoder jwtDecoder() {
 		byte[] secretBytes = jwtSigningSecret.getBytes(StandardCharsets.UTF_8);;
