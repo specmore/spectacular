@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.Date;
 
 @Service
@@ -23,10 +23,14 @@ public class AppAuthenticationService {
     private static final Logger logger = LoggerFactory.getLogger(AppAuthenticationService.class);
     private final String appId;
     private final String privateKeyFilePath;
+    private final Duration jwtDuration;
 
-    public AppAuthenticationService(@Value("${github.api.app.id}") String appId, @Value("${github.api.app.private-key-file-path}") String privateKeyFilePath) {
+    public AppAuthenticationService(@Value("${github.api.app.id}") String appId,
+                                    @Value("${github.api.app.jwt-signing-key-file-path}") String privateKeyFilePath,
+                                    @Value("#{T(java.time.Duration).parse('${github.api.app.jwt-duration}')}") Duration jwtDuration) {
         this.appId = appId;
         this.privateKeyFilePath = privateKeyFilePath;
+        this.jwtDuration = jwtDuration;
     }
 
     public String generateJWT() throws JOSEException, IOException {
@@ -44,10 +48,11 @@ public class AppAuthenticationService {
         var jwsSigner = new RSASSASigner(rsaKey);
 
         var now = new Date();
+        var expiration = new Date(now.getTime() + jwtDuration.toMillis());
         JWTClaimsSet claims = new JWTClaimsSet.Builder()
                 .issuer(appId)
                 .issueTime(now)
-                .expirationTime(new Date(now.getTime() + 1000*60*10 - 1000)) // expires in (10 minutes - 1 second)
+                .expirationTime(expiration)
                 .build();
 
         JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).build();

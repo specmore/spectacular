@@ -3,6 +3,8 @@ package spectacular.github.service.github.app
 import com.nimbusds.jwt.SignedJWT
 import spock.lang.Specification
 
+import java.time.Duration
+
 class AppAuthenticationServiceTest extends Specification {
     def "GenerateJWT"() {
         given: "A GitHub App private key pem file path"
@@ -10,7 +12,7 @@ class AppAuthenticationServiceTest extends Specification {
         and: "App id"
         def appId = "123456"
         and: "a AppAuthenticationService is create"
-        def appAuthenticationService = new AppAuthenticationService(appId, pemFilePath)
+        def appAuthenticationService = new AppAuthenticationService(appId, pemFilePath, Duration.ofSeconds(10))
 
         when: "a JWT is generated"
         def jwtContents = appAuthenticationService.generateJWT()

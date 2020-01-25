@@ -4,15 +4,17 @@ github:
   api:
     app:
       id: ${GITHUB_APP_ID:testId}
-      private-key-file-path: ${GITHUB_APP_PRIVATE_KEY_FILE_PATH:testPath}
+      jwt-signing-key-file-path: ${GITHUB_APP_PRIVATE_KEY_FILE_PATH:testPath}
+      jwt-duration: PT9S
     root-url: https://api.github.com
 security:
   authentication:
     jwt:
       signature-secret: ${JWT_SECRET:this_test_shared_key_is_32_bytes}
       cookie-name: ${JWT_COOKIE_NAME:jwt_token}
-#logging:
-#  level:
-#    org:
-#      springframework:
-#        security: DEBUG
+logging:
+  level:
+    spectacular: DEBUG
+    org:
+      springframework:
+        security: DEBUG
