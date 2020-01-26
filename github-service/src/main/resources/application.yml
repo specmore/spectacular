@@ -10,7 +10,7 @@ github:
 security:
   authentication:
     jwt:
-      signature-secret: ${JWT_SECRET:this_test_shared_key_is_32_bytes}
+      signature-secret: ${JWT_SHARED_SECRET:this_test_shared_key_is_32_bytes}
       cookie-name: ${JWT_COOKIE_NAME:jwt_token}
 #logging:
 #  level:

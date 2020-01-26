@@ -3,20 +3,27 @@ services:
     web:
         build: ./ui
         ports:
-        - "8080:80"
+        - "80:80"
         depends_on: 
             - backend
+            - auth
         environment:
             - API_LOCATION=http://backend
-        command: /bin/bash -c "envsubst < /etc/nginx/conf.d/web.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
+            - AUTH_LOCATION=http://auth:8080
+        command: /bin/bash -c "envsubst '$${API_LOCATION},$${AUTH_LOCATION}' < /etc/nginx/conf.d/web.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
     backend:
         build:
             context: .
             dockerfile: ./github-service/Dockerfile
         environment: 
-            - GITHUB_APP_ID=${APP_ID:?APP_ID needs to be set in a .env file with a GitHub app id}
+            - GITHUB_APP_ID=${SPECTACULAR_GITHUB_APP_ID:?SPECTACULAR_GITHUB_APP_ID needs to be set in a .env file with a GitHub app id}
             - GITHUB_APP_PRIVATE_KEY_FILE_PATH=/usr/spectacular/github.private-key.pem
-            - GITHUB_APP_CLIENT_ID=${CLIENT_ID:?CLIENT_ID needs to be set in a .env file with a GitHub app client id}
-            - GITHUB_APP_CLIENT_SECRET=${CLIENT_SECRET:?CLIENT_SECRET needs to be set in a .env file with a GitHub app client secret}
+            - JWT_SHARED_SECRET=${SPECTACULAR_JWT_SHARED_SECRET:?SPECTACULAR_JWT_SHARED_SECRET needs to be set in a .env file with a 32byte text secret}
         volumes:
-            - ${APP_PRIVATE_KEY_FILE_PATH:?APP_PRIVATE_KEY_FILE_PATH needs to be set in a .env file with the location of a .pem private key provided for the GitHub app}:/usr/spectacular/github.private-key.pem:ro
+            - ${SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH:?SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH needs to be set in a .env file with the location of a .pem private key provided for the GitHub app}:/usr/spectacular/github.private-key.pem:ro
+    auth:
+        image: tarent/loginsrv
+        environment: 
+            - LOGINSRV_GITHUB=client_id=${SPECTACULAR_GITHUB_CLIENT_ID:?SPECTACULAR_GITHUB_CLIENT_ID needs to be set in a .env file with a GitHub app client id},client_secret=${SPECTACULAR_GITHUB_CLIENT_SECRET:?SPECTACULAR_GITHUB_CLIENT_SECRET needs to be set in a .env file with a GitHub app client secret}
+            - LOGINSRV_JWT_SECRET=${SPECTACULAR_JWT_SHARED_SECRET:?SPECTACULAR_JWT_SHARED_SECRET needs to be set in a .env file with a 32byte text secret}
+            - LOGINSRV_COOKIE_SECURE="false"
