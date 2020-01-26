@@ -33,10 +33,10 @@ spec:
             readOnly: true
           resources:
             requests:
-              cpu: 250m
+              cpu: 100m
               memory: 512Mi
             limits:
-              cpu: 500m
+              cpu: 0
               memory: 1024Mi
       volumes:
       - name: private-key-volume
