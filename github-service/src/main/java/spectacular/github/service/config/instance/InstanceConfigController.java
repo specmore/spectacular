@@ -1,6 +1,6 @@
 package spectacular.github.service.config.instance;
 
-import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,11 +18,11 @@ public class InstanceConfigController {
     }
 
     @GetMapping("api/{installationId}/instances")
-    public InstancesResponse getInstances(@PathVariable("installationId") String installationId, Authentication authentication) {
+    public InstancesResponse getInstances(@PathVariable("installationId") String installationId, JwtAuthenticationToken authToken) {
         //todo: move installationId to a header and set context using a interceptor
         appInstallationContextProvider.setInstallationId(installationId);
 
-        var instanceConfigs = this.instanceConfigService.getInstanceConfigsForInstallation();
+        var instanceConfigs = this.instanceConfigService.getInstanceConfigsForUser(authToken.getName());
         return new InstancesResponse(instanceConfigs);
     }
 }

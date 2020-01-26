@@ -17,6 +17,7 @@ import spectacular.github.service.github.domain.SearchCodeResults;
 public class RestApiClient {
     private static final String SEARCH_CODE_PATH = "/search/code";
     private static final String REPO_CONTENT_PATH = "/repos/{repo}/contents/{path}";
+    private static final String REPO_COLLABORATORS_PATH = "/repos/{repo}/collaborators/{username}";
     private static final String RAW_CONTENT_ACCEPT_HEADER = "application/vnd.github.3.raw";
 
     private final RestTemplate restTemplate;
@@ -45,8 +46,18 @@ public class RestApiClient {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity entity = new HttpEntity(headers);
 
-
         ResponseEntity<SearchCodeResults> response = restTemplate.exchange(uriComponentsBuilder.build().toUriString(), HttpMethod.GET, entity, SearchCodeResults.class);
         return response.getBody();
+    }
+
+    public boolean isUserRepositoryCollaborator(Repository repo, String username) {
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(REPO_COLLABORATORS_PATH);
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity entity = new HttpEntity(headers);
+
+        String contentUri = uriComponentsBuilder.buildAndExpand(repo.getNameWithOwner(), username).toUriString();
+        ResponseEntity<Void> response = restTemplate.exchange(contentUri, HttpMethod.GET, entity, Void.class);
+        return response.getStatusCode().is2xxSuccessful();
     }
 }

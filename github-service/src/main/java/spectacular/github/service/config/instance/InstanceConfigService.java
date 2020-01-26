@@ -29,8 +29,10 @@ public class InstanceConfigService {
         this.appInstallationContextProvider = appInstallationContextProvider;
     }
 
-    public List<InstanceConfig> getInstanceConfigsForInstallation() {
-        var instanceConfigs = findInstanceConfigRepositoriesForInstallation().stream().map(this::getInstanceConfigForRepository).collect(Collectors.toList());
+    public List<InstanceConfig> getInstanceConfigsForUser(String username) {
+        var instanceConfigs = findInstanceConfigRepositories().stream()
+                .filter(repository -> isUserCollaboratorForRepository(repository, username))
+                .map(this::getInstanceConfigForRepository).collect(Collectors.toList());
         return instanceConfigs;
     }
 
@@ -50,12 +52,16 @@ public class InstanceConfigService {
         return new InstanceConfig(appInstallationContextProvider.getInstallationId(), repository, manifest, error);
     }
 
-    public List<Repository> findInstanceConfigRepositoriesForInstallation() {
+    private List<Repository> findInstanceConfigRepositories() {
         var searchCodeResults = restApiClient.findFiles(INSTANCE_CONFIG_FILE_PATH);
         return searchCodeResults.getItems().stream().map(InstanceConfigService::createRepositoryFrom).collect(Collectors.toList());
     }
 
     private static Repository createRepositoryFrom(SearchCodeResultItem searchCodeResultItem) {
         return new Repository(searchCodeResultItem.getRepository().getFull_name());
+    }
+
+    private boolean isUserCollaboratorForRepository(Repository repo, String username) {
+        return restApiClient.isUserRepositoryCollaborator(repo, username);
     }
 }

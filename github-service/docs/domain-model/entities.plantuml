@@ -5,10 +5,17 @@ enum TargetType {
     User
 }
 
+entity User {
+    username : String
+}
+
 entity Repository {
     owner : String
     name : String
+    collaborators : List<User>
 }
+
+Repository --> "*" User
 
 entity Installation {
     installationId : int
@@ -22,7 +29,7 @@ entity Installation {
 Installation -> TargetType
 Installation --> "*" Repository
 
-class InstanceConfig {
+entity InstanceConfig {
   installationId : String
   repository : Repository
   instanceConfigManifest : InstanceConfigManifest
@@ -31,7 +38,7 @@ class InstanceConfig {
 Installation --> "*" InstanceConfig
 InstanceConfig --> Repository
 
-class InstanceConfigManifest {
+entity InstanceConfigManifest {
   catalogues : List<Catalogue>
 }
 
