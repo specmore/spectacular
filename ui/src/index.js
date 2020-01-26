@@ -12,7 +12,7 @@ const Index = () => (
   <MenuBar/>
   <Container style={{ marginTop: '4em' }}>
     <Segment>
-      <CatalogueList installationId={5521529} configRepo={"pburls/specs-app"}/>
+      <CatalogueList installationId={6436743} configRepo={"pburls/specs-app"}/>
     </Segment>
   </Container>
   <FooterBar/>
