@@ -22,10 +22,22 @@ spec:
               secretKeyRef:
                 name: github-app
                 key: app-id
+          - name: JWT_SHARED_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: auth-keys
+                key: shared-signing-key
           volumeMounts:
           - name: private-key-volume
             mountPath: "/usr/spectacular/"
             readOnly: true
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 500m
+              memory: 1024Mi
       volumes:
       - name: private-key-volume
         secret:

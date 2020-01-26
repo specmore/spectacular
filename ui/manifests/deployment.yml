@@ -17,5 +17,14 @@ spec:
           env:
           - name: API_LOCATION
             value: "http://spectacular-backend"
+          - name: AUTH_LOCATION
+            value: "http://spectacular-auth"
           command: ["/bin/sh"]
-          args: ["-c", "envsubst < /etc/nginx/conf.d/web.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]
+          args: ["-c", "envsubst '$${API_LOCATION},$${AUTH_LOCATION}' < /etc/nginx/conf.d/web.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 32Mi
+            limits:
+              cpu: 250m
+              memory: 64Mi

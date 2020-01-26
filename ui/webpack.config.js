@@ -42,6 +42,9 @@ const miniCssExtractPlugin = new MiniCssExtractPlugin({
         proxy: {
             '/api': {
                 target: 'http://localhost:5000'
+            },
+            '/login': {
+                target: 'http://localhost:5001'
             }
         }
     }
