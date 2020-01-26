@@ -29,8 +29,8 @@ spec:
                 key: shared-signing-key
           resources:
             requests:
-              cpu: 100m
+              cpu: 75m
               memory: 32Mi
             limits:
-              cpu: 0
+              cpu: 150m
               memory: 64Mi
