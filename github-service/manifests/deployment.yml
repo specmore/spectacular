@@ -19,7 +19,7 @@ spec:
             value: "/usr/spectacular/private-key.pem"
           - name: GITHUB_APP_ID
             valueFrom:
-              secretKeyRef:
+              configMapKeyRef:
                 name: github-app
                 key: app-id
           - name: JWT_SHARED_SECRET
