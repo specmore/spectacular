@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Dimmer, Loader, Item, Segment, Message } from 'semantic-ui-react'
 import { fetchCatalogueListForInstallationConfig } from '../api-client';
-import { sleep } from '../utils';
 import EmptyCatalogueItemImage from '../assets/images/empty-catalogue-item.png';
 
 
@@ -23,7 +22,7 @@ const CatalogueList = ({installationId, configRepo}) => {
       const cataloguesData = await fetchCatalogueListForInstallationConfig(installationId, configRepo);
       setCatalogues(cataloguesData.catalogues);
     } catch (error) {
-      console.error(error);
+      //console.error(error);
       setErrorMessage("An error occurred while fetching catalogues.");
     }
   }
