@@ -10,18 +10,13 @@ import spectacular.github.service.github.app.AppInstallationContextProvider;
 public class InstanceConfigController {
 
     private final InstanceConfigService instanceConfigService;
-    private final AppInstallationContextProvider appInstallationContextProvider;
 
-    public InstanceConfigController(InstanceConfigService instanceConfigService, AppInstallationContextProvider appInstallationContextProvider) {
+    public InstanceConfigController(InstanceConfigService instanceConfigService) {
         this.instanceConfigService = instanceConfigService;
-        this.appInstallationContextProvider = appInstallationContextProvider;
     }
 
-    @GetMapping("api/{installationId}/instances")
-    public InstancesResponse getInstances(@PathVariable("installationId") String installationId, JwtAuthenticationToken authToken) {
-        //todo: move installationId to a header and set context using a interceptor
-        appInstallationContextProvider.setInstallationId(installationId);
-
+    @GetMapping("api/instances")
+    public InstancesResponse getInstances(JwtAuthenticationToken authToken) {
         var instanceConfigs = this.instanceConfigService.getInstanceConfigsForUser(authToken.getName());
         return new InstancesResponse(instanceConfigs);
     }
