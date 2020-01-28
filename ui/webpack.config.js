@@ -47,7 +47,7 @@ const miniCssExtractPlugin = new MiniCssExtractPlugin({
                 '/api': {
                     target: 'http://localhost:5000',
                     headers: {
-                        'X-SPEC-INSTALLATION-ID' : process.env.SPECTACULAR_GITHUB_APP_INSTALLATION_ID
+                        'x-spec-installation-id' : process.env.SPECTACULAR_GITHUB_APP_INSTALLATION_ID
                     }
                 },
                 '/login': {
