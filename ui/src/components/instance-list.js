@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Dimmer, Loader, Item, Segment, Message } from 'semantic-ui-react'
 import { fetchInstances } from '../api-client';
-import EmptyCatalogueItemImage from '../assets/images/empty-catalogue-item.png';
+import EmptyInstanceItemImage from '../assets/images/empty-catalogue-item.png';
 
 
 const InstanceItem = ({instanceConfigManifest, repository}) => (
@@ -17,7 +17,7 @@ const InstanceList = () => {
   const [instances, setInstances] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const fetchCatalogueData = async () => {
+  const fetchInstanceData = async () => {
     try {
       const instancesData = await fetchInstances();
       setInstances(instancesData.instances);
@@ -28,7 +28,7 @@ const InstanceList = () => {
   }
 
   useEffect(() => {
-    fetchCatalogueData();
+    fetchInstanceData();
   }, [])
 
   if (!instances && !errorMessage) {
@@ -37,7 +37,7 @@ const InstanceList = () => {
         <Dimmer inverted active>
           <Loader content='Loading' />
         </Dimmer>
-        <img src={EmptyCatalogueItemImage} />
+        <img src={EmptyInstanceItemImage} />
       </React.Fragment>
     );
   }

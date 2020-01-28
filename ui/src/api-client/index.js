@@ -7,8 +7,8 @@ export const fetchCatalogueListForInstallationConfig = async (installationId, co
     return response.data;
 }
 
-export const fetchInstances = async (installationId, configRepo) => {
-    const response = await axios.get(`/api/${installationId}/${configRepo}/catalogues`);
+export const fetchInstances = async () => {
+    const response = await axios.get(`/api/instances`);
     return response.data;
 }
 
