@@ -28,7 +28,7 @@ spec:
           args: ["-c", "envsubst '$${API_LOCATION},$${AUTH_LOCATION},$${GITHUB_APP_INSTALLATION_ID}' < /etc/nginx/conf.d/web.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]
           resources:
             requests:
-              cpu: 50m
+              cpu: 10m
               memory: 16Mi
             limits:
               cpu: 100m
