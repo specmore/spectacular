@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -12,7 +13,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 public class AppApiClient {
 
-    private static final String APP_INSTALLATION_PATH = "/installations/{installationId}/access_tokens";
+    private static final String APP_INSTALLATION_ACCESS_TOKEN_PATH = "/installations/{installationId}/access_tokens";
+    private static final String APP_INSTALLATION_PATH = "/app/installations/{installationId}";
 
     private final RestTemplate restTemplate;
 
@@ -26,13 +28,25 @@ public class AppApiClient {
     }
 
     public AccessTokenResult createNewAppInstallationAccessToken(String installationId) {
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(APP_INSTALLATION_PATH);
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(APP_INSTALLATION_ACCESS_TOKEN_PATH);
         String accessTokenUri = uriComponentsBuilder.buildAndExpand(installationId).toUriString();
 
         HttpHeaders headers = new HttpHeaders();
         HttpEntity entity = new HttpEntity(headers);
 
         var response = restTemplate.postForEntity(accessTokenUri, entity, AccessTokenResult.class);
+
+        return response.getBody();
+    }
+
+    public Installation getAppInstallation(String installationId) {
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(APP_INSTALLATION_PATH);
+        String appInstallationUri = uriComponentsBuilder.buildAndExpand(installationId).toUriString();
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity entity = new HttpEntity(headers);
+
+        var response = restTemplate.exchange(appInstallationUri, HttpMethod.GET, entity, Installation.class);
 
         return response.getBody();
     }
