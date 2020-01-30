@@ -7,6 +7,11 @@ export const fetchCatalogueListForInstallationConfig = async (installationId, co
     return response.data;
 }
 
+export const fetchInstallation = async () => {
+    const response = await axios.get(`/api/installation`);
+    return response.data;
+}
+
 export const fetchInstances = async () => {
     const response = await axios.get(`/api/instances`);
     return response.data;
