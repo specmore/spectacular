@@ -6,23 +6,43 @@ import ImagePlaceHolder from '../assets/images/image-placeholder.png';
 import { Link } from "react-router-dom";
 
 
-const CatalogueItem = ({repository, catalogueManifest}) => (
-  <Item>
-    <Item.Image size='tiny' src={ImagePlaceHolder} />
-    <Item.Content>
-      <Item.Header as={Link} to={repository.nameWithOwner}>{catalogueManifest.name}</Item.Header>
-      <Item.Meta><a href={repository.htmlUrl} target='_blank'><Icon name="github"/> {repository.nameWithOwner}</a></Item.Meta>
-      <Item.Description>
-        {catalogueManifest.description}
-      </Item.Description>
-      <Item.Extra>
-        <Label color='teal'>
-          <Icon name='file alternate' />{catalogueManifest["spec-files"].length} specs
-        </Label>
-      </Item.Extra>
-    </Item.Content>
-  </Item>
-);
+const CatalogueItem = ({repository, catalogueManifest, error}) => {
+  if (error) {
+    return (
+      <Item>
+        <Item.Content>
+          <Item.Description>
+            <Message icon negative>
+              <Icon name='warning sign' />
+              <Message.Content>
+                <Message.Header>An error occurred while parsing the catalogue manifest file in <a href={repository.htmlUrl} target='_blank'>{repository.nameWithOwner}</a></Message.Header>
+                {error}
+              </Message.Content>
+            </Message>
+          </Item.Description>
+        </Item.Content>
+      </Item>
+    );
+  }
+
+  return (
+    <Item>
+      <Item.Image size='tiny' src={ImagePlaceHolder} />
+      <Item.Content>
+        <Item.Header as={Link} to={repository.nameWithOwner}>{catalogueManifest.name}</Item.Header>
+        <Item.Meta><a href={repository.htmlUrl} target='_blank'><Icon name="github"/> {repository.nameWithOwner}</a></Item.Meta>
+        <Item.Description>
+          {catalogueManifest.description}
+        </Item.Description>
+        <Item.Extra>
+          <Label color='teal'>
+            <Icon name='file alternate' />{catalogueManifest["spec-files"].length} specs
+          </Label>
+        </Item.Extra>
+      </Item.Content>
+    </Item>
+  );
+};
 
 const CatalogueList = ({org}) => {
   const [catalogues, setCatalogues] = useState(null);
