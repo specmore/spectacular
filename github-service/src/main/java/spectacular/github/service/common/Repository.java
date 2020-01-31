@@ -1,6 +1,7 @@
 package spectacular.github.service.common;
 
 import org.springframework.util.Assert;
+import spectacular.github.service.github.domain.SearchCodeResultItem;
 
 import java.util.Objects;
 
@@ -55,5 +56,9 @@ public class Repository {
     @Override
     public int hashCode() {
         return Objects.hash(getOwner(), getName());
+    }
+
+    public static Repository createRepositoryFrom(SearchCodeResultItem searchCodeResultItem) {
+        return new Repository(searchCodeResultItem.getRepository().getFull_name());
     }
 }

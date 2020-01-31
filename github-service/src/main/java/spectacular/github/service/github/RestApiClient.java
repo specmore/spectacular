@@ -13,6 +13,8 @@ import spectacular.github.service.github.app.AppInstallationAuthenticationHeader
 import spectacular.github.service.common.Repository;
 import spectacular.github.service.github.domain.SearchCodeResults;
 
+import java.util.StringJoiner;
+
 @Component
 public class RestApiClient {
     private static final String SEARCH_CODE_PATH = "/search/code";
@@ -40,8 +42,13 @@ public class RestApiClient {
         return response.getBody();
     }
 
-    public SearchCodeResults findFiles(String filename) {
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(SEARCH_CODE_PATH).queryParam("q", "filename:"+filename);
+    public SearchCodeResults findFiles(String filename, String fileExtension, String path, String org) {
+        StringJoiner joiner = new StringJoiner("+");
+        if(filename != null && filename.length() > 0) joiner.add("filename:"+filename);
+        if(fileExtension != null && fileExtension.length() > 0) joiner.add("extension:"+fileExtension);
+        if(path != null && path.length() > 0) joiner.add("path:"+path);
+        if(org != null && org.length() > 0) joiner.add("org:"+org);
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(SEARCH_CODE_PATH).queryParam("q", joiner.toString());
 
         HttpHeaders headers = new HttpHeaders();
         HttpEntity entity = new HttpEntity(headers);

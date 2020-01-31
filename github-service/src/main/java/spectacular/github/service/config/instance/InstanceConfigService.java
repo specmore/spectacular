@@ -17,7 +17,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class InstanceConfigService {
-    private static final String INSTANCE_CONFIG_FILE_PATH = "spectacular-app-config.yaml";
+    private static final String INSTANCE_CONFIG_FILE_NAME = "spectacular-app-config";
+    private static final String INSTANCE_CONFIG_FILE_EXTENSION = "yaml";
+    private static final String INSTANCE_CONFIG_FILE_PATH = "/";
+    private static final String INSTANCE_CONFIG_FULL_FILE_NAME = INSTANCE_CONFIG_FILE_NAME + "." + INSTANCE_CONFIG_FILE_EXTENSION;
 
     private static final Logger logger = LoggerFactory.getLogger(AppAuthenticationService.class);
 
@@ -37,7 +40,7 @@ public class InstanceConfigService {
     }
 
     public InstanceConfig getInstanceConfigForRepository(Repository repository) {
-        var fileContents = restApiClient.getRepositoryContent(repository, INSTANCE_CONFIG_FILE_PATH, null);
+        var fileContents = restApiClient.getRepositoryContent(repository, INSTANCE_CONFIG_FULL_FILE_NAME, null);
 
         var mapper = new ObjectMapper(new YAMLFactory());
         InstanceConfigManifest manifest = null;
@@ -53,7 +56,7 @@ public class InstanceConfigService {
     }
 
     private List<Repository> findInstanceConfigRepositories() {
-        var searchCodeResults = restApiClient.findFiles(INSTANCE_CONFIG_FILE_PATH);
+        var searchCodeResults = restApiClient.findFiles(INSTANCE_CONFIG_FILE_NAME, INSTANCE_CONFIG_FILE_EXTENSION, INSTANCE_CONFIG_FILE_PATH, null);
         return searchCodeResults.getItems().stream().map(InstanceConfigService::createRepositoryFrom).collect(Collectors.toList());
     }
 

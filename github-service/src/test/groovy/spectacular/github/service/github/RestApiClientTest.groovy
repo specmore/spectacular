@@ -150,8 +150,9 @@ class RestApiClientTest extends Specification {
                 .andRespond(withSuccess(responseContent, MediaType.APPLICATION_JSON));
 
         and: "the search results to be returned"
-        def searchCodeResults = client.findFiles(filename)
+        def searchCodeResults = client.findFiles(filename, null, null, null)
         searchCodeResults
+        !searchCodeResults.incompleteResults
         searchCodeResults.items
         searchCodeResults.items[0].name == filename
         searchCodeResults.items[0].repository.full_name == "pburls/specs-app"

@@ -52,7 +52,7 @@ class InstanceConfigServiceTest extends Specification {
         def repo = new Repository("test-owner/test-repo987")
         def searchCodeResultRepo = new spectacular.github.service.github.domain.Repository(1234, repo.getNameWithOwner())
         def searchCodeResultItem = new SearchCodeResultItem(instanceManifestFilename, instanceManifestFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
-        def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem))
+        def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
         and: "a valid Yaml instance config Manifest"
         def validYamlManifest = "catalogues:\n" +
                 "- name: \"Test Catalogue 1\"\n" +
@@ -62,7 +62,7 @@ class InstanceConfigServiceTest extends Specification {
         def result = instanceConfigService.getInstanceConfigsForUser(username)
 
         then: "github is search for instance manifest files"
-        1 * restApiClient.findFiles(instanceManifestFilename) >> searchCodeResults
+        1 * restApiClient.findFiles("spectacular-app-config", "yaml", "/", null) >> searchCodeResults
 
         and: "github is checked if the user is a collaborator of each repository returned"
         1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> true
@@ -93,7 +93,7 @@ class InstanceConfigServiceTest extends Specification {
         def repo = new Repository("test-owner/test-repo987")
         def searchCodeResultRepo = new spectacular.github.service.github.domain.Repository(1234, repo.getNameWithOwner())
         def searchCodeResultItem = new SearchCodeResultItem(instanceManifestFilename, instanceManifestFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
-        def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem))
+        def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
         and: "a valid Yaml instance config Manifest"
         def validYamlManifest = "catalogues:\n" +
                 "- name: \"Test Catalogue 1\"\n" +
@@ -103,7 +103,7 @@ class InstanceConfigServiceTest extends Specification {
         def result = instanceConfigService.getInstanceConfigsForUser(username)
 
         then: "github is search for instance manifest files"
-        1 * restApiClient.findFiles(instanceManifestFilename) >> searchCodeResults
+        1 * restApiClient.findFiles("spectacular-app-config", "yaml", "/", null) >> searchCodeResults
 
         and: "github is checked if the user is a collaborator of each repository returned"
         1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> false
