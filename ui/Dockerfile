@@ -13,6 +13,9 @@ COPY *.config.js ./
 # Copy app source
 COPY src src
 
+# Test
+RUN npm run test
+
 # Bundle
 RUN npm run build
 
