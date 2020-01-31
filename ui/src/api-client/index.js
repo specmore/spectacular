@@ -2,8 +2,8 @@ import axios from 'axios'
 
 //const API_HOSTNAME = "http://localhost:5000";
 
-export const fetchCatalogueListForInstallationConfig = async (installationId, configRepo) => {
-    const response = await axios.get(`/api/${installationId}/${configRepo}/catalogues`);
+export const fetchCatalogues = async () => {
+    const response = await axios.get(`/api/catalogues`);
     return response.data;
 }
 

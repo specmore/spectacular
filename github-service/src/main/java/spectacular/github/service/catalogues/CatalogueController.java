@@ -25,6 +25,11 @@ public class CatalogueController {
         this.appInstallationContextProvider = appInstallationContextProvider;
     }
 
+    @GetMapping("api/catalogues")
+    public CataloguesResponse getCatalogues() {
+        return null;
+    }
+
     @GetMapping("api/{installationId}/{configOwner}/{configRepoName}/catalogues")
     public CataloguesResponse getCatalogues(@PathVariable("installationId") String installationId, @PathVariable("configOwner") String repoOwner, @PathVariable("configRepoName") String repoName, Authentication authentication) throws IOException {
         var installationIdHeaderValue = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest().getHeader("x-spec-installation-id");

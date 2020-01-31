@@ -11,16 +11,31 @@ describe("CatalogueList component", () => {
     // given a mocked successful catalogues response 
     const cataloguesResponse = { 
         data: {
-            catalogues: [
-                {
-                    repo: "repo1",
-                    name: "name1"
-                }, 
-                {
-                    repo: "repo2",
-                    name: "name2"
-                }
-            ]
+          catalogues: [{
+            repository: {
+              name: "test-owner/repo1",
+              repo_url: "http://github.com/test-owner/repo1",
+              repo_image_url: "",
+            },
+            catalogue_manifest: {
+              name: "Test Catalogue 1",
+              description: "A test catalogue of interface specifications for a systems",
+              spec_files: [],
+              errors: []
+            },
+          }, {
+            repository: {
+              name: "test-owner/repo2",
+              repo_url: "http://github.com/test-owner/repo2",
+              repo_image_url: "",
+            },
+            catalogue_manifest: {
+              name: "Test Catalogue 2",
+              description: "A test catalogue of interface specifications for a department and all its systems",
+              spec_files: [],
+              errors: []
+            },
+          }]
         }
     };
     
@@ -30,10 +45,10 @@ describe("CatalogueList component", () => {
     const { findByText } = render(<CatalogueList />);
 
     // then it contains an item for each catalogue in the response
-    expect(await findByText("repo1")).toBeInTheDocument();
-    expect(await findByText("name1")).toBeInTheDocument();
-    expect(await findByText("repo2")).toBeInTheDocument();
-    expect(await findByText("name2")).toBeInTheDocument();
+    expect(await findByText("test-owner/repo1")).toBeInTheDocument();
+    expect(await findByText("Test Catalogue 1")).toBeInTheDocument();
+    expect(await findByText("test-owner/repo1")).toBeInTheDocument();
+    expect(await findByText("Test Catalogue 2")).toBeInTheDocument();
   });
 
   test("unsuccessful fetch displays error message", async () => {

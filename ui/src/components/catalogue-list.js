@@ -1,35 +1,68 @@
 import React, { useState, useEffect } from "react";
-import { Dimmer, Loader, Item, Segment, Message } from 'semantic-ui-react'
-import { fetchCatalogueListForInstallationConfig } from '../api-client';
+import { Dimmer, Loader, Item, Segment, Message, Header } from 'semantic-ui-react'
+import { fetchCatalogues } from '../api-client';
 import EmptyCatalogueItemImage from '../assets/images/empty-catalogue-item.png';
+import ImagePlaceHolder from '../assets/images/image-placeholder.png';
 
 
-const CatalogueItem = ({name, repo}) => (
+const CatalogueItem = ({repository, catalogue_manifest}) => (
   <Item>
+    <Item.Image size='tiny' src={ImagePlaceHolder} />
     <Item.Content>
-      <Item.Header>{name}</Item.Header>
-      <Item.Description>{repo}</Item.Description>
+      <Item.Header as='a'>{catalogue_manifest.name}</Item.Header>
+      <Item.Meta>{repository.name}</Item.Meta>
+      <Item.Description>
+        {catalogue_manifest.description}
+      </Item.Description>
+      <Item.Extra></Item.Extra>
     </Item.Content>
   </Item>
 );
 
-const CatalogueList = ({installationId, configRepo}) => {
+const CatalogueList = () => {
   const [catalogues, setCatalogues] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const fetchCatalogueData = async (installationId, configRepo) => {
+  const fetchCatalogueData = async () => {
     try {
-      const cataloguesData = await fetchCatalogueListForInstallationConfig(installationId, configRepo);
+      const cataloguesData = await fetchCatalogues();
+      // let cataloguesData = {
+      //   catalogues: [{
+      //     repository: {
+      //       name: "test-owner/repo1",
+      //       repo_url: "http://github.com/test-owner/repo1",
+      //       repo_image_url: "",
+      //     },
+      //     catalogue_manifest: {
+      //       name: "Test Catalogue 1",
+      //       description: "A test catalogue of interface specifications for a systems",
+      //       spec_files: [],
+      //       errors: []
+      //     },
+      //   }, {
+      //     repository: {
+      //       name: "test-owner/repo2",
+      //       repo_url: "http://github.com/test-owner/repo2",
+      //       repo_image_url: "",
+      //     },
+      //     catalogue_manifest: {
+      //       name: "Test Catalogue 2",
+      //       description: "A test catalogue of interface specifications for a department and all its systems",
+      //       spec_files: [],
+      //       errors: []
+      //     },
+      //   }]
+      // };
       setCatalogues(cataloguesData.catalogues);
     } catch (error) {
-      //console.error(error);
+      console.error(error);
       setErrorMessage("An error occurred while fetching catalogues.");
     }
   }
 
   useEffect(() => {
-    fetchCatalogueData(installationId, configRepo);
-  }, [installationId, configRepo])
+    fetchCatalogueData();
+  }, [])
 
   if (!catalogues && !errorMessage) {
     return (
@@ -50,10 +83,13 @@ const CatalogueList = ({installationId, configRepo}) => {
     );
   }
 
-  return (  
-    <Item.Group>
-      {catalogues.map((catalogue, index) => (<CatalogueItem key={index} {...catalogue} />))}
-    </Item.Group>
+  return (
+    <Segment>
+      <Header>The following specification catalogues are available to you:</Header>
+      <Item.Group>
+        {catalogues.map((catalogue, index) => (<CatalogueItem key={index} {...catalogue} />))}
+      </Item.Group>
+    </Segment>
   );
 };
 
