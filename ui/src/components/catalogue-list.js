@@ -10,7 +10,7 @@ const CatalogueItem = ({repository, catalogueManifest}) => (
     <Item.Image size='tiny' src={ImagePlaceHolder} />
     <Item.Content>
       <Item.Header as='a'>{catalogueManifest.name}</Item.Header>
-      <Item.Meta>{repository.name}</Item.Meta>
+      <Item.Meta>{repository.nameWithOwner}</Item.Meta>
       <Item.Description>
         {catalogueManifest.description}
       </Item.Description>

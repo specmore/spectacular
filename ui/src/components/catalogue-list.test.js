@@ -13,7 +13,7 @@ describe("CatalogueList component", () => {
         data: {
           catalogues: [{
             repository: {
-              name: "test-owner/repo1",
+              nameWithOwner: "test-owner/repo1",
               repo_url: "http://github.com/test-owner/repo1",
               repo_image_url: "",
             },
@@ -25,7 +25,7 @@ describe("CatalogueList component", () => {
             },
           }, {
             repository: {
-              name: "test-owner/repo2",
+              nameWithOwner: "test-owner/repo2",
               repo_url: "http://github.com/test-owner/repo2",
               repo_image_url: "",
             },
