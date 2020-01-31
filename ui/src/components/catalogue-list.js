@@ -3,14 +3,15 @@ import { Dimmer, Label, Loader, Icon, Item, Segment, Message, Header } from 'sem
 import { fetchCatalogues } from '../api-client';
 import EmptyCatalogueItemImage from '../assets/images/empty-catalogue-item.png';
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
+import { Link } from "react-router-dom";
 
 
 const CatalogueItem = ({repository, catalogueManifest}) => (
   <Item>
     <Item.Image size='tiny' src={ImagePlaceHolder} />
     <Item.Content>
-      <Item.Header as='a'>{catalogueManifest.name}</Item.Header>
-      <Item.Meta>{repository.nameWithOwner}</Item.Meta>
+      <Item.Header as={Link} to={repository.nameWithOwner}>{catalogueManifest.name}</Item.Header>
+      <Item.Meta><a href={repository.htmlUrl} target='_blank'><Icon name="github"/> {repository.nameWithOwner}</a></Item.Meta>
       <Item.Description>
         {catalogueManifest.description}
       </Item.Description>

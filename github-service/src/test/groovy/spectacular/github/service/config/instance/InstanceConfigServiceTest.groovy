@@ -17,7 +17,7 @@ class InstanceConfigServiceTest extends Specification {
 
     def "get instance config for valid repository and installation"() {
         given: "a valid github repository and installation id"
-        def repo = new Repository("test-owner", "test-repo")
+        def repo = new Repository("test-owner", "test-repo", null)
         appInstallationContextProvider.getInstallationId() >> "99"
 
         and: "a valid Yaml instance config Manifest"
@@ -49,8 +49,8 @@ class InstanceConfigServiceTest extends Specification {
         def username = "test-user"
         and: "an app installation with access to 1 repository with an instance config manifest"
         appInstallationContextProvider.getInstallationId() >> "99"
-        def repo = new Repository("test-owner/test-repo987")
-        def searchCodeResultRepo = new spectacular.github.service.github.domain.Repository(1234, repo.getNameWithOwner())
+        def repo = new Repository("test-owner/test-repo987", null)
+        def searchCodeResultRepo = new spectacular.github.service.github.domain.Repository(1234, repo.getNameWithOwner(), null)
         def searchCodeResultItem = new SearchCodeResultItem(instanceManifestFilename, instanceManifestFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
         def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
         and: "a valid Yaml instance config Manifest"
@@ -90,8 +90,8 @@ class InstanceConfigServiceTest extends Specification {
         def username = "test-user"
         and: "an app installation with access to 1 repository with an instance config manifest"
         appInstallationContextProvider.getInstallationId() >> "99"
-        def repo = new Repository("test-owner/test-repo987")
-        def searchCodeResultRepo = new spectacular.github.service.github.domain.Repository(1234, repo.getNameWithOwner())
+        def repo = new Repository("test-owner/test-repo987", null)
+        def searchCodeResultRepo = new spectacular.github.service.github.domain.Repository(1234, repo.getNameWithOwner(), null)
         def searchCodeResultItem = new SearchCodeResultItem(instanceManifestFilename, instanceManifestFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
         def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
         and: "a valid Yaml instance config Manifest"

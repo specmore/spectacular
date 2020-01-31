@@ -8,16 +8,18 @@ import java.util.Objects;
 public class Repository {
     private final String owner;
     private final String name;
+    private final String htmlUrl;
 
-    public Repository(String owner, String name) {
+    public Repository(String owner, String name, String htmlUrl) {
         Assert.hasText(owner, "owner cannot be null or empty");
         Assert.hasText(name, "name cannot be null or empty");
 
         this.owner = owner;
         this.name = name;
+        this.htmlUrl = htmlUrl;
     }
 
-    public Repository(String nameWithOwner) {
+    public Repository(String nameWithOwner, String htmlUrl) {
         Assert.hasText(nameWithOwner, "nameWithOwner cannot be null or empty");
 
         var parts = nameWithOwner.split("/");
@@ -30,6 +32,7 @@ public class Repository {
 
         this.owner = parts[0];
         this.name = parts[1];
+        this.htmlUrl = htmlUrl;
     }
 
     public String getOwner() {
@@ -42,6 +45,10 @@ public class Repository {
 
     public String getNameWithOwner() {
         return String.join("/", owner, name);
+    }
+
+    public String getHtmlUrl() {
+        return htmlUrl;
     }
 
     @Override
@@ -59,6 +66,10 @@ public class Repository {
     }
 
     public static Repository createRepositoryFrom(SearchCodeResultItem searchCodeResultItem) {
-        return new Repository(searchCodeResultItem.getRepository().getFull_name());
+        return createRepositoryFrom(searchCodeResultItem.getRepository());
+    }
+
+    public static Repository createRepositoryFrom(spectacular.github.service.github.domain.Repository repository) {
+        return new Repository(repository.getFull_name(), repository.getHtml_url());
     }
 }

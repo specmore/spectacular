@@ -57,11 +57,7 @@ public class InstanceConfigService {
 
     private List<Repository> findInstanceConfigRepositories() {
         var searchCodeResults = restApiClient.findFiles(INSTANCE_CONFIG_FILE_NAME, INSTANCE_CONFIG_FILE_EXTENSION, INSTANCE_CONFIG_FILE_PATH, null);
-        return searchCodeResults.getItems().stream().map(InstanceConfigService::createRepositoryFrom).collect(Collectors.toList());
-    }
-
-    private static Repository createRepositoryFrom(SearchCodeResultItem searchCodeResultItem) {
-        return new Repository(searchCodeResultItem.getRepository().getFull_name());
+        return searchCodeResults.getItems().stream().map(Repository::createRepositoryFrom).collect(Collectors.toList());
     }
 
     private boolean isUserCollaboratorForRepository(Repository repo, String username) {

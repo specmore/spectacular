@@ -14,7 +14,6 @@ import spock.lang.Specification
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.queryParam
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess
 
@@ -31,7 +30,7 @@ class RestApiClientTest extends Specification {
 
     def "GetRepositoryContent"() {
         given: "a content file to fetch"
-        def repo = new Repository("testOwner", "testRepo")
+        def repo = new Repository("testOwner", "testRepo", null)
         def filePath = "test-file.yaml"
         and: "a valid raw content response"
         def responseContent = "test response content"
@@ -152,9 +151,10 @@ class RestApiClientTest extends Specification {
         and: "the search results to be returned"
         def searchCodeResults = client.findFiles(filename, null, null, null)
         searchCodeResults
-        !searchCodeResults.incompleteResults
-        searchCodeResults.items
-        searchCodeResults.items[0].name == filename
-        searchCodeResults.items[0].repository.full_name == "pburls/specs-app"
+        !searchCodeResults.isIncompleteResults()
+        searchCodeResults.getItems()
+        searchCodeResults.getItems()[0].getName() == filename
+        searchCodeResults.getItems()[0].getRepository().getFull_name() == "pburls/specs-app"
+        searchCodeResults.getItems()[0].getRepository().getHtml_url() == "https://github.com/pburls/specs-app"
     }
 }

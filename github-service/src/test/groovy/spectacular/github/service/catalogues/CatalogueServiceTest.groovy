@@ -22,8 +22,8 @@ class CatalogueServiceTest extends Specification {
 
         and: "an app installation with access to 1 repository with a catalogue config manifest file"
         appInstallationContextProvider.getInstallationId() >> "99"
-        def repo = new Repository("test-owner/test-repo987")
-        def searchCodeResultRepo = new spectacular.github.service.github.domain.Repository(1234, repo.getNameWithOwner())
+        def repo = new Repository("test-owner/test-repo987", null)
+        def searchCodeResultRepo = new spectacular.github.service.github.domain.Repository(1234, repo.getNameWithOwner(), null)
         def searchCodeResultItem = new SearchCodeResultItem(catalogueManifestFilename, catalogueManifestFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
         def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
         and: "a valid Yaml catalogue config Manifest"
@@ -79,8 +79,8 @@ class CatalogueServiceTest extends Specification {
 
         and: "an app installation with access to 1 repository with a catalogue config manifest file"
         appInstallationContextProvider.getInstallationId() >> "99"
-        def repo = new Repository("test-owner/test-repo987")
-        def searchCodeResultRepo = new spectacular.github.service.github.domain.Repository(1234, repo.getNameWithOwner())
+        def repo = new Repository("test-owner/test-repo987", null)
+        def searchCodeResultRepo = new spectacular.github.service.github.domain.Repository(1234, repo.getNameWithOwner(), null)
         def searchCodeResultItem = new SearchCodeResultItem(catalogueManifestFilename, catalogueManifestFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
         def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
         and: "a valid Yaml catalogue config Manifest"
@@ -119,8 +119,8 @@ class CatalogueServiceTest extends Specification {
 
         and: "an app installation with access to 1 repository with a catalogue config manifest file"
         appInstallationContextProvider.getInstallationId() >> "99"
-        def repo = new Repository("test-owner/test-repo987")
-        def searchCodeResultRepo = new spectacular.github.service.github.domain.Repository(1234, repo.getNameWithOwner())
+        def repo = new Repository("test-owner/test-repo987", null)
+        def searchCodeResultRepo = new spectacular.github.service.github.domain.Repository(1234, repo.getNameWithOwner(), null)
         def searchCodeResultItem = new SearchCodeResultItem(searchFilename, searchFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
         def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
         and: "a valid Yaml catalogue config Manifest"
