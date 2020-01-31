@@ -1,6 +1,17 @@
 import axios from 'axios'
 
-//const API_HOSTNAME = "http://localhost:5000";
+axios.interceptors.response.use((response) => { return response; }, (error) => {
+    if (error.response.status === 401) {
+        console.log("expired token");
+        console.log("current location:" + window.location.pathname);
+
+        const redirectParams = new URLSearchParams();
+        redirectParams.append('backTo', window.location.pathname);
+
+        window.location.assign('/login/github?'+redirectParams.toString());
+    }
+    return Promise.reject(error);
+  });
 
 export const fetchCatalogues = async (org) => {
     const response = await axios.get(`/api/${org}/catalogues`);
