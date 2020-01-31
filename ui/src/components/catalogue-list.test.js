@@ -3,6 +3,7 @@ import { render, fireEvent, waitForElement } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import CatalogueList from "./catalogue-list";
 import axiosMock from 'axios'
+import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('axios');
 
@@ -14,26 +15,26 @@ describe("CatalogueList component", () => {
           catalogues: [{
             repository: {
               nameWithOwner: "test-owner/repo1",
-              repo_url: "http://github.com/test-owner/repo1",
+              htmlUrl: "http://github.com/test-owner/repo1",
               repo_image_url: "",
             },
             catalogueManifest: {
               name: "Test Catalogue 1",
               description: "A test catalogue of interface specifications for a systems",
-              spec_files: [],
-              errors: []
+              "spec-files": [],
+              errors: ""
             },
           }, {
             repository: {
               nameWithOwner: "test-owner/repo2",
-              repo_url: "http://github.com/test-owner/repo2",
+              htmlUrl: "http://github.com/test-owner/repo2",
               repo_image_url: "",
             },
             catalogueManifest: {
               name: "Test Catalogue 2",
               description: "A test catalogue of interface specifications for a department and all its systems",
-              spec_files: [],
-              errors: []
+              "spec-files": [],
+              errors: ""
             },
           }]
         }
@@ -42,12 +43,12 @@ describe("CatalogueList component", () => {
     axiosMock.get.mockResolvedValueOnce(cataloguesResponse);
 
     // when catalogue list component renders
-    const { findByText } = render(<CatalogueList />);
+    const { findByText } = render(<MemoryRouter><CatalogueList org="test-org" /></MemoryRouter>);
 
     // then it contains an item for each catalogue in the response
     expect(await findByText("test-owner/repo1")).toBeInTheDocument();
     expect(await findByText("Test Catalogue 1")).toBeInTheDocument();
-    expect(await findByText("test-owner/repo1")).toBeInTheDocument();
+    expect(await findByText("test-owner/repo2")).toBeInTheDocument();
     expect(await findByText("Test Catalogue 2")).toBeInTheDocument();
   });
 
