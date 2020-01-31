@@ -44,13 +44,13 @@ const InstallationWelcome = () => {
     let org_url = `https://github.com/${installation.owner}`;
     
     return (
-        <React.Fragment>
+        <Segment vertical>
             <Header as='h1' textAlign='center' image={installation.owner_avatar_url}>
                 Welcome to Spectacular
                 <Header.Subheader>Connected to the <a href={org_url} target='_blank'>{installation.owner}</a> GitHub organization</Header.Subheader>
             </Header>
             <CatalogueList org={installation.owner}/>
-        </React.Fragment>
+        </Segment>
     );
 };
 

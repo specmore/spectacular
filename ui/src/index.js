@@ -11,9 +11,7 @@ const Index = () => (
 <Router>
   <MenuBar/>
   <Container style={{ marginTop: '4em' }}>
-    <Segment vertical>
-      <InstallationWelcome/>
-    </Segment>
+    <InstallationWelcome/>
   </Container>
   <FooterBar/>
 </Router>);
