@@ -10,8 +10,9 @@ RUN npm install
 # Copy webpack config
 COPY *.config.js ./
 
-# Copy app source
+# Copy app source & test mocks
 COPY src src
+COPY __mocks__ __mocks__
 
 # Test
 RUN npm run test
