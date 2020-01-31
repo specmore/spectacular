@@ -66,8 +66,7 @@ public class CatalogueService {
             manifest = mapper.readValue(fileContents, CatalogueManifest.class);
         } catch (MismatchedInputException e) {
             logger.error("An error occurred while parsing the catalogue manifest yaml file for repo: " + repository.getNameWithOwner(), e);
-            var missingFields = e.getPath().stream().map(reference -> reference.getFieldName()).collect(Collectors.joining(","));
-            error = "An error occurred while parsing the catalogue manifest yaml file. The following fields are missing: " + missingFields;
+            error = "An error occurred while parsing the catalogue manifest yaml file. The following field is missing: " + e.getPathReference();
         } catch (IOException e) {
             logger.error("An error occurred while parsing the catalogue manifest yaml file for repo: " + repository.getNameWithOwner(), e);
             error = "An error occurred while parsing the catalogue manifest yaml file: " + e.getMessage();
