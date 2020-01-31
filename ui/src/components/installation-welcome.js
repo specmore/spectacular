@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Dimmer, Loader, Message, Header } from 'semantic-ui-react'
+import { Dimmer, Loader, Message, Header, Segment } from 'semantic-ui-react'
 import { fetchInstallation } from '../api-client';
 import EmptyWelcomeItemImage from '../assets/images/empty-catalogue-item.png';
+import CatalogueList from './catalogue-list';
 
 const InstallationWelcome = () => {
     const [installation, setInstallation] = useState(null);
@@ -43,10 +44,13 @@ const InstallationWelcome = () => {
     let org_url = `https://github.com/${installation.owner}`;
     
     return (
-        <Header textAlign='center' image={installation.owner_avatar_url}>
-            Welcome to Spectacular
-            <Header.Subheader>This installation is for the <a href={org_url} target='_blank'>{installation.owner}</a> GitHub organization.</Header.Subheader>
-        </Header>
+        <React.Fragment>
+            <Header as='h1' textAlign='center' image={installation.owner_avatar_url}>
+                Welcome to Spectacular
+                <Header.Subheader>This installation is for the <a href={org_url} target='_blank'>{installation.owner}</a> GitHub organization.</Header.Subheader>
+            </Header>
+            <CatalogueList org={installation.owner}/>
+        </React.Fragment>
     );
 };
 

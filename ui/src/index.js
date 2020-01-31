@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Container, Segment } from 'semantic-ui-react';
-import CatalogueList from './components/catalogue-list';
+// import CatalogueList from './components/catalogue-list';
 // import InstanceList from './components/instance-list';
 import InstallationWelcome from './components/installation-welcome';
 import MenuBar from './components/menu-bar';
@@ -15,7 +15,6 @@ const Index = () => (
   <Container style={{ marginTop: '4em' }}>
     <Segment>
       <InstallationWelcome/>
-      <CatalogueList/>
     </Segment>
   </Container>
   <FooterBar/>

@@ -2,8 +2,8 @@ import axios from 'axios'
 
 //const API_HOSTNAME = "http://localhost:5000";
 
-export const fetchCatalogues = async () => {
-    const response = await axios.get(`/api/catalogues`);
+export const fetchCatalogues = async (org) => {
+    const response = await axios.get(`/api/${org}/catalogues`);
     return response.data;
 }
 

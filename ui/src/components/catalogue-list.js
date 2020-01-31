@@ -5,27 +5,27 @@ import EmptyCatalogueItemImage from '../assets/images/empty-catalogue-item.png';
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
 
 
-const CatalogueItem = ({repository, catalogue_manifest}) => (
+const CatalogueItem = ({repository, catalogueManifest}) => (
   <Item>
     <Item.Image size='tiny' src={ImagePlaceHolder} />
     <Item.Content>
-      <Item.Header as='a'>{catalogue_manifest.name}</Item.Header>
+      <Item.Header as='a'>{catalogueManifest.name}</Item.Header>
       <Item.Meta>{repository.name}</Item.Meta>
       <Item.Description>
-        {catalogue_manifest.description}
+        {catalogueManifest.description}
       </Item.Description>
       <Item.Extra></Item.Extra>
     </Item.Content>
   </Item>
 );
 
-const CatalogueList = () => {
+const CatalogueList = ({org}) => {
   const [catalogues, setCatalogues] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const fetchCatalogueData = async () => {
+  const fetchCatalogueData = async (org) => {
     try {
-      const cataloguesData = await fetchCatalogues();
+      const cataloguesData = await fetchCatalogues(org);
       // let cataloguesData = {
       //   catalogues: [{
       //     repository: {
@@ -61,8 +61,8 @@ const CatalogueList = () => {
   }
 
   useEffect(() => {
-    fetchCatalogueData();
-  }, [])
+    fetchCatalogueData(org);
+  }, [org])
 
   if (!catalogues && !errorMessage) {
     return (

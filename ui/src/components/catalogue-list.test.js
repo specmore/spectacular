@@ -17,7 +17,7 @@ describe("CatalogueList component", () => {
               repo_url: "http://github.com/test-owner/repo1",
               repo_image_url: "",
             },
-            catalogue_manifest: {
+            catalogueManifest: {
               name: "Test Catalogue 1",
               description: "A test catalogue of interface specifications for a systems",
               spec_files: [],
@@ -29,7 +29,7 @@ describe("CatalogueList component", () => {
               repo_url: "http://github.com/test-owner/repo2",
               repo_image_url: "",
             },
-            catalogue_manifest: {
+            catalogueManifest: {
               name: "Test Catalogue 2",
               description: "A test catalogue of interface specifications for a department and all its systems",
               spec_files: [],
