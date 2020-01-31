@@ -48,7 +48,12 @@ const CatalogueList = ({org}) => {
         <Dimmer inverted active>
           <Loader content='Loading' />
         </Dimmer>
-        <img src={EmptyCatalogueItemImage} />
+        <Item.Group divided>
+          <Item>
+            <Item.Image size='tiny' src={ImagePlaceHolder} />
+            <img src={EmptyCatalogueItemImage} />
+          </Item>
+        </Item.Group>
       </React.Fragment>
     );
   }
@@ -63,7 +68,7 @@ const CatalogueList = ({org}) => {
 
   return (
     <Segment vertical>
-      <Header>The following specification catalogues are available to you:</Header>
+      <Header as='h4'>The following specification catalogues are available to you:</Header>
       <Item.Group divided>
         {catalogues.map((catalogue, index) => (<CatalogueItem key={index} {...catalogue} />))}
       </Item.Group>
