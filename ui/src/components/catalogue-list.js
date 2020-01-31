@@ -64,7 +64,7 @@ const CatalogueList = ({org}) => {
   return (
     <Segment>
       <Header>The following specification catalogues are available to you:</Header>
-      <Item.Group>
+      <Item.Group divided>
         {catalogues.map((catalogue, index) => (<CatalogueItem key={index} {...catalogue} />))}
       </Item.Group>
     </Segment>
