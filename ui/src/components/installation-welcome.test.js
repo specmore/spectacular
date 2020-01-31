@@ -26,7 +26,7 @@ describe("InstallationWelcome component", () => {
       expect(await findByText("Welcome to Spectacular")).toBeInTheDocument();
 
       // and the installation owner name
-      expect(await findByText("This installation is for the test-owner GitHub organization.")).toBeInTheDocument();
+      expect(await findByText("test-owner")).toBeInTheDocument();
     });
   
     test("unsuccessful fetch displays error message", async () => {

@@ -39,11 +39,13 @@ const InstallationWelcome = () => {
             </Message>
         );
     }
+
+    let org_url = `https://github.com/${installation.owner}`;
     
     return (
         <Header textAlign='center' image={installation.owner_avatar_url}>
             Welcome to Spectacular
-            <Header.Subheader>This installation is for the {installation.owner} GitHub organization.</Header.Subheader>
+            <Header.Subheader>This installation is for the <a href={org_url} target='_blank'>{installation.owner}</a> GitHub organization.</Header.Subheader>
         </Header>
     );
 };
