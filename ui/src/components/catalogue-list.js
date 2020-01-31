@@ -25,11 +25,12 @@ const CatalogueItem = ({repository, catalogueManifest, error}) => {
     );
   }
 
+  const catalogueLink = `catalogue/${repository.nameWithOwner}`;
   return (
     <Item>
       <Item.Image size='tiny' src={ImagePlaceHolder} />
       <Item.Content>
-        <Item.Header as={Link} to={repository.nameWithOwner}>{catalogueManifest.name}</Item.Header>
+        <Item.Header as={Link} to={catalogueLink}>{catalogueManifest.name}</Item.Header>
         <Item.Meta><a href={repository.htmlUrl} target='_blank'><Icon name="github"/> {repository.nameWithOwner}</a></Item.Meta>
         <Item.Description>
           {catalogueManifest.description}

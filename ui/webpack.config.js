@@ -40,9 +40,11 @@ const miniCssExtractPlugin = new MiniCssExtractPlugin({
         plugins: [htmlPlugin, miniCssExtractPlugin],
         output: {
             filename: '[name].[contenthash].js',
-            path: path.resolve(__dirname, 'dist')
+            path: path.resolve(__dirname, 'dist'),
+            publicPath: '/'
         },
         devServer: {
+            historyApiFallback: true,
             proxy: {
                 '/api': {
                     target: 'http://localhost:5000',
