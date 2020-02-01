@@ -10,6 +10,10 @@ public class Repository {
     private final String name;
     private final String htmlUrl;
 
+    public Repository(String owner, String name) {
+        this(owner, name, null);
+    }
+
     public Repository(String owner, String name, String htmlUrl) {
         Assert.hasText(owner, "owner cannot be null or empty");
         Assert.hasText(name, "name cannot be null or empty");
@@ -19,7 +23,7 @@ public class Repository {
         this.htmlUrl = htmlUrl;
     }
 
-    public Repository(String nameWithOwner, String htmlUrl) {
+    public static Repository createForNameWithOwner(String nameWithOwner, String htmlUrl) {
         Assert.hasText(nameWithOwner, "nameWithOwner cannot be null or empty");
 
         var parts = nameWithOwner.split("/");
@@ -27,12 +31,7 @@ public class Repository {
             throw new IllegalArgumentException("nameWithOwner needs to be in the format :owner-name/:repository-name");
         }
 
-        Assert.hasText(parts[0], "owner cannot be null or empty");
-        Assert.hasText(parts[1], "name cannot be null or empty");
-
-        this.owner = parts[0];
-        this.name = parts[1];
-        this.htmlUrl = htmlUrl;
+        return new Repository(parts[0], parts[1], htmlUrl);
     }
 
     public String getOwner() {
@@ -70,6 +69,6 @@ public class Repository {
     }
 
     public static Repository createRepositoryFrom(spectacular.github.service.github.domain.Repository repository) {
-        return new Repository(repository.getFull_name(), repository.getHtml_url());
+        return createForNameWithOwner(repository.getFull_name(), repository.getHtml_url());
     }
 }

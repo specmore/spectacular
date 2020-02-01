@@ -35,8 +35,14 @@ public class CatalogueService {
     public List<Catalogue> getCataloguesForOrgAndUser(String orgName, String username) {
         var catalogues = findCatalogueRepositoriesForOrg(orgName).stream()
                 .filter(repository -> isUserCollaboratorForRepository(repository, username))
-                .map(this::getInstanceConfigForRepository).collect(Collectors.toList());
+                .map(this::getCatalogueForRepository).collect(Collectors.toList());
         return catalogues;
+    }
+
+    public Catalogue getCatalogueForRepoAndUser(Repository repo, String username) {
+        if (!isUserCollaboratorForRepository(repo, username)) return null;
+
+        return getCatalogueForRepository(repo);
     }
 
     private List<Repository> findCatalogueRepositoriesForOrg(String orgName) {
@@ -56,7 +62,7 @@ public class CatalogueService {
         return restApiClient.isUserRepositoryCollaborator(repo, username);
     }
 
-    private Catalogue getInstanceConfigForRepository(Repository repository) {
+    private Catalogue getCatalogueForRepository(Repository repository) {
         var fileContents = restApiClient.getRepositoryContent(repository, CATALOGUE_MANIFEST_FULL_FILE_NAME, null);
 
         var mapper = new ObjectMapper(new YAMLFactory());
