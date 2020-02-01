@@ -1,17 +1,29 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Container, Segment } from 'semantic-ui-react';
+import { Container } from 'semantic-ui-react';
 import InstallationWelcome from './components/installation-welcome';
+import CatalogueContainer from './components/catalogue-container';
+import NotFound from './components/not-found';
 import MenuBar from './components/menu-bar';
 import FooterBar from './components/footer-bar';
 import './index.css';
-import { BrowserRouter as Router } from "react-router-dom"
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 
 const Index = () => (
 <Router>
   <MenuBar/>
   <Container style={{ marginTop: '4em' }}>
-    <InstallationWelcome/>
+    <Switch>
+      <Route exact path="/">
+        <InstallationWelcome/>
+      </Route>
+      <Route path="/catalogue/:owner/:repo">
+        <CatalogueContainer/>
+      </Route>
+      <Route path="*">
+        <NotFound />
+      </Route>
+    </Switch>
   </Container>
   <FooterBar/>
 </Router>);
