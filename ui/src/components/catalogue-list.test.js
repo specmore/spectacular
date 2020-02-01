@@ -1,9 +1,8 @@
 import React from "react";
-import { render, fireEvent, waitForElement } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import CatalogueList from "./catalogue-list";
 import axiosMock from 'axios'
-import { MemoryRouter } from 'react-router-dom';
+import { renderWithRouter } from '../common/test-utils';
 
 jest.mock('axios');
 
@@ -43,7 +42,7 @@ describe("CatalogueList component", () => {
     axiosMock.get.mockResolvedValueOnce(cataloguesResponse);
 
     // when catalogue list component renders
-    const { findByText } = render(<MemoryRouter><CatalogueList org="test-org" /></MemoryRouter>);
+    const { findByText } = renderWithRouter(<CatalogueList org="test-org" />);
 
     // then it contains an item for each catalogue in the response
     expect(await findByText("test-owner/repo1")).toBeInTheDocument();
@@ -59,7 +58,7 @@ describe("CatalogueList component", () => {
     });
 
     // when catalogue list component renders
-    const { findByText } = render(<CatalogueList />);
+    const { findByText } = renderWithRouter(<CatalogueList />);
 
     // then it contains an error message
     expect(await findByText("An error occurred while fetching catalogues.")).toBeInTheDocument();
@@ -71,7 +70,7 @@ describe("CatalogueList component", () => {
     axiosMock.get.mockImplementation(() => responsePromise);
 
     // when catalogue list component renders
-    const { getByText } = render(<CatalogueList />);
+    const { getByText } = renderWithRouter(<CatalogueList />);
 
     // then it contains a loading message
     expect(getByText("Loading")).toBeInTheDocument();
