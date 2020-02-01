@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Dimmer, Loader, Message, Header, Segment } from 'semantic-ui-react'
-import { fetchInstallation } from '../api-client';
+import { fetchCatalogue } from '../api-client';
 import EmptyWelcomeItemImage from '../assets/images/empty-catalogue-item.png';
 import { useParams } from 'react-router-dom';
 
@@ -9,10 +9,10 @@ const CatalogueContainer = () => {
     const [errorMessage, setErrorMessage] = useState(null);
     const { owner, repo } = useParams();
 
-    const fetchInstallationData = async () => {
+    const fetchCatalogueData = async (owner, repo) => {
         try {
-            const installationData = await fetchInstallation();
-            setCatalogue(installationData);
+            const catalogueData = await fetchCatalogue(owner, repo);
+            setCatalogue(catalogueData);
         } catch (error) {
             //console.error(error);
             setErrorMessage("An error occurred while fetching catalogue details.");
@@ -20,17 +20,17 @@ const CatalogueContainer = () => {
     }
 
     useEffect(() => {
-        fetchInstallationData();
-    }, [])
+        fetchCatalogueData(owner, repo);
+    }, [owner, repo])
 
     if (!catalogue && !errorMessage) {
         return (
-            <React.Fragment>
+            <Segment vertical>
                 <Dimmer inverted active>
                     <Loader content='Loading' />
                 </Dimmer>
                 <img src={EmptyWelcomeItemImage} />
-            </React.Fragment>
+            </Segment>
         );
     }
 

@@ -18,6 +18,11 @@ export const fetchCatalogues = async (org) => {
     return response.data;
 }
 
+export const fetchCatalogue = async (owner, repo) => {
+    const response = await axios.get(`/api/catalogues/${owner}/${repo}`);
+    return response.data;
+}
+
 export const fetchInstallation = async () => {
     const response = await axios.get(`/api/installation`);
     return response.data;
