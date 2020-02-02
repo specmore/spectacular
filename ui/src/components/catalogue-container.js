@@ -6,11 +6,11 @@ import { useParams } from 'react-router-dom';
 import CatalogueDetails from './catalogue-details';
 
 const CatalogueContainerLoading = ({owner, repo}) => (
-    <Segment vertical>
+    <Segment vertical textAlign='center'>
         <Dimmer inverted active>
             <Loader content={`Loading catalogue for ${owner}/${repo}`} />
         </Dimmer>
-        <img src={EmptyItemImage} data-testid='catalogue-container-placeholder-image'/>
+        <img src={EmptyItemImage} data-testid='catalogue-container-placeholder-image' />
     </Segment>
   );
   
