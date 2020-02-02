@@ -24,12 +24,14 @@ const CatalogueErrorItem = ({error, repository}) => (
       <Item.Image size='tiny' src={ImagePlaceHolder} />
       <Item.Content>
         <Item.Header>{catalogueManifest.name}</Item.Header>
-        <Item.Meta><a href={repository.htmlUrl} target='_blank'><Icon name="github"/> {repository.nameWithOwner}</a></Item.Meta>
         <Item.Description>
           {catalogueManifest.description}
         </Item.Description>
         <Item.Extra>
           {selectButton}
+          <Label as='a' href={repository.htmlUrl} target='_blank'>
+            <Icon name='github' />{repository.nameWithOwner}
+          </Label>
           <Label color='teal'>
             <Icon name='file alternate' />{catalogueManifest["spec-files"].length} specs
           </Label>
