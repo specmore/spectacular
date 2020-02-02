@@ -4,7 +4,7 @@ import ImagePlaceHolder from '../assets/images/image-placeholder.png';
 import { CatalogueContainerLinkButton } from "../routes";
 
 const CatalogueErrorItem = ({error, repository}) => (
-    <Item>
+    <Item data-testid='catalogue-list-item-error-item'>
       <Item.Content>
         <Item.Description>
           <Message icon negative>
@@ -20,7 +20,7 @@ const CatalogueErrorItem = ({error, repository}) => (
   );
   
   const CatalogueItemDetails = ({repository, catalogueManifest, selectButton}) => (
-    <Item>
+    <Item data-testid='catalogue-list-item-details-item'>
       <Item.Image size='tiny' src={ImagePlaceHolder} />
       <Item.Content>
         <Item.Header>{catalogueManifest.name}</Item.Header>

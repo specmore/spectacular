@@ -43,7 +43,7 @@ const CatalogueListContainer = ({org}) => {
       const cataloguesData = await fetchCatalogues(org);
       setCatalogues(cataloguesData.catalogues);
     } catch (error) {
-      console.error(error);
+      //console.error(error);
       setErrorMessage("An error occurred while fetching catalogues.");
     }
   }
