@@ -1,8 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { Dimmer, Loader, Message, Header, Segment } from 'semantic-ui-react'
+import { Dimmer, Loader, Message, Segment } from 'semantic-ui-react'
 import { fetchCatalogue } from '../api-client';
-import EmptyWelcomeItemImage from '../assets/images/empty-catalogue-item.png';
+import EmptyItemImage from '../assets/images/empty-catalogue-item.png';
 import { useParams } from 'react-router-dom';
+import CatalogueDetails from './catalogue-details';
+
+const CatalogueContainerLoading = ({owner, repo}) => (
+    <Segment vertical>
+        <Dimmer inverted active>
+            <Loader content={`Loading catalogue for ${owner}/${repo}`} />
+        </Dimmer>
+        <img src={EmptyItemImage} data-testid='catalogue-container-placeholder-image'/>
+    </Segment>
+  );
+  
+  const CatalogueContainerError = ({errorMessage}) => (
+    <Message negative>
+      <Message.Header>{errorMessage}</Message.Header>
+    </Message>
+  );
 
 const CatalogueContainer = () => {
     const [catalogue, setCatalogue] = useState(null);
@@ -23,30 +39,13 @@ const CatalogueContainer = () => {
         fetchCatalogueData(owner, repo);
     }, [owner, repo])
 
-    if (!catalogue && !errorMessage) {
-        return (
-            <Segment vertical>
-                <Dimmer inverted active>
-                    <Loader content='Loading' />
-                </Dimmer>
-                <img src={EmptyWelcomeItemImage} />
-            </Segment>
-        );
-    }
+    if (!catalogue && !errorMessage) return ( <CatalogueContainerLoading owner={owner} repo={repo} />);
 
-    if (errorMessage) {
-        return (
-            <Message negative>
-                <Message.Header>{errorMessage}</Message.Header>
-            </Message>
-        );
-    }
+    if (errorMessage) return (<CatalogueContainerError errorMessage={errorMessage} />);
 
     return (
-        <Segment vertical>
-            <Header as='h1' textAlign='center'>
-                catalogue {owner}/{repo}
-            </Header>
+        <Segment vertical data-testid='catalogue-container'>
+            <CatalogueDetails {...catalogue} />
         </Segment>
     );
 };
