@@ -24,12 +24,12 @@ const InstallationWelcome = () => {
 
     if (!installation && !errorMessage) {
         return (
-            <React.Fragment>
+            <Segment vertical>
                 <Dimmer inverted active>
                     <Loader content='Loading' />
                 </Dimmer>
                 <img src={EmptyWelcomeItemImage} />
-            </React.Fragment>
+            </Segment>
         );
     }
 
