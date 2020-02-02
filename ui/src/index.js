@@ -7,7 +7,8 @@ import NotFound from './components/not-found';
 import MenuBar from './components/menu-bar';
 import FooterBar from './components/footer-bar';
 import './index.css';
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { CATALOGUE_CONTAINER_ROUTE } from './routes';
 
 const Index = () => (
 <Router>
@@ -17,7 +18,7 @@ const Index = () => (
       <Route exact path="/">
         <InstallationWelcome/>
       </Route>
-      <Route path="/catalogue/:owner/:repo">
+      <Route path={CATALOGUE_CONTAINER_ROUTE}>
         <CatalogueContainer/>
       </Route>
       <Route path="*">

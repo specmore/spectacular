@@ -1,10 +1,14 @@
 import React from "react";
 import '@testing-library/jest-dom/extend-expect';
 import CatalogueList from "./catalogue-list";
+import CatalogueListItem from "./catalogue-list-item";
 import axiosMock from 'axios'
 import { renderWithRouter } from '../common/test-utils';
 
 jest.mock('axios');
+
+// mock out the actual list items
+jest.mock('./catalogue-list-item', () =>  jest.fn(() => null));
 
 describe("CatalogueList component", () => {
   test("successful fetch displays catalogue items", async () => {
@@ -42,13 +46,10 @@ describe("CatalogueList component", () => {
     axiosMock.get.mockResolvedValueOnce(cataloguesResponse);
 
     // when catalogue list component renders
-    const { findByText } = renderWithRouter(<CatalogueList org="test-org" />);
+    const { findByTestId } = renderWithRouter(<CatalogueList org="test-org" />);
 
-    // then it contains an item for each catalogue in the response
-    expect(await findByText("test-owner/repo1")).toBeInTheDocument();
-    expect(await findByText("Test Catalogue 1")).toBeInTheDocument();
-    expect(await findByText("test-owner/repo2")).toBeInTheDocument();
-    expect(await findByText("Test Catalogue 2")).toBeInTheDocument();
+    // then a catalogue list item group should be found
+    expect(await findByTestId('catalogue-list-item-group')).toBeInTheDocument();
   });
 
   test("unsuccessful fetch displays error message", async () => {
@@ -70,9 +71,12 @@ describe("CatalogueList component", () => {
     axiosMock.get.mockImplementation(() => responsePromise);
 
     // when catalogue list component renders
-    const { getByText } = renderWithRouter(<CatalogueList />);
+    const { getByText, getByTestId } = renderWithRouter(<CatalogueList />);
 
     // then it contains a loading message
     expect(getByText("Loading")).toBeInTheDocument();
+
+    // and it contains a place holder item
+    expect(getByTestId('catalogue-list-placeholder-item-group')).toBeInTheDocument();
   });
 });

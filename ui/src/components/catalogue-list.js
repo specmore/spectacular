@@ -1,51 +1,40 @@
 import React, { useState, useEffect } from "react";
-import { Dimmer, Label, Loader, Icon, Item, Segment, Message, Header } from 'semantic-ui-react'
+import { Dimmer, Loader, Item, Segment, Message, Header } from 'semantic-ui-react'
 import { fetchCatalogues } from '../api-client';
 import EmptyCatalogueItemImage from '../assets/images/empty-catalogue-item.png';
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
-import { Link } from "react-router-dom";
+import CatalogueListItem from './catalogue-list-item';
 
-
-const CatalogueItem = ({repository, catalogueManifest, error}) => {
-  if (error) {
-    return (
+const CatalogueListLoading = () => (
+  <Segment vertical>
+    <Dimmer inverted active>
+      <Loader content='Loading' />
+    </Dimmer>
+    <Item.Group divided data-testid='catalogue-list-placeholder-item-group'>
       <Item>
-        <Item.Content>
-          <Item.Description>
-            <Message icon negative>
-              <Icon name='warning sign' />
-              <Message.Content>
-                <Message.Header>An error occurred while parsing the catalogue manifest file in <a href={repository.htmlUrl} target='_blank'>{repository.nameWithOwner}</a></Message.Header>
-                {error}
-              </Message.Content>
-            </Message>
-          </Item.Description>
-        </Item.Content>
+        <Item.Image size='tiny' src={ImagePlaceHolder} />
+        <img src={EmptyCatalogueItemImage} />
       </Item>
-    );
-  }
+    </Item.Group>
+  </Segment>
+);
 
-  const catalogueLink = `catalogue/${repository.nameWithOwner}`;
-  return (
-    <Item>
-      <Item.Image size='tiny' src={ImagePlaceHolder} />
-      <Item.Content>
-        <Item.Header as={Link} to={catalogueLink}>{catalogueManifest.name}</Item.Header>
-        <Item.Meta><a href={repository.htmlUrl} target='_blank'><Icon name="github"/> {repository.nameWithOwner}</a></Item.Meta>
-        <Item.Description>
-          {catalogueManifest.description}
-        </Item.Description>
-        <Item.Extra>
-          <Label color='teal'>
-            <Icon name='file alternate' />{catalogueManifest["spec-files"].length} specs
-          </Label>
-        </Item.Extra>
-      </Item.Content>
-    </Item>
-  );
-};
+const CatalogueListError = ({errorMessage}) => (
+  <Message negative>
+    <Message.Header>{errorMessage}</Message.Header>
+  </Message>
+);
 
-const CatalogueList = ({org}) => {
+const CatalogueList = ({catalogues}) => (
+  <Segment vertical>
+    <Header as='h4'>The following specification catalogues are available to you:</Header>
+    <Item.Group divided data-testid='catalogue-list-item-group'>
+      {catalogues.map((catalogue, index) => (<CatalogueListItem key={index} catalogue={catalogue} />))}
+    </Item.Group>
+  </Segment>
+);
+
+const CatalogueListContainer = ({org}) => {
   const [catalogues, setCatalogues] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -63,38 +52,11 @@ const CatalogueList = ({org}) => {
     fetchCatalogueData(org);
   }, [org])
 
-  if (!catalogues && !errorMessage) {
-    return (
-      <React.Fragment>
-        <Dimmer inverted active>
-          <Loader content='Loading' />
-        </Dimmer>
-        <Item.Group divided>
-          <Item>
-            <Item.Image size='tiny' src={ImagePlaceHolder} />
-            <img src={EmptyCatalogueItemImage} />
-          </Item>
-        </Item.Group>
-      </React.Fragment>
-    );
-  }
+  if (!catalogues && !errorMessage) return ( <CatalogueListLoading />);
 
-  if (errorMessage) {
-    return (
-      <Message negative>
-        <Message.Header>{errorMessage}</Message.Header>
-      </Message>
-    );
-  }
+  if (errorMessage) return (<CatalogueListError errorMessage={errorMessage} />);
 
-  return (
-    <Segment vertical>
-      <Header as='h4'>The following specification catalogues are available to you:</Header>
-      <Item.Group divided>
-        {catalogues.map((catalogue, index) => (<CatalogueItem key={index} {...catalogue} />))}
-      </Item.Group>
-    </Segment>
-  );
+  return (<CatalogueList catalogues={catalogues} />);
 };
 
-export default CatalogueList;
+export default CatalogueListContainer;
