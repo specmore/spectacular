@@ -50,7 +50,7 @@ describe("CatalogueContainer component", () => {
     const { findByTestId } = renderWithRouter(<CatalogueContainer />, CreateCatalogueContainerLocation(owner, repo), CATALOGUE_CONTAINER_ROUTE);
 
     // then a catalogue container should be found
-    expect(await findByTestId('catalogue-container')).toBeInTheDocument();
+    expect(await findByTestId('catalogue-container-segment')).toBeInTheDocument();
 
     // and it fetched the catalogue details
     expect(axiosMock.get.mock.calls[0][0]).toBe(`/api/catalogues/${owner}/${repo}`)

@@ -8,24 +8,24 @@ import MenuBar from './components/menu-bar';
 import FooterBar from './components/footer-bar';
 import './index.css';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { CATALOGUE_CONTAINER_ROUTE } from './routes';
+import { CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE } from './routes';
 
 const Index = () => (
 <Router>
   <MenuBar/>
-  <Container style={{ marginTop: '4em' }}>
+  <div style={{ paddingTop: '4em' }}>
     <Switch>
       <Route exact path="/">
         <InstallationWelcome/>
       </Route>
-      <Route path={CATALOGUE_CONTAINER_ROUTE}>
+      <Route exact path={[CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE]}>
         <CatalogueContainer/>
       </Route>
       <Route path="*">
         <NotFound />
       </Route>
     </Switch>
-  </Container>
+  </div>
   <FooterBar/>
 </Router>);
 

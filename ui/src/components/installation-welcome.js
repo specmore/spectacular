@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Dimmer, Loader, Message, Header, Segment } from 'semantic-ui-react'
+import { Dimmer, Loader, Message, Header, Segment, Container } from 'semantic-ui-react'
 import { fetchInstallation } from '../api-client';
 import EmptyWelcomeItemImage from '../assets/images/empty-catalogue-item.png';
 import CatalogueList from './catalogue-list';
@@ -24,33 +24,35 @@ const InstallationWelcome = () => {
 
     if (!installation && !errorMessage) {
         return (
-            <Segment vertical>
+            <Container text>
                 <Dimmer inverted active>
                     <Loader content='Loading' />
                 </Dimmer>
                 <img src={EmptyWelcomeItemImage} />
-            </Segment>
+            </Container>
         );
     }
 
     if (errorMessage) {
         return (
-            <Message negative>
-                <Message.Header>{errorMessage}</Message.Header>
-            </Message>
+            <Container text>
+                <Message negative>
+                    <Message.Header>{errorMessage}</Message.Header>
+                </Message>
+            </Container>
         );
     }
 
     let org_url = `https://github.com/${installation.owner}`;
     
     return (
-        <Segment vertical>
+        <Container text>
             <Header as='h1' textAlign='center' image={installation.owner_avatar_url}>
                 Welcome to Spectacular
                 <Header.Subheader>Connected to the <a href={org_url} target='_blank'>{installation.owner}</a> GitHub organization</Header.Subheader>
             </Header>
             <CatalogueList org={installation.owner}/>
-        </Segment>
+        </Container>
     );
 };
 
