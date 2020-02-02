@@ -42,7 +42,9 @@ public class CatalogueService {
     public Catalogue getCatalogueForRepoAndUser(Repository repo, String username) {
         if (!isUserCollaboratorForRepository(repo, username)) return null;
 
-        return getCatalogueForRepository(repo);
+        var responseRepo = restApiClient.getRepository(repo);
+
+        return getCatalogueForRepository(Repository.createRepositoryFrom(responseRepo));
     }
 
     private List<Repository> findCatalogueRepositoriesForOrg(String orgName) {

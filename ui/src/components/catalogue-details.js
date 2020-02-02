@@ -1,46 +1,73 @@
 import React from "react";
-import { Label, Icon, Item, Message } from 'semantic-ui-react'
+import { Label, Icon, Image, Message, Segment, Header, Container, Grid, Item } from 'semantic-ui-react'
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
 
-const CatalogueErrorItem = ({error, repository}) => (
-    <Item data-testid='catalogue-list-item-error-item'>
-      <Item.Content>
-        <Item.Description>
-          <Message icon negative>
-            <Icon name='warning sign' />
-            <Message.Content>
-              <Message.Header>An error occurred while parsing the catalogue manifest file in <a href={repository.htmlUrl} target='_blank'>{repository.nameWithOwner}</a></Message.Header>
-              {error}
-            </Message.Content>
-          </Message>
-        </Item.Description>
-      </Item.Content>
+const SpecFileItem = ({specFileLocation, selectButton}) => (
+    <Item data-testid='specification-file-item'>
+        <Item.Content>
+            <Item.Header>{specFileLocation['file-path']}</Item.Header>
+            {/* <Item.Description>
+                {catalogueManifest.description}
+            </Item.Description> */}
+            <Item.Extra>
+                {selectButton}
+                {specFileLocation.repo && (<Label><Icon name='github' />{specFileLocation.repo}</Label>)}
+            </Item.Extra>
+        </Item.Content>
     </Item>
-  );
-  
-  const CatalogueDetailsItem = ({repository, catalogueManifest, selectButton}) => (
-    <Item data-testid='catalogue-list-item-details-item'>
-      <Item.Image size='tiny' src={ImagePlaceHolder} />
-      <Item.Content>
-        <Item.Header>{catalogueManifest.name}</Item.Header>
-        <Item.Meta><a href={repository.htmlUrl} target='_blank'><Icon name="github"/> {repository.nameWithOwner}</a></Item.Meta>
-        <Item.Description>
-          {catalogueManifest.description}
-        </Item.Description>
-        <Item.Extra>
-          {selectButton}
-          <Label color='teal'>
-            <Icon name='file alternate' />{catalogueManifest["spec-files"].length} specs
-          </Label>
-        </Item.Extra>
-      </Item.Content>
-    </Item>
-  );
+);
 
-  const CatalogueDetails = ({repository, catalogueManifest, error}) => {  
-    if (error) return (<CatalogueErrorItem error={error} repository={repository} />);
+const CatalogueError = ({error, repository}) => (
+    <Message icon negative data-testid='catalogue-details-error-message'>
+        <Icon name='warning sign' />
+        <Message.Content>
+            <Message.Header>An error occurred while parsing the catalogue manifest file in <a href={repository.htmlUrl} target='_blank'>{repository.nameWithOwner}</a></Message.Header>
+            {error}
+        </Message.Content>
+    </Message>
+);
   
-    return (<CatalogueDetailsItem repository={repository} catalogueManifest={catalogueManifest} />);
-  };
+const CatalogueDetails = ({repository, catalogueManifest}) => (
+    <Segment vertical data-testid='catalogue-details-segment'>
+        <Header as='h1' textAlign='center'>{catalogueManifest.name}</Header>
+        <Segment.Group>
+            <Segment>
+                <Container text>
+                    <Header as='h3'>Details</Header>
+                    <Grid divided>
+                        <Grid.Row>
+                            <Grid.Column width={13}>
+                                {catalogueManifest.description}
+                            </Grid.Column>
+                            <Grid.Column width={3}>
+                                <Image src={ImagePlaceHolder} />
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
+                </Container>
+            </Segment>
+            <Segment>
+                <Container text>
+                    <Header as='h3'>Repository</Header>
+                    <p><a href={repository.htmlUrl} target='_blank'><Icon name="github"/> {repository.nameWithOwner}</a></p>
+                </Container>
+            </Segment>
+            <Segment>
+                <Container text>
+                    <Header as='h3'>Specifications</Header>
+                    <Item.Group divided data-testid='specifications-item-group'>
+                        {catalogueManifest["spec-files"].map((specFileLocation, index) => (<SpecFileItem key={index} specFileLocation={specFileLocation} />))}
+                    </Item.Group>
+                </Container>
+            </Segment>
+        </Segment.Group>
+    </Segment>
+);
 
-  export default CatalogueDetails;
+const CatalogueDetailsContainer = ({repository, catalogueManifest, error}) => {  
+    if (error) return (<CatalogueError error={error} repository={repository} />);
+
+    return (<CatalogueDetails repository={repository} catalogueManifest={catalogueManifest} />);
+};
+
+export default CatalogueDetailsContainer;

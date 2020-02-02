@@ -151,8 +151,9 @@ class CatalogueServiceTest extends Specification {
         given: "a github user"
         def username = "test-user"
 
-        and: "a repository with a valid Yaml catalogue config Manifest"
-        def repo = new Repository("test-owner","test-repo987")
+        and: "a github repository with a valid Yaml catalogue config Manifest"
+        def repo = new spectacular.github.service.github.domain.Repository(123, "test-owner/test-repo987", "test-url")
+        def requestRepo = Repository.createRepositoryFrom(repo)
         def validYamlManifest = "name: \"Test Catalogue 1\"\n" +
                 "description: \"Specifications for all the interfaces in the across the system X.\"\n" +
                 "spec-files: \n" +
@@ -163,18 +164,21 @@ class CatalogueServiceTest extends Specification {
         and: "an app installation with access to the repository"
         appInstallationContextProvider.getInstallationId() >> "99"
 
-        when: "the get catalogue for a user is called"
-        def catalogue = catalogueService.getCatalogueForRepoAndUser(repo, username)
+        when: "the get catalogue for repository and user is called"
+        def catalogue = catalogueService.getCatalogueForRepoAndUser(requestRepo, username)
 
         then: "github is checked if the user is a collaborator of the repository successfully"
-        1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> true
+        1 * restApiClient.isUserRepositoryCollaborator(requestRepo, username) >> true
+
+        and: "the repository details are retrieved"
+        1 * restApiClient.getRepository(requestRepo) >> repo
 
         and: "the yaml manifest file contents is retrieved"
-        1 * restApiClient.getRepositoryContent(repo, catalogueManifestFilename, null) >> validYamlManifest
+        1 * restApiClient.getRepositoryContent(_, catalogueManifestFilename, null) >> validYamlManifest
 
-        and: "a valid catalogue is returned for the repo"
+        and: "a valid catalogue is returned for the requested repo"
         catalogue
-        catalogue.getRepository() == repo
+        catalogue.getRepository() == requestRepo
 
         and: "the catalogue contains the values of the manifest"
         catalogue.getCatalogueManifest()
@@ -214,6 +218,9 @@ class CatalogueServiceTest extends Specification {
 
         then: "github is checked if the user is a collaborator of the repository and the user is not"
         1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> false
+
+        and: "no repository details are retrieved"
+        0 * restApiClient.getRepository(_)
 
         and: "no file contents are retrieved"
         0 * restApiClient.getRepositoryContent(*_)

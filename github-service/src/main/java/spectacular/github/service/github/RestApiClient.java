@@ -18,6 +18,7 @@ import java.util.StringJoiner;
 @Component
 public class RestApiClient {
     private static final String SEARCH_CODE_PATH = "/search/code";
+    private static final String REPO_PATH = "/repos/{repo}";
     private static final String REPO_CONTENT_PATH = "/repos/{repo}/contents/{path}";
     private static final String REPO_COLLABORATORS_PATH = "/repos/{repo}/collaborators/{username}";
     private static final String RAW_CONTENT_ACCEPT_HEADER = "application/vnd.github.3.raw";
@@ -66,5 +67,16 @@ public class RestApiClient {
         String contentUri = uriComponentsBuilder.buildAndExpand(repo.getNameWithOwner(), username).toUriString();
         ResponseEntity<Void> response = restTemplate.exchange(contentUri, HttpMethod.GET, entity, Void.class);
         return response.getStatusCode().is2xxSuccessful();
+    }
+
+    public spectacular.github.service.github.domain.Repository getRepository(Repository repo) {
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(REPO_PATH);
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity entity = new HttpEntity(headers);
+
+        String contentUri = uriComponentsBuilder.buildAndExpand(repo.getNameWithOwner()).toUriString();
+        ResponseEntity<spectacular.github.service.github.domain.Repository> response = restTemplate.exchange(contentUri, HttpMethod.GET, entity, spectacular.github.service.github.domain.Repository.class);
+        return response.getBody();
     }
 }
