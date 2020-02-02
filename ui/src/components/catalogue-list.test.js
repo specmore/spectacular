@@ -1,7 +1,7 @@
 import React from "react";
 import '@testing-library/jest-dom/extend-expect';
 import CatalogueList from "./catalogue-list";
-import CatalogueListItem from "./catalogue-list-item";
+import CatalogueListItemMock from "./catalogue-list-item";
 import axiosMock from 'axios'
 import { renderWithRouter } from '../common/test-utils';
 
@@ -12,34 +12,10 @@ jest.mock('./catalogue-list-item', () =>  jest.fn(() => null));
 
 describe("CatalogueList component", () => {
   test("successful fetch displays catalogue items", async () => {
-    // given a mocked successful catalogues response 
+    // given a mocked successful catalogues response with 2 catalogues
     const cataloguesResponse = { 
         data: {
-          catalogues: [{
-            repository: {
-              nameWithOwner: "test-owner/repo1",
-              htmlUrl: "http://github.com/test-owner/repo1",
-              repo_image_url: "",
-            },
-            catalogueManifest: {
-              name: "Test Catalogue 1",
-              description: "A test catalogue of interface specifications for a systems",
-              "spec-files": [],
-              errors: ""
-            },
-          }, {
-            repository: {
-              nameWithOwner: "test-owner/repo2",
-              htmlUrl: "http://github.com/test-owner/repo2",
-              repo_image_url: "",
-            },
-            catalogueManifest: {
-              name: "Test Catalogue 2",
-              description: "A test catalogue of interface specifications for a department and all its systems",
-              "spec-files": [],
-              errors: ""
-            },
-          }]
+          catalogues: [{}, {}]
         }
     };
     
@@ -50,6 +26,9 @@ describe("CatalogueList component", () => {
 
     // then a catalogue list item group should be found
     expect(await findByTestId('catalogue-list-item-group')).toBeInTheDocument();
+
+    // and the 2 CatalogueListItem should have been created
+    expect(CatalogueListItemMock).toHaveBeenCalledTimes(2);
   });
 
   test("unsuccessful fetch displays error message", async () => {
