@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import CatalogueDetails from './catalogue-details';
 import SwaggerUI from "swagger-ui-react";
 import "swagger-ui-react/swagger-ui.css";
+import "./catalogue-container.css";
 
 const CatalogueContainerLoading = ({owner, repo}) => (
     <Segment vertical textAlign='center'>
@@ -58,18 +59,14 @@ const CatalogueContainer = () => {
     );
 
     if (location) return (
-        <Grid columns={2} stackable>
-            <Grid.Row>
-                <Grid.Column>
-                    <div style={{ paddingLeft: '14px' }}>
-                        <CatalogueContainerSegment catalogue={catalogue}/>
-                    </div>
-                </Grid.Column>
-                <Grid.Column>
-                    <SwaggerUI url="https://petstore.swagger.io/v2/swagger.json" />
-                </Grid.Column>
-            </Grid.Row>
-        </Grid>
+        <div className='catalogue-container side-by-side-container'>
+            <Container text className='side-by-side-column'>
+                <CatalogueContainerSegment catalogue={catalogue}/>
+            </Container>
+            <div className='side-by-side-column'>
+                <SwaggerUI url="https://petstore.swagger.io/v2/swagger.json"/>
+            </div>
+        </div>
     );
 };
 
