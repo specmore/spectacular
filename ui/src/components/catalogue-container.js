@@ -32,7 +32,11 @@ const CatalogueContainerSegment = ({catalogue}) => (
 const CatalogueContainer = () => {
     const [catalogue, setCatalogue] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
-    const { owner, repo, location } = useParams();
+    const { 0: location, owner, repo } = useParams();
+    //const location = null;
+    // console.log(useParams());
+    // console.log(useRouteMatch());
+    // console.log(location);
 
     const fetchCatalogueData = async (owner, repo) => {
         try {

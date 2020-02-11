@@ -1,21 +1,7 @@
 import React from "react";
-import { Label, Icon, Image, Message, Segment, Header, Container, Grid, Item } from 'semantic-ui-react'
+import { Icon, Image, Message, Segment, Header, Grid, Item } from 'semantic-ui-react'
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
-
-const SpecFileItem = ({specFileLocation, selectButton}) => (
-    <Item data-testid='specification-file-item'>
-        <Item.Content>
-            <Item.Header>{specFileLocation['file-path']}</Item.Header>
-            {/* <Item.Description>
-                {catalogueManifest.description}
-            </Item.Description> */}
-            <Item.Extra>
-                {selectButton}
-                {specFileLocation.repo && (<Label><Icon name='github' />{specFileLocation.repo}</Label>)}
-            </Item.Extra>
-        </Item.Content>
-    </Item>
-);
+import SpecFileItem from './spec-file-item';
 
 const CatalogueError = ({error, repository}) => (
     <Message icon negative data-testid='catalogue-details-error-message'>
@@ -51,7 +37,7 @@ const CatalogueDetails = ({repository, catalogueManifest}) => (
             <Segment>
                 <Header as='h3'>Specifications</Header>
                 <Item.Group divided data-testid='specifications-item-group'>
-                    {catalogueManifest["spec-files"].map((specFileLocation, index) => (<SpecFileItem key={index} specFileLocation={specFileLocation} />))}
+                    {catalogueManifest["spec-files"].map((specFileLocation, index) => (<SpecFileItem key={index} catalogueRepository={repository} specFileLocation={specFileLocation} />))}
                 </Item.Group>
             </Segment>
         </Segment.Group>
