@@ -41,6 +41,9 @@ describe("CatalogueListItem component", () => {
 
     // and the name of the repository is shown
     expect(getByText("pburls/specs-test")).toBeInTheDocument();
+
+    // and view catalogue button is found
+    expect(getByTestId('view-catalogue-button')).toBeInTheDocument();
   });
 
   
@@ -58,7 +61,7 @@ describe("CatalogueListItem component", () => {
     };
 
     // when catalogue list item component renders
-    const { getByTestId, getByText } = renderWithRouter(<CatalogueListItem catalogue={catalogue} />);
+    const { getByTestId, getByText, queryByTestId } = renderWithRouter(<CatalogueListItem catalogue={catalogue} />);
 
     // then a catalogue list item details item is found
     expect(getByTestId('catalogue-list-item-error-item')).toBeInTheDocument();
@@ -68,5 +71,8 @@ describe("CatalogueListItem component", () => {
 
     // and the error message is shown
     expect(getByText("An error occurred while parsing the catalogue manifest yaml file. The following field is missing: bla bla bla")).toBeInTheDocument();
+
+    // and view catalogue button is not found
+    expect(queryByTestId('view-catalogue-button')).not.toBeInTheDocument();
   });
 });

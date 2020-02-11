@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Container } from 'semantic-ui-react';
 import InstallationWelcome from './components/installation-welcome';
 import CatalogueContainer from './components/catalogue-container';
 import NotFound from './components/not-found';
