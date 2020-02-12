@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+export const createFileApiURL = (fileLocation) => `/api/files/${fileLocation}`;
+
 axios.interceptors.response.use((response) => { return response; }, (error) => {
     if (error.response.status === 401) {
         console.log("expired token");

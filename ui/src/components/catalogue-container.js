@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Dimmer, Loader, Message, Segment, Grid, Container } from 'semantic-ui-react'
-import { fetchCatalogue } from '../api-client';
+import { fetchCatalogue, createFileApiURL } from '../api-client';
 import EmptyItemImage from '../assets/images/empty-catalogue-item.png';
 import { useParams } from 'react-router-dom';
 import CatalogueDetails from './catalogue-details';
@@ -36,7 +36,8 @@ const CatalogueContainer = () => {
     //const location = null;
     // console.log(useParams());
     // console.log(useRouteMatch());
-    // console.log(location);
+    const fileApiURL = createFileApiURL(location);
+    //console.log(location);
 
     const fetchCatalogueData = async (owner, repo) => {
         try {
@@ -67,8 +68,8 @@ const CatalogueContainer = () => {
             <Container text className='side-by-side-column'>
                 <CatalogueContainerSegment catalogue={catalogue}/>
             </Container>
-            <div className='side-by-side-column'>
-                <SwaggerUI url="https://petstore.swagger.io/v2/swagger.json"/>
+            <div className='side-by-side-column' data-testid='catalogue-container-swagger-ui'>
+                <SwaggerUI url={fileApiURL}/>
             </div>
         </div>
     );

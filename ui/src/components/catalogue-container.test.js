@@ -4,7 +4,7 @@ import CatalogueContainer from "./catalogue-container";
 import CatalogueDetailsMock from "./catalogue-details";
 import axiosMock from 'axios'
 import { renderWithRouter } from '../common/test-utils';
-import { CATALOGUE_CONTAINER_ROUTE, CreateCatalogueContainerLocation } from '../routes';
+import { CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE, CreateCatalogueContainerLocation, CreateViewSpecLocation } from '../routes';
 
 jest.mock('axios');
 
@@ -93,5 +93,65 @@ describe("CatalogueContainer component", () => {
 
     // and it contains a placeholder image
     expect(getByTestId('catalogue-container-placeholder-image')).toBeInTheDocument();
+  });
+
+  test("swagger UI is shown when a spec file location is set", async () => {
+    // given a repo for a catalogue
+    const owner = "test-owner";
+    const repo = "repo1";
+    
+    // and a spec file location
+    const specFileLocation = "test-owner/specs-test2/specs/example-spec.yaml";
+
+    // and a mocked successful catalogue response 
+    const catalogueResponse = { 
+        data: {
+            "repository": {
+                "owner": owner,
+                "name": repo,
+                "htmlUrl": "https://github.com/pburls/specs-test",
+                "nameWithOwner": `${owner}/${repo}`
+            },
+            "catalogueManifest": {
+                "name": "Test Catalogue 1",
+                "description": "Specifications for all the interfaces in the across the system X.",
+                "spec-files": [
+                    {
+                        "repo": null,
+                        "file-path": "specs/example-template.yaml"
+                    },
+                    {
+                        "repo": "test-owner/specs-test2",
+                        "file-path": "specs/example-spec.yaml"
+                    }
+                ]
+            },
+            "error": null
+        }
+    };
+  
+    axiosMock.get.mockResolvedValueOnce(catalogueResponse);
+
+    // and a mocked spec file fetch response
+    const responsePromise = Promise.resolve({ });
+    global.fetch = jest.fn().mockImplementation(() => responsePromise);
+
+    // when catalogue container component renders
+    const { getByText, findByTestId } = renderWithRouter(<CatalogueContainer />, CreateViewSpecLocation(owner, repo, specFileLocation), CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE);
+
+    // then a catalogue container should be found
+    expect(await findByTestId('catalogue-container-segment')).toBeInTheDocument();
+
+    // and a swagger ui container should be found
+    expect(await findByTestId('catalogue-container-swagger-ui')).toBeInTheDocument();
+
+    // and file contents should have been fetched
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch).toHaveBeenCalledWith('/api/files/test-owner/specs-test2/specs/example-spec.yaml',
+    expect.objectContaining({
+      url: '/api/files/test-owner/specs-test2/specs/example-spec.yaml'
+    }));
+
+    global.fetch.mockClear();
   });
 });
