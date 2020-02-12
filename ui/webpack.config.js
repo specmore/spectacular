@@ -44,7 +44,9 @@ const miniCssExtractPlugin = new MiniCssExtractPlugin({
             publicPath: '/'
         },
         devServer: {
-            historyApiFallback: true,
+            historyApiFallback: {
+                disableDotRule: true
+            },
             proxy: {
                 '/api': {
                     target: 'http://localhost:5000',
