@@ -3,7 +3,7 @@ import { Label, Icon, Item } from 'semantic-ui-react'
 import { ViewSpecLinkButton } from "../routes";
 
 const SpecFileItem = ({catalogueRepository, specFileLocation}) => {
-    const specFileLocationSuffix = specFileLocation.repo ? specFileLocation.repo : catalogueRepository.nameWithOwner;
+    const specFileLocationSuffix = specFileLocation.repo ? specFileLocation.repo.nameWithOwner : catalogueRepository.nameWithOwner;
     const specFileFullLocation = `${specFileLocationSuffix}/${specFileLocation["file-path"]}`;
     const selectButton = (<ViewSpecLinkButton catalogueRepository={catalogueRepository} specFileLocation={specFileFullLocation} />);
 

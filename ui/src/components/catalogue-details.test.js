@@ -22,7 +22,7 @@ describe("CatalogueDetails component", () => {
                     "file-path": "specs/example-template.yaml"
                 },
                 {
-                    "repo": "test-owner/specs-test2",
+                    "repo": {"owner":"test-owner","name":"specs-test2","htmlUrl":null,"nameWithOwner":"test-owner/specs-test2"},
                     "file-path": "specs/example-spec.yaml"
                 }
             ]

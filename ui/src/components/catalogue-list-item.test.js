@@ -8,10 +8,10 @@ describe("CatalogueListItem component", () => {
     // given a catalogue data item
     const catalogue = {
         "repository": {
-            "owner": "pburls",
+            "owner": "test-owner",
             "name": "specs-test",
-            "htmlUrl": "https://github.com/pburls/specs-test",
-            "nameWithOwner": "pburls/specs-test"
+            "htmlUrl": "https://github.com/test-owner/specs-test",
+            "nameWithOwner": "test-owner/specs-test"
         },
         "catalogueManifest": {
             "name": "Test Catalogue 1",
@@ -22,7 +22,7 @@ describe("CatalogueListItem component", () => {
                     "file-path": "specs/example-template.yaml"
                 },
                 {
-                    "repo": "pburls/specs-test2",
+                    "repo": {"owner":"test-owner","name":"specs-test2","htmlUrl":null,"nameWithOwner":"test-owner/specs-test2"},
                     "file-path": "specs/example-spec.yaml"
                 }
             ]
@@ -40,7 +40,7 @@ describe("CatalogueListItem component", () => {
     expect(getByText("Test Catalogue 1")).toBeInTheDocument();
 
     // and the name of the repository is shown
-    expect(getByText("pburls/specs-test")).toBeInTheDocument();
+    expect(getByText("test-owner/specs-test")).toBeInTheDocument();
 
     // and view catalogue button is found
     expect(getByTestId('view-catalogue-button')).toBeInTheDocument();

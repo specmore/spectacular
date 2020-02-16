@@ -15,7 +15,7 @@ describe("SpecFileItem component", () => {
 
         // and a spec file in another repo
         const specFileLocation = {
-            "repo": "test-owner/specs-repo1",
+            "repo": {"owner":"test-owner","name":"specs-repo1","htmlUrl":null,"nameWithOwner":"test-owner/specs-repo1"},
             "file-path": "specs/example-template.yaml"
         };
 
@@ -59,7 +59,7 @@ describe("SpecFileItem component", () => {
 
         // and a spec file in another repo
         const specFileLocation = {
-            "repo": "test-owner/specs-repo1",
+            "repo": {"owner":"test-owner","name":"specs-repo1","htmlUrl":null,"nameWithOwner":"test-owner/specs-repo1"},
             "file-path": "specs/example-template.yaml"
         };
 

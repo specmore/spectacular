@@ -66,7 +66,7 @@ class CatalogueServiceTest extends Specification {
         specFile1.getFilePath() == "specs/example-template.yaml"
 
         def specFile2 = catalogue1.getCatalogueManifest().getSpecFileLocations()[1]
-        specFile2.getRepo() == "test-owner2/specs-test2"
+        specFile2.getRepo().getNameWithOwner() == "test-owner2/specs-test2"
         specFile2.getFilePath() == "specs/example-spec.yaml"
     }
 
@@ -193,7 +193,7 @@ class CatalogueServiceTest extends Specification {
         specFile1.getFilePath() == "specs/example-template.yaml"
 
         def specFile2 = catalogue.getCatalogueManifest().getSpecFileLocations()[1]
-        specFile2.getRepo() == "test-owner2/specs-test2"
+        specFile2.getRepo().getNameWithOwner() == "test-owner2/specs-test2"
         specFile2.getFilePath() == "specs/example-spec.yaml"
     }
 
