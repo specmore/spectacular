@@ -26,7 +26,7 @@ class FilesServiceTest extends Specification {
         def catalogueRepo = new Repository("test-owner", "catalogue-repo")
         def specFileLocation = new SpecFileLocation(specFileRepo.getNameWithOwner(), specFilePath)
         def catalogueManifest = new CatalogueManifest("test manifest", "test description", [specFileLocation])
-        def catalogue = new Catalogue(catalogueRepo, catalogueManifest, null)
+        def catalogue = new Catalogue(catalogueRepo, catalogueManifest, null, null)
 
         when: "retrieving the spec file contents"
         def result = fileService.getFileContent(catalogueRepo, specFileRepo, specFilePath, username)
@@ -51,7 +51,7 @@ class FilesServiceTest extends Specification {
         and: "a catalogue manifest in the same repo containing the requested spec file but with out a repo in the location"
         def specFileLocation = new SpecFileLocation(null, specFilePath)
         def catalogueManifest = new CatalogueManifest("test manifest", "test description", [specFileLocation])
-        def catalogue = new Catalogue(specFileRepo, catalogueManifest, null)
+        def catalogue = new Catalogue(specFileRepo, catalogueManifest, null, null)
 
         when: "retrieving the spec file contents"
         def result = fileService.getFileContent(specFileRepo, specFileRepo, specFilePath, username)
@@ -77,7 +77,7 @@ class FilesServiceTest extends Specification {
         def catalogueRepo = new Repository("test-owner", "catalogue-repo")
         def specFileLocation = new SpecFileLocation("another-owner/another-repo", "another/spec-file.yaml")
         def catalogueManifest = new CatalogueManifest("test manifest", "test description", [specFileLocation])
-        def catalogue = new Catalogue(catalogueRepo, catalogueManifest, null)
+        def catalogue = new Catalogue(catalogueRepo, catalogueManifest, null, null)
 
         when: "retrieving the spec file contents"
         def result = fileService.getFileContent(catalogueRepo, specFileRepo, specFilePath, username)

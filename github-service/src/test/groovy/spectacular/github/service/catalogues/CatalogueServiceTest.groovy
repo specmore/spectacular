@@ -5,13 +5,16 @@ import spectacular.github.service.github.RestApiClient
 import spectacular.github.service.github.app.AppInstallationContextProvider
 import spectacular.github.service.github.domain.SearchCodeResultItem
 import spectacular.github.service.github.domain.SearchCodeResults
+import spectacular.github.service.specs.SpecItem
+import spectacular.github.service.specs.SpecService
 import spock.lang.Specification
 
 class CatalogueServiceTest extends Specification {
     def catalogueManifestFilename = "spectacular-config.yaml"
     def restApiClient = Mock(RestApiClient)
     def appInstallationContextProvider = Mock(AppInstallationContextProvider)
-    def catalogueService = new CatalogueService(restApiClient, appInstallationContextProvider)
+    def specService = Mock(SpecService)
+    def catalogueService = new CatalogueService(restApiClient, appInstallationContextProvider, specService)
 
     def "get catalogues for valid user"() {
         given: "a github user"
@@ -151,7 +154,7 @@ class CatalogueServiceTest extends Specification {
         given: "a github user"
         def username = "test-user"
 
-        and: "a github repository with a valid Yaml catalogue config Manifest"
+        and: "a github repository with a valid Yaml catalogue config Manifest with 2 files"
         def repo = new spectacular.github.service.github.domain.Repository(123, "test-owner/test-repo987", "test-url")
         def requestRepo = Repository.createRepositoryFrom(repo)
         def validYamlManifest = "name: \"Test Catalogue 1\"\n" +
@@ -160,6 +163,10 @@ class CatalogueServiceTest extends Specification {
                 "- file-path: \"specs/example-template.yaml\"\n" +
                 "- repo: \"test-owner2/specs-test2\"\n" +
                 "  file-path: \"specs/example-spec.yaml\""
+
+        and: "spec items for each file in the manifest"
+        def specItem1 = Mock(SpecItem)
+        def specItem2 = Mock(SpecItem)
 
         and: "an app installation with access to the repository"
         appInstallationContextProvider.getInstallationId() >> "99"
@@ -180,12 +187,12 @@ class CatalogueServiceTest extends Specification {
         catalogue
         catalogue.getRepository() == requestRepo
 
-        and: "the catalogue contains the values of the manifest"
+        and: "the catalogue has a manifest item with the name and description set"
         catalogue.getCatalogueManifest()
         catalogue.getCatalogueManifest().getName() == "Test Catalogue 1"
         catalogue.getCatalogueManifest().getDescription() == "Specifications for all the interfaces in the across the system X."
 
-        and: "the catalogue contains 2 spec files"
+        and: "the catalogue manifest contains 2 spec files"
         !catalogue.getCatalogueManifest().getSpecFileLocations().isEmpty()
 
         def specFile1 = catalogue.getCatalogueManifest().getSpecFileLocations()[0]
@@ -195,6 +202,15 @@ class CatalogueServiceTest extends Specification {
         def specFile2 = catalogue.getCatalogueManifest().getSpecFileLocations()[1]
         specFile2.getRepo().getNameWithOwner() == "test-owner2/specs-test2"
         specFile2.getFilePath() == "specs/example-spec.yaml"
+
+        and: "spec items are retrieved for each file"
+        1 * specService.getSpecItem(requestRepo, "specs/example-template.yaml") >> specItem1
+        1 * specService.getSpecItem(Repository.createForNameWithOwner("test-owner2/specs-test2", null), "specs/example-spec.yaml") >> specItem2
+
+        and: "the catalogue result contains all the spec items"
+        catalogue.getSpecItems().size() == 2
+        catalogue.getSpecItems()[0] == specItem1
+        catalogue.getSpecItems()[1] == specItem2
     }
 
     def "get catalogue returns null for a repository the user does not have access to"() {
@@ -227,5 +243,8 @@ class CatalogueServiceTest extends Specification {
 
         and: "no catalogue is returned"
         !catalogue
+
+        and: "no spec items are retrieved"
+        0 * specService.getSpecItem(_, _)
     }
 }
