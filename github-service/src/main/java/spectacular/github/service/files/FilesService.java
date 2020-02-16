@@ -2,6 +2,7 @@ package spectacular.github.service.files;
 
 import org.springframework.stereotype.Service;
 import spectacular.github.service.catalogues.CatalogueService;
+import spectacular.github.service.catalogues.SpecFileLocation;
 import spectacular.github.service.common.Repository;
 import spectacular.github.service.github.RestApiClient;
 
@@ -21,9 +22,15 @@ public class FilesService {
         if (catalogue == null || catalogue.getCatalogueManifest() == null || catalogue.getCatalogueManifest().getSpecFileLocations() == null) return null;
 
         if (!catalogue.getCatalogueManifest().getSpecFileLocations().stream()
-                .anyMatch(specFileLocation -> specFileLocation.getRepo().equals(specRepo) &&
-                specFileLocation.getFilePath().equalsIgnoreCase(path))) return null;
+                .anyMatch(specFileLocation -> specFileMatches(specFileLocation, catalogueRepo, specRepo, path))) return null;
 
         return restApiClient.getRepositoryContent(specRepo, path, null);
+    }
+
+    private static boolean specFileMatches(SpecFileLocation specFileLocation, Repository catalogueRepo, Repository specRepo, String specFilePath) {
+        if (specFileLocation.getRepo() == null && !catalogueRepo.equals(specRepo)) return false;
+        if (specFileLocation.getRepo() != null && !specFileLocation.getRepo().equals(specRepo)) return false;
+        if (!specFileLocation.getFilePath().equalsIgnoreCase(specFilePath)) return false;
+        return true;
     }
 }

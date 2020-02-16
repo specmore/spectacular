@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const createFileApiURL = (fileLocation) => `/api/files/${fileLocation}`;
+export const createFileApiURL = (owner, repo, fileLocation) => `/api/catalogues/${owner}/${repo}/files/${fileLocation}`;
 
 axios.interceptors.response.use((response) => { return response; }, (error) => {
     if (error.response.status === 401) {

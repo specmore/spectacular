@@ -33,11 +33,8 @@ const CatalogueContainer = () => {
     const [catalogue, setCatalogue] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
     const { 0: location, owner, repo } = useParams();
-    //const location = null;
-    // console.log(useParams());
-    // console.log(useRouteMatch());
-    const fileApiURL = createFileApiURL(location);
-    //console.log(location);
+    
+    const fileApiURL = createFileApiURL(owner, repo, location);
 
     const fetchCatalogueData = async (owner, repo) => {
         try {

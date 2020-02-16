@@ -39,6 +39,31 @@ class FilesServiceTest extends Specification {
         result == specFileContent
     }
 
+    def "get file content for spec path in catalogue manifest without repo returns the raw file contents from github"() {
+        given: "a user with access to the catalogue repo"
+        def username = "test-user"
+
+        and: "a spec file repo and path with content"
+        def specFileRepo = new Repository("test-owner2", "spec-repo");
+        def specFilePath = "test-specs/example-spec.yaml"
+        def specFileContent = "test content"
+
+        and: "a catalogue manifest in the same repo containing the requested spec file but with out a repo in the location"
+        def specFileLocation = new SpecFileLocation(null, specFilePath)
+        def catalogueManifest = new CatalogueManifest("test manifest", "test description", [specFileLocation])
+        def catalogue = new Catalogue(specFileRepo, catalogueManifest, null)
+
+        when: "retrieving the spec file contents"
+        def result = fileService.getFileContent(specFileRepo, specFileRepo, specFilePath, username)
+
+        then: "the catalogue is retrieved for the repo and user"
+        1 * catalogueServiceMock.getCatalogueForRepoAndUser(specFileRepo, username) >> catalogue
+
+        and: "the contents is retrieved from the spec file repo and path from the github api"
+        1 * restApiMock.getRepositoryContent(specFileRepo, specFilePath, null) >> specFileContent
+        result == specFileContent
+    }
+
     def "get file content for spec path not contained in catalogue manifest returns null contents"() {
         given: "a user with access to the catalogue repo"
         def username = "test-user"
