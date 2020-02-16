@@ -146,11 +146,10 @@ describe("CatalogueContainer component", () => {
     expect(await findByTestId('catalogue-container-swagger-ui')).toBeInTheDocument();
 
     // and file contents should have been fetched
+    const url = `/api/catalogues/${owner}/${repo}/files/test-owner/specs-test2/specs/example-spec.yaml`
     expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(global.fetch).toHaveBeenCalledWith('/api/files/test-owner/specs-test2/specs/example-spec.yaml',
-    expect.objectContaining({
-      url: '/api/files/test-owner/specs-test2/specs/example-spec.yaml'
-    }));
+    expect(global.fetch).toHaveBeenCalledWith(url,
+    expect.objectContaining({ url }));
 
     global.fetch.mockClear();
   });
