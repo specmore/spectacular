@@ -5,14 +5,13 @@ import { ViewSpecLinkButton } from "../routes";
 const SpecFileItemError = ({specFileFullLocation, errors}) => (
     <Item data-testid='specification-file-item-error'>
             <Item.Content>
-                <Item.Header>{specFileFullLocation}</Item.Header>
                 <Item.Description>
                     <Message icon negative>
                         <Icon name='warning sign' />
                         <Message.Content>
-                            <Message.Header>The following errors occurred while processing the specification file.</Message.Header>
+                            <Message.Header>The following errors occurred while processing the specification file '{specFileFullLocation}':</Message.Header>
                             <List bulleted>
-                                {errors.map(error => (<List.Item>{error}</List.Item>))}
+                                {errors.map((error, index) => (<List.Item key={index}>{error}</List.Item>))}
                             </List>
                         </Message.Content>
                     </Message>
@@ -30,9 +29,9 @@ const SpecFileItem = ({catalogueRepository, specItem}) => {
     return (
         <Item data-testid='specification-file-item'>
             <Item.Content>
-                <Item.Header>{specFileFullLocation}</Item.Header>
+                <Item.Header>{specItem.parseResult.openApiSpec.title}</Item.Header>
                 <Item.Description>
-                    <Label>{specItem.parseResult.openApiSpec.title}</Label>
+                    <Label>{specFileFullLocation}</Label>
                     <Label>{specItem.parseResult.openApiSpec.version}</Label>
                 </Item.Description>
                 <Item.Extra>

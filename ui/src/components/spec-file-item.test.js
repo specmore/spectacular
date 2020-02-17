@@ -80,7 +80,7 @@ describe("SpecFileItem component", () => {
         const { getByText, getByTestId } = renderWithRouter(<SpecFileItem catalogueRepository={repository} specItem={specItem} />);
 
         // then the file path suffixed by the repo name is shown
-        expect(getByText("test-owner/specs-test/specs/example-template.yaml")).toBeInTheDocument();
+        expect(getByText("test-owner/specs-test/specs/example-template.yaml", { exact: false })).toBeInTheDocument();
 
         // and the spec file error item is shown with error message
         expect(getByTestId('specification-file-item-error')).toBeInTheDocument();
