@@ -13,7 +13,7 @@ const CatalogueError = ({error, repository}) => (
     </Message>
 );
   
-const CatalogueDetails = ({repository, catalogueManifest}) => (
+const CatalogueDetails = ({repository, catalogueManifest, specItems}) => (
     <Segment vertical data-testid='catalogue-details-segment'>
         <Header as='h1' textAlign='center'>{catalogueManifest.name}</Header>
         <Segment.Group>
@@ -37,17 +37,17 @@ const CatalogueDetails = ({repository, catalogueManifest}) => (
             <Segment>
                 <Header as='h3'>Specifications</Header>
                 <Item.Group divided data-testid='specifications-item-group'>
-                    {catalogueManifest["spec-files"].map((specFileLocation, index) => (<SpecFileItem key={index} catalogueRepository={repository} specFileLocation={specFileLocation} />))}
+                    {specItems.map((specItem, index) => (<SpecFileItem key={index} catalogueRepository={repository} specItem={specItem} />))}
                 </Item.Group>
             </Segment>
         </Segment.Group>
     </Segment>
 );
 
-const CatalogueDetailsContainer = ({repository, catalogueManifest, error}) => {  
+const CatalogueDetailsContainer = ({repository, catalogueManifest, specItems, error}) => {  
     if (error) return (<CatalogueError error={error} repository={repository} />);
 
-    return (<CatalogueDetails repository={repository} catalogueManifest={catalogueManifest} />);
+    return (<CatalogueDetails repository={repository} catalogueManifest={catalogueManifest} specItems={specItems} />);
 };
 
 export default CatalogueDetailsContainer;

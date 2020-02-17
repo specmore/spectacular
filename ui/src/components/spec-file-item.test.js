@@ -4,7 +4,7 @@ import SpecFileItem from "./spec-file-item";
 import { renderWithRouter } from '../common/test-utils';
 
 describe("SpecFileItem component", () => {
-    test("spec file nested under another repo shows repo name as suffix in spec file title", async () => {
+    test("shows spec item with valid openApiSpec title and version", async () => {
         // given a catalogue repository
         const repository = {
             "owner": "test-owner",
@@ -13,42 +13,27 @@ describe("SpecFileItem component", () => {
             "nameWithOwner": "test-owner/specs-test"
         };
 
-        // and a spec file in another repo
-        const specFileLocation = {
-            "repo": {"owner":"test-owner","name":"specs-repo1","htmlUrl":null,"nameWithOwner":"test-owner/specs-repo1"},
-            "file-path": "specs/example-template.yaml"
+        // and valid spec item with title and version
+        const specItem = { 
+            "repository": { 
+                "owner": "test-owner", "name": "specs-test", "htmlUrl": "https://github.com/test-owner/specs-test", "nameWithOwner": "test-owner/specs-test"
+            }, 
+            "filePath": "specs/example-template.yaml", 
+            "parseResult": { "openApiSpec": { "title": "An empty API spec", "version": "0.1.0", "operations": [] }, "errors": [] } 
         };
 
         // when spec file item component renders
-        const { getByText } = renderWithRouter(<SpecFileItem catalogueRepository={repository} specFileLocation={specFileLocation} />);
+        const { getByText } = renderWithRouter(<SpecFileItem catalogueRepository={repository} specItem={specItem} />);
 
-        // then the title of the spec file shows the file path suffixed by the other repo name
-        expect(getByText("test-owner/specs-repo1/specs/example-template.yaml")).toBeInTheDocument();
-    });
-
-    test("spec file not nested under another repo shows catalogue repo name as suffix in spec file title", async () => {
-        // given a catalogue repository
-        const repository = {
-            "owner": "test-owner",
-            "name": "specs-test",
-            "htmlUrl": "https://github.com/test-owner/specs-test",
-            "nameWithOwner": "test-owner/specs-test"
-        };
-
-        // and a spec file with no repo
-        const specFileLocation = {
-            "repo": null,
-            "file-path": "specs/example-template.yaml"
-        };
-
-        // when spec file item component renders
-        const { getByText } = renderWithRouter(<SpecFileItem catalogueRepository={repository} specFileLocation={specFileLocation} />);
-
-        // then the name of the file path is shown
+        // then the file path suffixed by the repo name is shown
         expect(getByText("test-owner/specs-test/specs/example-template.yaml")).toBeInTheDocument();
+
+        // and the open api spec title and version is shown
+        expect(getByText("An empty API spec")).toBeInTheDocument();
+        expect(getByText("0.1.0")).toBeInTheDocument();
     });
 
-    test("renders a view spec button", async () => {
+    test("renders a view spec button for spec item with no parse result errors", async () => {
         // given a catalogue repository
         const repository = {
             "owner": "test-owner",
@@ -57,16 +42,48 @@ describe("SpecFileItem component", () => {
             "nameWithOwner": "test-owner/specs-test"
         };
 
-        // and a spec file in another repo
-        const specFileLocation = {
-            "repo": {"owner":"test-owner","name":"specs-repo1","htmlUrl":null,"nameWithOwner":"test-owner/specs-repo1"},
-            "file-path": "specs/example-template.yaml"
+        // and spec item with no parse results errors
+        const specItem = { 
+            "repository": { 
+                "owner": "test-owner", "name": "specs-test", "htmlUrl": "https://github.com/test-owner/specs-test", "nameWithOwner": "test-owner/specs-test"
+            }, 
+            "filePath": "specs/example-template.yaml", 
+            "parseResult": { "openApiSpec": { "title": "An empty API spec", "version": "0.1.0", "operations": [] }, "errors": [] } 
         };
 
         // when spec file item component renders
-        const { getByTestId } = renderWithRouter(<SpecFileItem catalogueRepository={repository} specFileLocation={specFileLocation} />);
+        const { getByTestId } = renderWithRouter(<SpecFileItem catalogueRepository={repository} specItem={specItem} />);
 
         // then the view spec button is shown
         expect(getByTestId('view-spec-button')).toBeInTheDocument();
+    });
+
+    test("shows spec item error message for spec item with parse result errors", async () => {
+        // given a catalogue repository
+        const repository = {
+            "owner": "test-owner",
+            "name": "specs-test",
+            "htmlUrl": "https://github.com/test-owner/specs-test",
+            "nameWithOwner": "test-owner/specs-test"
+        };
+
+        // and spec item with parse errors
+        const specItem = { 
+            "repository": { 
+                "owner": "test-owner", "name": "specs-test", "htmlUrl": "https://github.com/test-owner/specs-test", "nameWithOwner": "test-owner/specs-test"
+            }, 
+            "filePath": "specs/example-template.yaml", 
+            "parseResult": { "openApiSpec":null,"errors":["The spec file could not be found."] } 
+        };
+
+        // when spec file item component renders
+        const { getByText, getByTestId } = renderWithRouter(<SpecFileItem catalogueRepository={repository} specItem={specItem} />);
+
+        // then the file path suffixed by the repo name is shown
+        expect(getByText("test-owner/specs-test/specs/example-template.yaml")).toBeInTheDocument();
+
+        // and the spec file error item is shown with error message
+        expect(getByTestId('specification-file-item-error')).toBeInTheDocument();
+        expect(getByText("The spec file could not be found.")).toBeInTheDocument();
     });
 });

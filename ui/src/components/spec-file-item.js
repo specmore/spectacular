@@ -1,19 +1,40 @@
 import React from "react";
-import { Label, Icon, Item } from 'semantic-ui-react'
+import { Label, List, Icon, Item, Message } from 'semantic-ui-react'
 import { ViewSpecLinkButton } from "../routes";
 
-const SpecFileItem = ({catalogueRepository, specFileLocation}) => {
-    const specFileLocationSuffix = specFileLocation.repo ? specFileLocation.repo.nameWithOwner : catalogueRepository.nameWithOwner;
-    const specFileFullLocation = `${specFileLocationSuffix}/${specFileLocation["file-path"]}`;
+const SpecFileItemError = ({specFileFullLocation, errors}) => (
+    <Item data-testid='specification-file-item-error'>
+            <Item.Content>
+                <Item.Header>{specFileFullLocation}</Item.Header>
+                <Item.Description>
+                    <Message icon negative>
+                        <Icon name='warning sign' />
+                        <Message.Content>
+                            <Message.Header>The following errors occurred while processing the specification file.</Message.Header>
+                            <List bulleted>
+                                {errors.map(error => (<List.Item>{error}</List.Item>))}
+                            </List>
+                        </Message.Content>
+                    </Message>
+                </Item.Description>
+            </Item.Content>
+        </Item>
+);
+
+const SpecFileItem = ({catalogueRepository, specItem}) => {
+    const specFileFullLocation = `${specItem.repository.nameWithOwner}/${specItem.filePath}`;
+    if (specItem.parseResult.errors.length > 0) return (<SpecFileItemError specFileFullLocation={specFileFullLocation} errors={specItem.parseResult.errors} />);
+
     const selectButton = (<ViewSpecLinkButton catalogueRepository={catalogueRepository} specFileLocation={specFileFullLocation} />);
 
     return (
         <Item data-testid='specification-file-item'>
             <Item.Content>
                 <Item.Header>{specFileFullLocation}</Item.Header>
-                {/* <Item.Description>
-                    {catalogueManifest.description}
-                </Item.Description> */}
+                <Item.Description>
+                    <Label>{specItem.parseResult.openApiSpec.title}</Label>
+                    <Label>{specItem.parseResult.openApiSpec.version}</Label>
+                </Item.Description>
                 <Item.Extra>
                     {selectButton}
                     {/* {specFileLocation.repo && (<Label data-testid='specification-file-item-repo-label'><Icon name='github' />{specFileLocation.repo}</Label>)} */}
