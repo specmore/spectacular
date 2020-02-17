@@ -1,5 +1,6 @@
 package spectacular.github.service.specs
 
+import org.springframework.web.client.HttpClientErrorException
 import spectacular.github.service.common.Repository
 import spectacular.github.service.github.RestApiClient
 import spock.lang.Specification
@@ -49,5 +50,34 @@ class SpecServiceTest extends Specification {
         and: "the openapi spec has a title and version set"
         specItem.getParseResult().getOpenApiSpec().getTitle() == "An empty API spec"
         specItem.getParseResult().getOpenApiSpec().getVersion() == "0.1.0"
+    }
+
+    def "Get spec item returns parse error for spec file contents not found"() {
+        given: "a spec file repo and path"
+        def specFileRepo = new Repository("test-owner", "spec-repo");
+        def specFilePath = "test-specs/example-spec.yaml"
+
+        when: "the spec item is retrieved"
+        def specItem = specService.getSpecItem(specFileRepo, specFilePath)
+
+        then: "a spec item is returned with the spec file's repository and filepath"
+        specItem
+        specItem.getRepository() == specFileRepo
+        specItem.getFilePath() == specFilePath
+
+        and: "the content of the spec file not found on github"
+        1 * restApiClient.getRepositoryContent(specFileRepo, specFilePath, null) >> {
+            throw new HttpClientErrorException.NotFound("not found", null, null, null)
+        }
+
+        and: "the spec item contains a parse results of the content"
+        specItem.getParseResult()
+
+        and: "the parse result has a no content found error"
+        specItem.getParseResult().hasErrors()
+        specItem.getParseResult().getErrors()[0] == "The spec file could not be found."
+
+        and: "the parse result has no open api spec"
+        !specItem.getParseResult().getOpenApiSpec()
     }
 }
