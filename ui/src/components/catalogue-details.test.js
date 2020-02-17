@@ -1,7 +1,11 @@
 import React from "react";
 import '@testing-library/jest-dom/extend-expect';
 import CatalogueDetails from "./catalogue-details";
+import SpecFileItemMock from "./spec-file-item";
 import { renderWithRouter } from '../common/test-utils';
+
+// mock out the actual spec-file-item
+jest.mock('./spec-file-item', () =>  jest.fn(() => null));
 
 describe("CatalogueDetails component", () => {
   test("renders catalogue details when no error is given", async () => {
@@ -16,17 +20,9 @@ describe("CatalogueDetails component", () => {
         "catalogueManifest": {
             "name": "Test Catalogue 1",
             "description": "Specifications for all the interfaces in the across the system X.",
-            "spec-files": [
-                {
-                    "repo": null,
-                    "file-path": "specs/example-template.yaml"
-                },
-                {
-                    "repo": {"owner":"test-owner","name":"specs-test2","htmlUrl":null,"nameWithOwner":"test-owner/specs-test2"},
-                    "file-path": "specs/example-spec.yaml"
-                }
-            ]
+            "spec-files": []
         },
+        specItems: [{}, {}],
         "error": null
     };
 
@@ -42,8 +38,8 @@ describe("CatalogueDetails component", () => {
     // and the name of the repository is shown
     expect(getByText("test-owner/specs-test")).toBeInTheDocument();
 
-    // and 2 spec file items are found
-    expect(getAllByTestId('specification-file-item')).toHaveLength(2);
+    // and 2 spec file items were created
+    expect(SpecFileItemMock).toHaveBeenCalledTimes(2);
   });
 
   
