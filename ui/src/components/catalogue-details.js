@@ -1,5 +1,5 @@
 import React from "react";
-import { Icon, Image, Message, Segment, Header, Grid, Item } from 'semantic-ui-react'
+import { Icon, Image, Message, Segment, Header, Grid, Item, Label } from 'semantic-ui-react'
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
 import SpecFileItem from './spec-file-item';
 
@@ -22,17 +22,16 @@ const CatalogueDetails = ({repository, catalogueManifest, specItems}) => (
                 <Grid divided>
                     <Grid.Row>
                         <Grid.Column width={13}>
-                            {catalogueManifest.description}
+                            <p>{catalogueManifest.description}</p>
+                            <Label as='a' href={repository.htmlUrl} target='_blank'>
+                                <Icon name='github' />{repository.nameWithOwner}
+                            </Label>
                         </Grid.Column>
                         <Grid.Column width={3}>
                             <Image src={ImagePlaceHolder} />
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
-            </Segment>
-            <Segment>
-                <Header as='h3'>Repository</Header>
-                <p><a href={repository.htmlUrl} target='_blank'><Icon name="github"/> {repository.nameWithOwner}</a></p>
             </Segment>
             <Segment>
                 <Header as='h3'>Specifications</Header>
