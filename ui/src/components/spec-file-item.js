@@ -29,15 +29,14 @@ const SpecFileItem = ({catalogueRepository, specItem}) => {
     return (
         <Item data-testid='specification-file-item'>
             <Item.Content>
-                <Item.Header>{specItem.parseResult.openApiSpec.title}</Item.Header>
+                <Item.Header>
+                    <span style={{paddingRight: '1em'}}>{specItem.parseResult.openApiSpec.title}</span>
+                    <Label circular color='grey'>{specItem.parseResult.openApiSpec.version}</Label>
+                </Item.Header>
                 <Item.Description>
-                    <Label>{specFileFullLocation}</Label>
-                    <Label>{specItem.parseResult.openApiSpec.version}</Label>
-                </Item.Description>
-                <Item.Extra>
+                    <Label><Icon name='github' />{specFileFullLocation}</Label>
                     {selectButton}
-                    {/* {specFileLocation.repo && (<Label data-testid='specification-file-item-repo-label'><Icon name='github' />{specFileLocation.repo}</Label>)} */}
-                </Item.Extra>
+                </Item.Description>
             </Item.Content>
         </Item>
     );
