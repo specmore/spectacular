@@ -30,12 +30,14 @@ const SpecFileItem = ({catalogueRepository, specItem}) => {
         <Item data-testid='specification-file-item'>
             <Item.Content>
                 <Item.Header>
-                    <span style={{paddingRight: '1em'}}>{specItem.parseResult.openApiSpec.title}</span>
-                    <Label circular color='grey'>{specItem.parseResult.openApiSpec.version}</Label>
+                    <span>{specItem.parseResult.openApiSpec.title}</span>
                 </Item.Header>
                 <Item.Description>
+                    <p>Latest agreed version</p>
                     <Label><Icon name='github' />{specFileFullLocation}</Label>
+                    <Label circular color='grey'>{specItem.parseResult.openApiSpec.version}</Label>
                     {selectButton}
+                    <p>Proposed changes</p>
                 </Item.Description>
             </Item.Content>
         </Item>
