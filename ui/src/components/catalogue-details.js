@@ -22,21 +22,19 @@ const CatalogueDetails = ({repository, catalogueManifest, specItems}) => (
                 <Grid.Row>
                     <Grid.Column width={13}>
                         <p>{catalogueManifest.description}</p>
-                        <Label as='a' href={repository.htmlUrl} target='_blank'>
-                            <Icon name='github' />{repository.nameWithOwner}
-                        </Label>
                     </Grid.Column>
                     <Grid.Column width={3}>
                         <Image src={ImagePlaceHolder} />
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
+            <Label as='a' href={repository.htmlUrl} target='_blank'>
+                <Icon name='github' />{repository.nameWithOwner}
+            </Label>
         </Segment>
         <Header as='h3' attached='top'>Interface Specifications</Header>
         <Segment attached>
-            <Item.Group divided data-testid='specifications-item-group'>
-                {specItems.map((specItem, index) => (<SpecFileItem key={index} catalogueRepository={repository} specItem={specItem} />))}
-            </Item.Group>
+            {specItems.map((specItem, index) => (<SpecFileItem key={index} catalogueRepository={repository} specItem={specItem} />))}
         </Segment>
     </div>
 );
