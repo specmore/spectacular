@@ -25,8 +25,8 @@ const SpecFileItem = ({catalogueRepository, specItem}) => {
             <Header as='h4' attached='top' block><Icon name='file code'/>{specItem.parseResult.openApiSpec.title}</Header>
             <Segment attached>
                 <Header as='h5'>Latest agreed version</Header>
-                <Label><Icon name='code branch' />master</Label>
-                <Label circular color='grey'>{specItem.parseResult.openApiSpec.version}</Label>
+                <Label color='olive'><Icon name='code branch' />master</Label>
+                <Label circular>{specItem.parseResult.openApiSpec.version}</Label>
                 {selectButton}
                 <Header as='h5'>Proposed changes</Header>
             </Segment>
