@@ -34,7 +34,7 @@ const CatalogueDetails = ({repository, catalogueManifest, specItems}) => (
                 </Grid>
             </Segment>
             <Segment>
-                <Header as='h3'>Specifications</Header>
+                <Header as='h3'>Interface Specifications</Header>
                 <Item.Group divided data-testid='specifications-item-group'>
                     {specItems.map((specItem, index) => (<SpecFileItem key={index} catalogueRepository={repository} specItem={specItem} />))}
                 </Item.Group>
