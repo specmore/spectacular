@@ -25,8 +25,8 @@ describe("SpecFileItem component", () => {
         // when spec file item component renders
         const { getByText } = renderWithRouter(<SpecFileItem catalogueRepository={repository} specItem={specItem} />);
 
-        // then the file path suffixed by the repo name is shown
-        expect(getByText("test-owner/specs-test/specs/example-template.yaml")).toBeInTheDocument();
+        // then the master branch is shown
+        expect(getByText("master")).toBeInTheDocument();
 
         // and the open api spec title and version is shown
         expect(getByText("An empty API spec")).toBeInTheDocument();
