@@ -14,33 +14,31 @@ const CatalogueError = ({error, repository}) => (
 );
   
 const CatalogueDetails = ({repository, catalogueManifest, specItems}) => (
-    <Segment vertical data-testid='catalogue-details-segment'>
+    <div data-testid='catalogue-details-segment'>
         <Header as='h1' textAlign='center'>{catalogueManifest.name}</Header>
-        <Segment.Group>
-            <Segment>
-                <Header as='h3'>Details</Header>
-                <Grid divided>
-                    <Grid.Row>
-                        <Grid.Column width={13}>
-                            <p>{catalogueManifest.description}</p>
-                            <Label as='a' href={repository.htmlUrl} target='_blank'>
-                                <Icon name='github' />{repository.nameWithOwner}
-                            </Label>
-                        </Grid.Column>
-                        <Grid.Column width={3}>
-                            <Image src={ImagePlaceHolder} />
-                        </Grid.Column>
-                    </Grid.Row>
-                </Grid>
-            </Segment>
-            <Segment>
-                <Header as='h3'>Interface Specifications</Header>
-                <Item.Group divided data-testid='specifications-item-group'>
-                    {specItems.map((specItem, index) => (<SpecFileItem key={index} catalogueRepository={repository} specItem={specItem} />))}
-                </Item.Group>
-            </Segment>
-        </Segment.Group>
-    </Segment>
+        <Header as='h3' attached='top'>Details</Header>
+        <Segment attached>
+            <Grid divided>
+                <Grid.Row>
+                    <Grid.Column width={13}>
+                        <p>{catalogueManifest.description}</p>
+                        <Label as='a' href={repository.htmlUrl} target='_blank'>
+                            <Icon name='github' />{repository.nameWithOwner}
+                        </Label>
+                    </Grid.Column>
+                    <Grid.Column width={3}>
+                        <Image src={ImagePlaceHolder} />
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid>
+        </Segment>
+        <Header as='h3' attached='top'>Interface Specifications</Header>
+        <Segment attached>
+            <Item.Group divided data-testid='specifications-item-group'>
+                {specItems.map((specItem, index) => (<SpecFileItem key={index} catalogueRepository={repository} specItem={specItem} />))}
+            </Item.Group>
+        </Segment>
+    </div>
 );
 
 const CatalogueDetailsContainer = ({repository, catalogueManifest, specItems, error}) => {  
