@@ -16,7 +16,7 @@ const CatalogueError = ({error, repository}) => (
 const CatalogueDetails = ({repository, catalogueManifest, specItems}) => (
     <div data-testid='catalogue-details-segment'>
         <Header as='h1' textAlign='center'>{catalogueManifest.name}</Header>
-        <Header as='h3' attached='top'>Details</Header>
+        <Header as='h3' attached='top'><Icon name='info' />Details</Header>
         <Segment attached>
             <Grid divided>
                 <Grid.Row>
@@ -32,7 +32,7 @@ const CatalogueDetails = ({repository, catalogueManifest, specItems}) => (
                 <Icon name='github' />{repository.nameWithOwner}
             </Label>
         </Segment>
-        <Header as='h3' attached='top'>Interface Specifications</Header>
+        <Header as='h3' attached='top'><Icon name='list' />Interface Specifications</Header>
         <Segment attached>
             {specItems.map((specItem, index) => (<SpecFileItem key={index} catalogueRepository={repository} specItem={specItem} />))}
         </Segment>

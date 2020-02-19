@@ -22,13 +22,13 @@ const SpecFileItem = ({catalogueRepository, specItem}) => {
 
     return (
         <div data-testid='specification-file-item'>
-            <Header as='h5' attached='top' block>{specItem.parseResult.openApiSpec.title}</Header>
+            <Header as='h4' attached='top' block><Icon name='file code'/>{specItem.parseResult.openApiSpec.title}</Header>
             <Segment attached>
-                <p>Latest agreed version</p>
-                <Label><Icon name='github' />{specFileFullLocation}</Label>
+                <Header as='h5'>Latest agreed version</Header>
+                <Label><Icon name='code branch' />master</Label>
                 <Label circular color='grey'>{specItem.parseResult.openApiSpec.version}</Label>
                 {selectButton}
-                <p>Proposed changes</p>
+                <Header as='h5'>Proposed changes</Header>
             </Segment>
         </div>
     );
