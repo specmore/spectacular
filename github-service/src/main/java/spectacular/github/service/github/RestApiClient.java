@@ -2,15 +2,13 @@ package spectacular.github.service.github;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import spectacular.github.service.github.app.AppInstallationAuthenticationHeaderRequestInterceptor;
 import spectacular.github.service.common.Repository;
+import spectacular.github.service.github.domain.ContentItem;
 import spectacular.github.service.github.domain.SearchCodeResults;
 
 import java.util.StringJoiner;
@@ -39,6 +37,20 @@ public class RestApiClient {
 
         String contentUri = uriComponentsBuilder.buildAndExpand(repo.getNameWithOwner(), path).toUriString();
         ResponseEntity<String> response = restTemplate.exchange(contentUri, HttpMethod.GET, entity, String.class);
+
+        return response.getBody();
+    }
+
+    public ContentItem getRepositoryContent(Repository repo, String path, String ref) {
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(REPO_CONTENT_PATH);
+        if(ref != null && ref.length() > 0) uriComponentsBuilder.queryParam("ref", ref);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+        HttpEntity entity = new HttpEntity(headers);
+
+        String contentUri = uriComponentsBuilder.buildAndExpand(repo.getNameWithOwner(), path).toUriString();
+        var response = restTemplate.exchange(contentUri, HttpMethod.GET, entity, ContentItem.class);
 
         return response.getBody();
     }

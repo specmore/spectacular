@@ -53,7 +53,46 @@ class RestApiClientTest extends Specification {
     }
 
     def "GetRepositoryContent"() {
+        given: "a content file to fetch"
+        def repo = new Repository("testOwner", "testRepo", null)
+        def filePath = "specs/test-file.yaml"
 
+        and: "a content item response"
+        def responseContent = "{\n" +
+                "    \"name\": \"test-file.yaml\",\n" +
+                "    \"path\": \"specs/test-file.yaml\",\n" +
+                "    \"sha\": \"c680797bd557fb54bbac25ff0ef32ed23a07e36e\",\n" +
+                "    \"size\": 327,\n" +
+                "    \"url\": \"https://api.github.com/repos/pburls/specs-test2/contents/specs/example-spec.yaml?ref=master\",\n" +
+                "    \"html_url\": \"https://github.com/pburls/specs-test2/blob/master/specs/example-spec.yaml\",\n" +
+                "    \"git_url\": \"https://api.github.com/repos/pburls/specs-test2/git/blobs/c680797bd557fb54bbac25ff0ef32ed23a07e36e\",\n" +
+                "    \"download_url\": \"https://raw.githubusercontent.com/pburls/specs-test2/master/specs/example-spec.yaml?token=ACXYFTGYLX3RH5P2J2PV3ZK6JW5CO\",\n" +
+                "    \"type\": \"file\",\n" +
+                "    \"content\": \"b3BlbmFwaTogMy4wLjEKaW5mbzoKICB0aXRsZTogQW4gZXhhbXBsZSBBUEkg\\nc3BlYwogIHZlcnNpb246ICIwLjEuMCIKICBjb250YWN0OiAKICAgIG5hbWU6\\nICJUaGUgdGVhbSBuYW1lIGdvaW5nIHRvIGltcGxlbWVudCB0aGlzIHNwZWMi\\nCiAgICB1cmw6ICJodHRwczovL2dpdGh1Yi5jb20vc2t5LXVrL2FjdHVhbC1h\\ncGktaW1wbGVtZW50YXRpb24tcmVwb3NpdG9yeSIKdGFnczogCiAgLSBuYW1l\\nOiBFeGFtcGxlIFJlc291cmNlCiAgICBkZXNjcmlwdGlvbjogIkV4YW1wbGUg\\nUmVzb3VyY2UgZGVzY3JpcHRpb24iCnBhdGhzOiB7fQpjb21wb25lbnRzOgog\\nIHNjaGVtYXM6IHt9\\n\",\n" +
+                "    \"encoding\": \"base64\",\n" +
+                "    \"_links\": {\n" +
+                "        \"self\": \"https://api.github.com/repos/pburls/specs-test2/contents/specs/example-spec.yaml?ref=master\",\n" +
+                "        \"git\": \"https://api.github.com/repos/pburls/specs-test2/git/blobs/c680797bd557fb54bbac25ff0ef32ed23a07e36e\",\n" +
+                "        \"html\": \"https://github.com/pburls/specs-test2/blob/master/specs/example-spec.yaml\"\n" +
+                "    }\n" +
+                "}"
+
+        and: "the app installation authentication header interceptor to be used for the request"
+        1 * appInstallationAuthenticationHeaderRequestInterceptor.intercept(_,_,_) >> { HttpRequest request, byte[] body, ClientHttpRequestExecution execution ->
+            execution.execute(request, body)
+        }
+
+        expect: "the github content api endpoint to be called with a get and the application/json accept header"
+        def repoNameWithOwner = repo.getNameWithOwner()
+        this.server.expect(requestTo("/repos/$repoNameWithOwner/contents/$filePath"))
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(header("Accept", MediaType.APPLICATION_JSON_VALUE))
+                .andRespond(withSuccess(responseContent, MediaType.APPLICATION_JSON));
+
+        and: "the content item to be returned by the client for a successful response"
+        def contentItemResult = client.getRepositoryContent(repo, filePath, null)
+        contentItemResult
+        contentItemResult.getPath() == filePath
     }
 
     def "findFiles"() {
