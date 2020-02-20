@@ -35,7 +35,7 @@ class FilesServiceTest extends Specification {
         1 * catalogueServiceMock.getCatalogueForRepoAndUser(catalogueRepo, username) >> catalogue
 
         and: "the contents is retrieved from the spec file repo and path from the github api"
-        1 * restApiMock.getRepositoryContent(specFileRepo, specFilePath, null) >> specFileContent
+        1 * restApiMock.getRawRepositoryContent(specFileRepo, specFilePath, null) >> specFileContent
         result == specFileContent
     }
 
@@ -60,7 +60,7 @@ class FilesServiceTest extends Specification {
         1 * catalogueServiceMock.getCatalogueForRepoAndUser(specFileRepo, username) >> catalogue
 
         and: "the contents is retrieved from the spec file repo and path from the github api"
-        1 * restApiMock.getRepositoryContent(specFileRepo, specFilePath, null) >> specFileContent
+        1 * restApiMock.getRawRepositoryContent(specFileRepo, specFilePath, null) >> specFileContent
         result == specFileContent
     }
 
@@ -86,7 +86,7 @@ class FilesServiceTest extends Specification {
         1 * catalogueServiceMock.getCatalogueForRepoAndUser(catalogueRepo, username) >> catalogue
 
         and: "no contents is retrieved for the spec file repo and path from the github api"
-        0 * restApiMock.getRepositoryContent(specFileRepo, specFilePath, null) >> specFileContent
+        0 * restApiMock.getRawRepositoryContent(specFileRepo, specFilePath, null) >> specFileContent
         !result
     }
 
@@ -109,7 +109,7 @@ class FilesServiceTest extends Specification {
         1 * catalogueServiceMock.getCatalogueForRepoAndUser(catalogueRepo, username) >> null
 
         and: "no contents is retrieved for the spec file repo and path from the github api"
-        0 * restApiMock.getRepositoryContent(specFileRepo, specFilePath, null) >> specFileContent
+        0 * restApiMock.getRawRepositoryContent(specFileRepo, specFilePath, null) >> specFileContent
         !result
     }
 }

@@ -9,7 +9,6 @@ import spectacular.github.service.github.RestApiClient;
 import spectacular.github.service.github.app.AppAuthenticationService;
 import spectacular.github.service.github.app.AppInstallationContextProvider;
 import spectacular.github.service.common.Repository;
-import spectacular.github.service.github.domain.SearchCodeResultItem;
 
 import java.io.IOException;
 import java.util.List;
@@ -40,7 +39,7 @@ public class InstanceConfigService {
     }
 
     public InstanceConfig getInstanceConfigForRepository(Repository repository) {
-        var fileContents = restApiClient.getRepositoryContent(repository, INSTANCE_CONFIG_FULL_FILE_NAME, null);
+        var fileContents = restApiClient.getRawRepositoryContent(repository, INSTANCE_CONFIG_FULL_FILE_NAME, null);
 
         var mapper = new ObjectMapper(new YAMLFactory());
         InstanceConfigManifest manifest = null;

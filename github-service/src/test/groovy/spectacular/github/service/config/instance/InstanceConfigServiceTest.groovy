@@ -34,7 +34,7 @@ class InstanceConfigServiceTest extends Specification {
         instanceConfig.getInstallationId() == "99"
 
         and: "the yaml manifest file contents is retrieved"
-        1 * restApiClient.getRepositoryContent(repo, "spectacular-app-config.yaml", null) >> validYamlManifest
+        1 * restApiClient.getRawRepositoryContent(repo, "spectacular-app-config.yaml", null) >> validYamlManifest
 
         and: "the instance config contains the values of the manifest"
         instanceConfig.getInstanceConfigManifest()
@@ -75,7 +75,7 @@ class InstanceConfigServiceTest extends Specification {
         instanceConfig.getRepository().getNameWithOwner() == searchCodeResultRepo.getFull_name()
 
         and: "the yaml manifest file contents is retrieved"
-        1 * restApiClient.getRepositoryContent(repo, instanceManifestFilename, null) >> validYamlManifest
+        1 * restApiClient.getRawRepositoryContent(repo, instanceManifestFilename, null) >> validYamlManifest
 
         and: "the instance config contains the values of the manifest"
         instanceConfig.getInstanceConfigManifest()
@@ -112,6 +112,6 @@ class InstanceConfigServiceTest extends Specification {
         result.isEmpty()
 
         and: "no yaml manifest file contents is retrieved"
-        0 * restApiClient.getRepositoryContent(repo, instanceManifestFilename, null)
+        0 * restApiClient.getRawRepositoryContent(repo, instanceManifestFilename, null)
     }
 }

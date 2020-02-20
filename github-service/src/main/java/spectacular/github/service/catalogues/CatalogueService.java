@@ -69,7 +69,7 @@ public class CatalogueService {
     }
 
     private Catalogue getCatalogueForRepository(Repository repository) {
-        var fileContents = restApiClient.getRepositoryContent(repository, CATALOGUE_MANIFEST_FULL_FILE_NAME, null);
+        var fileContents = restApiClient.getRawRepositoryContent(repository, CATALOGUE_MANIFEST_FULL_FILE_NAME, null);
 
         var mapper = new ObjectMapper(new YAMLFactory());
         CatalogueManifest manifest = null;

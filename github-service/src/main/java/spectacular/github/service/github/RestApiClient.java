@@ -29,7 +29,7 @@ public class RestApiClient {
         this.restTemplate = restTemplateBuilder.rootUri(rootUrl).additionalInterceptors(appInstallationAuthenticationHeaderRequestInterceptor).build();
     }
 
-    public String getRepositoryContent(Repository repo, String path, String ref) {
+    public String getRawRepositoryContent(Repository repo, String path, String ref) {
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(REPO_CONTENT_PATH);
         if(ref != null && ref.length() > 0) uriComponentsBuilder.queryParam("ref", ref);
 

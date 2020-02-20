@@ -38,7 +38,7 @@ class SpecServiceTest extends Specification {
         specItem.getFilePath() == specFilePath
 
         and: "the content of the spec file is retrieved from github"
-        1 * restApiClient.getRepositoryContent(specFileRepo, specFilePath, null) >> specFileContent
+        1 * restApiClient.getRawRepositoryContent(specFileRepo, specFilePath, null) >> specFileContent
 
         and: "the spec item contains a parse results of the content"
         specItem.getParseResult()
@@ -66,7 +66,7 @@ class SpecServiceTest extends Specification {
         specItem.getFilePath() == specFilePath
 
         and: "the content of the spec file not found on github"
-        1 * restApiClient.getRepositoryContent(specFileRepo, specFilePath, null) >> {
+        1 * restApiClient.getRawRepositoryContent(specFileRepo, specFilePath, null) >> {
             throw new HttpClientErrorException.NotFound("not found", null, null, null)
         }
 

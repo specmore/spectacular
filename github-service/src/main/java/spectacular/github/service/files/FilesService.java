@@ -24,7 +24,7 @@ public class FilesService {
         if (!catalogue.getCatalogueManifest().getSpecFileLocations().stream()
                 .anyMatch(specFileLocation -> specFileMatches(specFileLocation, catalogueRepo, specRepo, path))) return null;
 
-        return restApiClient.getRepositoryContent(specRepo, path, null);
+        return restApiClient.getRawRepositoryContent(specRepo, path, null);
     }
 
     private static boolean specFileMatches(SpecFileLocation specFileLocation, Repository catalogueRepo, Repository specRepo, String specFilePath) {

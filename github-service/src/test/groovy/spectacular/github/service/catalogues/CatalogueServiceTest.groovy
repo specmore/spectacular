@@ -54,7 +54,7 @@ class CatalogueServiceTest extends Specification {
         catalogue1.getRepository().getNameWithOwner() == searchCodeResultRepo.getFull_name()
 
         and: "the yaml manifest file contents is retrieved"
-        1 * restApiClient.getRepositoryContent(repo, catalogueManifestFilename, null) >> validYamlManifest
+        1 * restApiClient.getRawRepositoryContent(repo, catalogueManifestFilename, null) >> validYamlManifest
 
         and: "the catalogue config contains the values of the manifest"
         catalogue1.getCatalogueManifest()
@@ -107,7 +107,7 @@ class CatalogueServiceTest extends Specification {
         result.isEmpty()
 
         and: "no file contents are retrieved"
-        0 * restApiClient.getRepositoryContent(*_)
+        0 * restApiClient.getRawRepositoryContent(*_)
     }
 
     def "get catalogues filters out incorrect filename matches"() {
@@ -147,7 +147,7 @@ class CatalogueServiceTest extends Specification {
         0 * restApiClient.isUserRepositoryCollaborator(*_)
 
         and: "no file contents are retrieved"
-        0 * restApiClient.getRepositoryContent(*_)
+        0 * restApiClient.getRawRepositoryContent(*_)
     }
 
     def "get catalogue for repository and valid user"() {
@@ -181,7 +181,7 @@ class CatalogueServiceTest extends Specification {
         1 * restApiClient.getRepository(requestRepo) >> repo
 
         and: "the yaml manifest file contents is retrieved"
-        1 * restApiClient.getRepositoryContent(_, catalogueManifestFilename, null) >> validYamlManifest
+        1 * restApiClient.getRawRepositoryContent(_, catalogueManifestFilename, null) >> validYamlManifest
 
         and: "a valid catalogue is returned for the requested repo"
         catalogue
@@ -239,7 +239,7 @@ class CatalogueServiceTest extends Specification {
         0 * restApiClient.getRepository(_)
 
         and: "no file contents are retrieved"
-        0 * restApiClient.getRepositoryContent(*_)
+        0 * restApiClient.getRawRepositoryContent(*_)
 
         and: "no catalogue is returned"
         !catalogue

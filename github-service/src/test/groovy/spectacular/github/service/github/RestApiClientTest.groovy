@@ -28,7 +28,7 @@ class RestApiClientTest extends Specification {
     @SpringBean
     AppInstallationAuthenticationHeaderRequestInterceptor appInstallationAuthenticationHeaderRequestInterceptor = Mock()
 
-    def "GetRepositoryContent"() {
+    def "GetRawRepositoryContent"() {
         given: "a content file to fetch"
         def repo = new Repository("testOwner", "testRepo", null)
         def filePath = "test-file.yaml"
@@ -47,9 +47,13 @@ class RestApiClientTest extends Specification {
                 .andRespond(withSuccess(responseContent, MediaType.APPLICATION_JSON));
 
         and: "the raw content to be returned by the client for a successful response"
-        def contentResult = client.getRepositoryContent(repo, filePath, null)
+        def contentResult = client.getRawRepositoryContent(repo, filePath, null)
         contentResult
         contentResult == responseContent
+    }
+
+    def "GetRepositoryContent"() {
+
     }
 
     def "findFiles"() {
