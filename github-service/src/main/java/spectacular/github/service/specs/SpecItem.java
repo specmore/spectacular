@@ -6,11 +6,13 @@ import spectacular.github.service.specs.openapi.OpenApiSpecParseResult;
 public class SpecItem {
     private final Repository repository;
     private final String filePath;
+    private final String htmlUrl;
     private final OpenApiSpecParseResult parseResult;
 
-    public SpecItem(Repository repository, String filePath, OpenApiSpecParseResult parseResult) {
+    public SpecItem(Repository repository, String filePath, String htmlUrl, OpenApiSpecParseResult parseResult) {
         this.repository = repository;
         this.filePath = filePath;
+        this.htmlUrl = htmlUrl;
         this.parseResult = parseResult;
     }
 
@@ -24,5 +26,9 @@ public class SpecItem {
 
     public OpenApiSpecParseResult getParseResult() {
         return parseResult;
+    }
+
+    public String getHtmlUrl() {
+        return htmlUrl;
     }
 }

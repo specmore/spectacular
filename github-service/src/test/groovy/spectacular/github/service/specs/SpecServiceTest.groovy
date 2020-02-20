@@ -3,6 +3,7 @@ package spectacular.github.service.specs
 import org.springframework.web.client.HttpClientErrorException
 import spectacular.github.service.common.Repository
 import spectacular.github.service.github.RestApiClient
+import spectacular.github.service.github.domain.ContentItem
 import spock.lang.Specification
 
 class SpecServiceTest extends Specification {
@@ -28,17 +29,19 @@ class SpecServiceTest extends Specification {
                 "paths: {}\n" +
                 "components:\n" +
                 "  schemas: {}"
+        def contentItem = new ContentItem("htmlUrl", specFilePath, "file", "some url", Base64.getEncoder().encodeToString(specFileContent.getBytes()), "base64")
 
         when: "the spec item is retrieved"
         def specItem = specService.getSpecItem(specFileRepo, specFilePath)
 
-        then: "a spec item is returned with the spec file's repository and filepath"
+        then: "a spec item is returned with the spec file's repository, filepath and html url"
         specItem
         specItem.getRepository() == specFileRepo
         specItem.getFilePath() == specFilePath
+        specItem.getHtmlUrl() == "some url"
 
         and: "the content of the spec file is retrieved from github"
-        1 * restApiClient.getRawRepositoryContent(specFileRepo, specFilePath, null) >> specFileContent
+        1 * restApiClient.getRepositoryContent(specFileRepo, specFilePath, null) >> contentItem
 
         and: "the spec item contains a parse results of the content"
         specItem.getParseResult()

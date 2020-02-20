@@ -1,6 +1,10 @@
 package spectacular.github.service.github.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Base64;
 
 public class ContentItem {
     private final String name;
@@ -46,5 +50,15 @@ public class ContentItem {
 
     public String getEncoding() {
         return encoding;
+    }
+
+    @JsonIgnore
+    public String getDecodedContent() throws UnsupportedEncodingException {
+        if (encoding.equalsIgnoreCase("base64")) {
+            byte[] decodedBytes = Base64.getDecoder().decode(content);
+            return new String(decodedBytes);
+        }
+
+        throw new UnsupportedEncodingException(encoding);
     }
 }
