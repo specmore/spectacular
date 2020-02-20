@@ -16,20 +16,29 @@ class SpecServiceTest extends Specification {
         def specFilePath = "test-specs/example-spec.yaml"
 
         and: "the spec file has a valid yaml content"
-        def specFileContent = "openapi: 3.0.1\n" +
-                "info:\n" +
-                "  title: An empty API spec\n" +
-                "  version: \"0.1.0\"\n" +
-                "  contact: \n" +
-                "    name: \"The team name going to implement this spec\"\n" +
-                "    url: \"https://github.com/test-owner/actual-api-implementation-repository\"\n" +
-                "tags: \n" +
-                "  - name: Sample Resource\n" +
-                "    description: \"Sample Resource description\"\n" +
-                "paths: {}\n" +
-                "components:\n" +
-                "  schemas: {}"
-        def contentItem = new ContentItem("htmlUrl", specFilePath, "file", "some url", Base64.getEncoder().encodeToString(specFileContent.getBytes()), "base64")
+//        def specFileContent = "openapi: 3.0.1\n" +
+//                "info:\n" +
+//                "  title: An empty API spec\n" +
+//                "  version: \"0.1.0\"\n" +
+//                "  contact: \n" +
+//                "    name: \"The team name going to implement this spec\"\n" +
+//                "    url: \"https://github.com/test-owner/actual-api-implementation-repository\"\n" +
+//                "tags: \n" +
+//                "  - name: Sample Resource\n" +
+//                "    description: \"Sample Resource description\"\n" +
+//                "paths: {}\n" +
+//                "components:\n" +
+//                "  schemas: {}"
+//        def encodedContent = Base64.getEncoder().encodeToString(specFileContent.getBytes())
+        def encodedContent = "b3BlbmFwaTogMy4wLjEKaW5mbzoKICB0aXRsZTogQW4gZW1wdHkgQVBJIHNw\n" +
+                "ZWMKICB2ZXJzaW9uOiAiMC4xLjAiCiAgY29udGFjdDogCiAgICBuYW1lOiAi\n" +
+                "VGhlIHRlYW0gbmFtZSBnb2luZyB0byBpbXBsZW1lbnQgdGhpcyBzcGVjIgog\n" +
+                "ICAgdXJsOiAiaHR0cHM6Ly9naXRodWIuY29tL3Rlc3Qtb3duZXIvYWN0dWFs\n" +
+                "LWFwaS1pbXBsZW1lbnRhdGlvbi1yZXBvc2l0b3J5Igp0YWdzOiAKICAtIG5h\n" +
+                "bWU6IFNhbXBsZSBSZXNvdXJjZQogICAgZGVzY3JpcHRpb246ICJTYW1wbGUg\n" +
+                "UmVzb3VyY2UgZGVzY3JpcHRpb24iCnBhdGhzOiB7fQpjb21wb25lbnRzOgog\n" +
+                "IHNjaGVtYXM6IHt9"
+        def contentItem = new ContentItem("htmlUrl", specFilePath, "file", "some url", encodedContent, "base64")
 
         when: "the spec item is retrieved"
         def specItem = specService.getSpecItem(specFileRepo, specFilePath)

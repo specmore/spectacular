@@ -55,7 +55,7 @@ public class ContentItem {
     @JsonIgnore
     public String getDecodedContent() throws UnsupportedEncodingException {
         if (encoding.equalsIgnoreCase("base64")) {
-            byte[] decodedBytes = Base64.getDecoder().decode(content);
+            byte[] decodedBytes = Base64.getMimeDecoder().decode(content);
             return new String(decodedBytes);
         }
 
