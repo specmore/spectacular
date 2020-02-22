@@ -5,15 +5,15 @@ import spectacular.github.service.github.RestApiClient
 import spectacular.github.service.github.app.AppInstallationContextProvider
 import spectacular.github.service.github.domain.SearchCodeResultItem
 import spectacular.github.service.github.domain.SearchCodeResults
-import spectacular.github.service.specs.SpecEvolution
-import spectacular.github.service.specs.SpecEvolutionService
+import spectacular.github.service.specs.SpecLog
+import spectacular.github.service.specs.SpecLogService
 import spock.lang.Specification
 
 class CatalogueServiceTest extends Specification {
     def catalogueManifestFilename = "spectacular-config.yaml"
     def restApiClient = Mock(RestApiClient)
     def appInstallationContextProvider = Mock(AppInstallationContextProvider)
-    def specEvolutionService = Mock(SpecEvolutionService)
+    def specEvolutionService = Mock(SpecLogService)
     def catalogueService = new CatalogueService(restApiClient, appInstallationContextProvider, specEvolutionService)
 
     def "get catalogues for valid user"() {
@@ -151,8 +151,8 @@ class CatalogueServiceTest extends Specification {
                 "  file-path: \"specs/example-spec.yaml\""
 
         and: "spec evolutions for each file in the manifest"
-        def specEvolution1 = Mock(SpecEvolution)
-        def specEvolution2 = Mock(SpecEvolution)
+        def specEvolution1 = Mock(SpecLog)
+        def specEvolution2 = Mock(SpecLog)
 
         and: "an app installation with access to the repository"
         appInstallationContextProvider.getInstallationId() >> "99"
@@ -190,13 +190,13 @@ class CatalogueServiceTest extends Specification {
         specFile2.getFilePath() == "specs/example-spec.yaml"
 
         and: "spec evolutions are retrieved for each file"
-        1 * specEvolutionService.getSpecEvolutionForSpecRepoAndFile(requestRepo, "specs/example-template.yaml") >> specEvolution1
-        1 * specEvolutionService.getSpecEvolutionForSpecRepoAndFile(Repository.createForNameWithOwner("test-owner2/specs-test2", null), "specs/example-spec.yaml") >> specEvolution2
+        1 * specEvolutionService.getSpecLogForSpecRepoAndFile(requestRepo, "specs/example-template.yaml") >> specEvolution1
+        1 * specEvolutionService.getSpecLogForSpecRepoAndFile(Repository.createForNameWithOwner("test-owner2/specs-test2", null), "specs/example-spec.yaml") >> specEvolution2
 
         and: "the catalogue result contains all the spec evolutions"
-        catalogue.getSpecEvolutions().size() == 2
-        catalogue.getSpecEvolutions()[0] == specEvolution1
-        catalogue.getSpecEvolutions()[1] == specEvolution2
+        catalogue.getSpecLogs().size() == 2
+        catalogue.getSpecLogs()[0] == specEvolution1
+        catalogue.getSpecLogs()[1] == specEvolution2
     }
 
     def "get catalogue returns null for a repository the user does not have access to"() {
@@ -225,6 +225,6 @@ class CatalogueServiceTest extends Specification {
         !catalogue
 
         and: "no spec items are retrieved"
-        0 * specEvolutionService.getSpecEvolutionForSpecRepoAndFile(_, _)
+        0 * specEvolutionService.getSpecLogForSpecRepoAndFile(_, _)
     }
 }

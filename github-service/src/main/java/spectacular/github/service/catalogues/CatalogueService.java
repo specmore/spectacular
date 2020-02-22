@@ -10,8 +10,8 @@ import spectacular.github.service.common.Repository;
 import spectacular.github.service.github.RestApiClient;
 import spectacular.github.service.github.app.AppInstallationContextProvider;
 import spectacular.github.service.github.domain.SearchCodeResultItem;
-import spectacular.github.service.specs.SpecEvolution;
-import spectacular.github.service.specs.SpecEvolutionService;
+import spectacular.github.service.specs.SpecLog;
+import spectacular.github.service.specs.SpecLogService;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,12 +28,12 @@ public class CatalogueService {
 
     private final RestApiClient restApiClient;
     private final AppInstallationContextProvider appInstallationContextProvider;
-    private final SpecEvolutionService specEvolutionService;
+    private final SpecLogService specLogService;
 
-    public CatalogueService(RestApiClient restApiClient, AppInstallationContextProvider appInstallationContextProvider, SpecEvolutionService specEvolutionService) {
+    public CatalogueService(RestApiClient restApiClient, AppInstallationContextProvider appInstallationContextProvider, SpecLogService specLogService) {
         this.restApiClient = restApiClient;
         this.appInstallationContextProvider = appInstallationContextProvider;
-        this.specEvolutionService = specEvolutionService;
+        this.specLogService = specLogService;
     }
 
     public List<Catalogue> getCataloguesForOrgAndUser(String orgName, String username) {
@@ -73,7 +73,7 @@ public class CatalogueService {
 
         var mapper = new ObjectMapper(new YAMLFactory());
         CatalogueManifest manifest = null;
-        List<SpecEvolution> specEvolutions = null;
+        List<SpecLog> specLogs = null;
         String error = null;
         try {
             manifest = mapper.readValue(fileContents, CatalogueManifest.class);
@@ -86,16 +86,16 @@ public class CatalogueService {
         }
 
         if (manifest != null) {
-            specEvolutions = manifest.getSpecFileLocations().stream().map(specFileLocation -> getSpecDetailsForFileLocation(specFileLocation, repository)).collect(Collectors.toList());
+            specLogs = manifest.getSpecFileLocations().stream().map(specFileLocation -> getSpecLogForFileLocation(specFileLocation, repository)).collect(Collectors.toList());
         }
 
-        return new Catalogue(repository, manifest, specEvolutions, error);
+        return new Catalogue(repository, manifest, specLogs, error);
     }
 
-    private SpecEvolution getSpecDetailsForFileLocation(SpecFileLocation specFileLocation, Repository catalogueRepo) {
+    private SpecLog getSpecLogForFileLocation(SpecFileLocation specFileLocation, Repository catalogueRepo) {
         var specFilePath = specFileLocation.getFilePath();
         var specRepo = specFileLocation.getRepo() != null ? specFileLocation.getRepo() : catalogueRepo;
 
-        return specEvolutionService.getSpecEvolutionForSpecRepoAndFile(specRepo, specFilePath);
+        return specLogService.getSpecLogForSpecRepoAndFile(specRepo, specFilePath);
     }
 }
