@@ -1,9 +1,9 @@
 import React from "react";
 import '@testing-library/jest-dom/extend-expect';
-import SpecFileEvolution from "./spec-file-evolution";
+import SpecLog from "./spec-log";
 import { renderWithRouter } from '../common/test-utils';
 
-describe("SpecFileEvolution component", () => {
+describe("SpecLog component", () => {
     test("shows latest agreed spec item with valid openApiSpec title and version", async () => {
         // given a catalogue repository
         const repository = {
@@ -23,12 +23,12 @@ describe("SpecFileEvolution component", () => {
             "parseResult": { "openApiSpec": { "title": "An empty API spec", "version": "0.1.0", "operations": [] }, "errors": [] } 
         };
         
-        const specEvolution = {
+        const specLog = {
             "latestAgreed": specItem
         };
 
         // when spec file item component renders
-        const { getByText } = renderWithRouter(<SpecFileEvolution catalogueRepository={repository} specEvolution={specEvolution} />);
+        const { getByText } = renderWithRouter(<SpecLog catalogueRepository={repository} specLog={specLog} />);
 
         // then the master branch is shown
         expect(getByText("master")).toBeInTheDocument();
@@ -57,12 +57,12 @@ describe("SpecFileEvolution component", () => {
             "parseResult": { "openApiSpec": { "title": "An empty API spec", "version": "0.1.0", "operations": [] }, "errors": [] } 
         };
         
-        const specEvolution = {
+        const specLog = {
             "latestAgreed": specItem
         };
 
         // when spec file item component renders
-        const { getByTestId } = renderWithRouter(<SpecFileEvolution catalogueRepository={repository} specEvolution={specEvolution} />);
+        const { getByTestId } = renderWithRouter(<SpecLog catalogueRepository={repository} specLog={specLog} />);
 
         // then the view spec button is shown
         expect(getByTestId('view-spec-button')).toBeInTheDocument();
@@ -87,18 +87,18 @@ describe("SpecFileEvolution component", () => {
             "parseResult": { "openApiSpec":null,"errors":["The spec file could not be found."] } 
         };
         
-        const specEvolution = {
+        const specLog = {
             "latestAgreed": specItem
         };
 
         // when spec file item component renders
-        const { getByText, getByTestId } = renderWithRouter(<SpecFileEvolution catalogueRepository={repository} specEvolution={specEvolution} />);
+        const { getByText, getByTestId } = renderWithRouter(<SpecLog catalogueRepository={repository} specLog={specLog} />);
 
         // then the file path suffixed by the repo name is shown
         expect(getByText("test-owner/specs-test/specs/example-template.yaml", { exact: false })).toBeInTheDocument();
 
         // and the spec file error item is shown with error message
-        expect(getByTestId('specification-file-evolution-error')).toBeInTheDocument();
+        expect(getByTestId('spec-log-error')).toBeInTheDocument();
         expect(getByText("The spec file could not be found.")).toBeInTheDocument();
     });
 });

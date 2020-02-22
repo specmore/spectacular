@@ -1,11 +1,11 @@
 import React from "react";
 import '@testing-library/jest-dom/extend-expect';
 import CatalogueDetails from "./catalogue-details";
-import SpecFileEvolutionMock from "./spec-file-evolution";
+import SpecLogMock from "./spec-log";
 import { renderWithRouter } from '../common/test-utils';
 
 // mock out the actual spec-file-item
-jest.mock('./spec-file-evolution', () =>  jest.fn(() => null));
+jest.mock('./spec-log', () =>  jest.fn(() => null));
 
 describe("CatalogueDetails component", () => {
   test("renders catalogue details when no error is given", async () => {
@@ -22,7 +22,7 @@ describe("CatalogueDetails component", () => {
             "description": "Specifications for all the interfaces in the across the system X.",
             "spec-files": []
         },
-        specEvolutions: [{}, {}],
+        specLogs: [{}, {}],
         "error": null
     };
 
@@ -39,7 +39,7 @@ describe("CatalogueDetails component", () => {
     expect(getByText("test-owner/specs-test")).toBeInTheDocument();
 
     // and 2 spec file items were created
-    expect(SpecFileEvolutionMock).toHaveBeenCalledTimes(2);
+    expect(SpecLogMock).toHaveBeenCalledTimes(2);
   });
 
   

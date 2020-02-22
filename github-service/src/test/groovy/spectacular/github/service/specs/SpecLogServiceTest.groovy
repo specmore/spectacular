@@ -15,14 +15,14 @@ class SpecLogServiceTest extends Specification {
         and: "a latest agreed spec item on the master branch"
         def latestAgreedSpecItem = Mock(SpecItem)
 
-        when: "the spec evolution is retrieved"
-        def specEvolutionResult = specLogService.getSpecLogForSpecRepoAndFile(specFileRepo, specFilePath)
+        when: "the spec log is retrieved"
+        def specLogResult = specLogService.getSpecLogForSpecRepoAndFile(specFileRepo, specFilePath)
 
         then: "the spec item for the master branch is retrieved"
         1 * specService.getSpecItem(specFileRepo, specFilePath, "master") >> latestAgreedSpecItem
 
-        and: "a valid spec evolution is returned with the latest agreed spec item"
-        specEvolutionResult
-        specEvolutionResult.getLatestAgreed() == latestAgreedSpecItem
+        and: "a valid spec log is returned with the latest agreed spec item"
+        specLogResult
+        specLogResult.getLatestAgreed() == latestAgreedSpecItem
     }
 }

@@ -2,8 +2,8 @@ import React from "react";
 import { Label, List, Icon, Item, Message, Segment, Header } from 'semantic-ui-react'
 import { ViewSpecLinkButton } from "../routes";
 
-const SpecFileEvolutionError = ({specFileFullLocation, errors}) => (
-    <Message icon negative data-testid='specification-file-evolution-error'>
+const SpecLogError = ({specFileFullLocation, errors}) => (
+    <Message icon negative data-testid='spec-log-error'>
         <Icon name='warning sign' />
         <Message.Content>
             <Message.Header>The following errors occurred while processing the specification file '{specFileFullLocation}':</Message.Header>
@@ -14,15 +14,15 @@ const SpecFileEvolutionError = ({specFileFullLocation, errors}) => (
     </Message>
 );
 
-const SpecFileEvolution = ({catalogueRepository, specEvolution}) => {
-    const latestAgreedSpecItem = specEvolution.latestAgreed;
+const SpecLog = ({catalogueRepository, specLog}) => {
+    const latestAgreedSpecItem = specLog.latestAgreed;
     const specFileFullLocation = `${latestAgreedSpecItem.repository.nameWithOwner}/${latestAgreedSpecItem.filePath}`;
-    if (latestAgreedSpecItem.parseResult.errors.length > 0) return (<SpecFileEvolutionError specFileFullLocation={specFileFullLocation} errors={latestAgreedSpecItem.parseResult.errors} />);
+    if (latestAgreedSpecItem.parseResult.errors.length > 0) return (<SpecLogError specFileFullLocation={specFileFullLocation} errors={latestAgreedSpecItem.parseResult.errors} />);
 
     const selectButton = (<ViewSpecLinkButton catalogueRepository={catalogueRepository} specFileLocation={specFileFullLocation} />);
 
     return (
-        <div data-testid='specification-file-evolution'>
+        <div data-testid='spec-log'>
             <Header as='h4' attached='top' block><Icon name='file code'/>{latestAgreedSpecItem.parseResult.openApiSpec.title}</Header>
             <Segment attached>
                 <Header as='h5'>Latest agreed version</Header>
@@ -37,4 +37,4 @@ const SpecFileEvolution = ({catalogueRepository, specEvolution}) => {
     );
 };
 
-export default SpecFileEvolution;
+export default SpecLog;
