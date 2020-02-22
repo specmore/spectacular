@@ -5,16 +5,16 @@ import spectacular.github.service.github.RestApiClient
 import spectacular.github.service.github.app.AppInstallationContextProvider
 import spectacular.github.service.github.domain.SearchCodeResultItem
 import spectacular.github.service.github.domain.SearchCodeResults
-import spectacular.github.service.specs.SpecItem
-import spectacular.github.service.specs.SpecService
+import spectacular.github.service.specs.SpecEvolution
+import spectacular.github.service.specs.SpecEvolutionService
 import spock.lang.Specification
 
 class CatalogueServiceTest extends Specification {
     def catalogueManifestFilename = "spectacular-config.yaml"
     def restApiClient = Mock(RestApiClient)
     def appInstallationContextProvider = Mock(AppInstallationContextProvider)
-    def specService = Mock(SpecService)
-    def catalogueService = new CatalogueService(restApiClient, appInstallationContextProvider, specService)
+    def specEvolutionService = Mock(SpecEvolutionService)
+    def catalogueService = new CatalogueService(restApiClient, appInstallationContextProvider, specEvolutionService)
 
     def "get catalogues for valid user"() {
         given: "a github user"
@@ -86,13 +86,6 @@ class CatalogueServiceTest extends Specification {
         def searchCodeResultRepo = new spectacular.github.service.github.domain.Repository(1234, repo.getNameWithOwner(), null)
         def searchCodeResultItem = new SearchCodeResultItem(catalogueManifestFilename, catalogueManifestFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
         def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
-        and: "a valid Yaml catalogue config Manifest"
-        def validYamlManifest = "name: \"Test Catalogue 1\"\n" +
-                "description: \"Specifications for all the interfaces in the across the system X.\"\n" +
-                "spec-files: \n" +
-                "- file-path: \"specs/example-template.yaml\"\n" +
-                "- repo: \"test-owner2/specs-test2\"\n" +
-                "  file-path: \"specs/example-spec.yaml\""
 
         when: "the get catalogues for a user is called"
         def result = catalogueService.getCataloguesForOrgAndUser(org, username)
@@ -126,13 +119,6 @@ class CatalogueServiceTest extends Specification {
         def searchCodeResultRepo = new spectacular.github.service.github.domain.Repository(1234, repo.getNameWithOwner(), null)
         def searchCodeResultItem = new SearchCodeResultItem(searchFilename, searchFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
         def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
-        and: "a valid Yaml catalogue config Manifest"
-        def validYamlManifest = "name: \"Test Catalogue 1\"\n" +
-                "description: \"Specifications for all the interfaces in the across the system X.\"\n" +
-                "spec-files: \n" +
-                "- file-path: \"specs/example-template.yaml\"\n" +
-                "- repo: \"test-owner2/specs-test2\"\n" +
-                "  file-path: \"specs/example-spec.yaml\""
 
         when: "the get catalogues for a user is called"
         def result = catalogueService.getCataloguesForOrgAndUser(org, username)
@@ -164,9 +150,9 @@ class CatalogueServiceTest extends Specification {
                 "- repo: \"test-owner2/specs-test2\"\n" +
                 "  file-path: \"specs/example-spec.yaml\""
 
-        and: "spec items for each file in the manifest"
-        def specItem1 = Mock(SpecItem)
-        def specItem2 = Mock(SpecItem)
+        and: "spec evolutions for each file in the manifest"
+        def specEvolution1 = Mock(SpecEvolution)
+        def specEvolution2 = Mock(SpecEvolution)
 
         and: "an app installation with access to the repository"
         appInstallationContextProvider.getInstallationId() >> "99"
@@ -203,14 +189,14 @@ class CatalogueServiceTest extends Specification {
         specFile2.getRepo().getNameWithOwner() == "test-owner2/specs-test2"
         specFile2.getFilePath() == "specs/example-spec.yaml"
 
-        and: "spec items are retrieved for each file"
-        1 * specService.getSpecItem(requestRepo, "specs/example-template.yaml") >> specItem1
-        1 * specService.getSpecItem(Repository.createForNameWithOwner("test-owner2/specs-test2", null), "specs/example-spec.yaml") >> specItem2
+        and: "spec evolutions are retrieved for each file"
+        1 * specEvolutionService.getSpecEvolutionForSpecRepoAndFile(requestRepo, "specs/example-template.yaml") >> specEvolution1
+        1 * specEvolutionService.getSpecEvolutionForSpecRepoAndFile(Repository.createForNameWithOwner("test-owner2/specs-test2", null), "specs/example-spec.yaml") >> specEvolution2
 
-        and: "the catalogue result contains all the spec items"
-        catalogue.getSpecItems().size() == 2
-        catalogue.getSpecItems()[0] == specItem1
-        catalogue.getSpecItems()[1] == specItem2
+        and: "the catalogue result contains all the spec evolutions"
+        catalogue.getSpecEvolutions().size() == 2
+        catalogue.getSpecEvolutions()[0] == specEvolution1
+        catalogue.getSpecEvolutions()[1] == specEvolution2
     }
 
     def "get catalogue returns null for a repository the user does not have access to"() {
@@ -219,12 +205,6 @@ class CatalogueServiceTest extends Specification {
 
         and: "a repository with a valid Yaml catalogue config Manifest"
         def repo = new Repository("test-owner","test-repo987")
-        def validYamlManifest = "name: \"Test Catalogue 1\"\n" +
-                "description: \"Specifications for all the interfaces in the across the system X.\"\n" +
-                "spec-files: \n" +
-                "- file-path: \"specs/example-template.yaml\"\n" +
-                "- repo: \"test-owner2/specs-test2\"\n" +
-                "  file-path: \"specs/example-spec.yaml\""
 
         and: "an app installation with access to the repository"
         appInstallationContextProvider.getInstallationId() >> "99"
@@ -245,6 +225,6 @@ class CatalogueServiceTest extends Specification {
         !catalogue
 
         and: "no spec items are retrieved"
-        0 * specService.getSpecItem(_, _)
+        0 * specEvolutionService.getSpecEvolutionForSpecRepoAndFile(_, _)
     }
 }

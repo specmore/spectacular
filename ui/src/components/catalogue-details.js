@@ -1,7 +1,7 @@
 import React from "react";
 import { Icon, Image, Message, Segment, Header, Grid, Item, Label } from 'semantic-ui-react'
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
-import SpecFileItem from './spec-file-item';
+import SpecFileEvolution from './spec-file-evolution';
 
 const CatalogueError = ({error, repository}) => (
     <Message icon negative data-testid='catalogue-details-error-message'>
@@ -13,7 +13,7 @@ const CatalogueError = ({error, repository}) => (
     </Message>
 );
   
-const CatalogueDetails = ({repository, catalogueManifest, specItems}) => (
+const CatalogueDetails = ({repository, catalogueManifest, specEvolutions}) => (
     <div data-testid='catalogue-details-segment'>
         <Header as='h1' textAlign='center'>{catalogueManifest.name}</Header>
         <Header as='h3' attached='top'><Icon name='info' />Details</Header>
@@ -34,15 +34,15 @@ const CatalogueDetails = ({repository, catalogueManifest, specItems}) => (
         </Segment>
         <Header as='h3' attached='top'><Icon name='list' />Interface Specifications</Header>
         <Segment attached>
-            {specItems.map((specItem, index) => (<SpecFileItem key={index} catalogueRepository={repository} specItem={specItem} />))}
+            {specEvolutions.map((specEvolution, index) => (<SpecFileEvolution key={index} catalogueRepository={repository} specEvolution={specEvolution} />))}
         </Segment>
     </div>
 );
 
-const CatalogueDetailsContainer = ({repository, catalogueManifest, specItems, error}) => {  
+const CatalogueDetailsContainer = ({repository, catalogueManifest, specEvolutions, error}) => {  
     if (error) return (<CatalogueError error={error} repository={repository} />);
 
-    return (<CatalogueDetails repository={repository} catalogueManifest={catalogueManifest} specItems={specItems} />);
+    return (<CatalogueDetails repository={repository} catalogueManifest={catalogueManifest} specEvolutions={specEvolutions} />);
 };
 
 export default CatalogueDetailsContainer;

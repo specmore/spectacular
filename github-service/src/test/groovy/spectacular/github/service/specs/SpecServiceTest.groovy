@@ -1,5 +1,6 @@
 package spectacular.github.service.specs
 
+import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 import spectacular.github.service.common.Repository
 import spectacular.github.service.github.RestApiClient
@@ -11,25 +12,12 @@ class SpecServiceTest extends Specification {
     def specService = new SpecService(restApiClient)
 
     def "Get spec item for spec repo and file path returns spec item"() {
-        given: "a spec file repo and path"
+        given: "a spec file repo, path and ref"
         def specFileRepo = new Repository("test-owner", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
+        def ref = "xyz"
 
         and: "the spec file has a valid yaml content"
-//        def specFileContent = "openapi: 3.0.1\n" +
-//                "info:\n" +
-//                "  title: An empty API spec\n" +
-//                "  version: \"0.1.0\"\n" +
-//                "  contact: \n" +
-//                "    name: \"The team name going to implement this spec\"\n" +
-//                "    url: \"https://github.com/test-owner/actual-api-implementation-repository\"\n" +
-//                "tags: \n" +
-//                "  - name: Sample Resource\n" +
-//                "    description: \"Sample Resource description\"\n" +
-//                "paths: {}\n" +
-//                "components:\n" +
-//                "  schemas: {}"
-//        def encodedContent = Base64.getEncoder().encodeToString(specFileContent.getBytes())
         def encodedContent = "b3BlbmFwaTogMy4wLjEKaW5mbzoKICB0aXRsZTogQW4gZW1wdHkgQVBJIHNw\n" +
                 "ZWMKICB2ZXJzaW9uOiAiMC4xLjAiCiAgY29udGFjdDogCiAgICBuYW1lOiAi\n" +
                 "VGhlIHRlYW0gbmFtZSBnb2luZyB0byBpbXBsZW1lbnQgdGhpcyBzcGVjIgog\n" +
@@ -41,16 +29,17 @@ class SpecServiceTest extends Specification {
         def contentItem = new ContentItem("htmlUrl", specFilePath, "file", "some url", encodedContent, "base64")
 
         when: "the spec item is retrieved"
-        def specItem = specService.getSpecItem(specFileRepo, specFilePath)
+        def specItem = specService.getSpecItem(specFileRepo, specFilePath, ref)
 
-        then: "a spec item is returned with the spec file's repository, filepath and html url"
+        then: "a spec item is returned with the spec file's repository, filepath, ref and html url"
         specItem
         specItem.getRepository() == specFileRepo
         specItem.getFilePath() == specFilePath
+        specItem.getRef() == ref
         specItem.getHtmlUrl() == "some url"
 
         and: "the content of the spec file is retrieved from github"
-        1 * restApiClient.getRepositoryContent(specFileRepo, specFilePath, null) >> contentItem
+        1 * restApiClient.getRepositoryContent(specFileRepo, specFilePath, ref) >> contentItem
 
         and: "the spec item contains a parse results of the content"
         specItem.getParseResult()
@@ -65,12 +54,13 @@ class SpecServiceTest extends Specification {
     }
 
     def "Get spec item returns parse error for spec file contents not found"() {
-        given: "a spec file repo and path"
+        given: "a spec file repo, path and ref"
         def specFileRepo = new Repository("test-owner", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
+        def ref = "xyz"
 
         when: "the spec item is retrieved"
-        def specItem = specService.getSpecItem(specFileRepo, specFilePath)
+        def specItem = specService.getSpecItem(specFileRepo, specFilePath, ref)
 
         then: "a spec item is returned with the spec file's repository and filepath"
         specItem
@@ -78,8 +68,8 @@ class SpecServiceTest extends Specification {
         specItem.getFilePath() == specFilePath
 
         and: "the content of the spec file not found on github"
-        1 * restApiClient.getRawRepositoryContent(specFileRepo, specFilePath, null) >> {
-            throw new HttpClientErrorException.NotFound("not found", null, null, null)
+        1 * restApiClient.getRepositoryContent(specFileRepo, specFilePath, ref) >> {
+            throw HttpClientErrorException.create(HttpStatus.NOT_FOUND, "not found", null, null, null)
         }
 
         and: "the spec item contains a parse results of the content"

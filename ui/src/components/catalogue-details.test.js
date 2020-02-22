@@ -1,11 +1,11 @@
 import React from "react";
 import '@testing-library/jest-dom/extend-expect';
 import CatalogueDetails from "./catalogue-details";
-import SpecFileItemMock from "./spec-file-item";
+import SpecFileEvolutionMock from "./spec-file-evolution";
 import { renderWithRouter } from '../common/test-utils';
 
 // mock out the actual spec-file-item
-jest.mock('./spec-file-item', () =>  jest.fn(() => null));
+jest.mock('./spec-file-evolution', () =>  jest.fn(() => null));
 
 describe("CatalogueDetails component", () => {
   test("renders catalogue details when no error is given", async () => {
@@ -22,12 +22,12 @@ describe("CatalogueDetails component", () => {
             "description": "Specifications for all the interfaces in the across the system X.",
             "spec-files": []
         },
-        specItems: [{}, {}],
+        specEvolutions: [{}, {}],
         "error": null
     };
 
     // when catalogue details component renders
-    const { getByTestId, getAllByTestId, getByText } = renderWithRouter(<CatalogueDetails {...catalogue} />);
+    const { getByTestId, getByText } = renderWithRouter(<CatalogueDetails {...catalogue} />);
 
     // then a catalogue details segment is found
     expect(getByTestId('catalogue-details-segment')).toBeInTheDocument();
@@ -39,7 +39,7 @@ describe("CatalogueDetails component", () => {
     expect(getByText("test-owner/specs-test")).toBeInTheDocument();
 
     // and 2 spec file items were created
-    expect(SpecFileItemMock).toHaveBeenCalledTimes(2);
+    expect(SpecFileEvolutionMock).toHaveBeenCalledTimes(2);
   });
 
   

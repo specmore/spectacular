@@ -21,11 +21,11 @@ public class SpecService {
         this.restApiClient = restApiClient;
     }
 
-    public SpecItem getSpecItem(Repository repo, String filePath) {
+    public SpecItem getSpecItem(Repository repo, String filePath, String ref) {
         OpenApiSpecParseResult parseResult = null;
         String htmlUrl = null;
         try {
-            var contentItem = restApiClient.getRepositoryContent(repo, filePath, null);
+            var contentItem = restApiClient.getRepositoryContent(repo, filePath, ref);
             htmlUrl = contentItem.getHtml_url();
             parseResult = OpenApiParser.parseYAML(contentItem.getDecodedContent());
         } catch (HttpClientErrorException.NotFound nf) {
@@ -36,6 +36,6 @@ public class SpecService {
             parseResult = new OpenApiSpecParseResult(null, List.of("The spec file contents from GitHub could not be decoded."));
         }
 
-        return new SpecItem(repo, filePath, htmlUrl, parseResult);
+        return new SpecItem(repo, filePath, htmlUrl, ref, parseResult);
     }
 }

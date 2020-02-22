@@ -7,12 +7,14 @@ public class SpecItem {
     private final Repository repository;
     private final String filePath;
     private final String htmlUrl;
+    private final String ref;
     private final OpenApiSpecParseResult parseResult;
 
-    public SpecItem(Repository repository, String filePath, String htmlUrl, OpenApiSpecParseResult parseResult) {
+    public SpecItem(Repository repository, String filePath, String htmlUrl, String ref, OpenApiSpecParseResult parseResult) {
         this.repository = repository;
         this.filePath = filePath;
         this.htmlUrl = htmlUrl;
+        this.ref = ref;
         this.parseResult = parseResult;
     }
 
@@ -30,5 +32,9 @@ public class SpecItem {
 
     public String getHtmlUrl() {
         return htmlUrl;
+    }
+
+    public String getRef() {
+        return ref;
     }
 }
