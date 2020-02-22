@@ -14,6 +14,21 @@ const SpecLogError = ({specFileFullLocation, errors}) => (
     </Message>
 );
 
+const ProposedChange = ({pullRequest, specItem}) => {
+    const specFileFullLocation = `${specItem.repository.nameWithOwner}/${specItem.filePath}`;
+    if (specItem.parseResult.errors.length > 0) return (<SpecLogError specFileFullLocation={specFileFullLocation} errors={specItem.parseResult.errors} />);
+
+    return(
+        <Segment data-testid='proposed-change'>
+            <p>{pullRequest.title}</p>
+            <Label color='olive' as='a' href={specItem.htmlUrl} target='_blank'>
+                <Icon name='code branch' />{specItem.ref}
+            </Label>
+            <Label circular>{specItem.parseResult.openApiSpec.version}</Label>
+        </Segment>
+    );   
+};
+
 const SpecLog = ({catalogueRepository, specLog}) => {
     const latestAgreedSpecItem = specLog.latestAgreed;
     const specFileFullLocation = `${latestAgreedSpecItem.repository.nameWithOwner}/${latestAgreedSpecItem.filePath}`;
@@ -32,6 +47,7 @@ const SpecLog = ({catalogueRepository, specLog}) => {
                 <Label circular>{latestAgreedSpecItem.parseResult.openApiSpec.version}</Label>
                 {selectButton}
                 <Header as='h5'>Proposed changes</Header>
+                {specLog.proposedChanges.map((proposedChange, index) => (<ProposedChange key={index} {...proposedChange} />))}
             </Segment>
         </div>
     );

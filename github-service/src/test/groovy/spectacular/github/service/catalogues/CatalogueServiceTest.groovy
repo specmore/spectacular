@@ -5,6 +5,8 @@ import spectacular.github.service.github.RestApiClient
 import spectacular.github.service.github.app.AppInstallationContextProvider
 import spectacular.github.service.github.domain.SearchCodeResultItem
 import spectacular.github.service.github.domain.SearchCodeResults
+import spectacular.github.service.pullrequests.PullRequest
+import spectacular.github.service.pullrequests.PullRequestService
 import spectacular.github.service.specs.SpecLog
 import spectacular.github.service.specs.SpecLogService
 import spock.lang.Specification
@@ -14,7 +16,8 @@ class CatalogueServiceTest extends Specification {
     def restApiClient = Mock(RestApiClient)
     def appInstallationContextProvider = Mock(AppInstallationContextProvider)
     def specLogService = Mock(SpecLogService)
-    def catalogueService = new CatalogueService(restApiClient, appInstallationContextProvider, specLogService)
+    def pullRequestService = Mock(PullRequestService)
+    def catalogueService = new CatalogueService(restApiClient, appInstallationContextProvider, specLogService, pullRequestService)
 
     def "get catalogues for valid user"() {
         given: "a github user"
@@ -143,12 +146,17 @@ class CatalogueServiceTest extends Specification {
         and: "a github repository with a valid Yaml catalogue config Manifest with 2 files"
         def repo = new spectacular.github.service.github.domain.Repository(123, "test-owner/test-repo987", "test-url")
         def requestRepo = Repository.createRepositoryFrom(repo)
+        def secondSpecRepo = Repository.createForNameWithOwner("test-owner2/specs-test2")
         def validYamlManifest = "name: \"Test Catalogue 1\"\n" +
                 "description: \"Specifications for all the interfaces in the across the system X.\"\n" +
                 "spec-files: \n" +
                 "- file-path: \"specs/example-template.yaml\"\n" +
                 "- repo: \"test-owner2/specs-test2\"\n" +
                 "  file-path: \"specs/example-spec.yaml\""
+
+        and: "open pull requests for each repository the spec files belong to"
+        def requestRepoOpenPullRequests = [Mock(PullRequest)]
+        def secondSpecRepoOpenPullRequests = [Mock(PullRequest)]
 
         and: "spec logs for each file in the manifest"
         def specLog1 = Mock(SpecLog)
@@ -189,9 +197,13 @@ class CatalogueServiceTest extends Specification {
         specFile2.getRepo().getNameWithOwner() == "test-owner2/specs-test2"
         specFile2.getFilePath() == "specs/example-spec.yaml"
 
+        and: "the open pull request for the repositories of each spec file are retrieved"
+        1 * pullRequestService.getPullRequestsForRepo(requestRepo) >> requestRepoOpenPullRequests
+        1 * pullRequestService.getPullRequestsForRepo(secondSpecRepo) >> secondSpecRepoOpenPullRequests
+
         and: "spec logs are retrieved for each file"
-        1 * specLogService.getSpecLogForSpecRepoAndFile(requestRepo, "specs/example-template.yaml") >> specLog1
-        1 * specLogService.getSpecLogForSpecRepoAndFile(Repository.createForNameWithOwner("test-owner2/specs-test2", null), "specs/example-spec.yaml") >> specLog2
+        1 * specLogService.getSpecLogForSpecRepoAndFile(requestRepo, "specs/example-template.yaml", requestRepoOpenPullRequests) >> specLog1
+        1 * specLogService.getSpecLogForSpecRepoAndFile(secondSpecRepo, "specs/example-spec.yaml", secondSpecRepoOpenPullRequests) >> specLog2
 
         and: "the catalogue result contains all the spec logs"
         catalogue.getSpecLogs().size() == 2

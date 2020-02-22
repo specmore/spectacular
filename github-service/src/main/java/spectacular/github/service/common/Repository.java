@@ -23,6 +23,10 @@ public class Repository {
         this.htmlUrl = htmlUrl;
     }
 
+    public static Repository createForNameWithOwner(String nameWithOwner) {
+        return createForNameWithOwner(nameWithOwner, null);
+    }
+
     public static Repository createForNameWithOwner(String nameWithOwner, String htmlUrl) {
         Assert.hasText(nameWithOwner, "nameWithOwner cannot be null or empty");
 

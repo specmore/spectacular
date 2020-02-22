@@ -24,7 +24,8 @@ describe("SpecLog component", () => {
         };
         
         const specLog = {
-            "latestAgreed": specItem
+            "latestAgreed": specItem,
+            "proposedChanges" : []
         };
 
         // when spec file item component renders
@@ -58,7 +59,8 @@ describe("SpecLog component", () => {
         };
         
         const specLog = {
-            "latestAgreed": specItem
+            "latestAgreed": specItem,
+            "proposedChanges" : []
         };
 
         // when spec file item component renders
@@ -88,7 +90,8 @@ describe("SpecLog component", () => {
         };
         
         const specLog = {
-            "latestAgreed": specItem
+            "latestAgreed": specItem,
+            "proposedChanges" : []
         };
 
         // when spec file item component renders
@@ -100,5 +103,60 @@ describe("SpecLog component", () => {
         // and the spec file error item is shown with error message
         expect(getByTestId('spec-log-error')).toBeInTheDocument();
         expect(getByText("The spec file could not be found.")).toBeInTheDocument();
+    });
+
+    test("shows proposed change with valid openApiSpec title and version", async () => {
+        // given a catalogue repository
+        const repository = {
+            "owner": "test-owner",
+            "name": "specs-test",
+            "htmlUrl": "https://github.com/test-owner/specs-test",
+            "nameWithOwner": "test-owner/specs-test"
+        };
+
+        // and valid latest agreed spec item with title and version
+        const specItem = { 
+            "repository": { 
+                "owner": "test-owner", "name": "specs-test", "htmlUrl": "https://github.com/test-owner/specs-test", "nameWithOwner": "test-owner/specs-test"
+            }, 
+            "filePath": "specs/example-template.yaml", 
+            "ref": "master",
+            "parseResult": { "openApiSpec": { "title": "An empty API spec", "version": "0.1.0", "operations": [] }, "errors": [] } 
+        };
+
+        // and valid proposed change spec item with title and version
+        const changedSpecItem = { 
+            "repository": { 
+                "owner": "test-owner", "name": "specs-test", "htmlUrl": "https://github.com/test-owner/specs-test", "nameWithOwner": "test-owner/specs-test"
+            }, 
+            "filePath": "specs/example-template.yaml", 
+            "ref": "change-branch",
+            "parseResult": { "openApiSpec": { "title": "An changed API spec", "version": "0.1.1", "operations": [] }, "errors": [] } 
+        };
+
+        // and proposed change with pull request
+        const proposedChange = {
+            "pullRequest" : {
+                "title" : "test-pr"
+            },
+            "specItem" : changedSpecItem
+        };
+        
+        const specLog = {
+            "latestAgreed" : specItem,
+            "proposedChanges" : [proposedChange]
+        };
+
+        // when spec file item component renders
+        const { getByText, getByTestId } = renderWithRouter(<SpecLog catalogueRepository={repository} specLog={specLog} />);
+
+        // then a proposed change segment is shown
+        expect(getByTestId('proposed-change')).toBeInTheDocument();
+
+        // then the pull request branch is shown
+        expect(getByText("change-branch")).toBeInTheDocument();
+
+        // and the open api spec title and version is shown
+        expect(getByText("0.1.1")).toBeInTheDocument();
     });
 });

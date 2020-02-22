@@ -4,9 +4,9 @@ import java.util.List;
 
 public class SpecLog {
     private final SpecItem latestAgreed;
-    private final List<SpecItem> proposedChanges;
+    private final List<ProposedSpecChange> proposedChanges;
 
-    public SpecLog(SpecItem latestAgreed, List<SpecItem> proposedChanges) {
+    public SpecLog(SpecItem latestAgreed, List<ProposedSpecChange> proposedChanges) {
         this.latestAgreed = latestAgreed;
         this.proposedChanges = proposedChanges;
     }
@@ -15,7 +15,7 @@ public class SpecLog {
         return latestAgreed;
     }
 
-    public List<SpecItem> getProposedChanges() {
+    public List<ProposedSpecChange> getProposedChanges() {
         return proposedChanges;
     }
 }

@@ -13,6 +13,11 @@ public class SpecFileLocation {
         this.filePath = filePath;
     }
 
+    public SpecFileLocation(Repository repository, String filePath) {
+        this.repo = repository;
+        this.filePath = filePath;
+    }
+
     public Repository getRepo() {
         return repo;
     }
