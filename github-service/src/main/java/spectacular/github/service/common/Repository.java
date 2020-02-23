@@ -75,4 +75,8 @@ public class Repository {
     public static Repository createRepositoryFrom(spectacular.github.service.github.domain.Repository repository) {
         return createForNameWithOwner(repository.getFull_name(), repository.getHtml_url());
     }
+
+    public static Repository createRepositoryFrom(spectacular.github.service.github.graphql.Repository repository) {
+        return createForNameWithOwner(repository.getNameWithOwner(), repository.getUrl());
+    }
 }

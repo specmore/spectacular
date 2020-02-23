@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ResponseData {
-    private final Repository repository;
+    private final RepositoryWithPullRequests repository;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public ResponseData(@JsonProperty("repository") Repository repository) {
+    public ResponseData(@JsonProperty("repository") RepositoryWithPullRequests repository) {
         this.repository = repository;
     }
 
-    public Repository getRepository() {
+    public RepositoryWithPullRequests getRepository() {
         return repository;
     }
 }

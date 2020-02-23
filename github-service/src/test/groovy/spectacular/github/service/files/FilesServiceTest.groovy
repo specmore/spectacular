@@ -49,7 +49,7 @@ class FilesServiceTest extends Specification {
         def specFileContent = "test content"
 
         and: "a catalogue manifest in the same repo containing the requested spec file but with out a repo in the location"
-        def specFileLocation = new SpecFileLocation(null, specFilePath)
+        def specFileLocation = new SpecFileLocation((String)null, specFilePath)
         def catalogueManifest = new CatalogueManifest("test manifest", "test description", [specFileLocation])
         def catalogue = new Catalogue(specFileRepo, catalogueManifest, null, null)
 

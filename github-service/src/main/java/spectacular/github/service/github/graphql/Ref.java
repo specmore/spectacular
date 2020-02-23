@@ -1,7 +1,6 @@
 package spectacular.github.service.github.graphql;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import spectacular.github.service.github.domain.Repository;
 
 public class Ref {
     private final String name;
