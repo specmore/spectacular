@@ -10,11 +10,14 @@ import spectacular.github.service.github.app.AppInstallationAuthenticationHeader
 import spectacular.github.service.common.Repository;
 import spectacular.github.service.github.domain.ContentItem;
 import spectacular.github.service.github.domain.SearchCodeResults;
+import spectacular.github.service.github.graphql.GraphQLRequest;
+import spectacular.github.service.github.graphql.GraphQLResponse;
 
 import java.util.StringJoiner;
 
 @Component
 public class RestApiClient {
+    private static final String GRAPH_QL = "/graphql";
     private static final String SEARCH_CODE_PATH = "/search/code";
     private static final String REPO_PATH = "/repos/{repo}";
     private static final String REPO_CONTENT_PATH = "/repos/{repo}/contents/{path}";
@@ -89,6 +92,14 @@ public class RestApiClient {
 
         String contentUri = uriComponentsBuilder.buildAndExpand(repo.getNameWithOwner()).toUriString();
         ResponseEntity<spectacular.github.service.github.domain.Repository> response = restTemplate.exchange(contentUri, HttpMethod.GET, entity, spectacular.github.service.github.domain.Repository.class);
+        return response.getBody();
+    }
+
+    public GraphQLResponse graphQLQuery(GraphQLRequest graphQLRequest) {
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<GraphQLRequest> entity = new HttpEntity<>(graphQLRequest, headers);
+
+        ResponseEntity<GraphQLResponse> response = restTemplate.postForEntity(GRAPH_QL, entity, GraphQLResponse.class);
         return response.getBody();
     }
 }

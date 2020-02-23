@@ -3,6 +3,7 @@ package spectacular.github.service.pullrequests;
 import spectacular.github.service.common.Repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PullRequest {
     private final Repository repository;
@@ -53,5 +54,13 @@ public class PullRequest {
 
     public Repository getRepository() {
         return repository;
+    }
+
+    public static PullRequest createPullRequestFrom(spectacular.github.service.github.graphql.PullRequest pullRequest) {
+        var repository = Repository.createRepositoryFrom(pullRequest.getHeadRef().getRepository());
+        var branchName = pullRequest.getHeadRef().getName();
+        List<String> labels = pullRequest.getLabels().getNodes().stream().map(label -> label.getName()).collect(Collectors.toList());
+        List<String> changedFiles = pullRequest.getChangedFiles().getNodes().stream().map(file -> file.getPath()).collect(Collectors.toList());
+        return new PullRequest(repository, branchName, pullRequest.getNumber(), pullRequest.getUrl(), labels, changedFiles, pullRequest.getTitle());
     }
 }
