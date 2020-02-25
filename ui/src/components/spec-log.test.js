@@ -2,6 +2,10 @@ import React from "react";
 import '@testing-library/jest-dom/extend-expect';
 import SpecLog from "./spec-log";
 import { renderWithRouter } from '../common/test-utils';
+import ProposedChangeItemMock from './proposed-change-item';
+
+// mock out the actual proposed-change-item
+jest.mock('./proposed-change-item', () =>  jest.fn(() => null));
 
 describe("SpecLog component", () => {
     test("shows latest agreed spec item with valid openApiSpec title and version", async () => {
@@ -123,40 +127,17 @@ describe("SpecLog component", () => {
             "ref": "master",
             "parseResult": { "openApiSpec": { "title": "An empty API spec", "version": "0.1.0", "operations": [] }, "errors": [] } 
         };
-
-        // and valid proposed change spec item with title and version
-        const changedSpecItem = { 
-            "repository": { 
-                "owner": "test-owner", "name": "specs-test", "htmlUrl": "https://github.com/test-owner/specs-test", "nameWithOwner": "test-owner/specs-test"
-            }, 
-            "filePath": "specs/example-template.yaml", 
-            "ref": "change-branch",
-            "parseResult": { "openApiSpec": { "title": "An changed API spec", "version": "0.1.1", "operations": [] }, "errors": [] } 
-        };
-
-        // and proposed change with pull request
-        const proposedChange = {
-            "pullRequest" : {
-                "title" : "test-pr"
-            },
-            "specItem" : changedSpecItem
-        };
         
+        // and a spec log containing two proposed changes
         const specLog = {
             "latestAgreed" : specItem,
-            "proposedChanges" : [proposedChange]
+            "proposedChanges" : [{}, {}]
         };
 
         // when spec file item component renders
-        const { getByText, getByTestId } = renderWithRouter(<SpecLog catalogueRepository={repository} specLog={specLog} />);
+        renderWithRouter(<SpecLog catalogueRepository={repository} specLog={specLog} />);
 
-        // then a proposed change segment is shown
-        expect(getByTestId('proposed-change')).toBeInTheDocument();
-
-        // then the pull request branch is shown
-        expect(getByText("change-branch")).toBeInTheDocument();
-
-        // and the open api spec title and version is shown
-        expect(getByText("0.1.1")).toBeInTheDocument();
+        // then 2 proposed change items are shown
+        expect(ProposedChangeItemMock).toHaveBeenCalledTimes(2);
     });
 });
