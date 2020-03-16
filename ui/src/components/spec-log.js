@@ -1,5 +1,5 @@
 import React from "react";
-import { Label, List, Icon, Item, Message, Segment, Header } from 'semantic-ui-react'
+import { Label, List, Icon, Grid, Message, Segment, Header } from 'semantic-ui-react'
 import { ViewSpecLinkButton } from "../routes";
 import ProposedChangeItem from './proposed-change-item';
 
@@ -32,8 +32,10 @@ const SpecLog = ({catalogueRepository, specLog}) => {
                 </Label>
                 <Label circular>{latestAgreedSpecItem.parseResult.openApiSpec.version}</Label>
                 {selectButton}
-                <Header as='h5'>Proposed changes</Header>
-                {specLog.proposedChanges.map((proposedChange, index) => (<ProposedChangeItem key={index} {...proposedChange} />))}
+                <Header as='h5'>Open change proposals</Header>
+                <Grid divided='vertically'>
+                    {specLog.proposedChanges.map((proposedChange, index) => (<ProposedChangeItem key={index} {...proposedChange} />))}
+                </Grid>
             </Segment>
         </div>
     );

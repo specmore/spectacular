@@ -135,9 +135,12 @@ describe("SpecLog component", () => {
         };
 
         // when spec file item component renders
-        renderWithRouter(<SpecLog catalogueRepository={repository} specLog={specLog} />);
+        const { getByText } = renderWithRouter(<SpecLog catalogueRepository={repository} specLog={specLog} />);
 
-        // then 2 proposed change items are shown
+        // then a proposed changes heading is shown
+        expect(getByText("Open change proposals")).toBeInTheDocument();
+
+        // and 2 proposed change items are shown
         expect(ProposedChangeItemMock).toHaveBeenCalledTimes(2);
     });
 });
