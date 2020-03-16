@@ -1,7 +1,7 @@
 import React from "react";
 import { Label, List, Icon, Grid, Message, Segment, Header } from 'semantic-ui-react'
 import { ViewSpecLinkButton } from "../routes";
-import ProposedChangeItem from './proposed-change-item';
+import ProposedChangesList from './proposed-changes-list';
 
 const SpecLogError = ({specFileFullLocation, errors}) => (
     <Message icon negative data-testid='spec-log-error'>
@@ -32,10 +32,7 @@ const SpecLog = ({catalogueRepository, specLog}) => {
                 </Label>
                 <Label circular>{latestAgreedSpecItem.parseResult.openApiSpec.version}</Label>
                 {selectButton}
-                <Header as='h5'>Open change proposals</Header>
-                <Grid divided='vertically'>
-                    {specLog.proposedChanges.map((proposedChange, index) => (<ProposedChangeItem key={index} {...proposedChange} />))}
-                </Grid>
+                {specLog.proposedChanges && specLog.proposedChanges.length > 0 && (<ProposedChangesList proposedChanges={specLog.proposedChanges} />)}
             </Segment>
         </div>
     );

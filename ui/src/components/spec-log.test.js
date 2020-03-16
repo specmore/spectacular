@@ -2,10 +2,13 @@ import React from "react";
 import '@testing-library/jest-dom/extend-expect';
 import SpecLog from "./spec-log";
 import { renderWithRouter } from '../common/test-utils';
-import ProposedChangeItemMock from './proposed-change-item';
+import ProposedChangesListMock from './proposed-changes-list';
 
-// mock out the actual proposed-change-item
-jest.mock('./proposed-change-item', () =>  jest.fn(() => null));
+// mock out the actual proposed-changes-list
+jest.mock('./proposed-changes-list', () =>  jest.fn(() => null));
+afterEach(() => {
+    ProposedChangesListMock.mockClear();
+});
 
 describe("SpecLog component", () => {
     test("shows latest agreed spec item with valid openApiSpec title and version", async () => {
@@ -109,7 +112,7 @@ describe("SpecLog component", () => {
         expect(getByText("The spec file could not be found.")).toBeInTheDocument();
     });
 
-    test("shows proposed change with valid openApiSpec title and version", async () => {
+    test("shows proposed changes list for one or many proposed changes", async () => {
         // given a catalogue repository
         const repository = {
             "owner": "test-owner",
@@ -135,12 +138,41 @@ describe("SpecLog component", () => {
         };
 
         // when spec file item component renders
-        const { getByText } = renderWithRouter(<SpecLog catalogueRepository={repository} specLog={specLog} />);
+        renderWithRouter(<SpecLog catalogueRepository={repository} specLog={specLog} />);
 
-        // then a proposed changes heading is shown
-        expect(getByText("Open change proposals")).toBeInTheDocument();
+        // then a proposed changes list is shown
+        expect(ProposedChangesListMock).toHaveBeenCalledTimes(1);
+    });
 
-        // and 2 proposed change items are shown
-        expect(ProposedChangeItemMock).toHaveBeenCalledTimes(2);
+    test("does not shows proposed changes list for fo zero proposed changes", async () => {
+        // given a catalogue repository
+        const repository = {
+            "owner": "test-owner",
+            "name": "specs-test",
+            "htmlUrl": "https://github.com/test-owner/specs-test",
+            "nameWithOwner": "test-owner/specs-test"
+        };
+
+        // and valid latest agreed spec item with title and version
+        const specItem = { 
+            "repository": { 
+                "owner": "test-owner", "name": "specs-test", "htmlUrl": "https://github.com/test-owner/specs-test", "nameWithOwner": "test-owner/specs-test"
+            }, 
+            "filePath": "specs/example-template.yaml", 
+            "ref": "master",
+            "parseResult": { "openApiSpec": { "title": "An empty API spec", "version": "0.1.0", "operations": [] }, "errors": [] } 
+        };
+        
+        // and a spec log containing two proposed changes
+        const specLog = {
+            "latestAgreed" : specItem,
+            "proposedChanges" : []
+        };
+
+        // when spec file item component renders
+        renderWithRouter(<SpecLog catalogueRepository={repository} specLog={specLog} />);
+
+        // then no proposed changes list is shown
+        expect(ProposedChangesListMock).not.toHaveBeenCalled();
     });
 });
