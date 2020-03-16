@@ -1,6 +1,7 @@
 import React from "react";
-import { Label, List, Icon, Grid, Message, Segment, Header } from 'semantic-ui-react'
+import { Label, List, Icon, Message, Segment, Header } from 'semantic-ui-react'
 import { ViewSpecLinkButton } from "../routes";
+import LatestAgreedVersion from "./latest-agreed-version";
 import ProposedChangesList from './proposed-changes-list';
 
 const SpecLogError = ({specFileFullLocation, errors}) => (
@@ -15,23 +16,16 @@ const SpecLogError = ({specFileFullLocation, errors}) => (
     </Message>
 );
 
-const SpecLog = ({catalogueRepository, specLog}) => {
+const SpecLog = ({specLog}) => {
     const latestAgreedSpecItem = specLog.latestAgreed;
     const specFileFullLocation = `${latestAgreedSpecItem.repository.nameWithOwner}/${latestAgreedSpecItem.filePath}`;
     if (latestAgreedSpecItem.parseResult.errors.length > 0) return (<SpecLogError specFileFullLocation={specFileFullLocation} errors={latestAgreedSpecItem.parseResult.errors} />);
-
-    const selectButton = (<ViewSpecLinkButton catalogueRepository={catalogueRepository} specFileLocation={specFileFullLocation} />);
 
     return (
         <div data-testid='spec-log'>
             <Header as='h4' attached='top' block><Icon name='file code'/>{latestAgreedSpecItem.parseResult.openApiSpec.title}</Header>
             <Segment attached>
-                <Header as='h5'>Latest agreed version</Header>
-                <Label color='olive' as='a' href={latestAgreedSpecItem.htmlUrl} target='_blank'>
-                    <Icon name='code branch' />{latestAgreedSpecItem.ref}
-                </Label>
-                <Label circular>{latestAgreedSpecItem.parseResult.openApiSpec.version}</Label>
-                {selectButton}
+                <LatestAgreedVersion latestAgreedSpecItem={specLog.latestAgreed} />
                 {specLog.proposedChanges && specLog.proposedChanges.length > 0 && (<ProposedChangesList proposedChanges={specLog.proposedChanges} />)}
             </Segment>
         </div>

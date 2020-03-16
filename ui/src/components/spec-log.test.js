@@ -2,25 +2,24 @@ import React from "react";
 import '@testing-library/jest-dom/extend-expect';
 import SpecLog from "./spec-log";
 import { renderWithRouter } from '../common/test-utils';
+import LatestAgreedVersionMock from './latest-agreed-version';
 import ProposedChangesListMock from './proposed-changes-list';
+import LatestAgreedVersion from "./latest-agreed-version";
 
-// mock out the actual proposed-changes-list
+// mock out the actual implementations
+jest.mock('./latest-agreed-version', () =>  jest.fn(() => null));
+afterEach(() => {
+    LatestAgreedVersionMock.mockClear();
+});
+
 jest.mock('./proposed-changes-list', () =>  jest.fn(() => null));
 afterEach(() => {
     ProposedChangesListMock.mockClear();
 });
 
 describe("SpecLog component", () => {
-    test("shows latest agreed spec item with valid openApiSpec title and version", async () => {
-        // given a catalogue repository
-        const repository = {
-            "owner": "test-owner",
-            "name": "specs-test",
-            "htmlUrl": "https://github.com/test-owner/specs-test",
-            "nameWithOwner": "test-owner/specs-test"
-        };
-
-        // and valid latest agreed spec item with title and version
+    test("shows latest agreed spec item's openApiSpec title as header", async () => {
+        // given a valid latest agreed spec item with title
         const specItem = { 
             "repository": { 
                 "owner": "test-owner", "name": "specs-test", "htmlUrl": "https://github.com/test-owner/specs-test", "nameWithOwner": "test-owner/specs-test"
@@ -35,27 +34,15 @@ describe("SpecLog component", () => {
             "proposedChanges" : []
         };
 
-        // when spec file item component renders
-        const { getByText } = renderWithRouter(<SpecLog catalogueRepository={repository} specLog={specLog} />);
+        // when spec log component renders
+        const { getByText } = renderWithRouter(<SpecLog specLog={specLog} />);
 
-        // then the master branch is shown
-        expect(getByText("master")).toBeInTheDocument();
-
-        // and the open api spec title and version is shown
+        // then the open api spec title is shown
         expect(getByText("An empty API spec")).toBeInTheDocument();
-        expect(getByText("0.1.0")).toBeInTheDocument();
     });
 
-    test("renders a view spec button for spec item with no parse result errors", async () => {
-        // given a catalogue repository
-        const repository = {
-            "owner": "test-owner",
-            "name": "specs-test",
-            "htmlUrl": "https://github.com/test-owner/specs-test",
-            "nameWithOwner": "test-owner/specs-test"
-        };
-
-        // and latest agreed spec item with no parse results errors
+    test("shows latest agreed version component for valid latest agreed spec item", async () => {
+        // given a valid latest agreed spec item with title
         const specItem = { 
             "repository": { 
                 "owner": "test-owner", "name": "specs-test", "htmlUrl": "https://github.com/test-owner/specs-test", "nameWithOwner": "test-owner/specs-test"
@@ -70,23 +57,15 @@ describe("SpecLog component", () => {
             "proposedChanges" : []
         };
 
-        // when spec file item component renders
-        const { getByTestId } = renderWithRouter(<SpecLog catalogueRepository={repository} specLog={specLog} />);
+        // when spec log component renders
+        renderWithRouter(<SpecLog specLog={specLog} />);
 
-        // then the view spec button is shown
-        expect(getByTestId('view-spec-button')).toBeInTheDocument();
+        // then a latest agreed version item is shown
+        expect(LatestAgreedVersion).toHaveBeenCalledTimes(1);
     });
 
     test("shows spec item error message for spec item with parse result errors", async () => {
-        // given a catalogue repository
-        const repository = {
-            "owner": "test-owner",
-            "name": "specs-test",
-            "htmlUrl": "https://github.com/test-owner/specs-test",
-            "nameWithOwner": "test-owner/specs-test"
-        };
-
-        // and spec item with parse errors
+        // given a spec item with parse errors
         const specItem = { 
             "repository": { 
                 "owner": "test-owner", "name": "specs-test", "htmlUrl": "https://github.com/test-owner/specs-test", "nameWithOwner": "test-owner/specs-test"
@@ -102,7 +81,7 @@ describe("SpecLog component", () => {
         };
 
         // when spec file item component renders
-        const { getByText, getByTestId } = renderWithRouter(<SpecLog catalogueRepository={repository} specLog={specLog} />);
+        const { getByText, getByTestId } = renderWithRouter(<SpecLog specLog={specLog} />);
 
         // then the file path suffixed by the repo name is shown
         expect(getByText("test-owner/specs-test/specs/example-template.yaml", { exact: false })).toBeInTheDocument();
@@ -113,15 +92,7 @@ describe("SpecLog component", () => {
     });
 
     test("shows proposed changes list for one or many proposed changes", async () => {
-        // given a catalogue repository
-        const repository = {
-            "owner": "test-owner",
-            "name": "specs-test",
-            "htmlUrl": "https://github.com/test-owner/specs-test",
-            "nameWithOwner": "test-owner/specs-test"
-        };
-
-        // and valid latest agreed spec item with title and version
+        // given valid latest agreed spec item with title and version
         const specItem = { 
             "repository": { 
                 "owner": "test-owner", "name": "specs-test", "htmlUrl": "https://github.com/test-owner/specs-test", "nameWithOwner": "test-owner/specs-test"
@@ -138,22 +109,14 @@ describe("SpecLog component", () => {
         };
 
         // when spec file item component renders
-        renderWithRouter(<SpecLog catalogueRepository={repository} specLog={specLog} />);
+        renderWithRouter(<SpecLog specLog={specLog} />);
 
         // then a proposed changes list is shown
         expect(ProposedChangesListMock).toHaveBeenCalledTimes(1);
     });
 
-    test("does not shows proposed changes list for fo zero proposed changes", async () => {
-        // given a catalogue repository
-        const repository = {
-            "owner": "test-owner",
-            "name": "specs-test",
-            "htmlUrl": "https://github.com/test-owner/specs-test",
-            "nameWithOwner": "test-owner/specs-test"
-        };
-
-        // and valid latest agreed spec item with title and version
+    test("does not shows proposed changes list for zero proposed changes", async () => {
+        // given a valid latest agreed spec item with title and version
         const specItem = { 
             "repository": { 
                 "owner": "test-owner", "name": "specs-test", "htmlUrl": "https://github.com/test-owner/specs-test", "nameWithOwner": "test-owner/specs-test"
@@ -170,7 +133,7 @@ describe("SpecLog component", () => {
         };
 
         // when spec file item component renders
-        renderWithRouter(<SpecLog catalogueRepository={repository} specLog={specLog} />);
+        renderWithRouter(<SpecLog specLog={specLog} />);
 
         // then no proposed changes list is shown
         expect(ProposedChangesListMock).not.toHaveBeenCalled();
