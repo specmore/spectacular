@@ -1,5 +1,5 @@
 import React from "react";
-import { Label, Icon, Header } from 'semantic-ui-react'
+import { Label, Icon, Header, Segment } from 'semantic-ui-react'
 import { ViewSpecLinkButton } from "../routes";
 
 const LatestAgreedVersion = ({latestAgreedSpecItem}) => {
@@ -7,14 +7,16 @@ const LatestAgreedVersion = ({latestAgreedSpecItem}) => {
     const selectButton = (<ViewSpecLinkButton specFileLocation={specFileFullLocation} />);
 
     return (
-        <div data-testid='latest-agreed-version'>
-            <Header as='h5'>Latest agreed version</Header>
-            <Label color='olive' as='a' href={latestAgreedSpecItem.htmlUrl} target='_blank'>
-                <Icon name='code branch' />{latestAgreedSpecItem.ref}
-            </Label>
-            <Label circular>{latestAgreedSpecItem.parseResult.openApiSpec.version}</Label>
-            {selectButton}
-        </div>
+        <React.Fragment>
+            <Header as='h5' attached='top'>Latest agreed version</Header>
+            <Segment attached data-testid='latest-agreed-version'>
+                <Label color='olive' as='a' href={latestAgreedSpecItem.htmlUrl} target='_blank'>
+                    <Icon name='code branch' />{latestAgreedSpecItem.ref}
+                </Label>
+                <Label circular>{latestAgreedSpecItem.parseResult.openApiSpec.version}</Label>
+                {selectButton}
+            </Segment>
+        </React.Fragment>
     );
 };
 
