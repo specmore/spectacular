@@ -34,7 +34,7 @@ const CatalogueDetails = ({repository, catalogueManifest, specLogs}) => (
         </Segment>
         <Header as='h3' attached='top'><Icon name='list' />Interface Specifications</Header>
         <Segment attached>
-            {specLogs.map((specLog, index) => (<SpecLog key={index} catalogueRepository={repository} specLog={specLog} />))}
+            {specLogs.map((specLog, index) => (<SpecLog key={index} specLog={specLog} />))}
         </Segment>
     </div>
 );
