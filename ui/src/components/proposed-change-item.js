@@ -1,5 +1,5 @@
 import React from "react";
-import { Label, List, Icon, Grid, Message } from 'semantic-ui-react'
+import { Label, List, Icon, Message, Segment } from 'semantic-ui-react'
 
 const SpecItemError = ({specItem}) => (
     <Message icon negative data-testid='spec-item-error'>
@@ -30,19 +30,15 @@ const ChangedSpecItem = ({specItem}) => {
 };
 
 const ProposedChange = ({pullRequest, specItem}) => (
-    <Grid.Row>
-        <Grid.Column>
-        <div data-testid='proposed-change-item'>
-            <a href={pullRequest.url} target='_blank'>
-                <Label circular color='grey'>#{pullRequest.number}</Label> 
-                <span style={{marginLeft:'0.5em', fontWeight:'bold'}}>{pullRequest.title}</span>
-            </a>
-            <div style={{marginTop:'0.5em'}}>
-                {specItem && (<ChangedSpecItem  specItem={specItem} />)}
-            </div>
+    <Segment attached>
+        <a href={pullRequest.url} target='_blank'>
+            <Label circular color='grey'>#{pullRequest.number}</Label> 
+            <span style={{marginLeft:'0.5em', fontWeight:'bold'}}>{pullRequest.title}</span>
+        </a>
+        <div style={{marginTop:'0.5em'}}>
+            {specItem && (<ChangedSpecItem  specItem={specItem} />)}
         </div>
-        </Grid.Column>
-    </Grid.Row>
+    </Segment>
 );
 
 export default ProposedChange;
