@@ -25,11 +25,12 @@ public class FilesController {
         this.filesService = filesService;
     }
 
-    @GetMapping("api/catalogues/{catalogue-owner}/{catalogue-repo}/files/{file-owner}/{file-repo}/**")
+    @GetMapping("api/catalogues/{catalogue-owner}/{catalogue-repo}/files/{file-owner}/{file-repo}/{ref-name}/**")
     public ResponseEntity<String> getFileContents(@PathVariable("catalogue-owner") String catalogueOwner,
                                                   @PathVariable("catalogue-repo") String catalogueRepoName,
                                                   @PathVariable("file-owner") String fileOwner,
                                                   @PathVariable("file-repo") String fileRepoName,
+                                                  @PathVariable("ref-name") String refName,
                                                   HttpServletRequest request,
                                                   JwtAuthenticationToken authToken) {
         Repository catalogueRepo = new Repository(catalogueOwner, catalogueRepoName);
@@ -37,7 +38,7 @@ public class FilesController {
         String path = extractPathFromPattern(request);
         String fileContent;
         try {
-            fileContent = filesService.getFileContent(catalogueRepo, fileRepo, path, authToken.getName());
+            fileContent = filesService.getFileContent(catalogueRepo, fileRepo, path, refName, authToken.getName());
         } catch (HttpClientErrorException.NotFound nf) {
             logger.debug("Failed to retrieve file contents due an file not found on the github api.", nf);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);

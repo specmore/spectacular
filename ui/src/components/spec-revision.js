@@ -21,7 +21,7 @@ const SpecRevision = ({specItem, branchColor}) => {
         branchColor='olive'
     }
 
-    const specFileFullLocation = `${specItem.repository.nameWithOwner}/${specItem.filePath}`;
+    const specFileFullLocation = `${specItem.repository.nameWithOwner}/${specItem.ref}/${specItem.filePath}`;
     const selectButton = (<ViewSpecLinkButton specFileLocation={specFileFullLocation} />);
 
     if (specItem.parseResult.errors.length > 0) 
