@@ -10,14 +10,14 @@ const PullRequestHeader = ({pullRequest}) => (
 );
 
 const ProposedChange = ({pullRequest, specItem}) => (
-    <Segment attached>
+    <React.Fragment>
         <div>
             <PullRequestHeader pullRequest={pullRequest} />
         </div>
         <div style={{marginTop:'0.5em'}}>
             <SpecRevision specItem={specItem} branchColor='yellow'/>
         </div>
-    </Segment>
+    </React.Fragment>
 );
 
 export default ProposedChange;

@@ -3,8 +3,7 @@ import '@testing-library/jest-dom/extend-expect';
 import SpecLog from "./spec-log";
 import { renderWithRouter } from '../common/test-utils';
 import LatestAgreedVersionMock from './latest-agreed-version';
-import ProposedChangesListMock from './proposed-changes-list';
-import LatestAgreedVersion from "./latest-agreed-version";
+import ProposedChangeItemMock from './proposed-change-item';
 
 // mock out the actual implementations
 jest.mock('./latest-agreed-version', () =>  jest.fn(() => null));
@@ -12,9 +11,9 @@ afterEach(() => {
     LatestAgreedVersionMock.mockClear();
 });
 
-jest.mock('./proposed-changes-list', () =>  jest.fn(() => null));
+jest.mock('./proposed-change-item', () =>  jest.fn(() => null));
 afterEach(() => {
-    ProposedChangesListMock.mockClear();
+    ProposedChangeItemMock.mockClear();
 });
 
 describe("SpecLog component", () => {
@@ -61,7 +60,7 @@ describe("SpecLog component", () => {
         renderWithRouter(<SpecLog specLog={specLog} />);
 
         // then a latest agreed version item is shown
-        expect(LatestAgreedVersion).toHaveBeenCalledTimes(1);
+        expect(LatestAgreedVersionMock).toHaveBeenCalledTimes(1);
     });
 
     test("shows spec item error message for spec item with parse result errors", async () => {
@@ -103,39 +102,19 @@ describe("SpecLog component", () => {
         };
         
         // and a spec log containing two proposed changes
+        let proposedSpec1 = JSON.parse(JSON.stringify(specItem));
+        proposedSpec1.ref = "proposal1";
+        let proposedSpec2 = JSON.parse(JSON.stringify(specItem));
+        proposedSpec2.ref = "proposal2";
         const specLog = {
             "latestAgreed" : specItem,
-            "proposedChanges" : [{}, {}]
+            "proposedChanges" : [{specItem: proposedSpec1}, {specItem: proposedSpec2}]
         };
 
         // when spec file item component renders
         renderWithRouter(<SpecLog specLog={specLog} />);
 
-        // then a proposed changes list is shown
-        expect(ProposedChangesListMock).toHaveBeenCalledTimes(1);
-    });
-
-    test("does not shows proposed changes list for zero proposed changes", async () => {
-        // given a valid latest agreed spec item with title and version
-        const specItem = { 
-            "repository": { 
-                "owner": "test-owner", "name": "specs-test", "htmlUrl": "https://github.com/test-owner/specs-test", "nameWithOwner": "test-owner/specs-test"
-            }, 
-            "filePath": "specs/example-template.yaml", 
-            "ref": "master",
-            "parseResult": { "openApiSpec": { "title": "An empty API spec", "version": "0.1.0", "operations": [] }, "errors": [] } 
-        };
-        
-        // and a spec log containing two proposed changes
-        const specLog = {
-            "latestAgreed" : specItem,
-            "proposedChanges" : []
-        };
-
-        // when spec file item component renders
-        renderWithRouter(<SpecLog specLog={specLog} />);
-
-        // then no proposed changes list is shown
-        expect(ProposedChangesListMock).not.toHaveBeenCalled();
+        // then a proposed change item is shown for each proposal
+        expect(ProposedChangeItemMock).toHaveBeenCalledTimes(2);
     });
 });
