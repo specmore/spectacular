@@ -49,7 +49,7 @@ const miniCssExtractPlugin = new MiniCssExtractPlugin({
             },
             proxy: {
                 '/api': {
-                    target: 'http://localhost:5000',
+                    target: 'http://localhost:5005',
                     headers: {
                         'x-spec-installation-id' : process.env.SPECTACULAR_GITHUB_APP_INSTALLATION_ID
                     }

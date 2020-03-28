@@ -1,0 +1,23 @@
+{
+  "id" : "c1e031e2-0ca0-3274-9ce7-ccaa36dcb09a",
+  "request" : {
+    "url" : "/favicon.ico",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 400,
+    "bodyFileName" : "body-favicon.ico-AkLeo.json",
+    "headers" : {
+      "Vary" : [ "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers" ],
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "1; mode=block",
+      "Cache-Control" : "no-cache, no-store, max-age=0, must-revalidate",
+      "Pragma" : "no-cache",
+      "Expires" : "0",
+      "X-Frame-Options" : "DENY",
+      "Content-Type" : "application/json;charset=ISO-8859-1",
+      "Date" : "Sat, 28 Mar 2020 09:21:56 GMT"
+    }
+  },
+  "uuid" : "c1e031e2-0ca0-3274-9ce7-ccaa36dcb09a"
+}

@@ -1,0 +1,23 @@
+{
+  "id" : "699b5067-f062-3ceb-8f61-c92f794a5bc6",
+  "request" : {
+    "url" : "/api/catalogues/pburls/specs-test",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-api-catalogues-pburls-specs-test-rVK8Y.json",
+    "headers" : {
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "1; mode=block",
+      "Cache-Control" : "no-cache, no-store, max-age=0, must-revalidate",
+      "Pragma" : "no-cache",
+      "Expires" : "0",
+      "X-Frame-Options" : "DENY",
+      "Content-Type" : "application/json",
+      "Date" : "Sat, 28 Mar 2020 09:23:46 GMT",
+      "Keep-Alive" : "timeout=60"
+    }
+  },
+  "uuid" : "699b5067-f062-3ceb-8f61-c92f794a5bc6"
+}

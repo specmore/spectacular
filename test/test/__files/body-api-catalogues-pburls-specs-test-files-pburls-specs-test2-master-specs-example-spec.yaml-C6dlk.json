@@ -1,0 +1,13 @@
+openapi: 3.0.1
+info:
+  title: An example API spec
+  version: "0.1.0"
+  contact: 
+    name: "The team name going to implement this spec"
+    url: "https://github.com/sky-uk/actual-api-implementation-repository"
+tags: 
+  - name: Example Resource
+    description: "Example Resource description"
+paths: {}
+components:
+  schemas: {}
