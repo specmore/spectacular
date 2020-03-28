@@ -24,6 +24,7 @@ public class PullRequestService {
             "            nodes {\n" +
             "                number\n" +
             "                url\n" +
+            "                updatedAt\n" +
             "                headRef { name repository { nameWithOwner url } }\n" +
             "                labels(first: 100) {\n" +
             "                    totalCount\n" +

@@ -4,6 +4,8 @@ import spectacular.github.service.common.Repository
 import spectacular.github.service.pullrequests.PullRequest
 import spock.lang.Specification
 
+import java.time.ZonedDateTime
+
 class SpecLogServiceTest extends Specification {
     def specService = Mock(SpecService)
     def specLogService = new SpecLogService(specService)
@@ -34,7 +36,7 @@ class SpecLogServiceTest extends Specification {
 
         and: "an open pull request that changed the spec file in another branch"
         def changeBranch = "test-branch"
-        def openPullRequest = new PullRequest(specFileRepo, changeBranch, 1, "test-url", [], [specFilePath], "test-pr")
+        def openPullRequest = new PullRequest(specFileRepo, changeBranch, 1, "test-url", [], [specFilePath], "test-pr", ZonedDateTime.now())
         def changedSpecItem = Mock(SpecItem)
 
         when: "the spec log is retrieved"
