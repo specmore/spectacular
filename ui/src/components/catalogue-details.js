@@ -16,7 +16,7 @@ const CatalogueError = ({error, repository}) => (
 const CatalogueDetails = ({repository, catalogueManifest, specLogs}) => (
     <div data-testid='catalogue-details-segment'>
         <Header as='h1' textAlign='center'>{catalogueManifest.name}</Header>
-        <Header as='h3' attached='top'><Icon name='info' />Details</Header>
+        <Header as='h3' attached='top'><Icon name='info' />Catalogue Details</Header>
         <Segment attached>
             <Grid divided>
                 <Grid.Row>
@@ -32,7 +32,7 @@ const CatalogueDetails = ({repository, catalogueManifest, specLogs}) => (
                 <Icon name='github' />{repository.nameWithOwner}
             </Label>
         </Segment>
-        <Header as='h3' attached='top'><Icon name='list' />Interface Specifications</Header>
+        <Header as='h3' attached='top'><Icon name='list' />Interfaces</Header>
         <Segment attached>
             {specLogs.map((specLog, index) => (<SpecLog key={index} specLog={specLog} />))}
         </Segment>
