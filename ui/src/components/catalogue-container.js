@@ -7,6 +7,7 @@ import CatalogueDetails from './catalogue-details';
 import SwaggerUI from "swagger-ui-react";
 import "swagger-ui-react/swagger-ui.css";
 import "./catalogue-container.css";
+import { CloseSpecButton } from '../routes';
 
 const CatalogueContainerLoading = ({owner, repo}) => (
     <Segment vertical textAlign='center'>
@@ -66,6 +67,7 @@ const CatalogueContainer = () => {
                 <CatalogueContainerSegment catalogue={catalogue}/>
             </Container>
             <div className='side-by-side-column' data-testid='catalogue-container-swagger-ui'>
+                <CloseSpecButton />
                 <SwaggerUI url={fileApiURL}/>
             </div>
         </div>

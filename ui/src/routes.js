@@ -27,3 +27,13 @@ export const ViewSpecLinkButton = ({specFileLocation, isSelected}) => {
         </Button>
     );
 }
+
+export const CloseSpecButton = () => {
+    const { owner, repo } = useParams();
+    const catalogueOnlyLink = CreateCatalogueContainerLocation(owner, repo);
+    return (
+        <Button icon compact floated='right' labelPosition='right' as={Link} to={catalogueOnlyLink} data-testid='close-spec-button' style={{marginTop: "10px"}}>
+            Close <Icon name='close' />
+        </Button>
+    );
+}
