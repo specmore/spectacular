@@ -10,6 +10,7 @@ import spectacular.github.service.specs.openapi.OpenApiParser;
 import spectacular.github.service.specs.openapi.OpenApiSpecParseResult;
 
 import java.io.UnsupportedEncodingException;
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -25,10 +26,12 @@ public class SpecService {
         OpenApiSpecParseResult parseResult = null;
         String htmlUrl = null;
         String sha = null;
+        Instant lastModified = null;
         try {
             var contentItem = restApiClient.getRepositoryContent(repo, filePath, ref);
             htmlUrl = contentItem.getHtml_url();
             sha = contentItem.getSha();
+            lastModified = contentItem.getLastModified();
             parseResult = OpenApiParser.parseYAML(contentItem.getDecodedContent());
         } catch (HttpClientErrorException.NotFound nf) {
             logger.debug("Failed to retrieve file contents due an file not found on the github api.", nf);
@@ -38,6 +41,6 @@ public class SpecService {
             parseResult = new OpenApiSpecParseResult(null, List.of("The spec file contents from GitHub could not be decoded."));
         }
 
-        return new SpecItem(repo, filePath, htmlUrl, ref, sha, parseResult);
+        return new SpecItem(repo, filePath, htmlUrl, ref, sha, lastModified, parseResult);
     }
 }

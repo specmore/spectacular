@@ -7,6 +7,10 @@ import spectacular.github.service.github.RestApiClient
 import spectacular.github.service.github.domain.ContentItem
 import spock.lang.Specification
 
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
+
 class SpecServiceTest extends Specification {
     def restApiClient = Mock(RestApiClient)
     def specService = new SpecService(restApiClient)
@@ -51,6 +55,28 @@ class SpecServiceTest extends Specification {
         and: "the openapi spec has a title and version set"
         specItem.getParseResult().getOpenApiSpec().getTitle() == "An empty API spec"
         specItem.getParseResult().getOpenApiSpec().getVersion() == "0.1.0"
+    }
+
+    def "Get spec item for spec repo and file path returns spec item with last modified date for content item with last modified date"() {
+        given: "a spec file repo, path and ref"
+        def specFileRepo = new Repository("test-owner", "spec-repo");
+        def specFilePath = "test-specs/example-spec.yaml"
+        def ref = "xyz"
+
+        and: "a content item with a last modified date for the spec file"
+        def lastModifiedDate = ZonedDateTime.of(2020, 2, 16, 20, 46, 03, 0, ZoneId.of("GMT")) //"Sun, 16 Feb 2020 20:46:03 GMT"
+        def contentItem = new ContentItem("htmlUrl", specFilePath, "some sha", "file", "some url", "", "base64")
+        contentItem.setLastModified(lastModifiedDate.toInstant())
+
+        when: "the spec item is retrieved"
+        def specItem = specService.getSpecItem(specFileRepo, specFilePath, ref)
+
+        then: "the content item of the spec file is retrieved from github"
+        1 * restApiClient.getRepositoryContent(specFileRepo, specFilePath, ref) >> contentItem
+
+        and: "a spec item is returned with the content item's last modified date"
+        specItem
+        specItem.getLastModified() == lastModifiedDate.toInstant()
     }
 
     def "Get spec item returns parse error for spec file contents not found"() {
