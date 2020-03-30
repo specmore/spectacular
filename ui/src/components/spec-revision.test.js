@@ -72,15 +72,4 @@ describe("SpecRevision component", () => {
         // then the master branch is shown in olive
         expect(getByText("master")).toHaveClass('olive');
     });
-
-    test("shows a view spec button", async () => {
-        // given a spec item with branch name and version
-        const specItem = validSpecItem;
-
-        // when the component renders
-        const { getByTestId } = renderWithRouter(<SpecRevision specItem={specItem} />);
-
-        // then the view spec button is shown
-        expect(getByTestId('view-spec-button')).toBeInTheDocument();
-    });
 });

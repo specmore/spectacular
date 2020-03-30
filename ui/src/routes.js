@@ -18,11 +18,11 @@ export const CatalogueContainerLinkButton = ({repository}) => {
     );
 }
 
-export const ViewSpecLinkButton = ({specFileLocation}) => {
+export const ViewSpecLinkButton = ({specFileLocation, isSelected}) => {
     const { owner, repo } = useParams();
     const viewSpecLink = CreateViewSpecLocation(owner, repo, specFileLocation);
     return (
-        <Button primary compact floated='right' icon labelPosition='right' as={Link} to={viewSpecLink} data-testid='view-spec-button'>
+        <Button primary compact floated='right' icon labelPosition='right' as={Link} to={viewSpecLink} disabled={isSelected} data-testid='view-spec-button'>
             View Spec <Icon name='right chevron' />
         </Button>
     );

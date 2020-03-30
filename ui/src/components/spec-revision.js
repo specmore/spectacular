@@ -1,6 +1,5 @@
 import React from "react";
 import { Label, List, Icon, Message } from 'semantic-ui-react';
-import { ViewSpecLinkButton } from "../routes";
 import Moment from "react-moment";
 
 const SpecItemError = ({specItem}) => (
@@ -22,9 +21,6 @@ const SpecRevision = ({specItem, branchColor}) => {
         branchColor='olive'
     }
 
-    const specFileFullLocation = `${specItem.repository.nameWithOwner}/${specItem.ref}/${specItem.filePath}`;
-    const selectButton = (<ViewSpecLinkButton specFileLocation={specFileFullLocation} />);
-
     if (specItem.parseResult.errors.length > 0) 
         return (<SpecItemError specItem={specItem} />);
 
@@ -35,7 +31,6 @@ const SpecRevision = ({specItem, branchColor}) => {
             </Label>
             <Label circular>{specItem.parseResult.openApiSpec.version}</Label>
             <Moment fromNow>{specItem.lastModified}</Moment>
-            {selectButton}
         </div>
     );
 };
