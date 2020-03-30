@@ -22,7 +22,7 @@ export const ViewSpecLinkButton = ({specFileLocation}) => {
     const { owner, repo } = useParams();
     const viewSpecLink = CreateViewSpecLocation(owner, repo, specFileLocation);
     return (
-        <Button primary floated='right' icon labelPosition='right' as={Link} to={viewSpecLink} data-testid='view-spec-button'>
+        <Button primary compact floated='right' icon labelPosition='right' as={Link} to={viewSpecLink} data-testid='view-spec-button'>
             View Spec <Icon name='right chevron' />
         </Button>
     );
