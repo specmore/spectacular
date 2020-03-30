@@ -3,6 +3,7 @@ package spectacular.github.service.github
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpRequest
 import org.springframework.http.MediaType
@@ -11,6 +12,9 @@ import org.springframework.test.web.client.MockRestServiceServer
 import spectacular.github.service.github.app.AppInstallationAuthenticationHeaderRequestInterceptor
 import spectacular.github.service.common.Repository
 import spock.lang.Specification
+
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method
@@ -77,6 +81,11 @@ class RestApiClientTest extends Specification {
                 "    }\n" +
                 "}"
 
+        and: "a last-modified header on the response"
+        def responseHeaders = new HttpHeaders()
+        def lastModifiedDate = ZonedDateTime.of(2020, 2, 16, 20, 46, 03, 0, ZoneId.of("GMT")) //"Sun, 16 Feb 2020 20:46:03 GMT"
+        responseHeaders.setLastModified(lastModifiedDate);
+
         and: "the app installation authentication header interceptor to be used for the request"
         1 * appInstallationAuthenticationHeaderRequestInterceptor.intercept(_,_,_) >> { HttpRequest request, byte[] body, ClientHttpRequestExecution execution ->
             execution.execute(request, body)
@@ -87,12 +96,17 @@ class RestApiClientTest extends Specification {
         this.server.expect(requestTo("/repos/$repoNameWithOwner/contents/$filePath"))
                 .andExpect(method(HttpMethod.GET))
                 .andExpect(header("Accept", MediaType.APPLICATION_JSON_VALUE))
-                .andRespond(withSuccess(responseContent, MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess(responseContent, MediaType.APPLICATION_JSON).headers(responseHeaders));
 
         and: "the content item to be returned by the client for a successful response"
         def contentItemResult = client.getRepositoryContent(repo, filePath, null)
         contentItemResult
+
+        and: "the content to be for the requested file path"
         contentItemResult.getPath() == filePath
+
+        and: "the last modified date of the content to match the response header"
+        contentItemResult.getLastModified() == lastModifiedDate.toInstant()
     }
 
     def "findFiles"() {

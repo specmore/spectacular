@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.UnsupportedEncodingException;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.Base64;
 
 public class ContentItem {
@@ -15,7 +15,7 @@ public class ContentItem {
     private final String html_url;
     private final String content;
     private final String encoding;
-    //private ZonedDateTime lastModified;
+    private Instant lastModified;
 
     public ContentItem(@JsonProperty("name") String name,
                        @JsonProperty("path") String path,
@@ -69,11 +69,11 @@ public class ContentItem {
         throw new UnsupportedEncodingException(encoding);
     }
 
-//    public ZonedDateTime getLastModified() {
-//        return lastModified;
-//    }
-//
-//    public void setLastModified(ZonedDateTime lastModified) {
-//        this.lastModified = lastModified;
-//    }
+    public Instant getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Instant lastModified) {
+        this.lastModified = lastModified;
+    }
 }

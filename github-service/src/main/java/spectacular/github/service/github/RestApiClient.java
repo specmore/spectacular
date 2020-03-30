@@ -13,6 +13,8 @@ import spectacular.github.service.github.domain.SearchCodeResults;
 import spectacular.github.service.github.graphql.GraphQLRequest;
 import spectacular.github.service.github.graphql.GraphQLResponse;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.StringJoiner;
 
 @Component
@@ -55,7 +57,11 @@ public class RestApiClient {
         String contentUri = uriComponentsBuilder.buildAndExpand(repo.getNameWithOwner(), path).toUriString();
         var response = restTemplate.exchange(contentUri, HttpMethod.GET, entity, ContentItem.class);
 
-        return response.getBody();
+        var contentItem = response.getBody();
+        var lastModified = Instant.ofEpochMilli(response.getHeaders().getLastModified());
+        contentItem.setLastModified(lastModified);
+
+        return contentItem;
     }
 
     public SearchCodeResults findFiles(String filename, String fileExtension, String path, String org) {
