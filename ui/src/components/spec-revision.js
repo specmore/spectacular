@@ -1,6 +1,7 @@
 import React from "react";
 import { Label, List, Icon, Message } from 'semantic-ui-react';
 import { ViewSpecLinkButton } from "../routes";
+import Moment from "react-moment";
 
 const SpecItemError = ({specItem}) => (
     <Message icon negative data-testid='spec-item-error'>
@@ -33,6 +34,7 @@ const SpecRevision = ({specItem, branchColor}) => {
                 <Icon name='code branch' />{specItem.ref}
             </Label>
             <Label circular>{specItem.parseResult.openApiSpec.version}</Label>
+            <Moment fromNow>{specItem.lastModified}</Moment>
             {selectButton}
         </div>
     );
