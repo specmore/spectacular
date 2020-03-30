@@ -7,14 +7,14 @@ import MenuBar from './components/menu-bar';
 import FooterBar from './components/footer-bar';
 import './index.css';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE } from './routes';
+import { CATALOGUE_LIST_ROUTE, CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE } from './routes';
 
 const Index = () => (
 <Router>
   <MenuBar/>
   <div style={{ paddingTop: '4em' }}>
     <Switch>
-      <Route exact path="/">
+      <Route exact path={CATALOGUE_LIST_ROUTE}>
         <InstallationWelcome/>
       </Route>
       <Route exact path={[CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE]}>

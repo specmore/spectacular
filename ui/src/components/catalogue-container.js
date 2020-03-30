@@ -7,7 +7,7 @@ import CatalogueDetails from './catalogue-details';
 import SwaggerUI from "swagger-ui-react";
 import "swagger-ui-react/swagger-ui.css";
 import "./catalogue-container.css";
-import { CloseSpecButton } from '../routes';
+import { CloseSpecButton, BackToCatalogueListLinkButton } from '../routes';
 
 const CatalogueContainerLoading = ({owner, repo}) => (
     <Segment vertical textAlign='center'>
@@ -25,7 +25,7 @@ const CatalogueContainerError = ({errorMessage}) => (
 );
 
 const CatalogueContainerSegment = ({catalogue}) => (
-    <div data-testid='catalogue-container-segment'>
+    <div data-testid='catalogue-container-segment' style={{marginBottom: "10px"}} >
         <CatalogueDetails {...catalogue} />
     </div>
 );
@@ -53,10 +53,16 @@ const CatalogueContainer = () => {
 
     if (!catalogue && !errorMessage) return ( <CatalogueContainerLoading owner={owner} repo={repo} />);
 
-    if (errorMessage) return (<CatalogueContainerError errorMessage={errorMessage} />);
+    if (errorMessage) return (
+        <Container text>
+            <BackToCatalogueListLinkButton />
+            <CatalogueContainerError errorMessage={errorMessage} />
+        </Container>
+    );
 
     if  (!location) return (
         <Container text>
+            <BackToCatalogueListLinkButton />
             <CatalogueContainerSegment catalogue={catalogue}/>
         </Container>
     );
@@ -64,6 +70,7 @@ const CatalogueContainer = () => {
     if (location) return (
         <div className='catalogue-container side-by-side-container'>
             <Container text className='side-by-side-column'>
+                <BackToCatalogueListLinkButton />
                 <CatalogueContainerSegment catalogue={catalogue}/>
             </Container>
             <div className='side-by-side-column' data-testid='catalogue-container-swagger-ui'>

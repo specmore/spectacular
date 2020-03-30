@@ -2,12 +2,19 @@ import React from "react";
 import { Button, Icon } from 'semantic-ui-react'
 import { Link, useParams } from "react-router-dom";
 
+export const CATALOGUE_LIST_ROUTE = "/";
+
 export const CATALOGUE_CONTAINER_ROUTE = "/catalogue/:owner/:repo";
 export const CreateCatalogueContainerLocation = (owner, repo) => `/catalogue/${owner}/${repo}/`;
 
 export const CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE = "/catalogue/:owner/:repo/file/*";
 export const CreateViewSpecLocation = (owner, repo, location) => `/catalogue/${owner}/${repo}/file/${location}`;
 
+export const BackToCatalogueListLinkButton = () => (
+    <Button icon compact labelPosition='left' as={Link} to={CATALOGUE_LIST_ROUTE} data-testid='back-to-catalogue-list-button'>
+            Catalogue List <Icon name='left chevron' />
+    </Button>
+);
 
 export const CatalogueContainerLinkButton = ({repository}) => {
     const catalogueLink = CreateCatalogueContainerLocation(repository.owner, repository.name);
@@ -32,7 +39,7 @@ export const CloseSpecButton = () => {
     const { owner, repo } = useParams();
     const catalogueOnlyLink = CreateCatalogueContainerLocation(owner, repo);
     return (
-        <Button icon compact floated='right' labelPosition='right' as={Link} to={catalogueOnlyLink} data-testid='close-spec-button' style={{marginTop: "10px"}}>
+        <Button icon compact floated='right' labelPosition='right' as={Link} to={catalogueOnlyLink} data-testid='close-spec-button'>
             Close <Icon name='close' />
         </Button>
     );
