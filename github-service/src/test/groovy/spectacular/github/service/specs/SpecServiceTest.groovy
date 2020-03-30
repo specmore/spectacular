@@ -26,7 +26,7 @@ class SpecServiceTest extends Specification {
                 "bWU6IFNhbXBsZSBSZXNvdXJjZQogICAgZGVzY3JpcHRpb246ICJTYW1wbGUg\n" +
                 "UmVzb3VyY2UgZGVzY3JpcHRpb24iCnBhdGhzOiB7fQpjb21wb25lbnRzOgog\n" +
                 "IHNjaGVtYXM6IHt9"
-        def contentItem = new ContentItem("htmlUrl", specFilePath, "file", "some url", encodedContent, "base64")
+        def contentItem = new ContentItem("htmlUrl", specFilePath, "some sha", "file", "some url", encodedContent, "base64")
 
         when: "the spec item is retrieved"
         def specItem = specService.getSpecItem(specFileRepo, specFilePath, ref)

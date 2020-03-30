@@ -8,13 +8,15 @@ public class SpecItem {
     private final String filePath;
     private final String htmlUrl;
     private final String ref;
+    private final String sha;
     private final OpenApiSpecParseResult parseResult;
 
-    public SpecItem(Repository repository, String filePath, String htmlUrl, String ref, OpenApiSpecParseResult parseResult) {
+    public SpecItem(Repository repository, String filePath, String htmlUrl, String ref, String sha, OpenApiSpecParseResult parseResult) {
         this.repository = repository;
         this.filePath = filePath;
         this.htmlUrl = htmlUrl;
         this.ref = ref;
+        this.sha = sha;
         this.parseResult = parseResult;
     }
 
@@ -36,5 +38,9 @@ public class SpecItem {
 
     public String getRef() {
         return ref;
+    }
+
+    public String getSha() {
+        return sha;
     }
 }

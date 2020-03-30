@@ -24,9 +24,11 @@ public class SpecService {
     public SpecItem getSpecItem(Repository repo, String filePath, String ref) {
         OpenApiSpecParseResult parseResult = null;
         String htmlUrl = null;
+        String sha = null;
         try {
             var contentItem = restApiClient.getRepositoryContent(repo, filePath, ref);
             htmlUrl = contentItem.getHtml_url();
+            sha = contentItem.getSha();
             parseResult = OpenApiParser.parseYAML(contentItem.getDecodedContent());
         } catch (HttpClientErrorException.NotFound nf) {
             logger.debug("Failed to retrieve file contents due an file not found on the github api.", nf);
@@ -36,6 +38,6 @@ public class SpecService {
             parseResult = new OpenApiSpecParseResult(null, List.of("The spec file contents from GitHub could not be decoded."));
         }
 
-        return new SpecItem(repo, filePath, htmlUrl, ref, parseResult);
+        return new SpecItem(repo, filePath, htmlUrl, ref, sha, parseResult);
     }
 }
