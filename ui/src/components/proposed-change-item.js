@@ -9,6 +9,12 @@ const PullRequestHeader = ({pullRequest}) => (
     </a>
 );
 
+const PullRequestLabels = ({pullRequest}) => (
+    <React.Fragment>
+        {pullRequest.labels.map((value, index) => (<Label key={index}>{value}</Label>)) }
+    </React.Fragment>
+);
+
 const ProposedChange = ({pullRequest, specItem}) => (
     <React.Fragment>
         <div>
@@ -16,6 +22,9 @@ const ProposedChange = ({pullRequest, specItem}) => (
         </div>
         <div style={{marginTop:'0.5em'}}>
             <SpecRevision specItem={specItem} branchColor='yellow'/>
+        </div>
+        <div style={{marginTop:'0.5em'}}>
+            <PullRequestLabels pullRequest={pullRequest} />
         </div>
     </React.Fragment>
 );

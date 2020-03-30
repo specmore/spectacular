@@ -45,6 +45,36 @@ describe("ProposedChangeItem component", () => {
         expect(getByText('#1', { exact: false }).closest('a')).toHaveAttribute('href', 'https://github.com/test-owner/specs-test/pull/1');
     });
 
+    test("shows pull request labels", async () => {
+        // given a pull request with a label
+        const pullRequest = {
+            "repository": {
+                "owner":"test-owner",
+                "name":"specs-test",
+                "htmlUrl":"https://github.com/test-owner/specs-test",
+                "nameWithOwner":"test-owner/specs-test"
+            },
+            "branchName": "change-branch",
+            "number": 1,
+            "url": "https://github.com/test-owner/specs-test/pull/1",
+            "labels": ["project-x"],
+            "changedFiles": ["specs/example-template.yaml"],
+            "title":"example change to spec"
+        };
+
+        // and a proposed change for that pull request
+        const proposedChange = {
+            pullRequest,
+            specItem: {}
+        };
+
+        // when a proposed change item component is rendered with the given proposed item
+        const { getByText } = renderWithRouter(<ProposedChangeItem {...proposedChange} />);
+
+        // then the pull request number and title header is shown
+        expect(getByText("project-x")).toBeInTheDocument();
+    });
+
     test("shows a spec revision component for the proposed item", async () => {
         // given a pull request
         const pullRequest = {
