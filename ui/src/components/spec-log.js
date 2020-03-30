@@ -1,5 +1,5 @@
 import React from "react";
-import { List, Icon, Message, Segment, Header } from 'semantic-ui-react';
+import { Label, List, Icon, Message, Segment, Header } from 'semantic-ui-react';
 import SpecLogItem from './spec-log-item';
 import ProposedChangeItem from './proposed-change-item';
 import LatestAgreedVersion from './latest-agreed-version';
@@ -22,6 +22,8 @@ const SpecLog = ({specLog}) => {
     const specFileFullLocation = `${latestAgreedSpecItem.repository.nameWithOwner}/${latestAgreedSpecItem.filePath}`;
     if (latestAgreedSpecItem.parseResult.errors.length > 0) return (<SpecLogError specFileFullLocation={specFileFullLocation} errors={latestAgreedSpecItem.parseResult.errors} />);
 
+    const proposedChangesCount = specLog.proposedChanges.length;
+
     return (
         <div data-testid='spec-log'>
             <Header as='h4' attached='top' block><Icon name='file code'/>{latestAgreedSpecItem.parseResult.openApiSpec.title}</Header>
@@ -30,7 +32,7 @@ const SpecLog = ({specLog}) => {
                 <SpecLogItem specItem={specLog.latestAgreed}>
                     <LatestAgreedVersion latestAgreedSpecItem={specLog.latestAgreed} />
                 </SpecLogItem>
-                <Header as='h5' attached='top'>Open change proposals</Header>
+                <Header as='h5' attached='top'>Proposed Changes <Label size='small' color='grey'>{proposedChangesCount}</Label></Header>
                 {specLog.proposedChanges.map((proposedChange, index) => (
                     <SpecLogItem key={index} specItem={proposedChange.specItem}>
                         <ProposedChangeItem {...proposedChange} />

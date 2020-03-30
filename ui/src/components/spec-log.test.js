@@ -112,7 +112,10 @@ describe("SpecLog component", () => {
         };
 
         // when spec file item component renders
-        renderWithRouter(<SpecLog specLog={specLog} />);
+        const { getByText, getByTestId } = renderWithRouter(<SpecLog specLog={specLog} />);
+
+        // then a proposed changes heading is shown with a 2 changes count
+        expect(getByText("2")).toBeInTheDocument();
 
         // then a proposed change item is shown for each proposal
         expect(ProposedChangeItemMock).toHaveBeenCalledTimes(2);
