@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams } from 'react-router-dom';
-import { Segment } from 'semantic-ui-react'
+import { Segment } from 'semantic-ui-react';
+import './spec-log-item.css';
 
 const SpecLogItem = ({children, specItem}) => {
     const { 0: selectedSpecLocation } = useParams();
@@ -9,7 +10,7 @@ const SpecLogItem = ({children, specItem}) => {
     const isSelectedSpecItem = specItemLocation === selectedSpecLocation;
 
     return (
-        <Segment attached data-testid='spec-log-item-segment' tertiary={isSelectedSpecItem}>
+        <Segment attached data-testid='spec-log-item-segment' className={'spec-log-item ' + (isSelectedSpecItem ? 'selected' : '')}>
             {children}
         </Segment>
     );

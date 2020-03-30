@@ -5,7 +5,7 @@ import { renderWithRouter } from '../common/test-utils';
 import { CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE, CreateViewSpecLocation } from '../routes';
 
 describe("SpecLogItem component", () => {
-    test("shows tertiary color if browser location is for given spec item", async () => {
+    test("uses selected class if browser location is for given spec item", async () => {
         // given a spec item
         const specItem = { 
             "repository": { 
@@ -24,6 +24,6 @@ describe("SpecLogItem component", () => {
         const { getByTestId } = renderWithRouter(<SpecLogItem specItem={specItem} />, location, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE);
 
         // then the tertiary class is set
-        expect(getByTestId("spec-log-item-segment")).toHaveClass('tertiary');
+        expect(getByTestId("spec-log-item-segment")).toHaveClass('selected');
     });
 });
