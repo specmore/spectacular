@@ -3,7 +3,7 @@ package spectacular.github.service.github.graphql;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 public class PullRequest {
     private final int number;
@@ -11,7 +11,7 @@ public class PullRequest {
     private final Connection<Label> labels;
     private final Connection<ChangedFile> changedFiles;
     private final String title;
-    private final ZonedDateTime updateAt;
+    private final Instant updatedAt;
     private final Ref headRef;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
@@ -20,14 +20,14 @@ public class PullRequest {
                        @JsonProperty("labels") Connection<Label> labels,
                        @JsonProperty("files") Connection<ChangedFile> changedFiles,
                        @JsonProperty("title") String title,
-                       @JsonProperty("updateAt") ZonedDateTime updateAt,
+                       @JsonProperty("updatedAt") Instant updatedAt,
                        @JsonProperty("headRef") Ref headRef) {
         this.number = number;
         this.url = url;
         this.labels = labels;
         this.changedFiles = changedFiles;
         this.title = title;
-        this.updateAt = updateAt;
+        this.updatedAt = updatedAt;
         this.headRef = headRef;
     }
 
@@ -53,8 +53,8 @@ public class PullRequest {
         return headRef;
     }
 
-    public ZonedDateTime getUpdateAt() {
-        return updateAt;
+    public Instant getUpdatedAt() {
+        return updatedAt;
     }
 }
 

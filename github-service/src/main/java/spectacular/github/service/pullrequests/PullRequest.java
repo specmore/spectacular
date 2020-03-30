@@ -2,7 +2,7 @@ package spectacular.github.service.pullrequests;
 
 import spectacular.github.service.common.Repository;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,9 +14,9 @@ public class PullRequest {
     private final List<String> labels;
     private final List<String> changedFiles;
     private final String title;
-    private final ZonedDateTime updateAt;
+    private final Instant updatedAt;
 
-    public PullRequest(Repository repository, String branchName, int number, String url, List<String> labels, List<String> changedFiles, String title, ZonedDateTime updateAt) {
+    public PullRequest(Repository repository, String branchName, int number, String url, List<String> labels, List<String> changedFiles, String title, Instant updatedAt) {
         this.repository = repository;
         this.branchName = branchName;
         this.number = number;
@@ -24,7 +24,7 @@ public class PullRequest {
         this.labels = labels;
         this.changedFiles = changedFiles;
         this.title = title;
-        this.updateAt = updateAt;
+        this.updatedAt = updatedAt;
     }
 
     public boolean changesFile(Repository repo, String filePath) {
@@ -59,13 +59,13 @@ public class PullRequest {
         return repository;
     }
 
-    public ZonedDateTime getUpdateAt() { return updateAt; }
+    public Instant getUpdatedAt() { return updatedAt; }
 
     public static PullRequest createPullRequestFrom(spectacular.github.service.github.graphql.PullRequest pullRequest) {
         var repository = Repository.createRepositoryFrom(pullRequest.getHeadRef().getRepository());
         var branchName = pullRequest.getHeadRef().getName();
         List<String> labels = pullRequest.getLabels().getNodes().stream().map(label -> label.getName()).collect(Collectors.toList());
         List<String> changedFiles = pullRequest.getChangedFiles().getNodes().stream().map(file -> file.getPath()).collect(Collectors.toList());
-        return new PullRequest(repository, branchName, pullRequest.getNumber(), pullRequest.getUrl(), labels, changedFiles, pullRequest.getTitle(), pullRequest.getUpdateAt());
+        return new PullRequest(repository, branchName, pullRequest.getNumber(), pullRequest.getUrl(), labels, changedFiles, pullRequest.getTitle(), pullRequest.getUpdatedAt());
     }
 }
