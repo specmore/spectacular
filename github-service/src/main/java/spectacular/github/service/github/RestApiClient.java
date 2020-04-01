@@ -3,6 +3,8 @@ package spectacular.github.service.github;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -28,8 +30,12 @@ public class RestApiClient {
 
     private final RestTemplate restTemplate;
 
-    public RestApiClient(@Value("${github.api.root-url}") String rootUrl, RestTemplateBuilder restTemplateBuilder, AppInstallationAuthenticationHeaderRequestInterceptor appInstallationAuthenticationHeaderRequestInterceptor) {
-        this.restTemplate = restTemplateBuilder.rootUri(rootUrl).additionalInterceptors(appInstallationAuthenticationHeaderRequestInterceptor).build();
+    public RestApiClient(@Value("${github.api.root-url}") String rootUrl, RestTemplateBuilder restTemplateBuilder, HttpComponentsClientHttpRequestFactory requestFactory, AppInstallationAuthenticationHeaderRequestInterceptor appInstallationAuthenticationHeaderRequestInterceptor) {
+        this.restTemplate = restTemplateBuilder
+                .rootUri(rootUrl)
+                .requestFactory(() -> requestFactory)
+                .additionalInterceptors(appInstallationAuthenticationHeaderRequestInterceptor)
+                .build();
     }
 
     public String getRawRepositoryContent(Repository repo, String path, String ref) {
