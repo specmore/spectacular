@@ -22,6 +22,7 @@ import java.util.StringJoiner;
 @Component
 public class RestApiClient {
     private static final String GRAPH_QL = "/graphql";
+    private static final String RATE_LIMIT = "/rate_limit";
     private static final String SEARCH_CODE_PATH = "/search/code";
     private static final String REPO_PATH = "/repos/{repo}";
     private static final String REPO_CONTENT_PATH = "/repos/{repo}/contents/{path}";
@@ -113,5 +114,10 @@ public class RestApiClient {
 
         ResponseEntity<GraphQLResponse> response = restTemplate.postForEntity(GRAPH_QL, entity, GraphQLResponse.class);
         return response.getBody();
+    }
+
+    public String getRateLimit() {
+        final String response = restTemplate.getForObject(RATE_LIMIT, String.class);
+        return response;
     }
 }
