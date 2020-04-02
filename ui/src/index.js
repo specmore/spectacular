@@ -12,18 +12,20 @@ import { CATALOGUE_LIST_ROUTE, CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WI
 const Index = () => (
 <Router>
   <MenuBar/>
-  <div style={{ marginTop: '4em', position: 'relative' }}>
-    <Switch>
-      <Route exact path={CATALOGUE_LIST_ROUTE}>
-        <InstallationWelcome/>
-      </Route>
-      <Route exact path={[CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE]}>
-        <CatalogueContainer/>
-      </Route>
-      <Route path="*">
-        <NotFound />
-      </Route>
-    </Switch>
+  <div style={{ paddingTop: '4em' }}>
+    <div style={{ position: 'relative' }}>
+      <Switch>
+        <Route exact path={CATALOGUE_LIST_ROUTE}>
+          <InstallationWelcome/>
+        </Route>
+        <Route exact path={[CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE]}>
+          <CatalogueContainer/>
+        </Route>
+        <Route path="*">
+          <NotFound />
+        </Route>
+      </Switch>
+    </div>
   </div>
   <FooterBar/>
 </Router>);
