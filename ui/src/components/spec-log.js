@@ -25,16 +25,16 @@ const SpecLog = ({specLog}) => {
     const proposedChangesCount = specLog.proposedChanges.length;
 
     return (
-        <div data-testid='spec-log'>
+        <div data-testid='spec-log-container'>
             <Header as='h4' attached='top' block><Icon name='file code'/>{latestAgreedSpecItem.parseResult.openApiSpec.title}</Header>
             <Segment attached>
                 <Header as='h5' attached='top'>Latest agreed version</Header>
-                <SpecLogItem specItem={specLog.latestAgreed}>
+                <SpecLogItem specItem={specLog.latestAgreed} type='latest-agreed-version'>
                     <LatestAgreedVersion latestAgreedSpecItem={specLog.latestAgreed} />
                 </SpecLogItem>
                 <Header as='h5' attached='top'>Proposed Changes <Label size='small' color='grey'>{proposedChangesCount}</Label></Header>
                 {specLog.proposedChanges.map((proposedChange, index) => (
-                    <SpecLogItem key={index} specItem={proposedChange.specItem}>
+                    <SpecLogItem key={index} specItem={proposedChange.specItem} type='proposed-change-item' >
                         <ProposedChangeItem {...proposedChange} />
                     </SpecLogItem>
                 ))}
