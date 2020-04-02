@@ -14,10 +14,10 @@ const CatalogueError = ({error, repository}) => (
 );
   
 const CatalogueDetails = ({repository, catalogueManifest, specLogs}) => (
-    <div data-testid='catalogue-details-segment'>
+    <div data-testid='catalogue-details-container'>
         <Header as='h1' textAlign='center'>{catalogueManifest.name}</Header>
         <Header as='h3' attached='top'><Icon name='info' />Catalogue Details</Header>
-        <Segment attached>
+        <Segment attached data-testid='catalogue-details-segment'>
             <Grid divided>
                 <Grid.Row>
                     <Grid.Column width={13}>
@@ -33,7 +33,7 @@ const CatalogueDetails = ({repository, catalogueManifest, specLogs}) => (
             </Label>
         </Segment>
         <Header as='h3' attached='top'><Icon name='list' />Interfaces</Header>
-        <Segment attached>
+        <Segment attached data-testid='catalogue-details-interface-list'>
             {specLogs.map((specLog, index) => (<SpecLog key={index} specLog={specLog} />))}
         </Segment>
     </div>

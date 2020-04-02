@@ -46,7 +46,7 @@ const InstallationWelcome = () => {
     let org_url = `https://github.com/${installation.owner}`;
     
     return (
-        <Container text>
+        <Container text data-testid='installation-welcome'>
             <Header as='h1' textAlign='center' image={installation.owner_avatar_url}>
                 Welcome to Spectacular
                 <Header.Subheader>Connected to the <a href={org_url} target='_blank'>{installation.owner}</a> GitHub organization</Header.Subheader>

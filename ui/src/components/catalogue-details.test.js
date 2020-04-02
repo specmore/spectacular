@@ -29,8 +29,8 @@ describe("CatalogueDetails component", () => {
     // when catalogue details component renders
     const { getByTestId, getByText } = renderWithRouter(<CatalogueDetails {...catalogue} />);
 
-    // then a catalogue details segment is found
-    expect(getByTestId('catalogue-details-segment')).toBeInTheDocument();
+    // then a catalogue details container is found
+    expect(getByTestId('catalogue-details-container')).toBeInTheDocument();
 
     // and the name of the catalogue is shown
     expect(getByText("Test Catalogue 1")).toBeInTheDocument();

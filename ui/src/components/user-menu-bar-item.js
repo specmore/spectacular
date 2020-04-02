@@ -22,7 +22,7 @@ const UserMenuBarItem = () => {
 
     if (user) {
         return (
-            <Dropdown item pointing text={user.name}>
+            <Dropdown item pointing text={user.name} data-testid='user-menu-bar-item'>
               <Dropdown.Menu>
                 <Dropdown.Item as='a' href={user.profile_url}>Signed in as {user.sub}</Dropdown.Item>
                 <Dropdown.Item as='a' href="/login?logout=true">Sign out</Dropdown.Item>
