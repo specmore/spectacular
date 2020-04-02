@@ -12,7 +12,7 @@ import { CATALOGUE_LIST_ROUTE, CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WI
 const Index = () => (
 <Router>
   <MenuBar/>
-  <div style={{ paddingTop: '4em' }}>
+  <div style={{ marginTop: '4em', position: 'relative' }}>
     <Switch>
       <Route exact path={CATALOGUE_LIST_ROUTE}>
         <InstallationWelcome/>
