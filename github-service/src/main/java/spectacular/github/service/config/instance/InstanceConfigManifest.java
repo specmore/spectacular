@@ -1,6 +1,9 @@
 package spectacular.github.service.config.instance;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import java.util.List;
 
@@ -19,5 +22,10 @@ public class InstanceConfigManifest {
 
     public String getName() {
         return name;
+    }
+
+    public static InstanceConfigManifest parse(String instanceConfigFile) throws JsonProcessingException {
+        var mapper = new ObjectMapper(new YAMLFactory());
+        return mapper.readValue(instanceConfigFile, InstanceConfigManifest.class);
     }
 }

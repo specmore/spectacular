@@ -39,13 +39,12 @@ public class InstanceConfigService {
     }
 
     public InstanceConfig getInstanceConfigForRepository(Repository repository) {
-        var fileContents = restApiClient.getRawRepositoryContent(repository, INSTANCE_CONFIG_FULL_FILE_NAME, null);
+        var fileContentItem = restApiClient.getRepositoryContent(repository, INSTANCE_CONFIG_FULL_FILE_NAME, null);
 
-        var mapper = new ObjectMapper(new YAMLFactory());
         InstanceConfigManifest manifest = null;
         String error = null;
         try {
-            manifest = mapper.readValue(fileContents, InstanceConfigManifest.class);
+            manifest = InstanceConfigManifest.parse(fileContentItem.getDecodedContent());
         } catch (IOException e) {
             logger.error("An error occurred while parsing a instance config yaml file", e);
             error = "An error occurred while parsing a instance config yaml file: " + e.getMessage();

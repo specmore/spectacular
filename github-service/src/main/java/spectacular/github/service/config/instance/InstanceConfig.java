@@ -1,6 +1,11 @@
 package spectacular.github.service.config.instance;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import spectacular.github.service.common.Repository;
+
+import java.time.Instant;
 
 public class InstanceConfig {
     private final String installationId;

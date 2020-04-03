@@ -4,6 +4,7 @@ package spectacular.github.service.config.instance
 import spectacular.github.service.github.RestApiClient
 import spectacular.github.service.github.app.AppInstallationContextProvider
 import spectacular.github.service.common.Repository
+import spectacular.github.service.github.domain.ContentItem
 import spectacular.github.service.github.domain.SearchCodeResultItem
 import spectacular.github.service.github.domain.SearchCodeResults
 import spock.lang.Specification
@@ -20,10 +21,12 @@ class InstanceConfigServiceTest extends Specification {
         def repo = new Repository("test-owner", "test-repo", null)
         appInstallationContextProvider.getInstallationId() >> "99"
 
-        and: "a valid Yaml instance config Manifest"
+        and: "a valid Yaml instance config Manifest file"
+        def manifestFileContentItem = Mock(ContentItem)
         def validYamlManifest = "catalogues:\n" +
                 "- name: \"Test Catalogue 1\"\n" +
                 "  repo: test-owner/test-config-repo"
+        manifestFileContentItem.getDecodedContent() >> validYamlManifest
 
         when: "the instance config service is called"
         def instanceConfig = instanceConfigService.getInstanceConfigForRepository(repo)
@@ -34,7 +37,7 @@ class InstanceConfigServiceTest extends Specification {
         instanceConfig.getInstallationId() == "99"
 
         and: "the yaml manifest file contents is retrieved"
-        1 * restApiClient.getRawRepositoryContent(repo, "spectacular-app-config.yaml", null) >> validYamlManifest
+        1 * restApiClient.getRepositoryContent(repo, "spectacular-app-config.yaml", null) >> manifestFileContentItem
 
         and: "the instance config contains the values of the manifest"
         instanceConfig.getInstanceConfigManifest()
@@ -54,9 +57,11 @@ class InstanceConfigServiceTest extends Specification {
         def searchCodeResultItem = new SearchCodeResultItem(instanceManifestFilename, instanceManifestFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
         def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
         and: "a valid Yaml instance config Manifest"
+        def manifestFileContentItem = Mock(ContentItem)
         def validYamlManifest = "catalogues:\n" +
                 "- name: \"Test Catalogue 1\"\n" +
                 "  repo: test-owner/test-config-repo"
+        manifestFileContentItem.getDecodedContent() >> validYamlManifest
 
         when: "the get instance configs for a user"
         def result = instanceConfigService.getInstanceConfigsForUser(username)
@@ -75,7 +80,7 @@ class InstanceConfigServiceTest extends Specification {
         instanceConfig.getRepository().getNameWithOwner() == searchCodeResultRepo.getFull_name()
 
         and: "the yaml manifest file contents is retrieved"
-        1 * restApiClient.getRawRepositoryContent(repo, instanceManifestFilename, null) >> validYamlManifest
+        1 * restApiClient.getRepositoryContent(repo, instanceManifestFilename, null) >> manifestFileContentItem
 
         and: "the instance config contains the values of the manifest"
         instanceConfig.getInstanceConfigManifest()
