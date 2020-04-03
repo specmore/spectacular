@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.HttpRequest
 import org.springframework.http.MediaType
 import org.springframework.http.client.ClientHttpRequestExecution
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.test.web.client.MockRestServiceServer
 import spectacular.github.service.github.app.AppInstallationAuthenticationHeaderRequestInterceptor
 import spectacular.github.service.common.Repository
@@ -31,6 +32,9 @@ class RestApiClientTest extends Specification {
 
     @SpringBean
     AppInstallationAuthenticationHeaderRequestInterceptor appInstallationAuthenticationHeaderRequestInterceptor = Mock()
+
+    @SpringBean
+    HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = Mock()
 
     def "GetRawRepositoryContent"() {
         given: "a content file to fetch"
