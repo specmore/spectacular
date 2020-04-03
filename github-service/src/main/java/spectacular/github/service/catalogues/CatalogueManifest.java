@@ -1,6 +1,9 @@
 package spectacular.github.service.catalogues;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import java.util.List;
 
@@ -27,5 +30,11 @@ public class CatalogueManifest {
 
     public List<SpecFileLocation> getSpecFileLocations() {
         return specFileLocations;
+    }
+
+    public static CatalogueManifest parse(String manifestFile) throws JsonProcessingException {
+        var mapper = new ObjectMapper(new YAMLFactory());
+
+        return mapper.readValue(manifestFile, CatalogueManifest.class);
     }
 }

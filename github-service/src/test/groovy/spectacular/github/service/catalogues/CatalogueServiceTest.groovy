@@ -3,6 +3,7 @@ package spectacular.github.service.catalogues
 import spectacular.github.service.common.Repository
 import spectacular.github.service.github.RestApiClient
 import spectacular.github.service.github.app.AppInstallationContextProvider
+import spectacular.github.service.github.domain.ContentItem
 import spectacular.github.service.github.domain.SearchCodeResultItem
 import spectacular.github.service.github.domain.SearchCodeResults
 import spectacular.github.service.pullrequests.PullRequest
@@ -32,13 +33,16 @@ class CatalogueServiceTest extends Specification {
         def searchCodeResultRepo = new spectacular.github.service.github.domain.Repository(1234, repo.getNameWithOwner(), null)
         def searchCodeResultItem = new SearchCodeResultItem(catalogueManifestFilename, catalogueManifestFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
         def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
-        and: "a valid Yaml catalogue config Manifest"
+
+        and: "valid catalogue manifest YAML content in the manifest file"
         def validYamlManifest = "name: \"Test Catalogue 1\"\n" +
                 "description: \"Specifications for all the interfaces in the across the system X.\"\n" +
                 "spec-files: \n" +
                 "- file-path: \"specs/example-template.yaml\"\n" +
                 "- repo: \"test-owner2/specs-test2\"\n" +
                 "  file-path: \"specs/example-spec.yaml\""
+        def manifestFileContentItem = Mock(ContentItem)
+        manifestFileContentItem.getDecodedContent() >> validYamlManifest
 
         when: "the get catalogues for a user is called"
         def result = catalogueService.getCataloguesForOrgAndUser(org, username)
@@ -56,8 +60,8 @@ class CatalogueServiceTest extends Specification {
         and: "the catalogue config is for the repo with the manifest file"
         catalogue1.getRepository().getNameWithOwner() == searchCodeResultRepo.getFull_name()
 
-        and: "the yaml manifest file contents is retrieved"
-        1 * restApiClient.getRawRepositoryContent(repo, catalogueManifestFilename, null) >> validYamlManifest
+        and: "the yaml manifest file is retrieved"
+        1 * restApiClient.getRepositoryContent(repo, catalogueManifestFilename, null) >> manifestFileContentItem
 
         and: "the catalogue config contains the values of the manifest"
         catalogue1.getCatalogueManifest()
@@ -153,6 +157,8 @@ class CatalogueServiceTest extends Specification {
                 "- file-path: \"specs/example-template.yaml\"\n" +
                 "- repo: \"test-owner2/specs-test2\"\n" +
                 "  file-path: \"specs/example-spec.yaml\""
+        def manifestFileContentItem = Mock(ContentItem)
+        manifestFileContentItem.getDecodedContent() >> validYamlManifest
 
         and: "open pull requests for each repository the spec files belong to"
         def requestRepoOpenPullRequests = [Mock(PullRequest)]
@@ -175,7 +181,7 @@ class CatalogueServiceTest extends Specification {
         1 * restApiClient.getRepository(requestRepo) >> repo
 
         and: "the yaml manifest file contents is retrieved"
-        1 * restApiClient.getRawRepositoryContent(_, catalogueManifestFilename, null) >> validYamlManifest
+        1 * restApiClient.getRepositoryContent(_, catalogueManifestFilename, null) >> manifestFileContentItem
 
         and: "a valid catalogue is returned for the requested repo"
         catalogue

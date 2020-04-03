@@ -75,48 +75,34 @@ public class CatalogueService {
     }
 
     private Catalogue getCatalogueForRepository(Repository repository) {
-        var fileContents = restApiClient.getRawRepositoryContent(repository, CATALOGUE_MANIFEST_FULL_FILE_NAME, null);
+        var fileContentItem = restApiClient.getRepositoryContent(repository, CATALOGUE_MANIFEST_FULL_FILE_NAME, null);
 
-        var mapper = new ObjectMapper(new YAMLFactory());
         CatalogueManifest manifest = null;
         String error = null;
         try {
-            manifest = mapper.readValue(fileContents, CatalogueManifest.class);
-        } catch (MismatchedInputException e) {
-            logger.error("An error occurred while parsing the catalogue manifest yaml file for repo: " + repository.getNameWithOwner(), e);
-            error = "An error occurred while parsing the catalogue manifest yaml file. The following field is missing: " + e.getPathReference();
-        } catch (IOException e) {
-            logger.error("An error occurred while parsing the catalogue manifest yaml file for repo: " + repository.getNameWithOwner(), e);
-            error = "An error occurred while parsing the catalogue manifest yaml file: " + e.getMessage();
-        }
-
-        return new Catalogue(repository, manifest, null, error);
-    }
-
-    private Catalogue getFullCatalogueDetailsForRepository(Repository repository) {
-        var fileContents = restApiClient.getRawRepositoryContent(repository, CATALOGUE_MANIFEST_FULL_FILE_NAME, null);
-
-        var mapper = new ObjectMapper(new YAMLFactory());
-        CatalogueManifest manifest = null;
-        List<SpecLog> specLogs = null;
-        String error = null;
-        try {
-            manifest = mapper.readValue(fileContents, CatalogueManifest.class);
+            manifest = CatalogueManifest.parse(fileContentItem.getDecodedContent());
         } catch (MismatchedInputException e) {
             logger.debug("An error occurred while parsing the catalogue manifest yaml file for repo: " + repository.getNameWithOwner(), e);
             error = "An error occurred while parsing the catalogue manifest yaml file. The following field is missing: " + e.getPathReference();
         } catch (IOException e) {
-            logger.error("An unexpected error occurred while parsing the catalogue manifest yaml file for repo: " + repository.getNameWithOwner(), e);
+            logger.error("An error occurred while parsing the catalogue manifest yaml file for repo: " + repository.getNameWithOwner(), e);
             error = "An error occurred while parsing the catalogue manifest yaml file: " + e.getMessage();
         }
 
-        if (manifest != null) {
-            var specFileLocationsWithRepos = addCatalogueRepoToSpecFileLocationsWithoutRepo(manifest.getSpecFileLocations(), repository);
+        return Catalogue.create(repository, manifest, error);
+    }
+
+    private Catalogue getFullCatalogueDetailsForRepository(Repository repository) {
+        List<SpecLog> specLogs = null;
+        var catalogue = getCatalogueForRepository(repository);
+
+        if (catalogue.getCatalogueManifest() != null) {
+            var specFileLocationsWithRepos = addCatalogueRepoToSpecFileLocationsWithoutRepo(catalogue.getCatalogueManifest().getSpecFileLocations(), repository);
             var repoPullRequests = getRepoPullRequestsForManifestSpecs(specFileLocationsWithRepos);
             specLogs = specFileLocationsWithRepos.stream().map(specFileLocation -> getSpecLogForFileLocation(specFileLocation, repoPullRequests)).collect(Collectors.toList());
         }
 
-        return new Catalogue(repository, manifest, specLogs, error);
+        return catalogue.with(specLogs);
     }
 
     private List<SpecFileLocation> addCatalogueRepoToSpecFileLocationsWithoutRepo(List<SpecFileLocation> specFileLocations, Repository catalogueRepo) {
