@@ -15,6 +15,7 @@ import org.springframework.web.servlet.HandlerMapping;
 import spectacular.github.service.common.Repository;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 
 @RestController
 public class FilesController {
@@ -32,7 +33,7 @@ public class FilesController {
                                                   @PathVariable("file-repo") String fileRepoName,
                                                   @PathVariable("ref-name") String refName,
                                                   HttpServletRequest request,
-                                                  JwtAuthenticationToken authToken) {
+                                                  JwtAuthenticationToken authToken) throws UnsupportedEncodingException {
         Repository catalogueRepo = new Repository(catalogueOwner, catalogueRepoName);
         Repository fileRepo = new Repository(fileOwner, fileRepoName);
         String path = extractPathFromPattern(request);

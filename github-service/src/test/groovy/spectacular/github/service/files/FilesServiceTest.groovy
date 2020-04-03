@@ -6,6 +6,7 @@ import spectacular.github.service.catalogues.CatalogueService
 import spectacular.github.service.catalogues.SpecFileLocation
 import spectacular.github.service.common.Repository
 import spectacular.github.service.github.RestApiClient
+import spectacular.github.service.github.domain.ContentItem
 import spock.lang.Specification
 
 class FilesServiceTest extends Specification {
@@ -21,6 +22,8 @@ class FilesServiceTest extends Specification {
         def specFileRepo = new Repository("test-owner2", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def specFileContent = "test content"
+        def specFileContentItem = Mock(ContentItem)
+        specFileContentItem.getDecodedContent() >> specFileContent
 
         and: "a catalogue repo with a manifest containing the requested spec file"
         def catalogueRepo = new Repository("test-owner", "catalogue-repo")
@@ -35,7 +38,7 @@ class FilesServiceTest extends Specification {
         1 * catalogueServiceMock.getCatalogueForRepoAndUser(catalogueRepo, username) >> catalogue
 
         and: "the contents is retrieved from the spec file repo and path from the github api"
-        1 * restApiMock.getRawRepositoryContent(specFileRepo, specFilePath, null) >> specFileContent
+        1 * restApiMock.getRepositoryContent(specFileRepo, specFilePath, null) >> specFileContentItem
         result == specFileContent
     }
 
@@ -47,6 +50,8 @@ class FilesServiceTest extends Specification {
         def specFileRepo = new Repository("test-owner2", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def specFileContent = "test content"
+        def specFileContentItem = Mock(ContentItem)
+        specFileContentItem.getDecodedContent() >> specFileContent
 
         and: "a catalogue manifest in the same repo containing the requested spec file but with out a repo in the location"
         def specFileLocation = new SpecFileLocation((String)null, specFilePath)
@@ -60,7 +65,7 @@ class FilesServiceTest extends Specification {
         1 * catalogueServiceMock.getCatalogueForRepoAndUser(specFileRepo, username) >> catalogue
 
         and: "the contents is retrieved from the spec file repo and path from the github api"
-        1 * restApiMock.getRawRepositoryContent(specFileRepo, specFilePath, null) >> specFileContent
+        1 * restApiMock.getRepositoryContent(specFileRepo, specFilePath, null) >> specFileContentItem
         result == specFileContent
     }
 
@@ -72,6 +77,8 @@ class FilesServiceTest extends Specification {
         def specFileRepo = new Repository("test-owner2", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def specFileContent = "test content"
+        def specFileContentItem = Mock(ContentItem)
+        specFileContentItem.getDecodedContent() >> specFileContent
 
         and: "a catalogue manifest in the same repo containing the requested spec file but with out a repo in the location"
         def specFileLocation = new SpecFileLocation((String)null, specFilePath)
@@ -88,7 +95,7 @@ class FilesServiceTest extends Specification {
         1 * catalogueServiceMock.getCatalogueForRepoAndUser(specFileRepo, username) >> catalogue
 
         and: "the contents is retrieved from the github api using the ref specified"
-        1 * restApiMock.getRawRepositoryContent(specFileRepo, specFilePath, "test-branch") >> specFileContent
+        1 * restApiMock.getRepositoryContent(specFileRepo, specFilePath, "test-branch") >> specFileContentItem
         result == specFileContent
     }
 
@@ -100,6 +107,8 @@ class FilesServiceTest extends Specification {
         def specFileRepo = new Repository("test-owner2", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def specFileContent = "test content"
+        def specFileContentItem = Mock(ContentItem)
+        specFileContentItem.getDecodedContent() >> specFileContent
 
         and: "a catalogue repo with a manifest not containing the requested spec file"
         def catalogueRepo = new Repository("test-owner", "catalogue-repo")
@@ -114,7 +123,7 @@ class FilesServiceTest extends Specification {
         1 * catalogueServiceMock.getCatalogueForRepoAndUser(catalogueRepo, username) >> catalogue
 
         and: "no contents is retrieved for the spec file repo and path from the github api"
-        0 * restApiMock.getRawRepositoryContent(specFileRepo, specFilePath, null) >> specFileContent
+        0 * restApiMock.getRepositoryContent(specFileRepo, specFilePath, null) >> specFileContentItem
         !result
     }
 
@@ -126,6 +135,8 @@ class FilesServiceTest extends Specification {
         def specFileRepo = new Repository("test-owner2", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def specFileContent = "test content"
+        def specFileContentItem = Mock(ContentItem)
+        specFileContentItem.getDecodedContent() >> specFileContent
 
         and: "a catalogue repo the user does not have access to or does not exist"
         def catalogueRepo = new Repository("test-owner", "catalogue-repo")
@@ -137,7 +148,7 @@ class FilesServiceTest extends Specification {
         1 * catalogueServiceMock.getCatalogueForRepoAndUser(catalogueRepo, username) >> null
 
         and: "no contents is retrieved for the spec file repo and path from the github api"
-        0 * restApiMock.getRawRepositoryContent(specFileRepo, specFilePath, null) >> specFileContent
+        0 * restApiMock.getRepositoryContent(specFileRepo, specFilePath, null) >> specFileContentItem
         !result
     }
 }

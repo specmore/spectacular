@@ -6,6 +6,8 @@ import spectacular.github.service.catalogues.SpecFileLocation;
 import spectacular.github.service.common.Repository;
 import spectacular.github.service.github.RestApiClient;
 
+import java.io.UnsupportedEncodingException;
+
 @Service
 public class FilesService {
     private final CatalogueService catalogueService;
@@ -16,7 +18,7 @@ public class FilesService {
         this.restApiClient = restApiClient;
     }
 
-    public String getFileContent(Repository catalogueRepo, Repository specRepo, String path, String ref, String username) {
+    public String getFileContent(Repository catalogueRepo, Repository specRepo, String path, String ref, String username) throws UnsupportedEncodingException {
         var catalogue = catalogueService.getCatalogueForRepoAndUser(catalogueRepo, username);
 
         if (catalogue == null || catalogue.getCatalogueManifest() == null || catalogue.getCatalogueManifest().getSpecFileLocations() == null) return null;
@@ -24,7 +26,7 @@ public class FilesService {
         if (!catalogue.getCatalogueManifest().getSpecFileLocations().stream()
                 .anyMatch(specFileLocation -> specFileMatches(specFileLocation, catalogueRepo, specRepo, path))) return null;
 
-        return restApiClient.getRawRepositoryContent(specRepo, path, ref);
+        return restApiClient.getRepositoryContent(specRepo, path, ref).getDecodedContent();
     }
 
     private static boolean specFileMatches(SpecFileLocation specFileLocation, Repository catalogueRepo, Repository specRepo, String specFilePath) {
