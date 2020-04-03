@@ -99,10 +99,6 @@ class InstanceConfigServiceTest extends Specification {
         def searchCodeResultRepo = new spectacular.github.service.github.domain.Repository(1234, repo.getNameWithOwner(), null)
         def searchCodeResultItem = new SearchCodeResultItem(instanceManifestFilename, instanceManifestFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
         def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
-        and: "a valid Yaml instance config Manifest"
-        def validYamlManifest = "catalogues:\n" +
-                "- name: \"Test Catalogue 1\"\n" +
-                "  repo: test-owner/test-config-repo"
 
         when: "the get instance configs for a user"
         def result = instanceConfigService.getInstanceConfigsForUser(username)
@@ -117,6 +113,6 @@ class InstanceConfigServiceTest extends Specification {
         result.isEmpty()
 
         and: "no yaml manifest file contents is retrieved"
-        0 * restApiClient.getRawRepositoryContent(repo, instanceManifestFilename, null)
+        0 * restApiClient.getRepositoryContent(repo, instanceManifestFilename, null)
     }
 }

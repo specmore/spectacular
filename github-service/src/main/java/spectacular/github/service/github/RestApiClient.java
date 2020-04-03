@@ -39,20 +39,6 @@ public class RestApiClient {
                 .build();
     }
 
-    public String getRawRepositoryContent(Repository repo, String path, String ref) {
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(REPO_CONTENT_PATH);
-        if(ref != null && ref.length() > 0) uriComponentsBuilder.queryParam("ref", ref);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", RAW_CONTENT_ACCEPT_HEADER);
-        HttpEntity entity = new HttpEntity(headers);
-
-        String contentUri = uriComponentsBuilder.buildAndExpand(repo.getNameWithOwner(), path).toUriString();
-        ResponseEntity<String> response = restTemplate.exchange(contentUri, HttpMethod.GET, entity, String.class);
-
-        return response.getBody();
-    }
-
     public ContentItem getRepositoryContent(Repository repo, String path, String ref) {
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(REPO_CONTENT_PATH);
         if(ref != null && ref.length() > 0) uriComponentsBuilder.queryParam("ref", ref);

@@ -36,30 +36,6 @@ class RestApiClientTest extends Specification {
     @SpringBean
     HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = Mock()
 
-    def "GetRawRepositoryContent"() {
-        given: "a content file to fetch"
-        def repo = new Repository("testOwner", "testRepo", null)
-        def filePath = "test-file.yaml"
-        and: "a valid raw content response"
-        def responseContent = "test response content"
-        and: "the app installation authentication header interceptor to be used for the request"
-        1 * appInstallationAuthenticationHeaderRequestInterceptor.intercept(_,_,_) >> { HttpRequest request, byte[] body, ClientHttpRequestExecution execution ->
-            execution.execute(request, body)
-        }
-
-        expect: "the github content api endpoint to be called with a get and the raw content accept header"
-        def repoNameWithOwner = repo.getNameWithOwner()
-        this.server.expect(requestTo("/repos/$repoNameWithOwner/contents/$filePath"))
-                .andExpect(method(HttpMethod.GET))
-                .andExpect(header("Accept", "application/vnd.github.3.raw"))
-                .andRespond(withSuccess(responseContent, MediaType.APPLICATION_JSON));
-
-        and: "the raw content to be returned by the client for a successful response"
-        def contentResult = client.getRawRepositoryContent(repo, filePath, null)
-        contentResult
-        contentResult == responseContent
-    }
-
     def "GetRepositoryContent"() {
         given: "a content file to fetch"
         def repo = new Repository("testOwner", "testRepo", null)

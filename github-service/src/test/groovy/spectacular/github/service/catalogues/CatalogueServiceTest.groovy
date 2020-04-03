@@ -107,7 +107,7 @@ class CatalogueServiceTest extends Specification {
         result.isEmpty()
 
         and: "no file contents are retrieved"
-        0 * restApiClient.getRawRepositoryContent(*_)
+        0 * restApiClient.getRepositoryContent(*_)
     }
 
     def "get catalogues filters out incorrect filename matches"() {
@@ -140,7 +140,7 @@ class CatalogueServiceTest extends Specification {
         0 * restApiClient.isUserRepositoryCollaborator(*_)
 
         and: "no file contents are retrieved"
-        0 * restApiClient.getRawRepositoryContent(*_)
+        0 * restApiClient.getRepositoryContent(*_)
     }
 
     def "get catalogue for repository and valid user"() {
@@ -237,7 +237,7 @@ class CatalogueServiceTest extends Specification {
         0 * restApiClient.getRepository(_)
 
         and: "no file contents are retrieved"
-        0 * restApiClient.getRawRepositoryContent(*_)
+        0 * restApiClient.getRepositoryContent(*_)
 
         and: "no catalogue is returned"
         !catalogue
