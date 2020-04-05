@@ -1,0 +1,36 @@
+{
+  "id" : "883aa991-71b5-385e-89e6-6a25231affb1",
+  "request" : {
+    "url" : "/graphql",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "equalToJson" : "{\"query\":\"query {\\n    repository(owner: \\\"pburls\\\", name:\\\"specs-test2\\\") {\\n        nameWithOwner\\n        url\\n        pullRequests(first: 100, baseRefName: \\\"master\\\", states: [OPEN]) {\\n            totalCount\\n            nodes {\\n                number\\n                url\\n                updatedAt\\n                headRef { name repository { nameWithOwner url } }\\n                labels(first: 100) {\\n                    totalCount\\n                    nodes { name }\\n                }\\n                files(first:100) {\\n                    totalCount\\n                    nodes { path }\\n                }\\n                title\\n            }\\n        }\\n    }\\n}\"}",
+      "ignoreArrayOrder" : true,
+      "ignoreExtraElements" : true
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-graphql-iZQtq.json",
+    "headers" : {
+      "Date" : "Sun, 05 Apr 2020 09:40:57 GMT",
+      "Content-Type" : "application/json; charset=utf-8",
+      "Server" : "GitHub.com",
+      "Status" : "200 OK",
+      "Cache-Control" : "no-cache",
+      "X-GitHub-Media-Type" : "github.v4",
+      "X-RateLimit-Limit" : "5000",
+      "X-RateLimit-Remaining" : "4996",
+      "X-RateLimit-Reset" : "1586083256",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "1; mode=block",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "Vary" : "Accept-Encoding, Accept, X-Requested-With",
+      "X-GitHub-Request-Id" : "F21F:399C2:70EBFE:853CB5:5E89A7A8"
+    }
+  },
+  "uuid" : "883aa991-71b5-385e-89e6-6a25231affb1"
+}

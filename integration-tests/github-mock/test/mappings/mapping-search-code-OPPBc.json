@@ -1,0 +1,31 @@
+{
+  "id" : "028d3af5-1237-3a66-acd9-16dd98598a62",
+  "request" : {
+    "url" : "/search/code?q=filename:spectacular-config+extension:yaml+path:/+org:pburls",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-search-code-OPPBc.json",
+    "headers" : {
+      "Date" : "Sun, 05 Apr 2020 09:40:26 GMT",
+      "Content-Type" : "application/json; charset=utf-8",
+      "Server" : "GitHub.com",
+      "Status" : "200 OK",
+      "X-RateLimit-Limit" : "30",
+      "X-RateLimit-Remaining" : "29",
+      "X-RateLimit-Reset" : "1586079686",
+      "Cache-Control" : "no-cache",
+      "X-GitHub-Media-Type" : "github.v3",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "1; mode=block",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "Vary" : "Accept-Encoding, Accept, X-Requested-With",
+      "X-GitHub-Request-Id" : "F21F:399C2:70E3A4:853307:5E89A78A"
+    }
+  },
+  "uuid" : "028d3af5-1237-3a66-acd9-16dd98598a62"
+}
