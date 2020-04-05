@@ -54,7 +54,7 @@ stages:
       inputs:
         action: Run services
         azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
-        azureContainerRegistry: $(azureContainerRegistry)
+        azureContainerRegistry: $(containerRegistry)
         dockerComposeFile: docker-compose.yml
         projectName: $(Build.Repository.Name)
         qualifyImageNames: true
