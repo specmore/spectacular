@@ -6,7 +6,8 @@ trigger:
     - master
 
 variables:
-  dockerRegistryServiceConnection: 'b49e6e37-26c8-421e-ac20-c8ea6239311e'
+  azureSubscriptionEndpoint: spectacular-azurerm
+  #dockerRegistryServiceConnection: 'b49e6e37-26c8-421e-ac20-c8ea6239311e'
   imageRepository: 'spectacular-release-candidate'
   containerRegistry: 'spectacular.azurecr.io'
   imagePullSecret: 'spectacular-auth'
@@ -29,7 +30,7 @@ stages:
       displayName: Build services
       inputs:
         action: Build services
-        azureSubscriptionEndpoint: $(dockerRegistryServiceConnection)
+        azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
         azureContainerRegistry: $(containerRegistry)
         dockerComposeFile: docker-compose.yml
         projectName: $(Build.Repository.Name)
