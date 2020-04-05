@@ -62,12 +62,33 @@ stages:
         abortOnContainerExit: true
         detached: true
     - task: Bash@3
-      displayName: tests
+      displayName: tests 11
       inputs:
         targetType: 'inline'
-        script: ls |
-          ls $(Build.SourcesDirectory)
-    - bash: run-cypress-tests.sh
+        script: ls
+    - task: Bash@3
+      displayName: tests 12
+      inputs:
+        targetType: 'inline'
+        script: ls $(Build.SourcesDirectory)
+    - task: Bash@3
+      displayName: tests 13
+      inputs:
+        targetType: 'inline'
+        script: ls $(Build.SourcesDirectory)/integration-tests
+    - task: Bash@3
+      displayName: tests 14
+      inputs:
+        targetType: 'inline'
+        script: ls
+        workingDirectory: '$(Build.SourcesDirectory)'
+    - task: Bash@3
+      displayName: tests 15
+      inputs:
+        targetType: 'inline'
+        script: ls
+        workingDirectory: '$(Build.SourcesDirectory)/integration-tests'
+    - bash: ./run-cypress-tests.sh
       workingDirectory: '$(Build.SourcesDirectory)/integration-tests'
       displayName: tests2
     - task: Bash@3
