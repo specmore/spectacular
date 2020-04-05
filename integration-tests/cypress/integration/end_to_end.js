@@ -6,7 +6,7 @@ describe('End to End test without login', function() {
         cy.setCookie('jwt_token', 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwYnVybHMiLCJwaWN0dXJlIjoiaHR0cHM6Ly9hdmF0YXJzMi5naXRodWJ1c2VyY29udGVudC5jb20vdS8xMTUwMjI4ND92PTQiLCJuYW1lIjoiUGF0cmljayBCdXJscyIsIm9yaWdpbiI6ImdpdGh1YiIsImV4cCI6MTY3NTY3NjE1OTl9.Y1m5NpBOBeW239wpnxliBLYRFqVonfDFNYvJxXP19SKCUny_PkMAytFjFcYrVWIA0N01-ndnD0YhHxMCTkMM_A')
 
         // when visiting the home page
-        cy.visit('http://localhost:8080')
+        cy.visit('/')
     });
 
     it('Shows menu bar with logged in user name', function() {
