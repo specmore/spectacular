@@ -61,3 +61,8 @@ stages:
         buildImages: false
         abortOnContainerExit: true
         detached: true
+    - task: Bash@3
+      displayName: Run cypress tests
+      inputs:
+        workingDirectory: $(Build.SourcesDirectory)/integration-tests/
+        filePath: "run-cypress-tests.sh"
