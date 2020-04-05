@@ -22,7 +22,9 @@ stages:
   displayName: Build, test and push stage
   jobs:
   - job: Build
-    displayName: Build
+    displayName: Build, test and push stage
+    variables:
+      - group: docker-compose-variables
     pool:
       vmImage: $(vmImageName)
     steps:
