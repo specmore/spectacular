@@ -46,3 +46,15 @@ stages:
         projectName: $(Build.Repository.Name)
         qualifyImageNames: true
         additionalImageTags: $(Build.BuildId)
+    - task: DockerCompose@0
+      displayName: Run services
+      inputs:
+        action: Run services
+        azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+        azureContainerRegistry: $(azureContainerRegistry)
+        dockerComposeFile: docker-compose.yml
+        projectName: $(Build.Repository.Name)
+        qualifyImageNames: true
+        buildImages: false
+        abortOnContainerExit: true
+        detached: true
