@@ -19,6 +19,7 @@ services:
         environment: 
             - GITHUB_APP_ID=${SPECTACULAR_GITHUB_APP_ID:?SPECTACULAR_GITHUB_APP_ID needs to be set in a .env file with a GitHub app id}
             - GITHUB_APP_PRIVATE_KEY_FILE_PATH=/usr/spectacular/github.private-key.pem
+            - GITHUB_API_ROOT_URL=${SPECTACULAR_GITHUB_API_ROOT_URL:-https://api.github.com}
             - JWT_SHARED_SECRET=${SPECTACULAR_JWT_SHARED_SECRET:?SPECTACULAR_JWT_SHARED_SECRET needs to be set in a .env file with a 32byte text secret}
         volumes:
             - ${SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH:?SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH needs to be set in a .env file with the location of a .pem private key provided for the GitHub app}:/usr/spectacular/github.private-key.pem:ro
