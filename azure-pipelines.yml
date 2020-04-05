@@ -67,8 +67,11 @@ stages:
         targetType: 'inline'
         script: ls |
           ls $(Build.SourcesDirectory)
+    - bash: run-cypress-tests.sh
+      workingDirectory: '$(Build.SourcesDirectory)/integration-tests'
+      displayName: tests2
     - task: Bash@3
       displayName: Run cypress tests
       inputs:
-        workingDirectory: '$(Build.SourcesDirectory)/integration-tests'
         filePath: 'run-cypress-tests.sh'
+        workingDirectory: '$(Build.SourcesDirectory)/integration-tests'
