@@ -1,0 +1,37 @@
+# Build, test and push images to Azure Container Registry
+
+trigger:
+  branches:
+    include:
+    - master
+
+variables:
+  dockerRegistryServiceConnection: 'b49e6e37-26c8-421e-ac20-c8ea6239311e'
+  imageRepository: 'spectacular-release-candidate'
+  containerRegistry: 'spectacular.azurecr.io'
+  imagePullSecret: 'spectacular-auth'
+  manifestArtifactName: 'backend-manifests'
+  tag: '$(Build.BuildId)'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build, test and push stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: DockerCompose@0
+      displayName: Build services
+      inputs:
+        action: Build services
+        azureSubscriptionEndpoint: $(dockerRegistryServiceConnection)
+        azureContainerRegistry: $(containerRegistry)
+        dockerComposeFile: docker-compose.yml
+        projectName: $(Build.Repository.Name)
+        qualifyImageNames: true
+        additionalImageTags: $(Build.BuildId)
