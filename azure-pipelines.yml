@@ -64,5 +64,5 @@ stages:
     - task: Bash@3
       displayName: Run cypress tests
       inputs:
-        workingDirectory: $(Build.SourcesDirectory)/integration-tests/
-        filePath: "run-cypress-tests.sh"
+        workingDirectory: '$(Build.SourcesDirectory)/integration-tests'
+        filePath: 'run-cypress-tests.sh'
