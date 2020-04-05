@@ -30,6 +30,8 @@ stages:
     steps:
     - task: DockerCompose@0
       displayName: Build services
+      env:
+        SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
       inputs:
         action: Build services
         azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
