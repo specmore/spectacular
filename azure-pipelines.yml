@@ -28,10 +28,16 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
+    - task: DownloadSecureFile@1
+      displayName: Download GitHub App Signing Key
+      name: githubAppSigningKey
+      inputs:
+        secureFile: 'spectacular-dev-app.2020-01-26.private-key.pem'
     - task: DockerCompose@0
       displayName: Build services
       env:
         SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
+        SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH: $(githubAppSigningKey.secureFilePath)
       inputs:
         action: Build services
         azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
