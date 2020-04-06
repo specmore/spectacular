@@ -77,6 +77,9 @@ stages:
       continueOnError: true
     - task: DockerCompose@0
       displayName: Docker Compose logs
+      env:
+        SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
+        SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH: $(githubAppSigningKey.secureFilePath)
       inputs:
         action: Run a Docker Compose command
         azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
