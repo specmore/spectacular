@@ -35,3 +35,16 @@ stages:
         dockerfile: 'github-service/Dockerfile'
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: $(tag)
+  - job: BuildWeb
+    displayName: Build Web App
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: test-candidate/backend
+        dockerfile: 'ui/Dockerfile'
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: $(tag)
