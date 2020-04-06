@@ -71,11 +71,6 @@ stages:
       inputs:
         targetType: 'inline'
         script: curl http://localhost:80
-    # - bash: ./run-cypress-tests.sh
-    #   workingDirectory: '$(Build.SourcesDirectory)/integration-tests'
-    #   displayName: tests2
-    - task: Bash@3
+    - bash: docker run -v $PWD/:/e2e -w /e2e -e "CYPRESS_baseUrl=http://host.docker.internal:80" --add-host=host.docker.internal:$(ip route | grep docker0 | awk '{print $9}') cypress/included:3.3.2
+      workingDirectory: '$(Build.SourcesDirectory)/integration-tests'
       displayName: Run cypress tests
-      inputs:
-        filePath: 'run-cypress-tests.sh'
-        workingDirectory: '$(Build.SourcesDirectory)/integration-tests'
