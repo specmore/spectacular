@@ -33,6 +33,5 @@ stages:
         command: buildAndPush
         repository: test-candidate/backend
         dockerfile: 'github-service/Dockerfile'
-        buildContext: '.'
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: $(tag)
