@@ -1,0 +1,38 @@
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+  branches:
+    include:
+    - master
+
+variables:
+  azureSubscriptionEndpoint: spectacular-azurerm
+  dockerRegistryServiceConnection: 'b49e6e37-26c8-421e-ac20-c8ea6239311e'
+  containerRegistry: 'spectacular.azurecr.io'
+  imagePullSecret: 'spectacular-auth'
+  manifestArtifactName: 'backend-manifests'
+  tag: '$(Build.BuildId)'
+  
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build and push stage
+  jobs:  
+  - job: BuildBackend
+    displayName: Build Backend Service
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: test-candidate/backend
+        dockerfile: 'github-service/Dockerfile'
+        buildContext: '.'
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: $(tag)
