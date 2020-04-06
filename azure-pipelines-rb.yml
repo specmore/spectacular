@@ -44,7 +44,7 @@ stages:
       displayName: Build and push an image to container registry
       inputs:
         command: buildAndPush
-        repository: test-candidate/backend
+        repository: test-candidate/web
         dockerfile: 'ui/Dockerfile'
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: $(tag)
