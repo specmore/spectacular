@@ -46,9 +46,13 @@ stages:
         projectName: $(Build.Repository.Name)
         qualifyImageNames: true
         additionalImageTags: $(Build.BuildId)
+    - bash: docker run -d -p 5006:5000 -v $PWD/github-mock/test:/home/wiremock rodolpheche/wiremock --port 5000
+      workingDirectory: '$(Build.SourcesDirectory)/integration-tests'
+      displayName: Run GitHub API Mock
     - task: DockerCompose@0
       displayName: Run services
       env:
+        SPECTACULAR_GITHUB_API_ROOT_URL: http://$(ip route | grep docker0 | awk '{print $9}'):5006
         SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
         SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH: $(githubAppSigningKey.secureFilePath)
       inputs:
@@ -62,21 +66,16 @@ stages:
         abortOnContainerExit: true
         detached: true
     - task: Bash@3
-      displayName: docker ps
+      displayName: List Docker containers
       inputs:
         targetType: 'inline'
         script: docker ps
-    - task: Bash@3
-      displayName: curl web
-      inputs:
-        targetType: 'inline'
-        script: curl http://localhost:80
     - bash: docker run -v $PWD/:/e2e -w /e2e -e "CYPRESS_baseUrl=http://host.docker.internal:80" --add-host=host.docker.internal:$(ip route | grep docker0 | awk '{print $9}') cypress/included:3.3.2
       workingDirectory: '$(Build.SourcesDirectory)/integration-tests'
       displayName: Run cypress tests
-      continueOnError: true
     - task: DockerCompose@0
-      displayName: Docker Compose logs
+      displayName: Print Docker Compose logs
+      condition: always()
       env:
         SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
         SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH: $(githubAppSigningKey.secureFilePath)
