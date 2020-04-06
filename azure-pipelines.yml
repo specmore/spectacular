@@ -49,10 +49,13 @@ stages:
     - bash: docker run -d -p 5006:5000 -v $PWD/github-mock/test:/home/wiremock rodolpheche/wiremock --port 5000
       workingDirectory: '$(Build.SourcesDirectory)/integration-tests'
       displayName: Run GitHub API Mock
+    - bash: DOCKER_HOST=$(ip route | grep docker0 | awk '{print $9}'); echo $DOCKER_HOST; export DOCKER_HOST; 
+      displayName: Get DockerHost IP
+    - bash: echo $SPECTACULAR_GITHUB_API_ROOT_URL; SPECTACULAR_GITHUB_API_ROOT_URL='http://$DOCKER_HOST:5006'; export SPECTACULAR_GITHUB_API_ROOT_URL; echo $SPECTACULAR_GITHUB_API_ROOT_URL; 
+      displayName: Set SPECTACULAR_GITHUB_API_ROOT_URL to mock
     - task: DockerCompose@0
       displayName: Run services
       env:
-        SPECTACULAR_GITHUB_API_ROOT_URL: http://$(ip route | grep docker0 | awk '{print $9}'):5006
         SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
         SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH: $(githubAppSigningKey.secureFilePath)
       inputs:
