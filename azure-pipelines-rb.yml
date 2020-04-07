@@ -19,32 +19,43 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 stages:
-- stage: Build
-  displayName: Build and push stage
+# - stage: Build
+#   displayName: Build, unit test and push images
+#   jobs:  
+#   - job: BuildBackend
+#     displayName: Build Backend Service
+#     pool:
+#       vmImage: $(vmImageName)
+#     steps:
+#     - task: Docker@2
+#       displayName: Build and push an image to container registry
+#       inputs:
+#         command: buildAndPush
+#         repository: test-candidate/backend
+#         dockerfile: 'github-service/Dockerfile'
+#         containerRegistry: $(dockerRegistryServiceConnection)
+#         tags: $(tag)
+#   - job: BuildWeb
+#     displayName: Build Web App
+#     pool:
+#       vmImage: $(vmImageName)
+#     steps:
+#     - task: Docker@2
+#       displayName: Build and push an image to container registry
+#       inputs:
+#         command: buildAndPush
+#         repository: test-candidate/web
+#         dockerfile: 'ui/Dockerfile'
+#         containerRegistry: $(dockerRegistryServiceConnection)
+#         tags: $(tag)
+
+- stage: IntegrationTesting
+  displayName: Integration Testing
   jobs:  
-  - job: BuildBackend
-    displayName: Build Backend Service
+  - job: E2EUITests
+    displayName: End to End UI Tests
     pool:
       vmImage: $(vmImageName)
     steps:
-    - task: Docker@2
-      displayName: Build and push an image to container registry
-      inputs:
-        command: buildAndPush
-        repository: test-candidate/backend
-        dockerfile: 'github-service/Dockerfile'
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: $(tag)
-  - job: BuildWeb
-    displayName: Build Web App
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-    - task: Docker@2
-      displayName: Build and push an image to container registry
-      inputs:
-        command: buildAndPush
-        repository: test-candidate/web
-        dockerfile: 'ui/Dockerfile'
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: $(tag)
+    - bash: docker ps
+      displayName: List container
