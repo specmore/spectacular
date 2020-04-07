@@ -65,6 +65,8 @@ stages:
     displayName: End to End UI Tests
     pool:
       vmImage: $(vmImageName)
+    service:
+      github-mock: wiremock
     steps:
     - bash: docker ps
       displayName: List container
