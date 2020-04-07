@@ -25,7 +25,7 @@ resources:
     ports:
     - 8080
     volumes:
-    - $(Build.SourcesDirectory)/integration-tests/github-mock/test:/home/wiremock
+    - '$(Build.SourcesDirectory)/integration-tests/github-mock/test:/home/wiremock'
 
 stages:
 # - stage: Build
