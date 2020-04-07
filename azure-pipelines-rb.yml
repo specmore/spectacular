@@ -18,15 +18,15 @@ variables:
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
-resources:
-  containers:
-  - container: wiremock
-    image: rodolpheche/wiremock
-    ports:
-    - 8080
-    volumes:
-    # - '$(Build.SourcesDirectory)/integration-tests/github-mock/test:/home/wiremock'
-    - 'integration-tests/github-mock/test:/home/wiremock'
+# resources:
+#   containers:
+#   - container: wiremock
+#     image: rodolpheche/wiremock
+#     ports:
+#     - 8080
+#     volumes:
+#     # - '$(Build.SourcesDirectory)/integration-tests/github-mock/test:/home/wiremock'
+#     - 'integration-tests/github-mock/test:/home/wiremock'
 
 stages:
 # - stage: Build
@@ -67,7 +67,12 @@ stages:
     pool:
       vmImage: $(vmImageName)
     services:
-      github-mock: wiremock
+      github-mock:
+        image: rodolpheche/wiremock
+        ports:
+        - 8080
+        volumes:
+        - '$(Build.SourcesDirectory)/integration-tests/github-mock/test:/home/wiremock'
     steps:
     - bash: docker ps
       displayName: List container
