@@ -54,6 +54,14 @@ stages:
   jobs:  
   - job: E2EUITests
     displayName: End to End UI Tests
+    resources:
+      containers:
+      - container: wiremock
+        image: rodolpheche/wiremock
+        ports:
+        - 8080
+        volumes:
+        - $(Build.SourcesDirectory)/integration-tests/github-mock/test:/home/wiremock
     pool:
       vmImage: $(vmImageName)
     steps:
