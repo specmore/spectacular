@@ -66,13 +66,15 @@ stages:
     displayName: End to End UI Tests
     pool:
       vmImage: $(vmImageName)
-    services:
-      github-mock:
-        image: rodolpheche/wiremock
-        ports:
-        - 8080
-        volumes:
-        - '$(Build.SourcesDirectory)/integration-tests/github-mock/test:/home/wiremock'
+    # services:
+    #   github-mock:
+    #     image: rodolpheche/wiremock
+    #     ports:
+    #     - 8080
+    #     volumes:
+    #     - '$(Build.SourcesDirectory)/integration-tests/github-mock/test:/home/wiremock'
     steps:
     - bash: docker ps
       displayName: List container
+    - bash: echo $(Build.SourcesDirectory)
+      displayName: List path
