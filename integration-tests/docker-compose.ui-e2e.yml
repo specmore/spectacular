@@ -13,7 +13,7 @@ services:
     backend:
         depends_on: 
             - github-mock
-        image: spectacular.azurecr.io/test-candidate/backend
+        image: spectacular.azurecr.io/test-candidate/backend:144
         environment: 
             - GITHUB_APP_ID=${SPECTACULAR_GITHUB_APP_ID:?SPECTACULAR_GITHUB_APP_ID needs to be set in a .env file with a GitHub app id}
             - GITHUB_APP_PRIVATE_KEY_FILE_PATH=/usr/spectacular/github.private-key.pem
@@ -22,7 +22,7 @@ services:
         volumes:
             - ${SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH:?SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH needs to be set in a .env file with the location of a .pem private key provided for the GitHub app}:/usr/spectacular/github.private-key.pem:ro
     web:
-        image: spectacular.azurecr.io/test-candidate/web
+        image: spectacular.azurecr.io/test-candidate/web:144
         ports:
         - "80:80"
         depends_on: 
