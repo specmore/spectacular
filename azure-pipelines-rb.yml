@@ -18,15 +18,6 @@ variables:
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
-resources:
-  containers:
-  - container: wiremock
-    image: rodolpheche/wiremock
-    ports:
-    - 8080
-    volumes:
-    - '/home/vsts/work/github-mock/test:/home/wiremock'
-
 stages:
 # - stage: Build
 #   displayName: Build, unit test and push images
@@ -63,17 +54,42 @@ stages:
   jobs:  
   - job: E2EUITests
     displayName: End to End UI Tests
+    variables:
+      - group: docker-compose-variables
     pool:
       vmImage: $(vmImageName)
-    services:
-      github-mock: wiremock
     steps:
+    - task: DownloadSecureFile@1
+      displayName: Download GitHub App Signing Key
+      name: githubAppSigningKey
+      inputs:
+        secureFile: 'spectacular-dev-app.2020-01-26.private-key.pem'
+    - task: DockerCompose@0
+      displayName: Run services
+      env:
+        SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
+        SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH: $(githubAppSigningKey.secureFilePath)
+      inputs:
+        action: Run services
+        azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+        azureContainerRegistry: $(containerRegistry)
+        dockerComposeFile: ./integration-tests/docker-compose.ui-e2e.yml
+        projectName: spectacular
+        buildImages: false
+        abortOnContainerExit: true
+        detached: true
     - bash: docker ps
       displayName: List container
-    - bash: echo $(Build.SourcesDirectory)
-      displayName: List path
-    - task: CopyFiles@2
-      displayName: Copy GitHub wiremock files
+    - task: DockerCompose@0
+      displayName: Print Docker Compose logs
+      condition: always()
+      env:
+        SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
+        SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH: $(githubAppSigningKey.secureFilePath)
       inputs:
-        contents: 'integration-tests/github-mock/test/**'
-        targetFolder: /home/vsts/work/github-mock/test
+        action: Run a Docker Compose command
+        azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+        azureContainerRegistry: $(containerRegistry)
+        dockerComposeFile: ./integration-tests/docker-compose.ui-e2e.yml
+        projectName: spectacular
+        dockerComposeCommand: logs
