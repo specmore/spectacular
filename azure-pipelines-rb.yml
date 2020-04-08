@@ -81,18 +81,9 @@ stages:
         detached: true
     - bash: docker ps
       displayName: List container
-    - task: DockerCompose@0
-      displayName: Run cypress e2e ui tests
-      env:
-        SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
-        SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH: $(githubAppSigningKey.secureFilePath)
-      inputs:
-        action: Run a Docker Compose command
-        azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
-        azureContainerRegistry: $(containerRegistry)
-        dockerComposeFile: ./integration-tests/docker-compose.ui-e2e.yml
-        projectName: spectacular
-        dockerComposeCommand: exec cypress cypress run
+    - bash: docker run -v $PWD/ui-e2e:/e2e -w /e2e -e "CYPRESS_baseUrl=http://host.docker.internal:80" --add-host=host.docker.internal:$(ip route | grep docker0 | awk '{print $9}') cypress/included:3.3.2
+      workingDirectory: '$(Build.SourcesDirectory)/integration-tests'
+      displayName: Run cypress tests
     - task: DockerCompose@0
       displayName: Print Docker Compose logs
       condition: always()
