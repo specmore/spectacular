@@ -32,3 +32,13 @@ services:
             - API_LOCATION=http://backend
             - AUTH_LOCATION=http://auth:8080
             - GITHUB_APP_INSTALLATION_ID=${SPECTACULAR_GITHUB_APP_INSTALLATION_ID:?SPECTACULAR_GITHUB_APP_INSTALLATION_ID needs to be set in a .env file with a GitHub app installation id}
+    cypress:
+        image: cypress/included:3.3.2
+        depends_on: 
+            - web
+        volumes:
+            - ./integration-tests/ui-e2e:/e2e
+        working_dir: /e2e
+        environment:
+            - CYPRESS_BASEURL=http://web
+        
