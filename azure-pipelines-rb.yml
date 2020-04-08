@@ -82,12 +82,23 @@ stages:
     - bash: docker ps
       displayName: List container
     - task: DockerCompose@0
+      displayName: Run cypress e2e ui tests
+      env:
+        SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
+        SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH: $(githubAppSigningKey.secureFilePath)
+      inputs:
+        action: Run a Docker Compose command
+        azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+        azureContainerRegistry: $(containerRegistry)
+        dockerComposeFile: ./integration-tests/docker-compose.ui-e2e.yml
+        projectName: spectacular
+        dockerComposeCommand: exec cypress cypress run
+    - task: DockerCompose@0
       displayName: Print Docker Compose logs
       condition: always()
       env:
         SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
         SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH: $(githubAppSigningKey.secureFilePath)
-        SPECTACULAR_IMAGE_TAG: 144
       inputs:
         action: Run a Docker Compose command
         azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
