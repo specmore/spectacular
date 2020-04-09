@@ -30,3 +30,5 @@ COPY --from=build /usr/src/app/dist /usr/share/nginx/html
 
 # Copy and web config template
 COPY web.template.conf /etc/nginx/conf.d/web.template
+
+CMD ["bash", "-c", "envsubst '$${API_LOCATION},$${AUTH_LOCATION},$${GITHUB_APP_INSTALLATION_ID}' < /etc/nginx/conf.d/web.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]

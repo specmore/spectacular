@@ -3,7 +3,7 @@ services:
     github-mock:
         image: rodolpheche/wiremock
         volumes:
-            - ./integration-tests/github-mock/test:/home/wiremock
+            - ./github-mock/test:/home/wiremock
     auth:
         image: tarent/loginsrv:1.3.0
         environment: 
