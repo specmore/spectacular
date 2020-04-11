@@ -90,6 +90,7 @@ stages:
       env:
         SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
         SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH: $(githubAppSigningKey.secureFilePath)
+        SPECTACULAR_IMAGE_TAG: $(tag)
       inputs:
         action: Run a Docker Compose command
         azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
