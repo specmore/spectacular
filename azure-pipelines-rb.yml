@@ -154,6 +154,8 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
+    - checkout: self
+      persistCredentials: true
     - bash: git tag rc-$(tag)
       displayName: Git Tag
     - bash: git push --tags
