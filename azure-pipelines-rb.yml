@@ -15,91 +15,92 @@ variables:
   releaseCandidateRepositoryName: release-candidate 
   imagePullSecret: 'spectacular-auth'
   manifestArtifactName: 'backend-manifests'
-  tag: '$(Build.BuildId)'
+  # tag: '$(Build.BuildId)'
+  tag: 173
   
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
 stages:
-- stage: Build
-  displayName: Build, unit test and push images
-  jobs:  
-  - job: BuildBackend
-    displayName: Build Backend Service
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-    - task: Docker@2
-      displayName: Build and push an image to container registry
-      inputs:
-        command: buildAndPush
-        repository: $(testCandidateRepositoryName)/backend
-        dockerfile: 'github-service/Dockerfile'
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: $(tag)
-  - job: BuildWeb
-    displayName: Build Web App
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-    - task: Docker@2
-      displayName: Build and push an image to container registry
-      inputs:
-        command: buildAndPush
-        repository: $(testCandidateRepositoryName)/web
-        dockerfile: 'ui/Dockerfile'
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: $(tag)
+# - stage: Build
+#   displayName: Build, unit test and push images
+#   jobs:  
+#   - job: BuildBackend
+#     displayName: Build Backend Service
+#     pool:
+#       vmImage: $(vmImageName)
+#     steps:
+#     - task: Docker@2
+#       displayName: Build and push an image to container registry
+#       inputs:
+#         command: buildAndPush
+#         repository: $(testCandidateRepositoryName)/backend
+#         dockerfile: 'github-service/Dockerfile'
+#         containerRegistry: $(dockerRegistryServiceConnection)
+#         tags: $(tag)
+#   - job: BuildWeb
+#     displayName: Build Web App
+#     pool:
+#       vmImage: $(vmImageName)
+#     steps:
+#     - task: Docker@2
+#       displayName: Build and push an image to container registry
+#       inputs:
+#         command: buildAndPush
+#         repository: $(testCandidateRepositoryName)/web
+#         dockerfile: 'ui/Dockerfile'
+#         containerRegistry: $(dockerRegistryServiceConnection)
+#         tags: $(tag)
 
-- stage: IntegrationTesting
-  displayName: Integration Testing
-  jobs:  
-  - job: E2EUITests
-    displayName: End to End UI Tests
-    variables:
-      - group: docker-compose-variables
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-    - task: DownloadSecureFile@1
-      displayName: Download GitHub App Signing Key
-      name: githubAppSigningKey
-      inputs:
-        secureFile: 'spectacular-dev-app.2020-01-26.private-key.pem'
-    - task: DockerCompose@0
-      displayName: Run services
-      env:
-        SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
-        SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH: $(githubAppSigningKey.secureFilePath)
-        SPECTACULAR_IMAGE_TAG: $(tag)
-      inputs:
-        action: Run services
-        azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
-        azureContainerRegistry: $(containerRegistry)
-        dockerComposeFile: ./integration-tests/docker-compose.ui-e2e.yml
-        projectName: spectacular
-        buildImages: false
-        abortOnContainerExit: true
-        detached: true
-    - bash: docker ps
-      displayName: List container
-    - bash: docker run -v $PWD/ui-e2e:/e2e -w /e2e -e "CYPRESS_baseUrl=http://host.docker.internal:80" --add-host=host.docker.internal:$(ip route | grep docker0 | awk '{print $9}') cypress/included:3.3.2
-      workingDirectory: '$(Build.SourcesDirectory)/integration-tests'
-      displayName: Run cypress tests
-    - task: DockerCompose@0
-      displayName: Print Docker Compose logs
-      condition: always()
-      env:
-        SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
-        SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH: $(githubAppSigningKey.secureFilePath)
-        SPECTACULAR_IMAGE_TAG: $(tag)
-      inputs:
-        action: Run a Docker Compose command
-        azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
-        azureContainerRegistry: $(containerRegistry)
-        dockerComposeFile: ./integration-tests/docker-compose.ui-e2e.yml
-        projectName: spectacular
-        dockerComposeCommand: logs
+# - stage: IntegrationTesting
+#   displayName: Integration Testing
+#   jobs:  
+#   - job: E2EUITests
+#     displayName: End to End UI Tests
+#     variables:
+#       - group: docker-compose-variables
+#     pool:
+#       vmImage: $(vmImageName)
+#     steps:
+#     - task: DownloadSecureFile@1
+#       displayName: Download GitHub App Signing Key
+#       name: githubAppSigningKey
+#       inputs:
+#         secureFile: 'spectacular-dev-app.2020-01-26.private-key.pem'
+#     - task: DockerCompose@0
+#       displayName: Run services
+#       env:
+#         SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
+#         SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH: $(githubAppSigningKey.secureFilePath)
+#         SPECTACULAR_IMAGE_TAG: $(tag)
+#       inputs:
+#         action: Run services
+#         azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+#         azureContainerRegistry: $(containerRegistry)
+#         dockerComposeFile: ./integration-tests/docker-compose.ui-e2e.yml
+#         projectName: spectacular
+#         buildImages: false
+#         abortOnContainerExit: true
+#         detached: true
+#     - bash: docker ps
+#       displayName: List container
+#     - bash: docker run -v $PWD/ui-e2e:/e2e -w /e2e -e "CYPRESS_baseUrl=http://host.docker.internal:80" --add-host=host.docker.internal:$(ip route | grep docker0 | awk '{print $9}') cypress/included:3.3.2
+#       workingDirectory: '$(Build.SourcesDirectory)/integration-tests'
+#       displayName: Run cypress tests
+#     - task: DockerCompose@0
+#       displayName: Print Docker Compose logs
+#       condition: always()
+#       env:
+#         SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
+#         SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH: $(githubAppSigningKey.secureFilePath)
+#         SPECTACULAR_IMAGE_TAG: $(tag)
+#       inputs:
+#         action: Run a Docker Compose command
+#         azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+#         azureContainerRegistry: $(containerRegistry)
+#         dockerComposeFile: ./integration-tests/docker-compose.ui-e2e.yml
+#         projectName: spectacular
+#         dockerComposeCommand: logs
 
 - stage: CreateReleaseCandidate
   displayName: Tag as a Release Candidate
