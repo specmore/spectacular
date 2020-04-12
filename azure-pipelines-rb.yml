@@ -119,9 +119,7 @@ stages:
       displayName: Pull web Test Candidate image
       inputs:
         command: pull
-        repository: $(testCandidateRepositoryName)/web
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: $(tag)
+        arguments: $(containerRegistry)/$(testCandidateRepositoryName)/web:$(tag)
     - task: Docker@2
       displayName: Tag web Release Candidate image
       inputs:
