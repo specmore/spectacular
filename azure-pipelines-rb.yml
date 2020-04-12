@@ -106,7 +106,7 @@ stages:
   displayName: Tag as a Release Candidate
   jobs:
   - job: TagImage
-    displayName: Tag and Push Release Candidate image
+    displayName: Tag and Push image
     pool:
       vmImage: $(vmImageName)
     steps:
@@ -149,3 +149,12 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         repository: $(releaseCandidateRepositoryName)/web
         tags: $(tag)
+  - job: TagSource
+    displayName: Tag git repository
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - bash: git tag rc-$(tag)
+      displayName: Git Tag
+    - bash: git push --tags
+      displayName: Push Git Tags
