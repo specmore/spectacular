@@ -6,6 +6,12 @@ trigger:
   branches:
     include:
     - master
+  paths:
+    include:
+    - ui/*
+    - github-service/*
+    - integration-tests/*
+    - azure-pipelines.yml
 
 variables:
   azureSubscriptionEndpoint: spectacular-azurerm
