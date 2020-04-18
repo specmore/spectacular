@@ -56,7 +56,9 @@ stages:
         repository: $(testCandidateRepositoryName)/backend
         dockerfile: 'backend/Dockerfile'
         containerRegistry: $(dockerRegistryServiceConnection)
-        tags: $(tag)
+        tags: |
+          $(tag)
+          $(GitVersion.SemVer)
   - job: BuildWeb
     displayName: Build Web App
     dependsOn: SetVersion
@@ -70,7 +72,9 @@ stages:
         repository: $(testCandidateRepositoryName)/web
         dockerfile: 'web/Dockerfile'
         containerRegistry: $(dockerRegistryServiceConnection)
-        tags: $(tag)
+        tags: |
+          $(tag)
+          $(GitVersion.SemVer)
   # - job: TagSource
   #   displayName: Tag git repository with build number
   #   pool:
