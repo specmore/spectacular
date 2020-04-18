@@ -12,7 +12,7 @@ FROM openjdk:11-jre
 
 ENV GITHUB_APP_PRIVATE_KEY_FILE_PATH=/usr/spectacular/github.private-key.pem
 
-COPY --from=build app/build/libs/github-service.jar /app.jar
+COPY --from=build app/build/libs/backend.jar /app.jar
 
 EXPOSE 80
 
