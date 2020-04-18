@@ -1,11 +1,13 @@
 FROM gradle:6.0.1-jdk11 AS build
+ARG SEMVER
 
 WORKDIR /app
 COPY build.gradle gradle.properties settings.gradle ./
 
 COPY src ./src
 
-RUN gradle build
+RUN echo $SEMVER
+RUN gradle -Pversion=$SEMVER build
 
 ### 
 FROM openjdk:11-jre
