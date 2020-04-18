@@ -8,7 +8,7 @@ trigger:
     - master
   paths:
     include:
-    - ui/*
+    - web/*
     - github-service/*
     - integration-tests/*
     - azure-pipelines.yml
@@ -54,7 +54,7 @@ stages:
       inputs:
         command: buildAndPush
         repository: $(testCandidateRepositoryName)/web
-        dockerfile: 'ui/Dockerfile'
+        dockerfile: 'web/Dockerfile'
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: $(tag)
   # - job: TagSource
