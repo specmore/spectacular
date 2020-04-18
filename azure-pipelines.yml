@@ -136,6 +136,7 @@ stages:
         command: push
         containerRegistry: $(dockerRegistryServiceConnection)
         repository: $(releaseCandidateRepositoryName)/backend
+        tags: latest
     - task: Docker@2
       displayName: Pull web Test Candidate image
       inputs:
@@ -152,6 +153,7 @@ stages:
         command: push
         containerRegistry: $(dockerRegistryServiceConnection)
         repository: $(releaseCandidateRepositoryName)/web
+        tags: latest
   - job: TagSource
     displayName: Tag git repository
     pool:
