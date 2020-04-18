@@ -40,6 +40,7 @@ stages:
     steps:
     - task: UseGitVersion@5
       displayName: Run GitVersion
+      name: GitVersionTask
       inputs:
         versionSpec: '5.x'
     - bash: echo SemVer $(GitVersion.SemVer);
@@ -48,6 +49,8 @@ stages:
   - job: BuildBackend
     displayName: Build Backend Service image
     dependsOn: SetVersion
+    variables:
+      GitVersion.FullSemVer: $[ dependencies.SetVersion.outputs['GitVersionTask.GitVersion.FullSemVer'] ]
     pool:
       vmImage: $(vmImageName)
     steps:
@@ -78,6 +81,8 @@ stages:
   - job: BuildWeb
     displayName: Build Web App image
     dependsOn: SetVersion
+    variables:
+      GitVersion.FullSemVer: $[ dependencies.SetVersion.outputs['GitVersionTask.GitVersion.FullSemVer'] ]
     pool:
       vmImage: $(vmImageName)
     steps:
