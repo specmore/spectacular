@@ -22,7 +22,7 @@ group = 'spectacular.backend'
 sourceCompatibility = '11'
 
 bootJar {
-    version = null
+	archiveVersion = null
 }
 
 dependencies {
