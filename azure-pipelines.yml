@@ -9,7 +9,7 @@ trigger:
   paths:
     include:
     - web/*
-    - github-service/*
+    - backend/*
     - integration-tests/*
     - azure-pipelines.yml
 
@@ -41,7 +41,7 @@ stages:
       inputs:
         command: buildAndPush
         repository: $(testCandidateRepositoryName)/backend
-        dockerfile: 'github-service/Dockerfile'
+        dockerfile: 'backend/Dockerfile'
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: $(tag)
   - job: BuildWeb
