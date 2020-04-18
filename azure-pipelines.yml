@@ -30,7 +30,7 @@ variables:
 
 stages:
 - stage: Build
-  displayName: Build, unit test and push images
+  displayName: Build, unit test and push Test Candidate images
   jobs:
   - job: SetVersion
     displayName: Set Version Number
@@ -50,7 +50,18 @@ stages:
       vmImage: $(vmImageName)
     steps:
     - task: Docker@2
-      displayName: Build and push an image to container registry
+      displayName: Build image
+      inputs:
+        command: build
+        repository: $(testCandidateRepositoryName)/backend
+        containerRegistry: $(dockerRegistryServiceConnection)
+        dockerfile: 'backend/Dockerfile'
+        arguments: --build-arg SEMVER=$(GitVersion.SemVer)
+        tags: |
+          $(tag)
+          $(GitVersion.SemVer)
+    - task: Docker@2
+      displayName: Push image to container registry
       inputs:
         command: buildAndPush
         repository: $(testCandidateRepositoryName)/backend
@@ -138,7 +149,7 @@ stages:
         dockerComposeCommand: logs
 
 - stage: CreateReleaseCandidate
-  displayName: Tag as a Release Candidate
+  displayName: Tag images as Release Candidates
   jobs:
   - job: TagImage
     displayName: Tag and Push image
