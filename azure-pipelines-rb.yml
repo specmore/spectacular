@@ -120,34 +120,48 @@ stages:
         command: pull
         arguments: $(containerRegistry)/$(testCandidateRepositoryName)/backend:$(tag)
     - task: Docker@2
-      displayName: Tag backend Release Candidate image
+      displayName: Tag backend Release Candidate image with build number
       inputs:
         command: tag
         arguments: $(containerRegistry)/$(testCandidateRepositoryName)/backend:$(tag) $(containerRegistry)/$(releaseCandidateRepositoryName)/backend:$(tag)
+    - task: Docker@2
+      displayName: Tag backend Release Candidate image with latest
+      inputs:
+        command: tag
+        arguments: $(containerRegistry)/$(testCandidateRepositoryName)/backend:$(tag) $(containerRegistry)/$(releaseCandidateRepositoryName)/backend:latest
     - task: Docker@2
       displayName: Push backend Release Candidate image
       inputs:
         command: push
         containerRegistry: $(dockerRegistryServiceConnection)
         repository: $(releaseCandidateRepositoryName)/backend
-        tags: $(tag)
+        tags: |
+          $(tag)
+          latest
     - task: Docker@2
       displayName: Pull web Test Candidate image
       inputs:
         command: pull
         arguments: $(containerRegistry)/$(testCandidateRepositoryName)/web:$(tag)
     - task: Docker@2
-      displayName: Tag web Release Candidate image
+      displayName: Tag web Release Candidate image with build number
       inputs:
         command: tag
         arguments: $(containerRegistry)/$(testCandidateRepositoryName)/web:$(tag) $(containerRegistry)/$(releaseCandidateRepositoryName)/web:$(tag)
+    - task: Docker@2
+      displayName: Tag web Release Candidate image with latest
+      inputs:
+        command: tag
+        arguments: $(containerRegistry)/$(testCandidateRepositoryName)/web:$(tag) $(containerRegistry)/$(releaseCandidateRepositoryName)/web:latest
     - task: Docker@2
       displayName: Push web Release Candidate image
       inputs:
         command: push
         containerRegistry: $(dockerRegistryServiceConnection)
         repository: $(releaseCandidateRepositoryName)/web
-        tags: $(tag)
+        tags: |
+          $(tag)
+          latest
   - job: TagSource
     displayName: Tag git repository
     pool:
