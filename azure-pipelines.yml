@@ -17,12 +17,13 @@ variables:
   azureSubscriptionEndpoint: spectacular-azurerm
   dockerRegistryServiceConnection: 'b49e6e37-26c8-421e-ac20-c8ea6239311e'
   containerRegistry: 'spectacular.azurecr.io'
-  testCandidateRepositoryName: test-candidate 
-  releaseCandidateRepositoryName: release-candidate 
+  testCandidateRepositoryName: test-candidate
+  releaseCandidateRepositoryName: release-candidate
   imagePullSecret: 'spectacular-auth'
   manifestArtifactName: 'backend-manifests'
   tag: '$(Build.BuildId)'
-  
+  GitVersion.SemVer: ''
+
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
@@ -30,9 +31,22 @@ variables:
 stages:
 - stage: Build
   displayName: Build, unit test and push images
-  jobs:  
+  jobs:
+  - job: SetVersion
+    displayName: Set Version Number
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: UseGitVersion@5
+      displayName: gitversion
+      inputs:
+        versionSpec: '5.x'
+        updateAssemblyInfo: true
+    - bash: echo SemVer $(GitVersion.SemVer);
+      displayName: Display version
   - job: BuildBackend
     displayName: Build Backend Service
+    dependsOn: SetVersion
     pool:
       vmImage: $(vmImageName)
     steps:
@@ -46,6 +60,7 @@ stages:
         tags: $(tag)
   - job: BuildWeb
     displayName: Build Web App
+    dependsOn: SetVersion
     pool:
       vmImage: $(vmImageName)
     steps:
@@ -71,7 +86,7 @@ stages:
 
 - stage: IntegrationTesting
   displayName: Integration Testing
-  jobs:  
+  jobs:
   - job: E2EUITests
     displayName: End to End UI Tests
     variables:
