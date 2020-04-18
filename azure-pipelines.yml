@@ -50,6 +50,7 @@ stages:
     displayName: Build Backend Service image
     dependsOn: SetVersion
     variables:
+      GitVersion.SemVer: $[ dependencies.SetVersion.outputs['GitVersionTask.GitVersion.SemVer'] ]
       GitVersion.FullSemVer: $[ dependencies.SetVersion.outputs['GitVersionTask.GitVersion.FullSemVer'] ]
     pool:
       vmImage: $(vmImageName)
@@ -67,7 +68,7 @@ stages:
         arguments: --build-arg SEMVER=$(GitVersion.FullSemVer)
         tags: |
           $(tag)
-          $(GitVersion.FullSemVer)
+          $(GitVersion.SemVer)
     - task: Docker@2
       displayName: Push image to container registry
       inputs:
@@ -77,11 +78,12 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
-          $(GitVersion.FullSemVer)
+          $(GitVersion.SemVer)
   - job: BuildWeb
     displayName: Build Web App image
     dependsOn: SetVersion
     variables:
+      GitVersion.SemVer: $[ dependencies.SetVersion.outputs['GitVersionTask.GitVersion.SemVer'] ]
       GitVersion.FullSemVer: $[ dependencies.SetVersion.outputs['GitVersionTask.GitVersion.FullSemVer'] ]
     pool:
       vmImage: $(vmImageName)
@@ -95,7 +97,7 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
-          $(GitVersion.FullSemVer)
+          $(GitVersion.SemVer)
   # - job: TagSource
   #   displayName: Tag git repository with build number
   #   pool:
