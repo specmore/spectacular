@@ -11,7 +11,6 @@ import spectacular.backend.config.instance.InstanceConfigService;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.github.app.*;
 import spectacular.backend.config.instance.Catalogue;
-import spectacular.github.service.github.app.*;
 
 public class GenerateDomainModel {
     public static void main (String args[]) {
