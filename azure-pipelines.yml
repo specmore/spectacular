@@ -41,7 +41,6 @@ stages:
       displayName: gitversion
       inputs:
         versionSpec: '5.x'
-        updateAssemblyInfo: true
     - bash: echo SemVer $(GitVersion.SemVer);
       displayName: Display version
   - job: BuildBackend
