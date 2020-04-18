@@ -18,11 +18,15 @@ apply plugin: 'groovy'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
-group = 'spectacular.backend'
+group = 'spectacular'
 sourceCompatibility = '11'
 
 bootJar {
-	archiveVersion = null
+	archiveVersion = ''
+}
+
+springBoot {
+	buildInfo()
 }
 
 dependencies {
