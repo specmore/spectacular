@@ -23,6 +23,7 @@ variables:
   manifestArtifactName: 'backend-manifests'
   tag: '$(Build.BuildId)'
   GitVersion.SemVer: ''
+  GitVersion.FullSemVer: ''
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
@@ -30,25 +31,29 @@ variables:
 
 stages:
 - stage: Build
-  displayName: Build, unit test and push Test Candidate images
+  displayName: Build, Test and Push Test Candidate images
   jobs:
   - job: SetVersion
-    displayName: Set Version Number
+    displayName: Calc Version Number
     pool:
       vmImage: $(vmImageName)
     steps:
     - task: UseGitVersion@5
-      displayName: gitversion
+      displayName: Run GitVersion
       inputs:
         versionSpec: '5.x'
     - bash: echo SemVer $(GitVersion.SemVer);
-      displayName: Display version
+            echo FullSemVer $(GitVersion.FullSemVer);
+      displayName: Display versions
   - job: BuildBackend
-    displayName: Build Backend Service
+    displayName: Build Backend Service image
     dependsOn: SetVersion
     pool:
       vmImage: $(vmImageName)
     steps:
+    - bash: echo SemVer $(GitVersion.SemVer);
+            echo FullSemVer $(GitVersion.FullSemVer);
+      displayName: Display versions
     - task: Docker@2
       displayName: Build image
       inputs:
@@ -56,10 +61,10 @@ stages:
         repository: $(testCandidateRepositoryName)/backend
         containerRegistry: $(dockerRegistryServiceConnection)
         dockerfile: 'backend/Dockerfile'
-        arguments: --build-arg SEMVER=$(GitVersion.SemVer)
+        arguments: --build-arg SEMVER=$(GitVersion.FullSemVer)
         tags: |
           $(tag)
-          $(GitVersion.SemVer)
+          $(GitVersion.FullSemVer)
     - task: Docker@2
       displayName: Push image to container registry
       inputs:
@@ -69,9 +74,9 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
-          $(GitVersion.SemVer)
+          $(GitVersion.FullSemVer)
   - job: BuildWeb
-    displayName: Build Web App
+    displayName: Build Web App image
     dependsOn: SetVersion
     pool:
       vmImage: $(vmImageName)
@@ -85,7 +90,7 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
-          $(GitVersion.SemVer)
+          $(GitVersion.FullSemVer)
   # - job: TagSource
   #   displayName: Tag git repository with build number
   #   pool:
@@ -152,7 +157,7 @@ stages:
   displayName: Tag images as Release Candidates
   jobs:
   - job: TagImage
-    displayName: Tag and Push image
+    displayName: Tag and Push images
     pool:
       vmImage: $(vmImageName)
     steps:
