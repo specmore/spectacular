@@ -97,7 +97,7 @@ stages:
         repository: $(testCandidateRepositoryName)/web
         containerRegistry: $(dockerRegistryServiceConnection)
         dockerfile: 'web/Dockerfile'
-        arguments: --build-arg SEMVER=$(GitVersion.FullSemVer) SHORTSHA=$(GitVersion.ShortSha)
+        arguments: --build-arg SEMVER=$(GitVersion.FullSemVer) --build-arg SHORTSHA=$(GitVersion.ShortSha)
         tags: |
           $(tag)
           $(GitVersion.SemVer)
