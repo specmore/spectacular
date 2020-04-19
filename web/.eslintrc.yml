@@ -7,6 +7,8 @@ extends:
 globals:
   Atomics: readonly
   SharedArrayBuffer: readonly
+  VERSION: readonly
+  SHORTSHA: readonly
 parserOptions:
   ecmaFeatures:
     jsx: true
@@ -18,3 +20,6 @@ rules:
   linebreak-style: 0
   react/prop-types: 0
   react/jsx-filename-extension: 0
+  max-len: 
+    - 2
+    - code: 140
