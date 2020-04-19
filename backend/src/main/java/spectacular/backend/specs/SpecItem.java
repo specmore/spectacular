@@ -17,7 +17,7 @@ public class SpecItem {
     private final OpenApiSpecParseResult parseResult;
 
     public SpecItem(@NotNull Repository repository, @NotNull String filePath, String htmlUrl, String ref, String sha, Instant lastModified, OpenApiSpecParseResult parseResult) {
-        this.id = repository.getNameWithOwner() + "/" + filePath + ":" + ref;
+        this.id = repository.getNameWithOwner() + "/" + ref + "/" + filePath;
         this.repository = repository;
         this.filePath = filePath;
         this.htmlUrl = htmlUrl;

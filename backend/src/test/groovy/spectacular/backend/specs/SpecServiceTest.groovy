@@ -36,7 +36,7 @@ class SpecServiceTest extends Specification {
 
         then: "a spec item is returned with the spec file's id, repository, filepath, ref and html url"
         specItem
-        specItem.getId() == "test-owner/spec-repo/test-specs/example-spec.yaml:xyz"
+        specItem.getId() == "test-owner/spec-repo/xyz/test-specs/example-spec.yaml"
         specItem.getRepository() == specFileRepo
         specItem.getFilePath() == specFilePath
         specItem.getRef() == ref
@@ -90,7 +90,7 @@ class SpecServiceTest extends Specification {
 
         then: "a spec item is returned with the spec file's id, repository, filepath and ref"
         specItem
-        specItem.getId() == "test-owner/spec-repo/test-specs/example-spec.yaml:xyz"
+        specItem.getId() == "test-owner/spec-repo/xyz/test-specs/example-spec.yaml"
         specItem.getRepository() == specFileRepo
         specItem.getFilePath() == specFilePath
         specItem.getRef() == "xyz"
