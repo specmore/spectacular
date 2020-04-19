@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Dimmer, Loader, Item, Segment, Message } from 'semantic-ui-react'
+import React, { useState, useEffect } from 'react';
+import {
+  Dimmer, Loader, Item, Segment, Message,
+} from 'semantic-ui-react';
 import { fetchInstances } from '../api-client';
 import EmptyInstanceItemImage from '../assets/images/empty-catalogue-item.png';
 
 
-const InstanceItem = ({instanceConfigManifest, repository}) => (
+const InstanceItem = ({ instanceConfigManifest, repository }) => (
   <Item>
     <Item.Content>
       <Item.Header>{instanceConfigManifest.name}</Item.Header>
@@ -22,23 +24,23 @@ const InstanceList = () => {
       const instancesData = await fetchInstances();
       setInstances(instancesData.instances);
     } catch (error) {
-      //console.error(error);
-      setErrorMessage("An error occurred while fetching instances.");
+      // console.error(error);
+      setErrorMessage('An error occurred while fetching instances.');
     }
-  }
+  };
 
   useEffect(() => {
     fetchInstanceData();
-  }, [])
+  }, []);
 
   if (!instances && !errorMessage) {
     return (
-      <React.Fragment>
+      <>
         <Dimmer inverted active>
-          <Loader content='Loading' />
+          <Loader content="Loading" />
         </Dimmer>
         <img src={EmptyInstanceItemImage} />
-      </React.Fragment>
+      </>
     );
   }
 
@@ -50,7 +52,7 @@ const InstanceList = () => {
     );
   }
 
-  return (  
+  return (
     <Item.Group>
       {instances.map((instance, index) => (<InstanceItem key={index} {...instance} />))}
     </Item.Group>

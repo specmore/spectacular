@@ -1,24 +1,24 @@
-import React from "react";
+import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
-import LatestAgreedVersion from "./latest-agreed-version";
+import LatestAgreedVersion from './latest-agreed-version';
 import { renderWithRouter } from '../common/test-utils';
-import SpecRevisionMock from "./spec-revision";
+import SpecRevisionMock from './spec-revision';
 
 // mock out the actual implementations
-jest.mock('./spec-revision', () =>  jest.fn(() => null));
+jest.mock('./spec-revision', () => jest.fn(() => null));
 afterEach(() => {
-    SpecRevisionMock.mockClear();
+  SpecRevisionMock.mockClear();
 });
 
-describe("LatestAgreedVersion component", () => {
-    test("shows a spec revision component for latest agreed spec item with branch name and version", async () => {
-        // given a valid latest agreed spec item with title and version
-        const specItem = {};
+describe('LatestAgreedVersion component', () => {
+  test('shows a spec revision component for latest agreed spec item with branch name and version', async () => {
+    // given a valid latest agreed spec item with title and version
+    const specItem = {};
 
-        // when the latest agreed version component renders
-        renderWithRouter(<LatestAgreedVersion latestAgreedSpecItem={specItem} />);
+    // when the latest agreed version component renders
+    renderWithRouter(<LatestAgreedVersion latestAgreedSpecItem={specItem} />);
 
-        // then the spec revision component is shown
-        expect(SpecRevisionMock).toHaveBeenCalledTimes(1);
-    });
+    // then the spec revision component is shown
+    expect(SpecRevisionMock).toHaveBeenCalledTimes(1);
+  });
 });

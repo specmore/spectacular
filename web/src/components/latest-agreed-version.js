@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 import SpecRevision from './spec-revision';
 
-const LatestAgreedVersion = ({latestAgreedSpecItem}) => (
-    <React.Fragment>
-        <SpecRevision specItem={latestAgreedSpecItem} />
-    </React.Fragment>
+const LatestAgreedVersion = ({ latestAgreedSpecItem }) => (
+  <>
+    <SpecRevision specItem={latestAgreedSpecItem} />
+  </>
 );
 
 export default LatestAgreedVersion;

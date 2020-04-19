@@ -1,16 +1,21 @@
-import React from "react";
-import { Label, Icon, Item, Message } from 'semantic-ui-react'
+import React from 'react';
+import {
+  Label, Icon, Item, Message,
+} from 'semantic-ui-react';
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
-import { CatalogueContainerLinkButton } from "../routes";
+import { CatalogueContainerLinkButton } from '../routes';
 
-const CatalogueErrorItem = ({error, repository}) => (
-  <Item data-testid='catalogue-list-item-error-item'>
+const CatalogueErrorItem = ({ error, repository }) => (
+  <Item data-testid="catalogue-list-item-error-item">
     <Item.Content>
       <Item.Description>
         <Message icon negative>
-          <Icon name='warning sign' />
+          <Icon name="warning sign" />
           <Message.Content>
-            <Message.Header>An error occurred while parsing the catalogue manifest file in <a href={repository.htmlUrl} target='_blank'>{repository.nameWithOwner}</a></Message.Header>
+            <Message.Header>
+              An error occurred while parsing the catalogue manifest file in
+              <a href={repository.htmlUrl} target="_blank">{repository.nameWithOwner}</a>
+            </Message.Header>
             {error}
           </Message.Content>
         </Message>
@@ -18,10 +23,10 @@ const CatalogueErrorItem = ({error, repository}) => (
     </Item.Content>
   </Item>
 );
-  
-const CatalogueItemDetails = ({repository, catalogueManifest, selectButton}) => (
-  <Item data-testid='catalogue-list-item-details-item'>
-    <Item.Image size='tiny' src={ImagePlaceHolder} />
+
+const CatalogueItemDetails = ({ repository, catalogueManifest, selectButton }) => (
+  <Item data-testid="catalogue-list-item-details-item">
+    <Item.Image size="tiny" src={ImagePlaceHolder} />
     <Item.Content>
       <Item.Header>{catalogueManifest.name}</Item.Header>
       <Item.Description>
@@ -29,18 +34,22 @@ const CatalogueItemDetails = ({repository, catalogueManifest, selectButton}) => 
       </Item.Description>
       <Item.Extra>
         {selectButton}
-        <Label as='a' href={repository.htmlUrl} target='_blank'>
-          <Icon name='github' />{repository.nameWithOwner}
+        <Label as="a" href={repository.htmlUrl} target="_blank">
+          <Icon name="github" />
+          {repository.nameWithOwner}
         </Label>
-        <Label color='teal'>
-          <Icon name='file alternate' />{catalogueManifest["spec-files"].length} specs
+        <Label color="teal">
+          <Icon name="file alternate" />
+          {catalogueManifest['spec-files'].length}
+          {' '}
+          specs
         </Label>
       </Item.Extra>
     </Item.Content>
   </Item>
 );
-  
-const CatalogueListItem = ({catalogue}) => {
+
+const CatalogueListItem = ({ catalogue }) => {
   const selectButton = (<CatalogueContainerLinkButton repository={catalogue.repository} />);
 
   if (catalogue.error) return (<CatalogueErrorItem error={catalogue.error} repository={catalogue.repository} />);

@@ -1,49 +1,53 @@
-import React from "react";
+import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
-import CatalogueContainer from "./catalogue-container";
-import CatalogueDetailsMock from "./catalogue-details";
-import axiosMock from 'axios'
+import axiosMock from 'axios';
+import CatalogueContainer from './catalogue-container';
+import CatalogueDetailsMock from './catalogue-details';
 import { renderWithRouter } from '../common/test-utils';
-import { CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE, CreateCatalogueContainerLocation, CreateViewSpecLocation } from '../routes';
+import {
+  CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE, CreateCatalogueContainerLocation, CreateViewSpecLocation,
+} from '../routes';
 
 jest.mock('axios');
 
 // mock out the actual catalogue-details
-jest.mock('./catalogue-details', () =>  jest.fn(() => null));
+jest.mock('./catalogue-details', () => jest.fn(() => null));
 
-describe("CatalogueContainer component", () => {
-  test("successful fetch displays catalogue", async () => {
+describe('CatalogueContainer component', () => {
+  test('successful fetch displays catalogue', async () => {
     // given a repo for a catalogue
-    const owner = "test-owner";
-    const repo = "repo1";
+    const owner = 'test-owner';
+    const repo = 'repo1';
 
-    // and a mocked successful catalogue response 
-    const catalogueResponse = { 
-        data: {
-            "repository": {
-                "owner": owner,
-                "name": repo,
-                "htmlUrl": "https://github.com/pburls/specs-test",
-                "nameWithOwner": `${owner}/${repo}`
+    // and a mocked successful catalogue response
+    const catalogueResponse = {
+      data: {
+        repository: {
+          owner,
+          name: repo,
+          htmlUrl: 'https://github.com/pburls/specs-test',
+          nameWithOwner: `${owner}/${repo}`,
+        },
+        catalogueManifest: {
+          name: 'Test Catalogue 1',
+          description: 'Specifications for all the interfaces in the across the system X.',
+          'spec-files': [
+            {
+              repo: null,
+              'file-path': 'specs/example-template.yaml',
             },
-            "catalogueManifest": {
-                "name": "Test Catalogue 1",
-                "description": "Specifications for all the interfaces in the across the system X.",
-                "spec-files": [
-                    {
-                        "repo": null,
-                        "file-path": "specs/example-template.yaml"
-                    },
-                    {
-                        "repo": {"owner":"test-owner","name":"specs-test2","htmlUrl":null,"nameWithOwner":"test-owner/specs-test2"},
-                        "file-path": "specs/example-spec.yaml"
-                    }
-                ]
+            {
+              repo: {
+                owner: 'test-owner', name: 'specs-test2', htmlUrl: null, nameWithOwner: 'test-owner/specs-test2',
+              },
+              'file-path': 'specs/example-spec.yaml',
             },
-            "error": null
-        }
+          ],
+        },
+        error: null,
+      },
     };
-    
+
     axiosMock.get.mockResolvedValueOnce(catalogueResponse);
 
     // when catalogue container component renders
@@ -53,33 +57,33 @@ describe("CatalogueContainer component", () => {
     expect(await findByTestId('catalogue-container-segment')).toBeInTheDocument();
 
     // and it fetched the catalogue details
-    expect(axiosMock.get.mock.calls[0][0]).toBe(`/api/catalogues/${owner}/${repo}`)
+    expect(axiosMock.get.mock.calls[0][0]).toBe(`/api/catalogues/${owner}/${repo}`);
 
     // and CatalogueDetails should have been shown
     expect(CatalogueDetailsMock).toHaveBeenCalledTimes(1);
   });
 
-  test("unsuccessful fetch displays error message", async () => {
+  test('unsuccessful fetch displays error message', async () => {
     // given a repo for a catalogue
-    const owner = "test-owner";
-    const repo = "repo1";
+    const owner = 'test-owner';
+    const repo = 'repo1';
 
-    // and a mocked error thrown   
+    // and a mocked error thrown
     axiosMock.get.mockImplementation(() => {
-        throw new Error("test error");
+      throw new Error('test error');
     });
 
     // when catalogue container component renders
     const { findByText } = renderWithRouter(<CatalogueContainer />, CreateCatalogueContainerLocation(owner, repo), CATALOGUE_CONTAINER_ROUTE);
 
     // then it contains an error message
-    expect(await findByText("An error occurred while fetching catalogue details.")).toBeInTheDocument();
+    expect(await findByText('An error occurred while fetching catalogue details.')).toBeInTheDocument();
   });
 
-  test("loader is shown before fetch result", async () => {
+  test('loader is shown before fetch result', async () => {
     // given a repo for a catalogue
-    const owner = "test-owner";
-    const repo = "repo1";
+    const owner = 'test-owner';
+    const repo = 'repo1';
 
     // and a mocked catalogues response that is not yet resolved
     const responsePromise = new Promise(() => {});
@@ -95,41 +99,43 @@ describe("CatalogueContainer component", () => {
     expect(getByTestId('catalogue-container-placeholder-image')).toBeInTheDocument();
   });
 
-  test("swagger UI is shown when a spec file location is set", async () => {
+  test('swagger UI is shown when a spec file location is set', async () => {
     // given a repo for a catalogue
-    const owner = "test-owner";
-    const repo = "repo1";
-    
-    // and a spec file location
-    const specFileLocation = "test-owner/specs-test2/specs/example-spec.yaml";
+    const owner = 'test-owner';
+    const repo = 'repo1';
 
-    // and a mocked successful catalogue response 
-    const catalogueResponse = { 
-        data: {
-            "repository": {
-                "owner": owner,
-                "name": repo,
-                "htmlUrl": "https://github.com/pburls/specs-test",
-                "nameWithOwner": `${owner}/${repo}`
+    // and a spec file location
+    const specFileLocation = 'test-owner/specs-test2/specs/example-spec.yaml';
+
+    // and a mocked successful catalogue response
+    const catalogueResponse = {
+      data: {
+        repository: {
+          owner,
+          name: repo,
+          htmlUrl: 'https://github.com/pburls/specs-test',
+          nameWithOwner: `${owner}/${repo}`,
+        },
+        catalogueManifest: {
+          name: 'Test Catalogue 1',
+          description: 'Specifications for all the interfaces in the across the system X.',
+          'spec-files': [
+            {
+              repo: null,
+              'file-path': 'specs/example-template.yaml',
             },
-            "catalogueManifest": {
-                "name": "Test Catalogue 1",
-                "description": "Specifications for all the interfaces in the across the system X.",
-                "spec-files": [
-                    {
-                        "repo": null,
-                        "file-path": "specs/example-template.yaml"
-                    },
-                    {
-                        "repo": {"owner":"test-owner","name":"specs-test2","htmlUrl":null,"nameWithOwner":"test-owner/specs-test2"},
-                        "file-path": "specs/example-spec.yaml"
-                    }
-                ]
+            {
+              repo: {
+                owner: 'test-owner', name: 'specs-test2', htmlUrl: null, nameWithOwner: 'test-owner/specs-test2',
+              },
+              'file-path': 'specs/example-spec.yaml',
             },
-            "error": null
-        }
+          ],
+        },
+        error: null,
+      },
     };
-  
+
     axiosMock.get.mockResolvedValueOnce(catalogueResponse);
 
     // and a mocked spec file fetch response
@@ -146,10 +152,10 @@ describe("CatalogueContainer component", () => {
     expect(await findByTestId('catalogue-container-swagger-ui')).toBeInTheDocument();
 
     // and file contents should have been fetched
-    const url = `/api/catalogues/${owner}/${repo}/files/test-owner/specs-test2/specs/example-spec.yaml`
+    const url = `/api/catalogues/${owner}/${repo}/files/test-owner/specs-test2/specs/example-spec.yaml`;
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(global.fetch).toHaveBeenCalledWith(url,
-    expect.objectContaining({ url }));
+      expect.objectContaining({ url }));
 
     global.fetch.mockClear();
   });
