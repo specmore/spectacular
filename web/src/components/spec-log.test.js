@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import SpecLog from './spec-log';
-import { renderWithRouter } from '../common/test-utils';
+import { renderWithRouter } from '../__tests__/test-utils';
 import LatestAgreedVersionMock from './latest-agreed-version';
 import ProposedChangeItemMock from './proposed-change-item';
 

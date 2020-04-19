@@ -3,7 +3,7 @@ import '@testing-library/jest-dom/extend-expect';
 import axiosMock from 'axios';
 import CatalogueList from './catalogue-list';
 import CatalogueListItemMock from './catalogue-list-item';
-import { renderWithRouter } from '../common/test-utils';
+import { renderWithRouter } from '../__tests__/test-utils';
 
 jest.mock('axios');
 

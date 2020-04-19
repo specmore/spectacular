@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import CatalogueListItem from './catalogue-list-item';
-import { renderWithRouter } from '../common/test-utils';
+import { renderWithRouter } from '../__tests__/test-utils';
 
 describe('CatalogueListItem component', () => {
   test('renders catalogue list item details when no error is given', async () => {

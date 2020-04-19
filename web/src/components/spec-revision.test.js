@@ -2,7 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import moment from 'moment';
 import SpecRevision from './spec-revision';
-import { renderWithRouter } from '../common/test-utils';
+import { renderWithRouter } from '../__tests__/test-utils';
 
 const validSpecItem = {
   repository: {

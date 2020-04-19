@@ -15,3 +15,5 @@ export const renderWithRouter = (ui, location = '/', routePath = '/') => {
     ...render(ui, { wrapper: Wrapper }),
   };
 };
+
+export default renderWithRouter;

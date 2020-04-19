@@ -3,7 +3,7 @@ import '@testing-library/jest-dom/extend-expect';
 import axiosMock from 'axios';
 import CatalogueContainer from './catalogue-container';
 import CatalogueDetailsMock from './catalogue-details';
-import { renderWithRouter } from '../common/test-utils';
+import { renderWithRouter } from '../__tests__/test-utils';
 import {
   CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE, CreateCatalogueContainerLocation, CreateViewSpecLocation,
 } from '../routes';
@@ -51,7 +51,9 @@ describe('CatalogueContainer component', () => {
     axiosMock.get.mockResolvedValueOnce(catalogueResponse);
 
     // when catalogue container component renders
-    const { findByTestId } = renderWithRouter(<CatalogueContainer />, CreateCatalogueContainerLocation(owner, repo), CATALOGUE_CONTAINER_ROUTE);
+    const { findByTestId } = renderWithRouter(<CatalogueContainer />,
+      CreateCatalogueContainerLocation(owner, repo),
+      CATALOGUE_CONTAINER_ROUTE);
 
     // then a catalogue container should be found
     expect(await findByTestId('catalogue-container-segment')).toBeInTheDocument();
@@ -74,7 +76,9 @@ describe('CatalogueContainer component', () => {
     });
 
     // when catalogue container component renders
-    const { findByText } = renderWithRouter(<CatalogueContainer />, CreateCatalogueContainerLocation(owner, repo), CATALOGUE_CONTAINER_ROUTE);
+    const { findByText } = renderWithRouter(<CatalogueContainer />,
+      CreateCatalogueContainerLocation(owner, repo),
+      CATALOGUE_CONTAINER_ROUTE);
 
     // then it contains an error message
     expect(await findByText('An error occurred while fetching catalogue details.')).toBeInTheDocument();
@@ -90,7 +94,9 @@ describe('CatalogueContainer component', () => {
     axiosMock.get.mockImplementation(() => responsePromise);
 
     // when catalogue container component renders
-    const { getByText, getByTestId } = renderWithRouter(<CatalogueContainer />, CreateCatalogueContainerLocation(owner, repo), CATALOGUE_CONTAINER_ROUTE);
+    const { getByText, getByTestId } = renderWithRouter(<CatalogueContainer />,
+      CreateCatalogueContainerLocation(owner, repo),
+      CATALOGUE_CONTAINER_ROUTE);
 
     // then it contains a loading message
     expect(getByText(`Loading catalogue for ${owner}/${repo}`)).toBeInTheDocument();
@@ -143,7 +149,9 @@ describe('CatalogueContainer component', () => {
     global.fetch = jest.fn().mockImplementation(() => responsePromise);
 
     // when catalogue container component renders
-    const { getByText, findByTestId } = renderWithRouter(<CatalogueContainer />, CreateViewSpecLocation(owner, repo, specFileLocation), CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE);
+    const { findByTestId } = renderWithRouter(<CatalogueContainer />,
+      CreateViewSpecLocation(owner, repo, specFileLocation),
+      CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE);
 
     // then a catalogue container should be found
     expect(await findByTestId('catalogue-container-segment')).toBeInTheDocument();

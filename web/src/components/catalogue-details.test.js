@@ -2,7 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import CatalogueDetails from './catalogue-details';
 import SpecLogMock from './spec-log';
-import { renderWithRouter } from '../common/test-utils';
+import { renderWithRouter } from '../__tests__/test-utils';
 
 // mock out the actual spec-file-item
 jest.mock('./spec-log', () => jest.fn(() => null));
