@@ -3,9 +3,11 @@ package spectacular.backend.specs;
 import spectacular.backend.common.Repository;
 import spectacular.backend.specs.openapi.OpenApiSpecParseResult;
 
+import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
 public class SpecItem {
+    private final String id;
     private final Repository repository;
     private final String filePath;
     private final String htmlUrl;
@@ -14,7 +16,8 @@ public class SpecItem {
     private final Instant lastModified;
     private final OpenApiSpecParseResult parseResult;
 
-    public SpecItem(Repository repository, String filePath, String htmlUrl, String ref, String sha, Instant lastModified, OpenApiSpecParseResult parseResult) {
+    public SpecItem(@NotNull Repository repository, @NotNull String filePath, String htmlUrl, String ref, String sha, Instant lastModified, OpenApiSpecParseResult parseResult) {
+        this.id = repository.getNameWithOwner() + "/" + filePath + ":" + ref;
         this.repository = repository;
         this.filePath = filePath;
         this.htmlUrl = htmlUrl;
@@ -22,6 +25,10 @@ public class SpecItem {
         this.sha = sha;
         this.lastModified = lastModified;
         this.parseResult = parseResult;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public Repository getRepository() {

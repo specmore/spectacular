@@ -2,7 +2,9 @@ package spectacular.backend.specs
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
+import spectacular.backend.common.Repository
 import spectacular.backend.github.RestApiClient
+import spectacular.backend.github.domain.ContentItem
 import spock.lang.Specification
 
 import java.time.ZoneId
@@ -14,7 +16,7 @@ class SpecServiceTest extends Specification {
 
     def "Get spec item for spec repo and file path returns spec item"() {
         given: "a spec file repo, path and ref"
-        def specFileRepo = new spectacular.backend.common.Repository("test-owner", "spec-repo");
+        def specFileRepo = new Repository("test-owner", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def ref = "xyz"
 
@@ -27,13 +29,14 @@ class SpecServiceTest extends Specification {
                 "bWU6IFNhbXBsZSBSZXNvdXJjZQogICAgZGVzY3JpcHRpb246ICJTYW1wbGUg\n" +
                 "UmVzb3VyY2UgZGVzY3JpcHRpb24iCnBhdGhzOiB7fQpjb21wb25lbnRzOgog\n" +
                 "IHNjaGVtYXM6IHt9"
-        def contentItem = new spectacular.backend.github.domain.ContentItem("htmlUrl", specFilePath, "some sha", "file", "some url", encodedContent, "base64")
+        def contentItem = new ContentItem("htmlUrl", specFilePath, "some sha", "file", "some url", encodedContent, "base64")
 
         when: "the spec item is retrieved"
         def specItem = specService.getSpecItem(specFileRepo, specFilePath, ref)
 
-        then: "a spec item is returned with the spec file's repository, filepath, ref and html url"
+        then: "a spec item is returned with the spec file's id, repository, filepath, ref and html url"
         specItem
+        specItem.getId() == "test-owner/spec-repo/test-specs/example-spec.yaml:xyz"
         specItem.getRepository() == specFileRepo
         specItem.getFilePath() == specFilePath
         specItem.getRef() == ref
@@ -56,13 +59,13 @@ class SpecServiceTest extends Specification {
 
     def "Get spec item for spec repo and file path returns spec item with last modified date for content item with last modified date"() {
         given: "a spec file repo, path and ref"
-        def specFileRepo = new spectacular.backend.common.Repository("test-owner", "spec-repo");
+        def specFileRepo = new Repository("test-owner", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def ref = "xyz"
 
         and: "a content item with a last modified date for the spec file"
         def lastModifiedDate = ZonedDateTime.of(2020, 2, 16, 20, 46, 03, 0, ZoneId.of("GMT")) //"Sun, 16 Feb 2020 20:46:03 GMT"
-        def contentItem = new spectacular.backend.github.domain.ContentItem("htmlUrl", specFilePath, "some sha", "file", "some url", "", "base64")
+        def contentItem = new ContentItem("htmlUrl", specFilePath, "some sha", "file", "some url", "", "base64")
         contentItem.setLastModified(lastModifiedDate.toInstant())
 
         when: "the spec item is retrieved"
@@ -78,17 +81,19 @@ class SpecServiceTest extends Specification {
 
     def "Get spec item returns parse error for spec file contents not found"() {
         given: "a spec file repo, path and ref"
-        def specFileRepo = new spectacular.backend.common.Repository("test-owner", "spec-repo");
+        def specFileRepo = new Repository("test-owner", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def ref = "xyz"
 
         when: "the spec item is retrieved"
         def specItem = specService.getSpecItem(specFileRepo, specFilePath, ref)
 
-        then: "a spec item is returned with the spec file's repository and filepath"
+        then: "a spec item is returned with the spec file's id, repository, filepath and ref"
         specItem
+        specItem.getId() == "test-owner/spec-repo/test-specs/example-spec.yaml:xyz"
         specItem.getRepository() == specFileRepo
         specItem.getFilePath() == specFilePath
+        specItem.getRef() == "xyz"
 
         and: "the content of the spec file not found on github"
         1 * restApiClient.getRepositoryContent(specFileRepo, specFilePath, ref) >> {

@@ -3,12 +3,15 @@ package spectacular.backend.files
 
 import spectacular.backend.catalogues.Catalogue
 import spectacular.backend.catalogues.CatalogueManifest
+import spectacular.backend.catalogues.CatalogueService
 import spectacular.backend.catalogues.SpecFileLocation
+import spectacular.backend.common.Repository
 import spectacular.backend.github.RestApiClient
+import spectacular.backend.github.domain.ContentItem
 import spock.lang.Specification
 
 class FilesServiceTest extends Specification {
-    def catalogueServiceMock = Mock(spectacular.backend.catalogues.CatalogueService)
+    def catalogueServiceMock = Mock(CatalogueService)
     def restApiMock = Mock(RestApiClient)
     def fileService = new FilesService(catalogueServiceMock, restApiMock)
 
@@ -17,17 +20,17 @@ class FilesServiceTest extends Specification {
         def username = "test-user"
 
         and: "a spec file repo and path with content"
-        def specFileRepo = new spectacular.backend.common.Repository("test-owner2", "spec-repo");
+        def specFileRepo = new Repository("test-owner2", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def specFileContent = "test content"
-        def specFileContentItem = Mock(spectacular.backend.github.domain.ContentItem)
+        def specFileContentItem = Mock(ContentItem)
         specFileContentItem.getDecodedContent() >> specFileContent
 
         and: "a catalogue repo with a manifest containing the requested spec file"
-        def catalogueRepo = new spectacular.backend.common.Repository("test-owner", "catalogue-repo")
+        def catalogueRepo = new Repository("test-owner", "catalogue-repo")
         def specFileLocation = new SpecFileLocation(specFileRepo.getNameWithOwner(), specFilePath)
         def catalogueManifest = new CatalogueManifest("test manifest", "test description", [specFileLocation])
-        def catalogue = new Catalogue(catalogueRepo, catalogueManifest, null, null)
+        def catalogue = Catalogue.create(catalogueRepo, catalogueManifest, null)
 
         when: "retrieving the spec file contents"
         def result = fileService.getFileContent(catalogueRepo, specFileRepo, specFilePath, null, username)
@@ -45,16 +48,16 @@ class FilesServiceTest extends Specification {
         def username = "test-user"
 
         and: "a spec file repo and path with content"
-        def specFileRepo = new spectacular.backend.common.Repository("test-owner2", "spec-repo");
+        def specFileRepo = new Repository("test-owner2", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def specFileContent = "test content"
-        def specFileContentItem = Mock(spectacular.backend.github.domain.ContentItem)
+        def specFileContentItem = Mock(ContentItem)
         specFileContentItem.getDecodedContent() >> specFileContent
 
         and: "a catalogue manifest in the same repo containing the requested spec file but with out a repo in the location"
         def specFileLocation = new SpecFileLocation((String)null, specFilePath)
         def catalogueManifest = new CatalogueManifest("test manifest", "test description", [specFileLocation])
-        def catalogue = new Catalogue(specFileRepo, catalogueManifest, null, null)
+        def catalogue = Catalogue.create(specFileRepo, catalogueManifest, null)
 
         when: "retrieving the spec file contents"
         def result = fileService.getFileContent(specFileRepo, specFileRepo, specFilePath, null, username)
@@ -72,16 +75,16 @@ class FilesServiceTest extends Specification {
         def username = "test-user"
 
         and: "a spec file repo and path with content"
-        def specFileRepo = new spectacular.backend.common.Repository("test-owner2", "spec-repo");
+        def specFileRepo = new Repository("test-owner2", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def specFileContent = "test content"
-        def specFileContentItem = Mock(spectacular.backend.github.domain.ContentItem)
+        def specFileContentItem = Mock(ContentItem)
         specFileContentItem.getDecodedContent() >> specFileContent
 
         and: "a catalogue manifest in the same repo containing the requested spec file but with out a repo in the location"
         def specFileLocation = new SpecFileLocation((String)null, specFilePath)
         def catalogueManifest = new CatalogueManifest("test manifest", "test description", [specFileLocation])
-        def catalogue = new Catalogue(specFileRepo, catalogueManifest, null, null)
+        def catalogue = Catalogue.create(specFileRepo, catalogueManifest, null)
 
         and: "a ref specified for a test branch"
         def refName = "test-branch"
@@ -102,18 +105,17 @@ class FilesServiceTest extends Specification {
         def username = "test-user"
 
         and: "a spec file repo and path with content"
-        def specFileRepo = new spectacular.backend.common.Repository("test-owner2", "spec-repo");
+        def specFileRepo = new Repository("test-owner2", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def specFileContent = "test content"
-        def specFileContentItem = Mock(spectacular.backend.github.domain.ContentItem)
+        def specFileContentItem = Mock(ContentItem)
         specFileContentItem.getDecodedContent() >> specFileContent
 
         and: "a catalogue repo with a manifest not containing the requested spec file"
-        def catalogueRepo = new spectacular.backend.common.Repository("test-owner", "catalogue-repo")
+        def catalogueRepo = new Repository("test-owner", "catalogue-repo")
         def specFileLocation = new SpecFileLocation("another-owner/another-repo", "another/spec-file.yaml")
         def catalogueManifest = new CatalogueManifest("test manifest", "test description", [specFileLocation])
-        def catalogue = new Catalogue(catalogueRepo, catalogueManifest, null, null)
-
+        def catalogue = Catalogue.create(catalogueRepo, catalogueManifest, null)
         when: "retrieving the spec file contents"
         def result = fileService.getFileContent(catalogueRepo, specFileRepo, specFilePath, null, username)
 
@@ -130,14 +132,14 @@ class FilesServiceTest extends Specification {
         def username = "test-user"
 
         and: "a spec file repo and path with content"
-        def specFileRepo = new spectacular.backend.common.Repository("test-owner2", "spec-repo");
+        def specFileRepo = new Repository("test-owner2", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def specFileContent = "test content"
-        def specFileContentItem = Mock(spectacular.backend.github.domain.ContentItem)
+        def specFileContentItem = Mock(ContentItem)
         specFileContentItem.getDecodedContent() >> specFileContent
 
         and: "a catalogue repo the user does not have access to or does not exist"
-        def catalogueRepo = new spectacular.backend.common.Repository("test-owner", "catalogue-repo")
+        def catalogueRepo = new Repository("test-owner", "catalogue-repo")
 
         when: "retrieving the spec file contents"
         def result = fileService.getFileContent(catalogueRepo, specFileRepo, specFilePath, null, username)

@@ -59,6 +59,7 @@ class CatalogueServiceTest extends Specification {
         def catalogue1 = result.get(0)
 
         and: "the catalogue config is for the repo with the manifest file"
+        catalogue1.getId() == searchCodeResultRepo.getFull_name()
         catalogue1.getRepository().getNameWithOwner() == searchCodeResultRepo.getFull_name()
 
         and: "the yaml manifest file is retrieved"
@@ -186,6 +187,7 @@ class CatalogueServiceTest extends Specification {
 
         and: "a valid catalogue is returned for the requested repo"
         catalogue
+        catalogue.getId() == requestRepo.getNameWithOwner()
         catalogue.getRepository() == requestRepo
 
         and: "the catalogue has a manifest item with the name and description set"

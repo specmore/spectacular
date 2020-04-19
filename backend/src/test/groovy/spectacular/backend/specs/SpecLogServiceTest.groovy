@@ -1,6 +1,6 @@
 package spectacular.backend.specs
 
-
+import spectacular.backend.common.Repository
 import spectacular.backend.pullrequests.PullRequest
 import spock.lang.Specification
 
@@ -12,7 +12,7 @@ class SpecLogServiceTest extends Specification {
 
     def "getSpecLogForSpecRepoAndFile returns a spec item from master as the latest agreed spec item"() {
         given: "a catalogue spec file repo and path"
-        def specFileRepo = new spectacular.backend.common.Repository("test-owner", "spec-repo")
+        def specFileRepo = new Repository("test-owner", "spec-repo")
         def specFilePath = "test-specs/example-spec.yaml"
 
         and: "a spec item on the master branch"
@@ -31,12 +31,12 @@ class SpecLogServiceTest extends Specification {
 
     def "getSpecLogForSpecRepoAndFile returns a spec change proposal an open pull request that changed the spec file"() {
         given: "a catalogue spec file repo and path"
-        def specFileRepo = new spectacular.backend.common.Repository("test-owner", "spec-repo")
+        def specFileRepo = new Repository("test-owner", "spec-repo")
         def specFilePath = "test-specs/example-spec.yaml"
 
         and: "an open pull request that changed the spec file in another branch"
         def changeBranch = "test-branch"
-        def openPullRequest = new PullRequest(specFileRepo, changeBranch, 1, "test-url", [], [specFilePath], "test-pr", Instant.now())
+        def openPullRequest = new PullRequest(specFileRepo, changeBranch, 99, "test-url", [], [specFilePath], "test-pr", Instant.now())
         def changedSpecItem = Mock(SpecItem)
 
         when: "the spec log is retrieved"
@@ -50,6 +50,7 @@ class SpecLogServiceTest extends Specification {
 
         and: "contains a proposal for the open pull request with the changed spec item"
         specLogResult.getProposedChanges().size() == 1
+        specLogResult.getProposedChanges()[0].getId() == 99
         specLogResult.getProposedChanges()[0].getPullRequest() == openPullRequest
         specLogResult.getProposedChanges()[0].getSpecItem() == changedSpecItem
     }
