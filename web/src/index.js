@@ -33,5 +33,5 @@ const Index = () => (
 
 ReactDOM.render(<Index />, document.getElementById('root'));
 
-console.log(`VERSION: ${VERSION}`);
-console.log(`SHA: ${SHORTSHA}`);
+console.info(`VERSION: ${VERSION}`);
+console.info(`SHA: ${SHORTSHA}`);

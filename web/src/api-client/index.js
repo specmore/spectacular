@@ -4,8 +4,8 @@ export const createFileApiURL = (owner, repo, fileLocation) => `/api/catalogues/
 
 axios.interceptors.response.use((response) => response, (error) => {
   if (error.response.status === 401) {
-    console.log('expired token');
-    console.log(`current location:${window.location.pathname}`);
+    console.debug('expired token');
+    console.debug(`current location:${window.location.pathname}`);
 
     const redirectParams = new URLSearchParams();
     redirectParams.append('backTo', window.location.pathname);
