@@ -35,7 +35,10 @@ describe('ProposedChangeItem component', () => {
     };
 
     // when a proposed change item component is rendered with the given proposed item
-    const { getByText } = renderWithRouter(<ProposedChangeItem {...proposedChange} />);
+    const { getByText } = renderWithRouter(<ProposedChangeItem
+      pullRequest={proposedChange.pullRequest}
+      specItem={proposedChange.specItem}
+    />);
 
     // then the pull request number and title header is shown
     expect(getByText('#1', { exact: false })).toBeInTheDocument();
@@ -69,7 +72,10 @@ describe('ProposedChangeItem component', () => {
     };
 
     // when a proposed change item component is rendered with the given proposed item
-    const { getByText } = renderWithRouter(<ProposedChangeItem {...proposedChange} />);
+    const { getByText } = renderWithRouter(<ProposedChangeItem
+      pullRequest={proposedChange.pullRequest}
+      specItem={proposedChange.specItem}
+    />);
 
     // then the pull request number and title header is shown
     expect(getByText('project-x')).toBeInTheDocument();
@@ -99,7 +105,7 @@ describe('ProposedChangeItem component', () => {
     };
 
     // when the component is rendered
-    renderWithRouter(<ProposedChangeItem {...proposedChange} />);
+    renderWithRouter(<ProposedChangeItem pullRequest={proposedChange.pullRequest} specItem={proposedChange.specItem} />);
 
     // then the spec revision component is shown
     expect(SpecRevisionMock).toHaveBeenCalledTimes(1);

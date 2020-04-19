@@ -26,7 +26,7 @@ describe('UserMenuBarItem component', () => {
 
     // then it contains an item for each catalogue in the response
     expect(await findByText('Patrick Burls')).toBeInTheDocument();
-    expect(await findByText('Signed in as pburls')).toBeInTheDocument();
+    expect(await findByText(/pburls/)).toBeInTheDocument();
 
     // and it contains a sign out item
     expect(await findByText('Sign out')).toBeInTheDocument();

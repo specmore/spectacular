@@ -1,12 +1,11 @@
 import React from 'react';
-import { Label, Segment } from 'semantic-ui-react';
+import { Label } from 'semantic-ui-react';
 import SpecRevision from './spec-revision';
 
 const PullRequestHeader = ({ pullRequest }) => (
-  <a href={pullRequest.url} target="_blank">
+  <a href={pullRequest.url} target="_blank" rel="noopener noreferrer">
     <Label circular color="grey">
-      #
-      {pullRequest.number}
+      {`#${pullRequest.number}`}
     </Label>
     <span style={{ marginLeft: '0.5em', fontWeight: 'bold' }}>{pullRequest.title}</span>
   </a>
@@ -14,7 +13,7 @@ const PullRequestHeader = ({ pullRequest }) => (
 
 const PullRequestLabels = ({ pullRequest }) => (
   <>
-    {pullRequest.labels.map((value, index) => (<Label key={index}>{value}</Label>)) }
+    {pullRequest.labels.map((value) => (<Label key={value}>{value}</Label>)) }
   </>
 );
 

@@ -15,7 +15,7 @@ const CatalogueListLoading = () => (
     <Item.Group divided data-testid="catalogue-list-placeholder-item-group">
       <Item>
         <Item.Image size="tiny" src={ImagePlaceHolder} />
-        <img src={EmptyCatalogueItemImage} />
+        <img src={EmptyCatalogueItemImage} alt="placeholder" />
       </Item>
     </Item.Group>
   </Segment>
@@ -31,7 +31,7 @@ const CatalogueList = ({ catalogues }) => (
   <Segment vertical>
     <Header as="h4">The following specification catalogues are available to you:</Header>
     <Item.Group divided data-testid="catalogue-list-item-group">
-      {catalogues.map((catalogue, index) => (<CatalogueListItem key={index} catalogue={catalogue} />))}
+      {catalogues.map((catalogue) => (<CatalogueListItem key={catalogue.id} catalogue={catalogue} />))}
     </Item.Group>
   </Segment>
 );
@@ -40,9 +40,9 @@ const CatalogueListContainer = ({ org }) => {
   const [catalogues, setCatalogues] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const fetchCatalogueData = async (org) => {
+  const fetchCatalogueData = async (orgName) => {
     try {
-      const cataloguesData = await fetchCatalogues(org);
+      const cataloguesData = await fetchCatalogues(orgName);
       setCatalogues(cataloguesData.catalogues);
     } catch (error) {
       // console.error(error);

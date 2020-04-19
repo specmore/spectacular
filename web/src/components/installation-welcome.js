@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Dimmer, Loader, Message, Header, Segment, Container,
+  Dimmer, Loader, Message, Header, Container,
 } from 'semantic-ui-react';
 import { fetchInstallation } from '../api-client';
 import EmptyWelcomeItemImage from '../assets/images/empty-catalogue-item.png';
@@ -30,7 +30,7 @@ const InstallationWelcome = () => {
         <Dimmer inverted active>
           <Loader content="Loading" />
         </Dimmer>
-        <img src={EmptyWelcomeItemImage} />
+        <img src={EmptyWelcomeItemImage} alt="placeholder" />
       </Container>
     );
   }
@@ -45,7 +45,7 @@ const InstallationWelcome = () => {
     );
   }
 
-  const org_url = `https://github.com/${installation.owner}`;
+  const orgUrl = `https://github.com/${installation.owner}`;
 
   return (
     <Container text data-testid="installation-welcome">
@@ -53,7 +53,7 @@ const InstallationWelcome = () => {
         Welcome to Spectacular
         <Header.Subheader>
           Connected to the
-          <a href={org_url} target="_blank">{installation.owner}</a>
+          <a href={orgUrl} target="_blank" rel="noopener noreferrer">{installation.owner}</a>
           {' '}
           GitHub organization
         </Header.Subheader>

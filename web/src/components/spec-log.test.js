@@ -120,7 +120,7 @@ describe('SpecLog component', () => {
     proposedSpec2.ref = 'proposal2';
     const specLog = {
       latestAgreed: specItem,
-      proposedChanges: [{ specItem: proposedSpec1 }, { specItem: proposedSpec2 }],
+      proposedChanges: [{ id: 98, specItem: proposedSpec1 }, { id: 99, specItem: proposedSpec2 }],
     };
 
     // when spec file item component renders

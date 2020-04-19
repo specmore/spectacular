@@ -15,7 +15,7 @@ describe('CatalogueList component', () => {
     // given a mocked successful catalogues response with 2 catalogues
     const cataloguesResponse = {
       data: {
-        catalogues: [{}, {}],
+        catalogues: [{ id: 'a' }, { id: 'b' }],
       },
     };
 

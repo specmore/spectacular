@@ -12,12 +12,10 @@ const SpecLogError = ({ specFileFullLocation, errors }) => (
     <Icon name="warning sign" />
     <Message.Content>
       <Message.Header>
-        The following errors occurred while processing the specification file '
-        {specFileFullLocation}
-        ':
+        {`The following errors occurred while processing the specification file '${specFileFullLocation}':`}
       </Message.Header>
       <List bulleted>
-        {errors.map((error, index) => (<List.Item key={index}>{error}</List.Item>))}
+        {errors.map((error) => (<List.Item key={error}>{error}</List.Item>))}
       </List>
     </Message.Content>
   </Message>
@@ -26,7 +24,11 @@ const SpecLogError = ({ specFileFullLocation, errors }) => (
 const SpecLog = ({ specLog }) => {
   const latestAgreedSpecItem = specLog.latestAgreed;
   const specFileFullLocation = `${latestAgreedSpecItem.repository.nameWithOwner}/${latestAgreedSpecItem.filePath}`;
-  if (latestAgreedSpecItem.parseResult.errors.length > 0) return (<SpecLogError specFileFullLocation={specFileFullLocation} errors={latestAgreedSpecItem.parseResult.errors} />);
+  if (latestAgreedSpecItem.parseResult.errors.length > 0) {
+    return (
+      <SpecLogError specFileFullLocation={specFileFullLocation} errors={latestAgreedSpecItem.parseResult.errors} />
+    );
+  }
 
   const proposedChangesCount = specLog.proposedChanges.length;
 
@@ -45,9 +47,9 @@ const SpecLog = ({ specLog }) => {
           Proposed Changes
           <Label size="small" color="grey">{proposedChangesCount}</Label>
         </Header>
-        {specLog.proposedChanges.map((proposedChange, index) => (
-          <SpecLogItem key={index} specItem={proposedChange.specItem} type="proposed-change-item">
-            <ProposedChangeItem {...proposedChange} />
+        {specLog.proposedChanges.map((proposedChange) => (
+          <SpecLogItem key={proposedChange.id} specItem={proposedChange.specItem} type="proposed-change-item">
+            <ProposedChangeItem pullRequest={proposedChange.pullRequest} specItem={proposedChange.specItem} />
           </SpecLogItem>
         ))}
       </Segment>
