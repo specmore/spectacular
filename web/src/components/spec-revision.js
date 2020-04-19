@@ -11,32 +11,26 @@ const SpecItemError = ({ specItem }) => (
       <Message.Header>
         The following errors occurred while processing the specification file
         {' '}
-        <a href={specItem.htmlUrl} target="_blank">
-          '
-          {`${specItem.repository.nameWithOwner}/${specItem.filePath}`}
-          ' in branch '
-          {specItem.ref}
-          '
+        <a href={specItem.htmlUrl} target="_blank" rel="noopener noreferrer">
+          {`'${specItem.repository.nameWithOwner}/${specItem.filePath}' in branch '${specItem.ref}'`}
         </a>
         :
       </Message.Header>
       <List bulleted>
-        {specItem.parseResult.errors.map((error, index) => (<List.Item key={index}>{error}</List.Item>))}
+        {specItem.parseResult.errors.map((error) => (<List.Item key={error}>{error}</List.Item>))}
       </List>
     </Message.Content>
   </Message>
 );
 
 const SpecRevision = ({ specItem, branchColor }) => {
-  if (!branchColor) {
-    branchColor = 'olive';
-  }
+  const labelColor = branchColor || 'olive';
 
   if (specItem.parseResult.errors.length > 0) return (<SpecItemError specItem={specItem} />);
 
   return (
     <div>
-      <Label color={branchColor} as="a" href={specItem.htmlUrl} target="_blank">
+      <Label color={labelColor} as="a" href={specItem.htmlUrl} target="_blank">
         <Icon name="code branch" />
         {specItem.ref}
       </Label>
