@@ -21,7 +21,10 @@ describe('SpecLog component', () => {
     // given a valid latest agreed spec item with title
     const specItem = {
       repository: {
-        owner: 'test-owner', name: 'specs-test', htmlUrl: 'https://github.com/test-owner/specs-test', nameWithOwner: 'test-owner/specs-test',
+        owner: 'test-owner',
+        name: 'specs-test',
+        htmlUrl: 'https://github.com/test-owner/specs-test',
+        nameWithOwner: 'test-owner/specs-test',
       },
       filePath: 'specs/example-template.yaml',
       ref: 'master',
@@ -44,7 +47,10 @@ describe('SpecLog component', () => {
     // given a valid latest agreed spec item with title
     const specItem = {
       repository: {
-        owner: 'test-owner', name: 'specs-test', htmlUrl: 'https://github.com/test-owner/specs-test', nameWithOwner: 'test-owner/specs-test',
+        owner: 'test-owner',
+        name: 'specs-test',
+        htmlUrl: 'https://github.com/test-owner/specs-test',
+        nameWithOwner: 'test-owner/specs-test',
       },
       filePath: 'specs/example-template.yaml',
       ref: 'master',
@@ -67,7 +73,10 @@ describe('SpecLog component', () => {
     // given a spec item with parse errors
     const specItem = {
       repository: {
-        owner: 'test-owner', name: 'specs-test', htmlUrl: 'https://github.com/test-owner/specs-test', nameWithOwner: 'test-owner/specs-test',
+        owner: 'test-owner',
+        name: 'specs-test',
+        htmlUrl: 'https://github.com/test-owner/specs-test',
+        nameWithOwner: 'test-owner/specs-test',
       },
       filePath: 'specs/example-template.yaml',
       ref: 'master',
@@ -94,7 +103,10 @@ describe('SpecLog component', () => {
     // given valid latest agreed spec item with title and version
     const specItem = {
       repository: {
-        owner: 'test-owner', name: 'specs-test', htmlUrl: 'https://github.com/test-owner/specs-test', nameWithOwner: 'test-owner/specs-test',
+        owner: 'test-owner',
+        name: 'specs-test',
+        htmlUrl: 'https://github.com/test-owner/specs-test',
+        nameWithOwner: 'test-owner/specs-test',
       },
       filePath: 'specs/example-template.yaml',
       ref: 'master',
@@ -112,7 +124,7 @@ describe('SpecLog component', () => {
     };
 
     // when spec file item component renders
-    const { getByText, getByTestId } = renderWithRouter(<SpecLog specLog={specLog} />);
+    const { getByText } = renderWithRouter(<SpecLog specLog={specLog} />);
 
     // then a proposed changes heading is shown with a 2 changes count
     expect(getByText('2')).toBeInTheDocument();
