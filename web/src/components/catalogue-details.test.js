@@ -22,7 +22,7 @@ describe('CatalogueDetails component', () => {
         description: 'Specifications for all the interfaces in the across the system X.',
         'spec-files': [],
       },
-      specLogs: [{}, {}],
+      specLogs: [{ id: '123' }, { id: '456' }],
       error: null,
     };
 

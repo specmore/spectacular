@@ -72,7 +72,8 @@ describe('CatalogueListItem component', () => {
     expect(getByText('pburls/specs-test')).toBeInTheDocument();
 
     // and the error message is shown
-    expect(getByText('An error occurred while parsing the catalogue manifest yaml file. The following field is missing: bla bla bla')).toBeInTheDocument();
+    expect(getByText('An error occurred while parsing the catalogue manifest yaml file. The following field is missing: bla bla bla'))
+      .toBeInTheDocument();
 
     // and view catalogue button is not found
     expect(queryByTestId('view-catalogue-button')).not.toBeInTheDocument();

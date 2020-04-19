@@ -46,7 +46,7 @@ const CatalogueDetails = ({ repository, catalogueManifest, specLogs }) => (
       Interfaces
     </Header>
     <Segment attached data-testid="catalogue-details-interface-list">
-      {specLogs.map((specLog, index) => (<SpecLog key={index} specLog={specLog} />))}
+      {specLogs.map((specLog) => (<SpecLog key={specLog.id} specLog={specLog} />))}
     </Segment>
   </div>
 );
