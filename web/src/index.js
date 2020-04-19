@@ -31,3 +31,6 @@ const Index = () => (
 </Router>);
 
 ReactDOM.render(<Index />, document.getElementById("root"));
+
+console.log(`VERSION: ${VERSION}`);
+console.log(`SHA: ${SHORTSHA}`);
