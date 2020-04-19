@@ -195,14 +195,14 @@ stages:
       displayName: Tag backend Release Candidate image
       inputs:
         command: tag
-        arguments: $(containerRegistry)/$(testCandidateRepositoryName)/backend:$(tag) $(containerRegistry)/$(releaseCandidateRepositoryName)/backend
+        arguments: $(containerRegistry)/$(testCandidateRepositoryName)/backend:$(tag) $(containerRegistry)/$(releaseCandidateRepositoryName)/backend:$(tag)
     - task: Docker@2
       displayName: Push backend Release Candidate image
       inputs:
         command: push
         containerRegistry: $(dockerRegistryServiceConnection)
         repository: $(releaseCandidateRepositoryName)/backend
-        tags: latest
+        tags: $(tag)
     - task: Docker@2
       displayName: Pull web Test Candidate image
       inputs:
@@ -212,14 +212,14 @@ stages:
       displayName: Tag web Release Candidate image
       inputs:
         command: tag
-        arguments: $(containerRegistry)/$(testCandidateRepositoryName)/web:$(tag) $(containerRegistry)/$(releaseCandidateRepositoryName)/web
+        arguments: $(containerRegistry)/$(testCandidateRepositoryName)/web:$(tag) $(containerRegistry)/$(releaseCandidateRepositoryName)/web:$(tag)
     - task: Docker@2
       displayName: Push web Release Candidate image
       inputs:
         command: push
         containerRegistry: $(dockerRegistryServiceConnection)
         repository: $(releaseCandidateRepositoryName)/web
-        tags: latest
+        tags: $(tag)
   # - job: TagSource
   #   displayName: Tag git repository
   #   pool:
