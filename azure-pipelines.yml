@@ -52,6 +52,7 @@ stages:
     variables:
       GitVersion.SemVer: $[ dependencies.SetVersion.outputs['GitVersionTask.GitVersion.SemVer'] ]
       GitVersion.FullSemVer: $[ dependencies.SetVersion.outputs['GitVersionTask.GitVersion.FullSemVer'] ]
+      GitVersion.ShortSha: $[ dependencies.SetVersion.outputs['GitVersionTask.GitVersion.ShortSha'] ]
     pool:
       vmImage: $(vmImageName)
     steps:
@@ -72,7 +73,7 @@ stages:
     - task: Docker@2
       displayName: Push image to container registry
       inputs:
-        command: buildAndPush
+        command: push
         repository: $(testCandidateRepositoryName)/backend
         dockerfile: 'backend/Dockerfile'
         containerRegistry: $(dockerRegistryServiceConnection)
@@ -85,13 +86,25 @@ stages:
     variables:
       GitVersion.SemVer: $[ dependencies.SetVersion.outputs['GitVersionTask.GitVersion.SemVer'] ]
       GitVersion.FullSemVer: $[ dependencies.SetVersion.outputs['GitVersionTask.GitVersion.FullSemVer'] ]
+      GitVersion.ShortSha: $[ dependencies.SetVersion.outputs['GitVersionTask.GitVersion.ShortSha'] ]
     pool:
       vmImage: $(vmImageName)
     steps:
     - task: Docker@2
-      displayName: Build and push an image to container registry
+      displayName: Build image
       inputs:
-        command: buildAndPush
+        command: build
+        repository: $(testCandidateRepositoryName)/web
+        containerRegistry: $(dockerRegistryServiceConnection)
+        dockerfile: 'web/Dockerfile'
+        arguments: --build-arg SEMVER=$(GitVersion.FullSemVer) SHORTSHA=$(GitVersion.ShortSha)
+        tags: |
+          $(tag)
+          $(GitVersion.SemVer)
+    - task: Docker@2
+      displayName: Push image to container registry
+      inputs:
+        command: push
         repository: $(testCandidateRepositoryName)/web
         dockerfile: 'web/Dockerfile'
         containerRegistry: $(dockerRegistryServiceConnection)

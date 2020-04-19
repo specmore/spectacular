@@ -17,6 +17,14 @@ COPY __mocks__ __mocks__
 # Test
 RUN npm run test
 
+# Set version
+ARG SEMVER
+ARG SHORTSHA
+ENV SEMVER ${SEMVER:-local}
+ENV SHORTSHA ${SHORTSHA:-local}
+RUN echo $SEMVER
+RUN echo $SHORTSHA
+
 # Bundle
 RUN npm run build
 
