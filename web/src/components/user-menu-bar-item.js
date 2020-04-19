@@ -4,6 +4,7 @@ import { fetchUserInfo } from '../api-client';
 
 const UserMenuBarItem = () => {
   const [user, setUser] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [errorMessage, setErrorMessage] = useState(null);
 
   const fetchInfoUserData = async () => {
