@@ -22,6 +22,7 @@ variables:
   imagePullSecret: 'spectacular-auth'
   manifestArtifactName: 'backend-manifests'
   tag: '$(Build.BuildId)'
+  GitVersion.ShortSha: ''
   GitVersion.SemVer: ''
   GitVersion.FullSemVer: ''
 
@@ -43,7 +44,8 @@ stages:
       name: GitVersionTask
       inputs:
         versionSpec: '5.x'
-    - bash: echo SemVer $(GitVersion.SemVer);
+    - bash: echo ShortSha $(GitVersion.ShortSha);
+            echo SemVer $(GitVersion.SemVer);
             echo FullSemVer $(GitVersion.FullSemVer);
       displayName: Display versions
   - job: BuildBackend
