@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Icon, Image, Message, Segment, Header, Grid, Item, Label,
+  Icon, Image, Message, Segment, Header, Grid, Label,
 } from 'semantic-ui-react';
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
 import SpecLog from './spec-log';
@@ -11,7 +11,7 @@ const CatalogueError = ({ error, repository }) => (
     <Message.Content>
       <Message.Header>
         An error occurred while parsing the catalogue manifest file in
-        <a href={repository.htmlUrl} target="_blank">{repository.nameWithOwner}</a>
+        <a href={repository.htmlUrl} target="_blank" rel="noopener noreferrer">{repository.nameWithOwner}</a>
       </Message.Header>
       {error}
     </Message.Content>
@@ -51,12 +51,16 @@ const CatalogueDetails = ({ repository, catalogueManifest, specLogs }) => (
   </div>
 );
 
-const CatalogueDetailsContainer = ({
-  repository, catalogueManifest, specLogs, error,
-}) => {
-  if (error) return (<CatalogueError error={error} repository={repository} />);
+const CatalogueDetailsContainer = ({ catalogue }) => {
+  if (catalogue.error) return (<CatalogueError error={catalogue.error} repository={catalogue.repository} />);
 
-  return (<CatalogueDetails repository={repository} catalogueManifest={catalogueManifest} specLogs={specLogs} />);
+  return (
+    <CatalogueDetails
+      repository={catalogue.repository}
+      catalogueManifest={catalogue.catalogueManifest}
+      specLogs={catalogue.specLogs}
+    />
+  );
 };
 
 export default CatalogueDetailsContainer;

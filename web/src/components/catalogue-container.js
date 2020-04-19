@@ -28,7 +28,7 @@ const CatalogueContainerError = ({ errorMessage }) => (
 
 const CatalogueContainerSegment = ({ catalogue }) => (
   <div data-testid="catalogue-container-segment" style={{ marginBottom: '10px' }}>
-    <CatalogueDetails {...catalogue} />
+    <CatalogueDetails catalogue={catalogue} />
   </div>
 );
 

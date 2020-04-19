@@ -14,7 +14,8 @@ const CatalogueErrorItem = ({ error, repository }) => (
           <Message.Content>
             <Message.Header>
               An error occurred while parsing the catalogue manifest file in
-              <a href={repository.htmlUrl} target="_blank">{repository.nameWithOwner}</a>
+              {' '}
+              <a href={repository.htmlUrl} target="_blank" rel="noopener noreferrer">{repository.nameWithOwner}</a>
             </Message.Header>
             {error}
           </Message.Content>
@@ -54,7 +55,13 @@ const CatalogueListItem = ({ catalogue }) => {
 
   if (catalogue.error) return (<CatalogueErrorItem error={catalogue.error} repository={catalogue.repository} />);
 
-  return (<CatalogueItemDetails repository={catalogue.repository} catalogueManifest={catalogue.catalogueManifest} selectButton={selectButton} />);
+  return (
+    <CatalogueItemDetails
+      repository={catalogue.repository}
+      catalogueManifest={catalogue.catalogueManifest}
+      selectButton={selectButton}
+    />
+  );
 };
 
 export default CatalogueListItem;

@@ -27,7 +27,7 @@ describe('CatalogueDetails component', () => {
     };
 
     // when catalogue details component renders
-    const { getByTestId, getByText } = renderWithRouter(<CatalogueDetails {...catalogue} />);
+    const { getByTestId, getByText } = renderWithRouter(<CatalogueDetails catalogue={catalogue} />);
 
     // then a catalogue details container is found
     expect(getByTestId('catalogue-details-container')).toBeInTheDocument();
@@ -57,7 +57,7 @@ describe('CatalogueDetails component', () => {
     };
 
     // when catalogue details component renders
-    const { getByTestId, getByText } = renderWithRouter(<CatalogueDetails {...catalogue} />);
+    const { getByTestId, getByText } = renderWithRouter(<CatalogueDetails catalogue={catalogue} />);
 
     // then a catalogue details error message is found
     expect(getByTestId('catalogue-details-error-message')).toBeInTheDocument();
@@ -66,6 +66,7 @@ describe('CatalogueDetails component', () => {
     expect(getByText('test-owner/specs-test')).toBeInTheDocument();
 
     // and the error message is shown
-    expect(getByText('An error occurred while parsing the catalogue manifest yaml file. The following field is missing: bla bla bla')).toBeInTheDocument();
+    expect(getByText('An error occurred while parsing the catalogue manifest yaml file. The following field is missing: bla bla bla'))
+      .toBeInTheDocument();
   });
 });
