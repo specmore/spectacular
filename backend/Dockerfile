@@ -1,4 +1,4 @@
-FROM gradle:6.0.1-jdk11 AS build
+FROM gradle:6.3.0-jdk11 AS build
 ARG SEMVER
 
 WORKDIR /app
