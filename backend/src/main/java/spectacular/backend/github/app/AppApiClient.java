@@ -13,42 +13,49 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 public class AppApiClient {
 
-    private static final String APP_INSTALLATION_ACCESS_TOKEN_PATH = "/installations/{installationId}/access_tokens";
-    private static final String APP_INSTALLATION_PATH = "/app/installations/{installationId}";
+  private static final String APP_INSTALLATION_ACCESS_TOKEN_PATH =
+      "/installations/{installationId}/access_tokens";
+  private static final String APP_INSTALLATION_PATH = "/app/installations/{installationId}";
 
-    private final RestTemplate restTemplate;
+  private final RestTemplate restTemplate;
 
-    public AppApiClient(@Value("${github.api.root-url}") String rootUrl, RestTemplateBuilder restTemplateBuilder, GitHubAppAuthenticationHeaderRequestInterceptor gitHubAppAuthenticationHeaderRequestInterceptor, AppApiResponseErrorHandler appApiResponseErrorHandler) {
-        this.restTemplate = restTemplateBuilder
-                .rootUri(rootUrl)
-                .requestFactory(HttpComponentsClientHttpRequestFactory.class)
-                .additionalInterceptors(gitHubAppAuthenticationHeaderRequestInterceptor)
-                .errorHandler(appApiResponseErrorHandler)
-                .build();
-    }
+  public AppApiClient(@Value("${github.api.root-url}") String rootUrl,
+                      RestTemplateBuilder restTemplateBuilder,
+                      GitHubAppAuthenticationHeaderRequestInterceptor gitHubAppAuthenticationHeaderRequestInterceptor,
+                      AppApiResponseErrorHandler appApiResponseErrorHandler) {
+    this.restTemplate = restTemplateBuilder
+        .rootUri(rootUrl)
+        .requestFactory(HttpComponentsClientHttpRequestFactory.class)
+        .additionalInterceptors(gitHubAppAuthenticationHeaderRequestInterceptor)
+        .errorHandler(appApiResponseErrorHandler)
+        .build();
+  }
 
-    public AccessTokenResult createNewAppInstallationAccessToken(String installationId) {
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(APP_INSTALLATION_ACCESS_TOKEN_PATH);
-        String accessTokenUri = uriComponentsBuilder.buildAndExpand(installationId).toUriString();
+  public AccessTokenResult createNewAppInstallationAccessToken(String installationId) {
+    UriComponentsBuilder uriComponentsBuilder =
+        UriComponentsBuilder.fromUriString(APP_INSTALLATION_ACCESS_TOKEN_PATH);
+    String accessTokenUri = uriComponentsBuilder.buildAndExpand(installationId).toUriString();
 
-        HttpHeaders headers = new HttpHeaders();
-        HttpEntity entity = new HttpEntity(headers);
+    HttpHeaders headers = new HttpHeaders();
+    HttpEntity entity = new HttpEntity(headers);
 
-        var response = restTemplate.postForEntity(accessTokenUri, entity, AccessTokenResult.class);
+    var response = restTemplate.postForEntity(accessTokenUri, entity, AccessTokenResult.class);
 
-        return response.getBody();
-    }
+    return response.getBody();
+  }
 
-    public Installation getAppInstallation(String installationId) {
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(APP_INSTALLATION_PATH);
-        String appInstallationUri = uriComponentsBuilder.buildAndExpand(installationId).toUriString();
+  public Installation getAppInstallation(String installationId) {
+    UriComponentsBuilder uriComponentsBuilder =
+        UriComponentsBuilder.fromUriString(APP_INSTALLATION_PATH);
+    String appInstallationUri = uriComponentsBuilder.buildAndExpand(installationId).toUriString();
 
-        HttpHeaders headers = new HttpHeaders();
-        HttpEntity entity = new HttpEntity(headers);
+    HttpHeaders headers = new HttpHeaders();
+    HttpEntity entity = new HttpEntity(headers);
 
-        var response = restTemplate.exchange(appInstallationUri, HttpMethod.GET, entity, Installation.class);
+    var response =
+        restTemplate.exchange(appInstallationUri, HttpMethod.GET, entity, Installation.class);
 
-        return response.getBody();
-    }
+    return response.getBody();
+  }
 }
 

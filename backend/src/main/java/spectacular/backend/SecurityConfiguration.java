@@ -1,5 +1,8 @@
 package spectacular.backend;
 
+import java.nio.charset.StandardCharsets;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,39 +16,37 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationFilter;
 import spectacular.backend.security.JWTCookieToAuthorizationHeaderFilter;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
-
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    @Value("${security.authentication.jwt.signature-secret}")
-    private String jwtSigningSecret;
+  @Value("${security.authentication.jwt.signature-secret}")
+  private String jwtSigningSecret;
 
-    @Value("${security.authentication.jwt.cookie-name}")
-    private String jwtCookieName;
+  @Value("${security.authentication.jwt.cookie-name}")
+  private String jwtCookieName;
 
-    @Bean
-    public JwtDecoder jwtDecoder() {
-        byte[] secretBytes = jwtSigningSecret.getBytes(StandardCharsets.UTF_8);;
-        SecretKey secretKey = new SecretKeySpec(secretBytes, "HmacSHA512");
-        return NimbusJwtDecoder.withSecretKey(secretKey).macAlgorithm(MacAlgorithm.HS512).build();
-    }
+  @Bean
+  public JwtDecoder jwtDecoder() {
+    byte[] secretBytes = jwtSigningSecret.getBytes(StandardCharsets.UTF_8);
+    SecretKey secretKey = new SecretKeySpec(secretBytes, "HmacSHA512");
+    return NimbusJwtDecoder.withSecretKey(secretKey).macAlgorithm(MacAlgorithm.HS512).build();
+  }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        var jwtCookieToAuthorizationHeaderFilter = new JWTCookieToAuthorizationHeaderFilter(this.jwtCookieName);
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    var jwtCookieToAuthorizationHeaderFilter =
+        new JWTCookieToAuthorizationHeaderFilter(this.jwtCookieName);
 
-        http
-            .csrf().disable()
-            .logout().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-            .authorizeRequests()
-                .anyRequest().authenticated()
-                .and()
-            .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-        .addFilterBefore(jwtCookieToAuthorizationHeaderFilter, BearerTokenAuthenticationFilter.class);
-    }
+    http
+        .csrf().disable()
+        .logout().disable()
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .authorizeRequests()
+        .anyRequest().authenticated()
+        .and()
+        .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+        .addFilterBefore(jwtCookieToAuthorizationHeaderFilter,
+            BearerTokenAuthenticationFilter.class);
+  }
 }

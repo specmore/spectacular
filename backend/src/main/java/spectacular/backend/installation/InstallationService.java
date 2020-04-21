@@ -7,15 +7,16 @@ import spectacular.backend.github.app.Installation;
 
 @Service
 public class InstallationService {
-    private final AppApiClient appApiClient;
-    private final AppInstallationContextProvider appInstallationContextProvider;
+  private final AppApiClient appApiClient;
+  private final AppInstallationContextProvider appInstallationContextProvider;
 
-    public InstallationService(AppApiClient appApiClient, AppInstallationContextProvider appInstallationContextProvider) {
-        this.appApiClient = appApiClient;
-        this.appInstallationContextProvider = appInstallationContextProvider;
-    }
+  public InstallationService(AppApiClient appApiClient,
+                             AppInstallationContextProvider appInstallationContextProvider) {
+    this.appApiClient = appApiClient;
+    this.appInstallationContextProvider = appInstallationContextProvider;
+  }
 
-    public Installation getCurrentInstallation() {
-        return appApiClient.getAppInstallation(appInstallationContextProvider.getInstallationId());
-    }
+  public Installation getCurrentInstallation() {
+    return appApiClient.getAppInstallation(appInstallationContextProvider.getInstallationId());
+  }
 }

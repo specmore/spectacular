@@ -5,15 +5,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class InstallationController {
-    private final InstallationService installationService;
+  private final InstallationService installationService;
 
-    public InstallationController(InstallationService installationService) {
-        this.installationService = installationService;
-    }
+  public InstallationController(InstallationService installationService) {
+    this.installationService = installationService;
+  }
 
-    @GetMapping("api/installation")
-    public InstallationResponse getCurrentInstallation() {
-        var installation = this.installationService.getCurrentInstallation();
-        return new InstallationResponse(installation);
-    }
+  @GetMapping("api/installation")
+  public InstallationResponse getCurrentInstallation() {
+    var installation = this.installationService.getCurrentInstallation();
+    return new InstallationResponse(installation);
+  }
 }

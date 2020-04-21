@@ -10,13 +10,13 @@ import spectacular.backend.github.app.AppInstallationContextProvider;
 
 @SpringBootApplication
 public class GitHubServiceApplication {
-	@Bean
-	@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
-	public AppInstallationContextProvider appInstallationContextProviderRequestScopedBean() {
-		return new AppInstallationContextProvider();
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(GitHubServiceApplication.class, args);
+  }
 
-	public static void main(String[] args) {
-		SpringApplication.run(GitHubServiceApplication.class, args);
-	}
+  @Bean
+  @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+  public AppInstallationContextProvider appInstallationContextProviderRequestScopedBean() {
+    return new AppInstallationContextProvider();
+  }
 }

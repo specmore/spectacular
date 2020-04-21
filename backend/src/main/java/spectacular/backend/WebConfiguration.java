@@ -8,11 +8,11 @@ import spectacular.backend.installation.InstallationIdInterceptor;
 
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
-    @Autowired
-    InstallationIdInterceptor installationIdInterceptor;
+  @Autowired
+  InstallationIdInterceptor installationIdInterceptor;
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(installationIdInterceptor);
-    }
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(installationIdInterceptor);
+  }
 }

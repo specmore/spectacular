@@ -6,14 +6,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class RateLimitController {
-    private final RestApiClient restApiClient;
+  private final RestApiClient restApiClient;
 
-    public RateLimitController(RestApiClient restApiClient) {
-        this.restApiClient = restApiClient;
-    }
+  public RateLimitController(RestApiClient restApiClient) {
+    this.restApiClient = restApiClient;
+  }
 
-    @GetMapping(value = "api/github/rate_limit", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getRateLimit() {
-        return restApiClient.getRateLimit();
-    }
+  @GetMapping(value = "api/github/rate_limit", produces = MediaType.APPLICATION_JSON_VALUE)
+  public String getRateLimit() {
+    return restApiClient.getRateLimit();
+  }
 }
