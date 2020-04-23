@@ -23,10 +23,13 @@ public class AppApiClient {
 
   /**
    * A GitHub API v3 client that focuses on the "GitHub App" operations.
-   * @param rootUrl
-   * @param restTemplateBuilder
-   * @param gitHubAppAuthenticationHeaderRequestInterceptor
-   * @param appApiResponseErrorHandler
+   *
+   * @param rootUrl                                         a config value for the root URI of the GitHub API v3
+   * @param restTemplateBuilder                             a RestTemplateBuilder bean
+   * @param gitHubAppAuthenticationHeaderRequestInterceptor a RestTemplate Request Interceptor to automatically inject JWT into the
+   *                                                        Authorisation request header needed for the access to the App API endpoints
+   * @param appApiResponseErrorHandler                      a RestTemplate custom Response Error Handler for de-serialising the GitHub
+   *                                                        error message response body
    */
   public AppApiClient(@Value("${github.api.root-url}") String rootUrl,
                       RestTemplateBuilder restTemplateBuilder,
@@ -42,10 +45,11 @@ public class AppApiClient {
 
   /**
    * Requests a new API Access Token for an installation of this GitHub app.
+   *
    * @param installationId the installation id of the access token is needed for
    * @return a result object containing the access token and when it will expire
    */
-  public AccessTokenResult createNewAppInstallationAccessToken(String installationId) {
+  public AccessTokenResult requestNewAppInstallationAccessToken(String installationId) {
     UriComponentsBuilder uriComponentsBuilder =
         UriComponentsBuilder.fromUriString(APP_INSTALLATION_ACCESS_TOKEN_PATH);
     String accessTokenUri = uriComponentsBuilder.buildAndExpand(installationId).toUriString();
@@ -59,8 +63,10 @@ public class AppApiClient {
   }
 
   /**
-   * @param installationId
-   * @return
+   * Get details about the installation of this app against in a GitHub organisation's or user's account.
+   *
+   * @param installationId the id of the installation the details is needed for
+   * @return returns an Installation object representing the details of the installation
    */
   public Installation getAppInstallation(String installationId) {
     UriComponentsBuilder uriComponentsBuilder =

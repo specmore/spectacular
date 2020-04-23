@@ -44,7 +44,7 @@ class AppApiClientTest extends Specification {
                 .andRespond(withSuccess(responseContent, MediaType.APPLICATION_JSON));
 
         when: "the access token is retrieved by the AppApiClient"
-        def accessToken = client.createNewAppInstallationAccessToken(appInstallationId)
+        def accessToken = client.requestNewAppInstallationAccessToken(appInstallationId)
 
         then: "the access token object has the token and expiration time"
         accessToken
@@ -69,7 +69,7 @@ class AppApiClientTest extends Specification {
                 .andRespond(withUnauthorizedRequest().body(responseContent).contentType(MediaType.APPLICATION_JSON));
 
         when: "the access token is retrieved by the AppApiClient"
-        def accessToken = client.createNewAppInstallationAccessToken(appInstallationId)
+        def accessToken = client.requestNewAppInstallationAccessToken(appInstallationId)
 
         then: "an AppApiUnauthorizedErrorException is thrown with the response message set"
         AppApiUnauthorizedErrorException e = thrown()

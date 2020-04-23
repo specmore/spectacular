@@ -20,7 +20,7 @@ class AppInstallationServiceTest extends Specification {
         def accessToken = appInstallationService.getAccessTokenForInstallation(installationId)
 
         then: "a new access token is created using the GitHub api"
-        1 * appApiClient.createNewAppInstallationAccessToken(installationId) >> newAccessToken
+        1 * appApiClient.requestNewAppInstallationAccessToken(installationId) >> newAccessToken
 
         and: "the new access token is stored"
         1 * appInstallationAccessTokenStore.putAccessTokenForInstallation(newAccessToken, installationId)
@@ -39,7 +39,7 @@ class AppInstallationServiceTest extends Specification {
         def accessToken = appInstallationService.getAccessTokenForInstallation(installationId)
 
         then: "no new access token is created using the GitHub api"
-        0 * appApiClient.createNewAppInstallationAccessToken(installationId)
+        0 * appApiClient.requestNewAppInstallationAccessToken(installationId)
 
         and: "the existing valid token is returned"
         accessToken == validAccessToken
@@ -57,7 +57,7 @@ class AppInstallationServiceTest extends Specification {
         def accessToken = appInstallationService.getAccessTokenForInstallation(installationId)
 
         then: "a new access token is created using the GitHub api"
-        1 * appApiClient.createNewAppInstallationAccessToken(installationId) >> newAccessToken
+        1 * appApiClient.requestNewAppInstallationAccessToken(installationId) >> newAccessToken
 
         and: "the new access token is stored"
         1 * appInstallationAccessTokenStore.putAccessTokenForInstallation(newAccessToken, installationId)

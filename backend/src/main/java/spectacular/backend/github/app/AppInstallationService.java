@@ -20,7 +20,7 @@ public class AppInstallationService {
 
     if (accessToken == null ||
         accessToken.getExpirationDateTime().isBefore(ZonedDateTime.now().plusSeconds(30))) {
-      accessToken = this.appApiClient.createNewAppInstallationAccessToken(installationId);
+      accessToken = this.appApiClient.requestNewAppInstallationAccessToken(installationId);
       appInstallationAccessTokenStore.putAccessTokenForInstallation(accessToken, installationId);
     }
 
