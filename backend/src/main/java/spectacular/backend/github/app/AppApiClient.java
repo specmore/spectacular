@@ -27,9 +27,9 @@ public class AppApiClient {
    * @param rootUrl a config value for the root URI of the GitHub API v3
    * @param restTemplateBuilder a RestTemplateBuilder bean
    * @param gitHubAppAuthenticationHeaderRequestInterceptor a RestTemplate Request Interceptor to automatically inject JWT into the
-   * Authorisation request header needed for the access to the App API endpoints
+   *     Authorisation request header needed for the access to the App API endpoints
    * @param appApiResponseErrorHandler a RestTemplate custom Response Error Handler for de-serialising the GitHub
-   * error message response body
+   *     error message response body
    */
   public AppApiClient(@Value("${github.api.root-url}") String rootUrl,
                       RestTemplateBuilder restTemplateBuilder,
