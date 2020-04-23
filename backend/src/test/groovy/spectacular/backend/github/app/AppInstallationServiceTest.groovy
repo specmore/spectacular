@@ -1,5 +1,6 @@
 package spectacular.backend.github.app
 
+import spectacular.backend.github.domain.AccessTokenResult
 import spock.lang.Specification
 
 import java.time.ZonedDateTime

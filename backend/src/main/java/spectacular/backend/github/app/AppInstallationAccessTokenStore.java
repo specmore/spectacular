@@ -3,6 +3,7 @@ package spectacular.backend.github.app;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.stereotype.Repository;
+import spectacular.backend.github.domain.AccessTokenResult;
 
 @Repository
 public class AppInstallationAccessTokenStore {

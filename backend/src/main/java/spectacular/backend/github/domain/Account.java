@@ -1,10 +1,11 @@
-package spectacular.backend.github.app;
+package spectacular.backend.github.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Account {
   private final String login;
   private final int id;
+  @SuppressWarnings("MemberName")
   private final String avatar_url;
 
   public Account(@JsonProperty("login") String login, @JsonProperty("id") int id,

@@ -2,6 +2,7 @@ package spectacular.backend.github.app;
 
 import java.time.ZonedDateTime;
 import org.springframework.stereotype.Service;
+import spectacular.backend.github.domain.AccessTokenResult;
 
 @Service
 public class AppInstallationService {

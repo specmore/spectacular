@@ -10,7 +10,7 @@ import spectacular.backend.config.instance.InstanceConfig;
 import spectacular.backend.config.instance.InstanceConfigManifest;
 import spectacular.backend.config.instance.InstanceConfigService;
 import spectacular.backend.github.RestApiClient;
-import spectacular.backend.github.app.AccessTokenResult;
+import spectacular.backend.github.domain.AccessTokenResult;
 import spectacular.backend.github.app.AppApiClient;
 import spectacular.backend.github.app.AppAuthenticationService;
 import spectacular.backend.github.app.AppInstallationAccessTokenStore;

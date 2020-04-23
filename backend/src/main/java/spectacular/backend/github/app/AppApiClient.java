@@ -9,6 +9,8 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import spectacular.backend.github.domain.AccessTokenResult;
+import spectacular.backend.github.domain.Installation;
 
 @Component
 public class AppApiClient {
@@ -19,6 +21,13 @@ public class AppApiClient {
 
   private final RestTemplate restTemplate;
 
+  /**
+   * A GitHub API v3 client that focuses on the "GitHub App" operations.
+   * @param rootUrl
+   * @param restTemplateBuilder
+   * @param gitHubAppAuthenticationHeaderRequestInterceptor
+   * @param appApiResponseErrorHandler
+   */
   public AppApiClient(@Value("${github.api.root-url}") String rootUrl,
                       RestTemplateBuilder restTemplateBuilder,
                       GitHubAppAuthenticationHeaderRequestInterceptor gitHubAppAuthenticationHeaderRequestInterceptor,
@@ -31,6 +40,11 @@ public class AppApiClient {
         .build();
   }
 
+  /**
+   * Requests a new API Access Token for an installation of this GitHub app.
+   * @param installationId the installation id of the access token is needed for
+   * @return a result object containing the access token and when it will expire
+   */
   public AccessTokenResult createNewAppInstallationAccessToken(String installationId) {
     UriComponentsBuilder uriComponentsBuilder =
         UriComponentsBuilder.fromUriString(APP_INSTALLATION_ACCESS_TOKEN_PATH);
@@ -44,6 +58,10 @@ public class AppApiClient {
     return response.getBody();
   }
 
+  /**
+   * @param installationId
+   * @return
+   */
   public Installation getAppInstallation(String installationId) {
     UriComponentsBuilder uriComponentsBuilder =
         UriComponentsBuilder.fromUriString(APP_INSTALLATION_PATH);

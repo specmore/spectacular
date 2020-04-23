@@ -3,6 +3,7 @@ package spectacular.backend.github.app
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpRequest
 import org.springframework.http.client.ClientHttpRequestExecution
+import spectacular.backend.github.domain.AccessTokenResult
 import spock.lang.Specification
 
 import java.time.ZonedDateTime

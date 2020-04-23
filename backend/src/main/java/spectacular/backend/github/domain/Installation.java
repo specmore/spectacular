@@ -1,4 +1,4 @@
-package spectacular.backend.github.app;
+package spectacular.backend.github.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

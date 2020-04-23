@@ -1,6 +1,6 @@
 package spectacular.backend.installation;
 
-import spectacular.backend.github.app.Installation;
+import spectacular.backend.github.domain.Installation;
 
 public class InstallationResponse {
   private final int id;
