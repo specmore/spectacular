@@ -15,7 +15,7 @@ class AppAuthenticationServiceTest extends Specification {
         def appAuthenticationService = new AppAuthenticationService(appId, pemFilePath, Duration.ofSeconds(10))
 
         when: "a JWT is generated"
-        def jwtContents = appAuthenticationService.generateJWT()
+        def jwtContents = appAuthenticationService.generateJwt()
 
         then: "the JWT issuer is the app Id"
         def jwt = SignedJWT.parse(jwtContents)

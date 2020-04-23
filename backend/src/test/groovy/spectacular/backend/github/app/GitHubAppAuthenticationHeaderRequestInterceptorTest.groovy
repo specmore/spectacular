@@ -23,7 +23,7 @@ class GitHubAppAuthenticationHeaderRequestInterceptorTest extends Specification 
         interceptor.intercept(httpRequest, body, clientHttpRequestExecution)
 
         then: "the app authentication service generates a JWT"
-        1 * appAuthService.generateJWT() >> jwtToken
+        1 * appAuthService.generateJwt() >> jwtToken
         and: "the JWT is added to bearer authorization request header"
         1 * httpHeaders.setBearerAuth(jwtToken)
     }

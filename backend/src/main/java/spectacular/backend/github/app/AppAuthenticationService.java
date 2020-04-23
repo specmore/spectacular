@@ -26,17 +26,29 @@ public class AppAuthenticationService {
   private final String privateKeyFilePath;
   private final Duration jwtDuration;
 
+  /**
+   * Functionality needed to Authenticate as the configured GitHub App.
+   *
+   * @param appId a config value of the id for the GitHub app representing this application instance
+   * @param privateKeyFilePath config value of the file path to the RSA private key provided by GitHub for this app.
+   * @param jwtDuration a config value for how long each JWT created should be valid for
+   */
   public AppAuthenticationService(@Value("${github.api.app.id}") String appId,
-                                  @Value("${github.api.app.jwt-signing-key-file-path}")
-                                      String privateKeyFilePath,
-                                  @Value("#{T(java.time.Duration).parse('${github.api.app.jwt-duration}')}")
-                                      Duration jwtDuration) {
+                                  @Value("${github.api.app.jwt-signing-key-file-path}") String privateKeyFilePath,
+                                  @Value("#{T(java.time.Duration).parse('${github.api.app.jwt-duration}')}") Duration jwtDuration) {
     this.appId = appId;
     this.privateKeyFilePath = privateKeyFilePath;
     this.jwtDuration = jwtDuration;
   }
 
-  public String generateJWT() throws JOSEException, IOException {
+  /**
+   * Generate a RSA signed, RS256 encoded JWT for identifying this app when making requests to the GitHub App API.
+   *
+   * @return a string representation of the JWT payload
+   * @throws JOSEException if a problem occurs during the parsing of the RSA private key or during JWT signing
+   * @throws IOException if a problem occurs when reading teh RSA private key file at the configured path
+   */
+  public String generateJwt() throws JOSEException, IOException {
     Path path = Path.of(privateKeyFilePath);
     String privateKeyFileContent = Files.readString(path);
 
@@ -64,13 +76,12 @@ public class AppAuthenticationService {
 
     JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).build();
 
-    var signedJWT = new SignedJWT(header, claims);
-    signedJWT.sign(jwsSigner);
+    var signedJwt = new SignedJWT(header, claims);
+    signedJwt.sign(jwsSigner);
 
-    logger.info(
-        "Generated and signed new App JWT for AppId: '{}' issued at '{}' and expiring at '{}'.",
-        appId, claims.getIssueTime(), claims.getExpirationTime());
+    logger.info("Generated and signed new App JWT for AppId: '{}' issued at '{}' and expiring at '{}'.", appId, claims.getIssueTime(),
+        claims.getExpirationTime());
 
-    return signedJWT.serialize();
+    return signedJwt.serialize();
   }
 }

@@ -30,7 +30,7 @@ public class GitHubAppAuthenticationHeaderRequestInterceptor
   public ClientHttpResponse intercept(HttpRequest request, byte[] body,
                                       ClientHttpRequestExecution execution) throws IOException {
     try {
-      var jwt = appAuthenticationService.generateJWT();
+      var jwt = appAuthenticationService.generateJwt();
       request.getHeaders().setBearerAuth(jwt);
     } catch (JOSEException e) {
       logger.error("app JWT creation failed", e);
