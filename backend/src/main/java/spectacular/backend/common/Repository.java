@@ -13,6 +13,13 @@ public class Repository {
     this(owner, name, null);
   }
 
+  /**
+   * Constructs a Repository object representing the location of a Git Repository.
+   *
+   * @param owner the owner of the Repository
+   * @param name the name of the Repository
+   * @param htmlUrl the URL to the repository
+   */
   public Repository(String owner, String name, String htmlUrl) {
     Assert.hasText(owner, "owner cannot be null or empty");
     Assert.hasText(name, "name cannot be null or empty");
@@ -26,6 +33,13 @@ public class Repository {
     return createForNameWithOwner(nameWithOwner, null);
   }
 
+  /**
+   * Creates a Repository object using a / delimited string representing the repository Owner and Name.
+   *
+   * @param nameWithOwner a / delimited string containing the repository owner and name using the following format: {owner}/{name}
+   * @param htmlUrl the url of the repository
+   * @return a new Repository
+   */
   public static Repository createForNameWithOwner(String nameWithOwner, String htmlUrl) {
     Assert.hasText(nameWithOwner, "nameWithOwner cannot be null or empty");
 

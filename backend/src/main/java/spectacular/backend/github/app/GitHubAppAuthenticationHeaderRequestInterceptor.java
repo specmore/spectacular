@@ -12,13 +12,12 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GitHubAppAuthenticationHeaderRequestInterceptor
-    implements ClientHttpRequestInterceptor {
+public class GitHubAppAuthenticationHeaderRequestInterceptor implements ClientHttpRequestInterceptor {
 
-  private static final String APP_INSTALLATION_ACCEPT_HEADER =
-      "application/vnd.github.machine-man-preview+json";
+  private static final String APP_INSTALLATION_ACCEPT_HEADER = "application/vnd.github.machine-man-preview+json";
+
   private final AppAuthenticationService appAuthenticationService;
-  Logger logger = LoggerFactory.getLogger(GitHubAppAuthenticationHeaderRequestInterceptor.class);
+  private final Logger logger = LoggerFactory.getLogger(GitHubAppAuthenticationHeaderRequestInterceptor.class);
 
   @Autowired
   public GitHubAppAuthenticationHeaderRequestInterceptor(
@@ -27,8 +26,7 @@ public class GitHubAppAuthenticationHeaderRequestInterceptor
   }
 
   @Override
-  public ClientHttpResponse intercept(HttpRequest request, byte[] body,
-                                      ClientHttpRequestExecution execution) throws IOException {
+  public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
     try {
       var jwt = appAuthenticationService.generateJwt();
       request.getHeaders().setBearerAuth(jwt);

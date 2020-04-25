@@ -7,10 +7,14 @@ public class SpecFileLocation {
   private final Repository repo;
   private final String filePath;
 
-  public SpecFileLocation(@JsonProperty("repo") String repo,
-                          @JsonProperty(value = "file-path", required = true) String filePath) {
-    this.repo =
-        repo != null && !repo.isBlank() ? Repository.createForNameWithOwner(repo, null) : null;
+  /**
+   * Constructs a SpecFileLocation representing a spec file listed in a catalogue manifest.
+   *
+   * @param repo the optional repository the file belongs to
+   * @param filePath the mandatory file path of the spec file
+   */
+  public SpecFileLocation(@JsonProperty("repo") String repo, @JsonProperty(value = "file-path", required = true) String filePath) {
+    this.repo = repo != null && !repo.isBlank() ? Repository.createForNameWithOwner(repo, null) : null;
     this.filePath = filePath;
   }
 

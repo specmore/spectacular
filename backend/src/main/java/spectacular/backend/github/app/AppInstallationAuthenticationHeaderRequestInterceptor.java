@@ -21,8 +21,7 @@ public class AppInstallationAuthenticationHeaderRequestInterceptor
   }
 
   @Override
-  public ClientHttpResponse intercept(HttpRequest request, byte[] body,
-                                      ClientHttpRequestExecution execution) throws IOException {
+  public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
     var installationId = appInstallationContextProvider.getInstallationId();
     var accessToken = appInstallationService.getAccessTokenForInstallation(installationId);
 

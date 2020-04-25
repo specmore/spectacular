@@ -8,8 +8,13 @@ public class SpecLog {
   private final SpecItem latestAgreed;
   private final List<ProposedSpecChange> proposedChanges;
 
-  public SpecLog(@NotNull SpecItem latestAgreed,
-                 @NotNull List<ProposedSpecChange> proposedChanges) {
+  /**
+   * Constructs a SpecLog object that represents the current state of a spec item's evolution.
+   *
+   * @param latestAgreed the current agreed version of the SpecItem
+   * @param proposedChanges a list of the open ProposedSpecChange objects
+   */
+  public SpecLog(@NotNull SpecItem latestAgreed, @NotNull List<ProposedSpecChange> proposedChanges) {
     this.id = latestAgreed.getRepository().getNameWithOwner() + "/" + latestAgreed.getFilePath();
     this.latestAgreed = latestAgreed;
     this.proposedChanges = proposedChanges;

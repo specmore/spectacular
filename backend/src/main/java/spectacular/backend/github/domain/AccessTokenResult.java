@@ -9,8 +9,7 @@ public class AccessTokenResult {
   private final ZonedDateTime expirationDateTime;
 
   @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-  public AccessTokenResult(@JsonProperty("token") String token,
-                           @JsonProperty("expires_at") ZonedDateTime expirationDateTime) {
+  public AccessTokenResult(@JsonProperty("token") String token, @JsonProperty("expires_at") ZonedDateTime expirationDateTime) {
     this.token = token;
     this.expirationDateTime = expirationDateTime;
   }

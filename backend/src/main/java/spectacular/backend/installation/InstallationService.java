@@ -10,8 +10,7 @@ public class InstallationService {
   private final AppApiClient appApiClient;
   private final AppInstallationContextProvider appInstallationContextProvider;
 
-  public InstallationService(AppApiClient appApiClient,
-                             AppInstallationContextProvider appInstallationContextProvider) {
+  public InstallationService(AppApiClient appApiClient, AppInstallationContextProvider appInstallationContextProvider) {
     this.appApiClient = appApiClient;
     this.appInstallationContextProvider = appInstallationContextProvider;
   }

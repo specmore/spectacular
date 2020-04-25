@@ -8,8 +8,7 @@ public class Account {
   @SuppressWarnings("MemberName")
   private final String avatar_url;
 
-  public Account(@JsonProperty("login") String login, @JsonProperty("id") int id,
-                 @JsonProperty("avatar_url") String avatar_url) {
+  public Account(@JsonProperty("login") String login, @JsonProperty("id") int id, @JsonProperty("avatar_url") String avatar_url) {
     this.login = login;
     this.id = id;
     this.avatar_url = avatar_url;

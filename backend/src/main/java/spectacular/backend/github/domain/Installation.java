@@ -7,8 +7,7 @@ public class Installation {
   private final int app_id;
   private final Account account;
 
-  public Installation(@JsonProperty("id") int id, @JsonProperty("app_id") int app_id,
-                      @JsonProperty("account") Account account) {
+  public Installation(@JsonProperty("id") int id, @JsonProperty("app_id") int app_id, @JsonProperty("account") Account account) {
     this.id = id;
     this.app_id = app_id;
     this.account = account;

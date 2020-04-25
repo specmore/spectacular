@@ -5,17 +5,23 @@ import spectacular.backend.github.domain.Installation;
 public class InstallationResponse {
   private final int id;
   private final String owner;
-  private final String owner_avatar_url;
+  private final String ownerAvatarUrl;
 
-  public InstallationResponse(int id, String owner, String owner_avatar_url) {
+  /**
+   * Constructs a new InstallationResponse object.
+   *
+   * @param id the installation id
+   * @param owner the owner name of the installation
+   * @param ownerAvatarUrl an avatar image assigned to the owner
+   */
+  public InstallationResponse(int id, String owner, String ownerAvatarUrl) {
     this.id = id;
     this.owner = owner;
-    this.owner_avatar_url = owner_avatar_url;
+    this.ownerAvatarUrl = ownerAvatarUrl;
   }
 
   public InstallationResponse(Installation installation) {
-    this(installation.getId(), installation.getAccount().getLogin(),
-        installation.getAccount().getAvatar_url());
+    this(installation.getId(), installation.getAccount().getLogin(), installation.getAccount().getAvatar_url());
   }
 
   public int getId() {
@@ -26,7 +32,7 @@ public class InstallationResponse {
     return owner;
   }
 
-  public String getOwner_avatar_url() {
-    return owner_avatar_url;
+  public String getOwnerAvatarUrl() {
+    return ownerAvatarUrl;
   }
 }

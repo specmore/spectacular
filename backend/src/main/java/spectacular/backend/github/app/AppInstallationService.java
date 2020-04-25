@@ -15,11 +15,16 @@ public class AppInstallationService {
     this.appInstallationAccessTokenStore = appInstallationAccessTokenStore;
   }
 
+  /**
+   * Get a GitHub API access token for the given installation.
+   *
+   * @param installationId the installation id of the installation of this GitHub app for a given user or organisation
+   * @return a new AccessTokenResult object with the actual access token and other details like expiration date
+   */
   public AccessTokenResult getAccessTokenForInstallation(String installationId) {
     var accessToken = appInstallationAccessTokenStore.getAccessTokenForInstallation(installationId);
 
-    if (accessToken == null ||
-        accessToken.getExpirationDateTime().isBefore(ZonedDateTime.now().plusSeconds(30))) {
+    if (accessToken == null || accessToken.getExpirationDateTime().isBefore(ZonedDateTime.now().plusSeconds(30))) {
       accessToken = this.appApiClient.requestNewAppInstallationAccessToken(installationId);
       appInstallationAccessTokenStore.putAccessTokenForInstallation(accessToken, installationId);
     }

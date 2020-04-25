@@ -13,6 +13,17 @@ public class PullRequest {
   private final Instant updatedAt;
   private final Ref headRef;
 
+  /**
+   * Constructs a PullRequest from the response of a GitHub GraphQL PullRequest object result.
+   *
+   * @param number the PR number
+   * @param url the URL to the PR
+   * @param labels a list of labels associated to the PR
+   * @param changedFiles a list of files changed in the PR
+   * @param title the title of the PR
+   * @param updatedAt when the PR was last updated
+   * @param headRef the branch the PR has been opened from
+   */
   @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
   public PullRequest(@JsonProperty("number") int number,
                      @JsonProperty("url") String url,

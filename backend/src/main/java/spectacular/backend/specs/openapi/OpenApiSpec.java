@@ -7,6 +7,13 @@ public class OpenApiSpec {
   private final String version;
   private final List<OpenApiOperation> operations;
 
+  /**
+   * Constructs an OpenApiSpec object capturing specific values from the contents of a OpenAPI YAML file.
+   *
+   * @param title the title of the API
+   * @param version the version of the spec
+   * @param operations the list of operations described for the interface
+   */
   public OpenApiSpec(String title, String version, List<OpenApiOperation> operations) {
     this.title = title;
     this.version = version;

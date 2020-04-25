@@ -10,9 +10,9 @@ import spock.lang.Specification
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 
-class JWTCookieToAuthorizationHeaderFilterTest extends Specification {
+class JwtCookieToAuthorizationHeaderFilterTest extends Specification {
     def jwtCookieName = "test-cookie"
-    def filter = new JWTCookieToAuthorizationHeaderFilter(jwtCookieName)
+    def filter = new JwtCookieToAuthorizationHeaderFilter(jwtCookieName)
     def mockFilterChain = new MockFilterChain();
     def mockResponse = new MockHttpServletResponse();
 

@@ -19,8 +19,7 @@ public class AppApiResponseErrorHandler extends DefaultResponseErrorHandler {
   protected void handleError(ClientHttpResponse response, HttpStatus statusCode)
       throws IOException {
     if (statusCode == HttpStatus.UNAUTHORIZED) {
-      AppApiUnauthorizedError unauthorizedError =
-          (AppApiUnauthorizedError) messageConverter.read(AppApiUnauthorizedError.class, response);
+      AppApiUnauthorizedError unauthorizedError = (AppApiUnauthorizedError) messageConverter.read(AppApiUnauthorizedError.class, response);
       throw new AppApiUnauthorizedErrorException(unauthorizedError);
     }
     super.handleError(response, statusCode);

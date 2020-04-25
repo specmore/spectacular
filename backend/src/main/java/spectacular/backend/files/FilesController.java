@@ -25,18 +25,20 @@ public class FilesController {
     this.filesService = filesService;
   }
 
-  public static String extractPathFromPattern(final HttpServletRequest request) {
-    String path =
-        (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-    String bestMatchPattern =
-        (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
-
-    AntPathMatcher apm = new AntPathMatcher();
-    String finalPath = apm.extractPathWithinPattern(bestMatchPattern, path);
-
-    return finalPath;
-  }
-
+  /**
+   * A REST Get operation that wraps the request to the File Service to get the contents of a file stored in a repository
+   * that is listed in a catalogue for a given user.
+   *
+   * @param catalogueOwner the catalogue owner the file is listed in
+   * @param catalogueRepoName the repository containing the catalogue the file is listed in
+   * @param fileOwner the repository owner the file is stored in
+   * @param fileRepoName the repository name the file is stored in
+   * @param refName the name of the git commit reference at which to look
+   * @param request the request object wrapping this API call
+   * @param authToken the Authentication Token associated with the security principle making this API call
+   * @return The String contents of the requested file
+   * @throws UnsupportedEncodingException if an error occurs when decoding the contents of the file returned by the git source system
+   */
   @GetMapping("api/catalogues/{catalogue-owner}/{catalogue-repo}/files/{file-owner}/{file-repo}/{ref-name}/**")
   public ResponseEntity<String> getFileContents(
       @PathVariable("catalogue-owner") String catalogueOwner,
@@ -51,8 +53,7 @@ public class FilesController {
     String path = extractPathFromPattern(request);
     String fileContent;
     try {
-      fileContent =
-          filesService.getFileContent(catalogueRepo, fileRepo, path, refName, authToken.getName());
+      fileContent = filesService.getFileContent(catalogueRepo, fileRepo, path, refName, authToken.getName());
     } catch (HttpClientErrorException.NotFound nf) {
       logger.debug("Failed to retrieve file contents due an file not found on the github api.", nf);
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -63,5 +64,15 @@ public class FilesController {
     }
 
     return new ResponseEntity<>(fileContent, HttpStatus.OK);
+  }
+
+  private static String extractPathFromPattern(final HttpServletRequest request) {
+    String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+    String bestMatchPattern = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+
+    AntPathMatcher apm = new AntPathMatcher();
+    String finalPath = apm.extractPathWithinPattern(bestMatchPattern, path);
+
+    return finalPath;
   }
 }

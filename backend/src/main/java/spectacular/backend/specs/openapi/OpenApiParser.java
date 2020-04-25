@@ -17,7 +17,13 @@ import org.slf4j.LoggerFactory;
 public class OpenApiParser {
   private static final Logger logger = LoggerFactory.getLogger(OpenApiParser.class);
 
-  public static OpenApiSpecParseResult parseYAML(String yaml) {
+  /**
+   * Reads the YAML contents of an OpenAPI file and find specific nodes required to create an OpenApiSpecParseResult object.
+   *
+   * @param yaml the OpenAPI YAML file's contents
+   * @return a OpenApiSpecParseResult object with the values found in the yaml and any errors occurred
+   */
+  public static OpenApiSpecParseResult parseYaml(String yaml) {
     //todo: refactor using a builder pattern
     List<String> errorList = new ArrayList<>();
     try {
@@ -33,8 +39,7 @@ public class OpenApiParser {
           String version = infoNode.path("version").asText();
           var operationList = getOperationsFromRoot(rootNode, errorList);
 
-          return new OpenApiSpecParseResult(new OpenApiSpec(title, version, operationList),
-              errorList);
+          return new OpenApiSpecParseResult(new OpenApiSpec(title, version, operationList), errorList);
         }
       }
     } catch (IOException e) {
@@ -43,8 +48,7 @@ public class OpenApiParser {
     return new OpenApiSpecParseResult(null, errorList);
   }
 
-  private static List<OpenApiOperation> getOperationsFromRoot(JsonNode rootNode,
-                                                              List<String> errorList) {
+  private static List<OpenApiOperation> getOperationsFromRoot(JsonNode rootNode, List<String> errorList) {
     List<OpenApiOperation> operationList = new ArrayList<>();
     JsonNode pathsNode = rootNode.get("paths");
 
@@ -57,25 +61,21 @@ public class OpenApiParser {
       return operationList;
     }
 
-    var pathFieldsSpliterator =
-        Spliterators.spliteratorUnknownSize(pathsNode.fields(), Spliterator.ORDERED);
+    var pathFieldsSpliterator = Spliterators.spliteratorUnknownSize(pathsNode.fields(), Spliterator.ORDERED);
     return StreamSupport.stream(pathFieldsSpliterator, false)
         .map(OpenApiParser::getOperationsFromPath)
         .flatMap(Collection::stream)
         .collect(Collectors.toList());
   }
 
-  private static List<OpenApiOperation> getOperationsFromPath(
-      Map.Entry<String, JsonNode> pathField) {
-    var operationFieldsSpliterator =
-        Spliterators.spliteratorUnknownSize(pathField.getValue().fields(), Spliterator.ORDERED);
+  private static List<OpenApiOperation> getOperationsFromPath(Map.Entry<String, JsonNode> pathField) {
+    var operationFieldsSpliterator = Spliterators.spliteratorUnknownSize(pathField.getValue().fields(), Spliterator.ORDERED);
     return StreamSupport.stream(operationFieldsSpliterator, false)
         .map(operation -> createOperationFromOperation(operation, pathField.getKey()))
         .collect(Collectors.toList());
   }
 
-  private static OpenApiOperation createOperationFromOperation(
-      Map.Entry<String, JsonNode> operationField, String pathKey) {
+  private static OpenApiOperation createOperationFromOperation(Map.Entry<String, JsonNode> operationField, String pathKey) {
     var topicName = operationField.getValue().path("x-topic-name").asText();
     return new OpenApiOperation(pathKey, operationField.getKey(), topicName);
   }

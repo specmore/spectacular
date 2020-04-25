@@ -9,9 +9,7 @@ public class Repository {
   private final String html_url;
 
   @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-  public Repository(@JsonProperty("id") int id,
-                    @JsonProperty("full_name") String full_name,
-                    @JsonProperty("html_url") String html_url) {
+  public Repository(@JsonProperty("id") int id, @JsonProperty("full_name") String full_name, @JsonProperty("html_url") String html_url) {
     this.id = id;
     this.full_name = full_name;
     this.html_url = html_url;

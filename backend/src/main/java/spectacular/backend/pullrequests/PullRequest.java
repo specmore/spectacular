@@ -15,6 +15,18 @@ public class PullRequest {
   private final String title;
   private final Instant updatedAt;
 
+  /**
+   * Constructs a PullRequest object representing a PullRequest in the git source control system.
+   *
+   * @param repository the repository the pull request belongs to
+   * @param branchName the name of the branch the pull request is pull changes from
+   * @param number the number of the PR
+   * @param url the url of the PR
+   * @param labels a list of labels associated to the PR
+   * @param changedFiles a list of file paths representing the changed files in the PR
+   * @param title the title of the PR
+   * @param updatedAt the last time the PR was updated
+   */
   public PullRequest(Repository repository, String branchName, int number, String url,
                      List<String> labels, List<String> changedFiles, String title,
                      Instant updatedAt) {
@@ -28,17 +40,20 @@ public class PullRequest {
     this.updatedAt = updatedAt;
   }
 
-  public static PullRequest createPullRequestFrom(
-      spectacular.backend.github.graphql.PullRequest pullRequest) {
+  /**
+   * Creates a PullRequest object from a GitHub GraphQL PullRequest response object.
+   *
+   * @param pullRequest the GitHub GraphQL PullRequest response object
+   * @return a PullRequest object
+   */
+  public static PullRequest createPullRequestFrom(spectacular.backend.github.graphql.PullRequest pullRequest) {
     var repository = Repository.createRepositoryFrom(pullRequest.getHeadRef().getRepository());
     var branchName = pullRequest.getHeadRef().getName();
-    List<String> labels = pullRequest.getLabels().getNodes().stream().map(label -> label.getName())
-        .collect(Collectors.toList());
-    List<String> changedFiles =
-        pullRequest.getChangedFiles().getNodes().stream().map(file -> file.getPath())
-            .collect(Collectors.toList());
-    return new PullRequest(repository, branchName, pullRequest.getNumber(), pullRequest.getUrl(),
-        labels, changedFiles, pullRequest.getTitle(), pullRequest.getUpdatedAt());
+    List<String> labels = pullRequest.getLabels().getNodes().stream().map(label -> label.getName()).collect(Collectors.toList());
+    List<String> changedFiles = pullRequest.getChangedFiles().getNodes().stream().map(file -> file.getPath()).collect(Collectors.toList());
+
+    return new PullRequest(repository, branchName, pullRequest.getNumber(), pullRequest.getUrl(), labels, changedFiles,
+        pullRequest.getTitle(), pullRequest.getUpdatedAt());
   }
 
   public boolean changesFile(Repository repo, String filePath) {

@@ -21,6 +21,14 @@ public class SpecService {
     this.restApiClient = restApiClient;
   }
 
+  /**
+   * Gets the details of a specific spec file and the parsed OpenAPI YAML contents of the file.
+   *
+   * @param repo the repository the spec file belongs to
+   * @param filePath the file path of the spec file
+   * @param ref a reference to the commit in the git repository's history at which to take the file's contents
+   * @return a SpecItem object containing the file details and parsed OpenAPI YAML of the file's contents
+   */
   public SpecItem getSpecItem(Repository repo, String filePath, String ref) {
     OpenApiSpecParseResult parseResult = null;
     String htmlUrl = null;
@@ -31,7 +39,7 @@ public class SpecService {
       htmlUrl = contentItem.getHtml_url();
       sha = contentItem.getSha();
       lastModified = contentItem.getLastModified();
-      parseResult = OpenApiParser.parseYAML(contentItem.getDecodedContent());
+      parseResult = OpenApiParser.parseYaml(contentItem.getDecodedContent());
     } catch (HttpClientErrorException.NotFound nf) {
       logger.debug("Failed to retrieve file contents due an file not found on the github api.", nf);
       parseResult = new OpenApiSpecParseResult(null, List.of("The spec file could not be found."));

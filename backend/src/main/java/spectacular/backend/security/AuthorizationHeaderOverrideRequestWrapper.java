@@ -8,14 +8,13 @@ public class AuthorizationHeaderOverrideRequestWrapper extends HttpServletReques
   private final String overrideValue;
 
   /**
-   * Constructs a request object wrapping the given request.
+   * Constructs a request object wrapping the given request and replacing the Authorization header value.
    *
    * @param request       The request to wrap
-   * @param overrideValue
+   * @param overrideValue The new authorization header value to be set
    * @throws IllegalArgumentException if the request is null
    */
-  public AuthorizationHeaderOverrideRequestWrapper(HttpServletRequest request,
-                                                   String overrideValue) {
+  public AuthorizationHeaderOverrideRequestWrapper(HttpServletRequest request, String overrideValue) {
     super(request);
     this.overrideValue = overrideValue;
   }

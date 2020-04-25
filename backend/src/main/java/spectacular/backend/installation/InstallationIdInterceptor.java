@@ -3,7 +3,6 @@ package spectacular.backend.installation;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,8 +27,7 @@ public class InstallationIdInterceptor extends HandlerInterceptorAdapter {
 
     if (installationIdHeaderValue == null) {
       var mapper = new ObjectMapper();
-      var errorMessage = new InstallationError(
-          "No '" + INSTALLATION_ID_HEADER_NAME + "' http request header was found.");
+      var errorMessage = new InstallationError("No '" + INSTALLATION_ID_HEADER_NAME + "' http request header was found.");
 
       response.setStatus(SC_BAD_REQUEST);
       response.setContentType(APPLICATION_JSON.toString());

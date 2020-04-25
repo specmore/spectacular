@@ -8,7 +8,7 @@ import spectacular.backend.pullrequests.PullRequest;
 
 @Service
 public class SpecLogService {
-  private final static String LATEST_AGREED_BRANCH = "master";
+  private static final String LATEST_AGREED_BRANCH = "master";
 
   private final SpecService specService;
 
@@ -16,12 +16,17 @@ public class SpecLogService {
     this.specService = specService;
   }
 
-  public SpecLog getSpecLogForSpecRepoAndFile(Repository repo, String specFilePath,
-                                              List<PullRequest> openPullRequests) {
+  /**
+   * Gets all the information of the current state of the specified Spec File's evolution.
+   * @param repo the repository the spec file belongs to
+   * @param specFilePath the file path of the spec item
+   * @param openPullRequests a list of the current open pull requests for the repository
+   * @return a SpecLog item representing the current state of the Spec File's evolution.
+   */
+  public SpecLog getSpecLogForSpecRepoAndFile(Repository repo, String specFilePath, List<PullRequest> openPullRequests) {
     var latestAgreedSpecItem = specService.getSpecItem(repo, specFilePath, LATEST_AGREED_BRANCH);
 
-    var pullRequestsWithSpecFile = openPullRequests.stream()
-        .filter(pullRequest -> pullRequest.changesFile(repo, specFilePath));
+    var pullRequestsWithSpecFile = openPullRequests.stream().filter(pullRequest -> pullRequest.changesFile(repo, specFilePath));
     var proposedChanges = pullRequestsWithSpecFile
         .map(pullRequest -> createProposedSpecChangeFor(pullRequest, repo, specFilePath))
         .collect(Collectors.toList());
@@ -29,8 +34,7 @@ public class SpecLogService {
     return new SpecLog(latestAgreedSpecItem, proposedChanges);
   }
 
-  private ProposedSpecChange createProposedSpecChangeFor(PullRequest pullRequest, Repository repo,
-                                                         String specFilePath) {
+  private ProposedSpecChange createProposedSpecChangeFor(PullRequest pullRequest, Repository repo, String specFilePath) {
     var changedSpecItem = specService.getSpecItem(repo, specFilePath, pullRequest.getBranchName());
     return new ProposedSpecChange(pullRequest, changedSpecItem);
   }

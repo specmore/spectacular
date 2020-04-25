@@ -12,18 +12,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
-public class JWTCookieToAuthorizationHeaderFilter extends OncePerRequestFilter {
-  private static final Logger logger =
-      LoggerFactory.getLogger(JWTCookieToAuthorizationHeaderFilter.class);
+public class JwtCookieToAuthorizationHeaderFilter extends OncePerRequestFilter {
+  private static final Logger logger = LoggerFactory.getLogger(JwtCookieToAuthorizationHeaderFilter.class);
 
   private final String jwtCookieName;
 
-  public JWTCookieToAuthorizationHeaderFilter(String jwtCookieName) {
+  public JwtCookieToAuthorizationHeaderFilter(String jwtCookieName) {
     this.jwtCookieName = jwtCookieName;
   }
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+  protected void doFilterInternal(HttpServletRequest request,
+                                  HttpServletResponse response,
                                   FilterChain filterChain) throws ServletException, IOException {
     HttpServletRequest httpRequest = request;
     Cookie jwtCookie = WebUtils.getCookie(httpRequest, jwtCookieName);
@@ -44,8 +44,7 @@ public class JWTCookieToAuthorizationHeaderFilter extends OncePerRequestFilter {
 
     if (jwtCookie != null && authorisationHeader == null) {
       var newAuthorisationHeader = "Bearer " + jwtCookie.getValue();
-      var overriddenRequestWrapper =
-          new AuthorizationHeaderOverrideRequestWrapper(request, newAuthorisationHeader);
+      var overriddenRequestWrapper = new AuthorizationHeaderOverrideRequestWrapper(request, newAuthorisationHeader);
       logger.debug("Continuing chain with an overridden authorisation request header");
       filterChain.doFilter(overriddenRequestWrapper, response);
       return;

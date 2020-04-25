@@ -8,13 +8,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import spectacular.backend.common.Repository;
 import spectacular.backend.github.RestApiClient;
-import spectacular.backend.github.graphql.GraphQLRequest;
+import spectacular.backend.github.graphql.GraphQlRequest;
 
 @Service
 public class PullRequestService {
-  private final static Logger logger = LoggerFactory.getLogger(PullRequestService.class);
+  private static final Logger logger = LoggerFactory.getLogger(PullRequestService.class);
 
-  private final static String PullRequestsGraphQLQuery = "query {\n" +
+  private static final String PullRequestsGraphQLQuery = "query {\n" +
       "    repository(owner: \"%s\", name:\"%s\") {\n" +
       "        nameWithOwner\n" +
       "        url\n" +
@@ -45,11 +45,17 @@ public class PullRequestService {
     this.restApiClient = restApiClient;
   }
 
+  /**
+   * Gets all the open Pull Requests for a specific repository.
+   *
+   * @param repo the repository to get Pull Requests for
+   * @return a list of open PullRequests
+   */
   public List<PullRequest> getPullRequestsForRepo(Repository repo) {
     String formattedQuery =
         String.format(PullRequestsGraphQLQuery, repo.getOwner(), repo.getName());
 
-    var response = restApiClient.graphQLQuery(new GraphQLRequest(formattedQuery));
+    var response = restApiClient.graphQlQuery(new GraphQlRequest(formattedQuery));
 
     if (!response.getErrors().isEmpty()) {
       logger.error("The following error occurred while fetching pull requests for repo '" +

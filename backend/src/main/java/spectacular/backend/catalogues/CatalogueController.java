@@ -26,6 +26,14 @@ public class CatalogueController {
     return new CataloguesResponse(catalogues);
   }
 
+  /**
+   * Get the Catalogue found in the repository identified by it's owner and name.
+   *
+   * @param owner the owner name that identifies repository the catalogue can be found in
+   * @param repo the repository name that identifies repository the catalogue can be found in
+   * @param authToken the Authentication Token for the security principal of the request (to be provided by the authentication framework)
+   * @return
+   */
   @GetMapping("api/catalogues/{owner}/{repo}")
   public Catalogue getCatalogue(@PathVariable("owner") String owner,
                                 @PathVariable("repo") String repo,

@@ -1,9 +1,9 @@
 package spectacular.backend.github.graphql;
 
-public class GraphQLRequest {
+public class GraphQlRequest {
   private final String query;
 
-  public GraphQLRequest(String query) {
+  public GraphQlRequest(String query) {
     this.query = query;
   }
 

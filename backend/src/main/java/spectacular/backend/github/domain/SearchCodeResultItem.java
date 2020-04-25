@@ -12,7 +12,8 @@ public class SearchCodeResultItem {
   private final Repository repository;
 
   @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-  public SearchCodeResultItem(@JsonProperty("name") String name, @JsonProperty("path") String path,
+  public SearchCodeResultItem(@JsonProperty("name") String name,
+                              @JsonProperty("path") String path,
                               @JsonProperty("url") String url,
                               @JsonProperty("git_url") String gitUrl,
                               @JsonProperty("html_url") String htmlUrl,
