@@ -9,9 +9,9 @@ import org.springframework.web.context.WebApplicationContext;
 import spectacular.backend.github.app.AppInstallationContextProvider;
 
 @SpringBootApplication
-public class GitHubServiceApplication {
+public class SpectacularBackendApplication {
   public static void main(String[] args) {
-    SpringApplication.run(GitHubServiceApplication.class, args);
+    SpringApplication.run(SpectacularBackendApplication.class, args);
   }
 
   @Bean
