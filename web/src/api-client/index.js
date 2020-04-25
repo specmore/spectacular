@@ -30,11 +30,6 @@ export const fetchInstallation = async () => {
   return response.data;
 };
 
-export const fetchInstances = async () => {
-  const response = await axios.get('/api/instances');
-  return response.data;
-};
-
 export const fetchUserInfo = async () => {
   const response = await axios.get('/login');
   return response.data;
