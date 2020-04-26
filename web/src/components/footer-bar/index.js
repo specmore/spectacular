@@ -5,6 +5,7 @@ const FooterBar = () => (
   <Segment textAlign="center">
     <p>
       Contribute to the
+      {' '}
       <a href="https://github.com/pburls/spectacular" target="_blank" rel="noopener noreferrer">
         <Icon name="github" />
         GitHub project
