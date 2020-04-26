@@ -1,0 +1,28 @@
+@startuml system-architecture
+
+title Spectacular System Architecture
+
+actor "Application User" as user 
+rectangle "Browser / User Agent" as userAgent {
+    storage "Client State" as clientState
+}
+
+cloud "Spectacular" {
+    component "Reverse Proxy" as reverseProxy {
+        artifact "Web SPA static files" as webUI
+    }
+    component "Backend Service" as backendService
+    component "Authentication Service" as authService
+}
+
+component "GitHub API" as github
+
+user --> userAgent
+userAgent --> reverseProxy
+reverseProxy --> backendService : /api/*
+reverseProxy --> authService : /login
+
+backendService --> github
+authService --> github
+
+@enduml

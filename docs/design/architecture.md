@@ -9,6 +9,8 @@ In addition to these 3 core components the following infrastructure components a
   - Serving the bundled Web UI static files
   - Acting as a reverse proxy and API gateway to the Backend and Authentication services
 
+![system architecture diagram](diagrams/system-architecture.png)
+
 ## Web UI
 The [User Interface](../../web) for Spectacular is a Single Page Web Application (SPA) built using ReactJS.
 
