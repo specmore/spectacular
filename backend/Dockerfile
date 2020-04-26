@@ -5,6 +5,7 @@ WORKDIR /app
 COPY build.gradle gradle.properties settings.gradle ./
 
 COPY src ./src
+COPY config ./config
 
 RUN echo $SEMVER
 RUN gradle -Pversion=$SEMVER build
