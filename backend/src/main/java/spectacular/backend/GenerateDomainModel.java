@@ -1,19 +1,18 @@
 package spectacular.backend;
 
 import ch.ifocusit.plantuml.classdiagram.ClassDiagramBuilder;
-import spectacular.backend.catalogues.CatalogueController;
-import spectacular.backend.catalogues.CatalogueService;
-import spectacular.backend.catalogues.CataloguesResponse;
+import spectacular.backend.catalogues.Catalogue;
+import spectacular.backend.catalogues.CatalogueManifest;
+import spectacular.backend.catalogues.SpecFileLocation;
 import spectacular.backend.common.Repository;
-import spectacular.backend.github.RestApiClient;
-import spectacular.backend.github.app.AppApiClient;
-import spectacular.backend.github.app.AppAuthenticationService;
-import spectacular.backend.github.app.AppInstallationAccessTokenStore;
-import spectacular.backend.github.app.AppInstallationAuthenticationHeaderRequestInterceptor;
-import spectacular.backend.github.app.AppInstallationContextProvider;
-import spectacular.backend.github.app.AppInstallationService;
-import spectacular.backend.github.app.GitHubAppAuthenticationHeaderRequestInterceptor;
-import spectacular.backend.github.domain.AccessTokenResult;
+import spectacular.backend.installation.InstallationResponse;
+import spectacular.backend.pullrequests.PullRequest;
+import spectacular.backend.specs.ProposedSpecChange;
+import spectacular.backend.specs.SpecItem;
+import spectacular.backend.specs.SpecLog;
+import spectacular.backend.specs.openapi.OpenApiOperation;
+import spectacular.backend.specs.openapi.OpenApiSpec;
+import spectacular.backend.specs.openapi.OpenApiSpecParseResult;
 
 public class GenerateDomainModel {
   /**
@@ -24,20 +23,18 @@ public class GenerateDomainModel {
   public static void main(String[] args) {
     String diagram = new ClassDiagramBuilder()
         .addClasse(
-            CatalogueController.class,
-            CatalogueService.class,
-            CataloguesResponse.class,
-
-            AccessTokenResult.class,
-            AppApiClient.class,
-            AppAuthenticationService.class,
-            AppInstallationAccessTokenStore.class,
-            AppInstallationAuthenticationHeaderRequestInterceptor.class,
-            AppInstallationContextProvider.class,
-            AppInstallationService.class,
-            GitHubAppAuthenticationHeaderRequestInterceptor.class,
+            InstallationResponse.class,
             Repository.class,
-            RestApiClient.class
+            Catalogue.class,
+            SpecFileLocation.class,
+            CatalogueManifest.class,
+            SpecLog.class,
+            SpecItem.class,
+            ProposedSpecChange.class,
+            OpenApiSpec.class,
+            OpenApiOperation.class,
+            OpenApiSpecParseResult.class,
+            PullRequest.class
         )
         .build();
     System.out.println(diagram);
