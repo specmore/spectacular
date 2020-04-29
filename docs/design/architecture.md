@@ -1,8 +1,8 @@
 # System Architecture
 The systems is built up of 3 core separately deployable components:
-- A User Interface built as a Single Page Web Application
-- Backend logic service exposed as a RESTful API
-- User Login and Authentication service
+- A [User Interface]((#web-ui)) built as a Single Page Web Application
+- [Backend Service](#backend-service) exposing logic using a RESTful API
+- [User Login and Authentication Service](#user-authentication-service)
 
 In addition to these 3 core components the following infrastructure components are used:
 - NGINX web server with the following responsibilities:
@@ -10,6 +10,11 @@ In addition to these 3 core components the following infrastructure components a
   - Acting as a reverse proxy and API gateway to the Backend and Authentication services
 
 ![system architecture diagram](diagrams/system-architecture.png)
+
+- [System Architecture](#system-architecture)
+  - [Web UI](#web-ui)
+  - [Backend Service](#backend-service)
+  - [User Authentication Service](#user-authentication-service)
 
 ## Web UI
 The [User Interface](../../web) for Spectacular is a Single Page Web Application (SPA) built using ReactJS.
