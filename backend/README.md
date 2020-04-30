@@ -11,6 +11,17 @@ The following configuration values can also be changed from their defaults:
 - `GITHUB_API_ROOT_URL` - The root/base url or the GitHup API (defaults to `https://api.github.com`)
 - `JWT_COOKIE_NAME` - The cookie name shared with the [User Authentication Service](../docs/design/architecture.md#user-authentication-service) for storing user JWTs on the user's client agent and in each API request (defaults to `jwt_token`)
 
+## Building
+This application uses the [Gradle](https://docs.gradle.org/current/userguide/userguide.html) build tool to provide the following key tasks (ensure your JAVA_HOME environment variable is set to the location of your Java 11 JDK):
+#### Running the Application
+```
+./gradlew bootRun
+```
+#### Test the Application
+```
+./gradlew check
+```
+
 ## Design Decisions
 ### Architecture Pattern
 The objects in this project could be organised horizontally using the following conceptual layers:
