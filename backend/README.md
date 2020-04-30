@@ -11,13 +11,14 @@ The following configuration values can also be changed from their defaults:
 - `GITHUB_API_ROOT_URL` - The root/base url or the GitHup API (defaults to `https://api.github.com`)
 - `JWT_COOKIE_NAME` - The cookie name shared with the [User Authentication Service](../docs/design/architecture.md#user-authentication-service) for storing user JWTs on the user's client agent and in each API request (defaults to `jwt_token`)
 
-## Building
+## Local Development and Testing
 This application uses the [Gradle](https://docs.gradle.org/current/userguide/userguide.html) build tool to provide the following key tasks (ensure your JAVA_HOME environment variable is set to the location of your Java 11 JDK):
 #### Running the Application
+First ensuring the environment variables in the [Config](#config) section above are set appropriately, then run the following command:
 ```
 ./gradlew bootRun
 ```
-#### Test the Application
+#### Testing the Application
 ```
 ./gradlew check
 ```
