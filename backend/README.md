@@ -17,13 +17,14 @@ The following configuration values can also be changed from their defaults:
 - [Java 11 JDK](https://jdk.java.net/11/) - ensure your JAVA_HOME environment variable is set to the location of your Java 11 JDK
 
 ### Tasks
-This project uses the [Gradle](https://docs.gradle.org/current/userguide/userguide.html) build tool to provide the following key tasks:
+This project uses the [Gradle](https://docs.gradle.org/current/userguide/userguide.html) build tool to provide the following key application development life cycle tasks:
 
 #### Running the Application
 First ensuring the environment variables in the [Config](#config) section above are set appropriately, then run the following command:
 ```
 ./gradlew bootRun
 ```
+
 #### Testing the Application
 ```
 ./gradlew check
