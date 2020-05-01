@@ -8,11 +8,17 @@ The backend project requires the following configuration values to be set as Env
 - `JWT_SHARED_SECRET` - The secret key shared with the [User Authentication Service](../docs/design/architecture.md#user-authentication-service) for validating JWTs sent in each API request from the user's client agent.
 
 The following configuration values can also be changed from their defaults:
-- `GITHUB_API_ROOT_URL` - The root/base url or the GitHup API (defaults to `https://api.github.com`)
+- `GITHUB_API_ROOT_URL` - The root/base url of the GitHup API (defaults to `https://api.github.com`)
 - `JWT_COOKIE_NAME` - The cookie name shared with the [User Authentication Service](../docs/design/architecture.md#user-authentication-service) for storing user JWTs on the user's client agent and in each API request (defaults to `jwt_token`)
 
 ## Local Development and Testing
-This application uses the [Gradle](https://docs.gradle.org/current/userguide/userguide.html) build tool to provide the following key tasks (ensure your JAVA_HOME environment variable is set to the location of your Java 11 JDK):
+
+### Development Environment Requirements:
+- [Java 11 JDK](https://jdk.java.net/11/) - ensure your JAVA_HOME environment variable is set to the location of your Java 11 JDK
+
+### Tasks
+This project uses the [Gradle](https://docs.gradle.org/current/userguide/userguide.html) build tool to provide the following key tasks:
+
 #### Running the Application
 First ensuring the environment variables in the [Config](#config) section above are set appropriately, then run the following command:
 ```
