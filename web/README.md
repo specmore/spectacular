@@ -3,9 +3,12 @@ This web SPA project provides the [User Interface](../docs/design/architecture.m
 
 ## Config
 The web project requires the following configuration values to be set as Environment Variables before starting the application:
+- `GITHUB_APP_INSTALLATION_ID` - The specific installation (tenant) this instance of the UI will be serving. Required to be sent to the Backend Service in each API request. The installation needs to belong to the GitHub App the [Backend Service](../backend/README.md#config) is configured to use.
 
 ## Local Development and Testing
 This application uses 
+
+
 #### Running the Application
 First ensuring the environment variables in the [Config](#config) section above are set appropriately, then run the following command:
 ```
