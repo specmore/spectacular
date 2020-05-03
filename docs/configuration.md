@@ -18,4 +18,6 @@ After your GitHub App setup has been completed, the following key configuration 
 | Auth Service | `LOGINSRV_GITHUB` | A single string following the pattern `client_id=<Client ID>,client_secret=<Client secret>`. Where the `Client ID` and `Client secret` found on your GitHub App's "General" page after completing the [Registering a new GitHub App](git-integration.md#registering-a-new-github-app) setup step are substituted |
 | Web UI | `GITHUB_APP_INSTALLATION_ID` | The ID of the installation of the GitHub App found in the URL after completing the [Allow access to your Repositories](git-integration.md#allow-access-to-your-repositories-create-an-app-installation) setup step |
 
+The diagram below show how the Spectacular configuration items above map to the values of the GitHub App entities created in GitHub for the integration.
+
 ![GitHub App Configuration Mapping](design/diagrams/github-app-config.png)
