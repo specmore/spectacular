@@ -22,7 +22,7 @@ package GitHub {
     entity Installation {
         id: int
         app_id: int
-        account: UserOrOrganisation
+        owner: UserOrOrganisation
         repositories: List<Repository>
     }
 
@@ -33,9 +33,29 @@ package GitHub {
         client_id: String
         client_secret: String
         installations: List<Installation>
+        private_keys: List<pem>
     }
 }
 
+package Spectacular {
+    entity UI {
+        GITHUB_APP_INSTALLATION_ID: int
+    }
+
+    entity Auth {
+        client_id: String
+        client_secret: String
+    }
+
+    entity Backend {
+        GITHUB_APP_ID: int
+        GITHUB_APP_PRIVATE_KEY_FILE_PATH: String
+    }
+}
+
+' actor User
+
+' GitHub object relationships
 UserOrOrganisation <|-- AppOwner
 UserOrOrganisation <|-- InstallationOwner
 InstallationOwner ||--o{ Installation
@@ -43,5 +63,10 @@ AppOwner ||--o{ App
 InstallationOwner ||--o{ Repository
 App ||-o{ Installation
 Installation }o--o{ Repository
+
+' GitHub objects to Spectacular config mappings
+Installation ..> UI : "installation id"
+App ..> Auth : "client id and secret"
+App ..> Backend : "app id and private key"
 
 @enduml
