@@ -27,7 +27,7 @@ First ensuring the environment variables in the [Config](#config) section above 
 ```
 npm run start
 ```
-This will bundle the web project files and start a webpack development server to serve the bundled web application.
+This will bundle the web project files and start a [Webpack Dev Server](https://webpack.js.org/configuration/dev-server/) to serve the bundled web application.
 
 #### Testing the Application
 This project uses the [Jest test framework](https://jestjs.io/). To run the test, use the following command:
@@ -61,15 +61,18 @@ While the application state is limited to the following to areas, the choice has
 - The User context state is provided by the [User Authentication Service](../docs/design/architecture.md#user-authentication-service) in the form of a JWT stored in a cookie.
 - The context of which GitHub App Installation this instance of the UI is configured to serve is maintained and injected into the headers of each API request by the Reverse Proxy that is serving this web app.
 
+#### Type safety
+No React propTypes or other tool is used to offer some form of type safety when working with the data objects. There maybe a decision to move to generated TypeScript models created from the backend API spec in the future.
+
 ### Technology Choices
 #### Implementation
-
-#### Security
-
-#### REST Client
+This web application is written in JavaScript ES6 using the [React](https://reactjs.org/) framework. It also consists of some HTML and CSS.
 
 #### Build Tooling
+The application is bundled (built) using [Webpack](https://webpack.js.org/) and transpiled from ES6 using [Babel](https://babeljs.io/).
 
 #### Testing
+This project uses the [Jest test framework](https://jestjs.io/) and runner. [React Testing Library](https://testing-library.com/docs/react-testing-library/intro) is used for unit testing React components.
 
 #### Code Style
+This project uses [ESLint](https://eslint.org/) to ensure code quality and style. It uses the [Airbnb JavaScript Styleguide](https://github.com/airbnb/javascript) config as a base.
