@@ -1,0 +1,47 @@
+@startuml github-app-config
+
+package GitHub {
+    entity UserOrOrganisation {
+        name: String
+        repositories: List<Repository>
+    }
+
+    object AppOwner {
+
+    }
+
+    object InstallationOwner {
+
+    }
+
+    entity Repository {
+        owner: UserOrOrganisation
+        name: String
+    }
+
+    entity Installation {
+        id: int
+        app_id: int
+        account: UserOrOrganisation
+        repositories: List<Repository>
+    }
+
+    entity App {
+        id: int
+        name: String
+        owner: UserOrOrganisation
+        client_id: String
+        client_secret: String
+        installations: List<Installation>
+    }
+}
+
+UserOrOrganisation <|-- AppOwner
+UserOrOrganisation <|-- InstallationOwner
+InstallationOwner ||--o{ Installation
+AppOwner ||--o{ App
+InstallationOwner ||--o{ Repository
+App ||-o{ Installation
+Installation }o--o{ Repository
+
+@enduml
