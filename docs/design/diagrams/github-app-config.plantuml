@@ -38,18 +38,17 @@ package GitHub {
 }
 
 package Spectacular {
-    entity UI {
-        GITHUB_APP_INSTALLATION_ID: int
+    object UI {
+        GITHUB_APP_INSTALLATION_ID
     }
 
-    entity Auth {
-        client_id: String
-        client_secret: String
+    object Auth {
+        LOGINSRV_GITHUB
     }
 
-    entity Backend {
-        GITHUB_APP_ID: int
-        GITHUB_APP_PRIVATE_KEY_FILE_PATH: String
+    object Backend {
+        GITHUB_APP_ID
+        GITHUB_APP_PRIVATE_KEY_FILE_PATH
     }
 }
 
