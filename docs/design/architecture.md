@@ -1,36 +1,26 @@
 # System Architecture
 The systems is built up of 3 core separately deployable components:
-- A [User Interface]((#web-ui)) built as a Single Page Web Application
-- [Backend Service](#backend-service) exposing logic using a RESTful API
-- [User Login and Authentication Service](#user-authentication-service)
+- The [Web UI]((#web-ui)) frontend component that handles:
+  - The bundling of the web UI single page application (SPA) files
+  - And the serving of web requests to the web UI bundled files and backend services
+- The [Backend Service](#backend-service) backend component that drives much of the Spectacular features and is invoked via a RESTful API
+- The [User Authentication Service](#user-authentication-service) backend component that handles the User Login process
 
-In addition to these 3 core components the following infrastructure components are used:
-- NGINX web server with the following responsibilities:
-  - Serving the bundled Web UI static files
-  - Acting as a reverse proxy and API gateway to the Backend and Authentication services
+These 3 components can be seen in the Architecture diagram below:
 
 ![system architecture diagram](diagrams/system-architecture.png)
 
-- [System Architecture](#system-architecture)
-  - [Web UI](#web-ui)
-  - [Backend Service](#backend-service)
-  - [User Authentication Service](#user-authentication-service)
-
 ## Web UI
-The [User Interface](../../web) for Spectacular is a Single Page Web Application (SPA) built using ReactJS.
-
-This component is purposefully kept relatively "dumb" with exception of:
-- the presentational logic required to drive the User Experience
-- data fetching logic required to populate the visual components and application state
-- logic to maintain the application state, such as authentication tokens
+Useful links for the `Web UI` component:
+- The [web](../../web) project folder contains 
+  - the Single Page Web Application (SPA) source code files
+  - web server configuration files
+- Have a look at the project folder [README](../../web/README.md) for further documentation
 
 ## Backend Service
-The logic powering many of Spectacular's features is encapsulated in the [Backend](../../backend) service.
-It exposes this logic to the Web UI using a RESTful API.
-
-The following design decisions have been made:
-- This service is to be kept stateless to allow for easy horizontal scaling. All state is to be keep in the client.
+Useful links for the `Backend Service` component:
+- The [backend](../../backend) project folder contains the application source code
+- Have a look at the project folder [README](../../backend/README.md) for further documentation
 
 ## User Authentication Service
-The UI and logic for authenticating users using existing SSO providers, such as GitHub, is kept as a separate responsibility.
-The "User Authentication" service used is an "off the shelf" OSS product called [loginsrv](https://github.com/tarent/loginsrv).
+The Authentication Service is implemented using an opensource application called [loginsrv](https://github.com/tarent/loginsrv). For more details please read the [authentication-service](../authentication-service.md) documentation.
