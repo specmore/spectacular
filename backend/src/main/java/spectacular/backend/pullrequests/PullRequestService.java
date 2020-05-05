@@ -52,8 +52,7 @@ public class PullRequestService {
    * @return a list of open PullRequests
    */
   public List<PullRequest> getPullRequestsForRepo(Repository repo) {
-    String formattedQuery =
-        String.format(PullRequestsGraphQLQuery, repo.getOwner(), repo.getName());
+    String formattedQuery = String.format(PullRequestsGraphQLQuery, repo.getOwner(), repo.getName());
 
     var response = restApiClient.graphQlQuery(new GraphQlRequest(formattedQuery));
 
@@ -64,6 +63,8 @@ public class PullRequestService {
     }
 
     return response.getData().getRepository().getPullRequests().getNodes().stream()
-        .map(PullRequest::createPullRequestFrom).collect(Collectors.toList());
+        .filter(pullRequest -> pullRequest.getHeadRef() != null)
+        .map(PullRequest::createPullRequestFrom)
+        .collect(Collectors.toList());
   }
 }

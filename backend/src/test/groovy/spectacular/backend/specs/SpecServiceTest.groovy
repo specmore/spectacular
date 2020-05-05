@@ -16,7 +16,7 @@ class SpecServiceTest extends Specification {
 
     def "Get spec item for spec repo and file path returns spec item"() {
         given: "a spec file repo, path and ref"
-        def specFileRepo = new Repository("test-owner", "spec-repo");
+        def specFileRepo = new Repository("test-owner", "spec-repo")
         def specFilePath = "test-specs/example-spec.yaml"
         def ref = "xyz"
 
