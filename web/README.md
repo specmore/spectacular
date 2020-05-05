@@ -2,8 +2,10 @@
 This web project provides the [User Interface](../docs/architecture.md#web-ui) for the Spectacular tool. It consists of a JavaScript SPA web application and the necessary configuration to serve it (via a NGINX server or a Webpack dev server) alongside proxying requests to the backend components.
 
 ## Config
-The web project requires the following configuration values to be set as Environment Variables before starting the application:
-- `GITHUB_APP_INSTALLATION_ID` - The specific installation (tenant) this instance of the UI will be serving. Required to be sent to the Backend Service in each API request. The installation needs to belong to the GitHub App the [Backend Service](../backend/README.md#config) is configured to use.
+The web project requires the following configuration Environment Variables to be set before starting the application:
+- `GITHUB_APP_INSTALLATION_ID`
+
+Please refer to the dedicated [configuration guide](../docs/configuration.md) for instruction on how to set these values.
 
 The following configuration values can also be changed from their defaults:
 - `API_LOCATION` - The root/base url or the Backend Service API (defaults to `http://localhost:5000`)

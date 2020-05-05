@@ -6,9 +6,11 @@ Spectacular uses an opensource application called [loginsrv](https://github.com/
 ## Config
 The `loginsrv` application offers many different configurable options as shown on their GitHub project's [README](https://github.com/tarent/loginsrv/blob/master/README.md#config-options). 
 
-However, to use it with the Spectacular as the Authentication Service,the following configuration should be set as Environment Variables before starting the application:
-- `LOGINSRV_GITHUB` - A single string of text following the pattern `client_id=<Client ID>,client_secret=<Client secret>`. Where the `<Client ID>` and `<Client secret>` tokens are substituted with the `Client ID` and `Client secret` values found on your GitHub App's "General" page.
-- `LOGINSRV_JWT_SECRET` - A 32-byte text value. e.g. `this_test_shared_key_is_32_bytes`
+However, to use it with the Spectacular as the Authentication Service, the following configuration Environment Variables should be set before starting the application:
+- `LOGINSRV_GITHUB`
+- `LOGINSRV_JWT_SECRET`
+
+Please refer to the dedicated [configuration guide](../docs/configuration.md) for instruction on how to set these values.
 
 ## Running locally
 The `loginsrv` application is distributed as a docker image and can easily be run locally as a docker container. To start the container with the necessary Environment Variable configurations as set out above, using the following command:
