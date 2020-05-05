@@ -1,7 +1,7 @@
 # Configuration
 This document covers how to configure a new deployment of the Spectacular tool.
 
-Be sure to familiarise yourself with the different components that form the Spectacular tool's [Architecture](design/architecture.md) and the [docker-compose.yml](../docker-compose.yml) file provided can also be used as a good reference.
+Be sure to familiarise yourself with the different components that form the Spectacular tool's [Architecture](architecture.md) and the [docker-compose.yml](../docker-compose.yml) file provided can also be used as a good reference.
 
 You will need to complete the necessary [Git Integration](git-integration.md) setup steps before trying to configure your Spectacular deployment.
 
@@ -28,7 +28,7 @@ After your GitHub App setup has been completed, the following configuration valu
 
 The diagram below show how the Spectacular configuration items above map to the values of the GitHub App entities created in GitHub for the integration.
 
-![GitHub App Configuration Mapping](design/diagrams/github-app-config.png)
+![GitHub App Configuration Mapping](diagrams/github-app-config.png)
 
 ## Single Sign On
 Spectacular relies on your Git Hosting solution to act as an `Identity Provider` and offer an OAuth2 / OpenID login workflow to be used as a Single Sign On (SSO) login option for the tool's users.
@@ -43,7 +43,7 @@ After your GitHub App setup has been completed, the following configuration valu
 | Authentication Service | `LOGINSRV_GITHUB` | A single string of text following the pattern `client_id=<Client ID>,client_secret=<Client secret>`. Where the `<Client ID>` and `<Client secret>` tokens are substituted with the `Client ID` and `Client secret` values found on your GitHub App's "General" page after completing the [Registering a new GitHub App](git-integration.md#registering-a-new-github-app) setup step. |
 
 ## JWT Shared Secret
-Spectacular uses JWTs to authorise requests to the backend REST API from the Web UI frontend application. The JWTs are generated at the end of a successful user login process by the [Authentication Service](design/architecture.md#user-authentication-service). The [Backend Service](design/architecture.md#backend-service) and the Authentication Service are configured with the same "Shared Secret" to allow the Backend Service to verify the JWT signatures.
+Spectacular uses JWTs to authorise requests to the backend REST API from the Web UI frontend application. The JWTs are generated at the end of a successful user login process by the [Authentication Service](architecture.md#user-authentication-service). The [Backend Service](architecture.md#backend-service) and the Authentication Service are configured with the same "Shared Secret" to allow the Backend Service to verify the JWT signatures.
 | Spectacular Component | Environment Variable Name | Value |
 | ----------------------| ------------------------- | ---------------- |
 | Authentication Service | `LOGINSRV_JWT_SECRET` | A 32-byte text value. e.g. `this_test_shared_key_is_32_bytes` |

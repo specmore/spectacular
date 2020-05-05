@@ -1,5 +1,5 @@
 # Integration Tests
-This folder contains tests that test [all the architectural components](../docs/design/architecture.md) (that build up to form the Spectacular tool) integrated together and as a whole.
+This folder contains tests that test [all the architectural components](../docs/architecture.md) (that build up to form the Spectacular tool) integrated together and as a whole.
 
 ## Decisions
 - External resources outside the Spectacular system are stubbed out. e.g. GitHup API
