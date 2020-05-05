@@ -1,7 +1,7 @@
 # Configuration
 This document covers how to configure a new deployment of the Spectacular tool.
 
-Be sure to familiarise yourself with the different components that form the Spectacular tool's [Architecture](design/architecture.md).
+Be sure to familiarise yourself with the different components that form the Spectacular tool's [Architecture](design/architecture.md) and the [docker-compose.yml](../docker-compose.yml) file provided can also be used as a good reference.
 
 You will need to complete the necessary [Git Integration](git-integration.md) setup steps before trying to configure your Spectacular deployment.
 
