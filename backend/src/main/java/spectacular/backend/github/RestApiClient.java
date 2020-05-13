@@ -1,6 +1,7 @@
 package spectacular.backend.github;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.StringJoiner;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -85,18 +86,20 @@ public class RestApiClient {
    * Finds files with a given filename, extension, path and organisation.
    *
    * @param filename the filename to find
-   * @param fileExtension the extension of files to find
+   * @param fileExtensions a list of possible extensions the files can have
    * @param path the path of the files to find
    * @param org limit to the repositories owned by the specified organisation
    * @return a SearchCodeResults object representing the result of the search
    */
-  public SearchCodeResults findFiles(String filename, String fileExtension, String path, String org) {
+  public SearchCodeResults findFiles(String filename, List<String> fileExtensions, String path, String org) {
     StringJoiner joiner = new StringJoiner("+");
     if (filename != null && filename.length() > 0) {
       joiner.add("filename:" + filename);
     }
-    if (fileExtension != null && fileExtension.length() > 0) {
-      joiner.add("extension:" + fileExtension);
+    if (fileExtensions != null && fileExtensions.size() > 0) {
+      for (var fileExtension : fileExtensions) {
+        joiner.add("extension:" + fileExtension);
+      }
     }
     if (path != null && path.length() > 0) {
       joiner.add("path:" + path);

@@ -21,10 +21,13 @@ import spectacular.backend.specs.SpecLogService;
 @Service
 public class CatalogueService {
   private static final String CATALOGUE_MANIFEST_FILE_NAME = "spectacular-config";
-  private static final String CATALOGUE_MANIFEST_FILE_EXTENSION = "yaml";
+  private static final String CATALOGUE_MANIFEST_YAML_FILE_EXTENSION = "yaml";
+  private static final String CATALOGUE_MANIFEST_YML_FILE_EXTENSION = "yml";
   private static final String CATALOGUE_MANIFEST_FILE_PATH = "/";
-  private static final String CATALOGUE_MANIFEST_FULL_FILE_NAME =
-      CATALOGUE_MANIFEST_FILE_NAME + "." + CATALOGUE_MANIFEST_FILE_EXTENSION;
+  private static final String CATALOGUE_MANIFEST_FULL_YAML_FILE_NAME =
+      CATALOGUE_MANIFEST_FILE_NAME + "." + CATALOGUE_MANIFEST_YAML_FILE_EXTENSION;
+  private static final String CATALOGUE_MANIFEST_FULL_YML_FILE_NAME =
+      CATALOGUE_MANIFEST_FILE_NAME + "." + CATALOGUE_MANIFEST_YML_FILE_EXTENSION;
 
   private static final Logger logger = LoggerFactory.getLogger(CatalogueService.class);
 
@@ -84,13 +87,19 @@ public class CatalogueService {
   }
 
   private List<Repository> findCatalogueRepositoriesForOrg(String orgName) {
-    var searchCodeResults = restApiClient.findFiles(CATALOGUE_MANIFEST_FILE_NAME, CATALOGUE_MANIFEST_FILE_EXTENSION,
-            CATALOGUE_MANIFEST_FILE_PATH, orgName);
+    var searchCodeResults = restApiClient.findFiles(CATALOGUE_MANIFEST_FILE_NAME,
+        List.of(CATALOGUE_MANIFEST_YAML_FILE_EXTENSION, CATALOGUE_MANIFEST_YML_FILE_EXTENSION),
+        CATALOGUE_MANIFEST_FILE_PATH,
+        orgName);
     logger.debug("find catalogue manifest files results for org '" + orgName + "': " + searchCodeResults.toString());
 
-    return searchCodeResults.getItems().stream()
-        .filter(resultItem -> isExactFileNameMatch(resultItem, CATALOGUE_MANIFEST_FULL_FILE_NAME))
-        .map(Repository::createRepositoryFrom)
+    var repositorySearchCodeResultsMap = searchCodeResults.getItems().stream()
+        .filter(resultItem -> isExactFileNameMatch(resultItem, CATALOGUE_MANIFEST_FULL_YAML_FILE_NAME) ||
+            isExactFileNameMatch(resultItem, CATALOGUE_MANIFEST_FULL_YML_FILE_NAME))
+        .collect(Collectors.groupingBy(SearchCodeResultItem::getRepository));
+
+    return repositorySearchCodeResultsMap.entrySet().stream()
+        .map(entry -> Repository.createRepositoryFrom(entry.getKey()))
         .collect(Collectors.toList());
   }
 
@@ -103,7 +112,7 @@ public class CatalogueService {
   }
 
   private Catalogue getCatalogueForRepository(Repository repository) {
-    var fileContentItem = restApiClient.getRepositoryContent(repository, CATALOGUE_MANIFEST_FULL_FILE_NAME, null);
+    var fileContentItem = restApiClient.getRepositoryContent(repository, CATALOGUE_MANIFEST_FULL_YML_FILE_NAME, null);
 
     CatalogueManifest manifest = null;
     String error = null;
