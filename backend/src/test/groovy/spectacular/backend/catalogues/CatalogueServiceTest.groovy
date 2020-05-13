@@ -50,7 +50,7 @@ class CatalogueServiceTest extends Specification {
         def result = catalogueService.getCataloguesForOrgAndUser(org, username)
 
         then: "github is searched for catalogue manifest files"
-        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org) >> searchCodeResults
+        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org, null) >> searchCodeResults
 
         and: "github is checked if the user is a collaborator of each repository returned"
         1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> true
@@ -112,7 +112,7 @@ class CatalogueServiceTest extends Specification {
         def result = catalogueService.getCataloguesForOrgAndUser(org, username)
 
         then: "github is searched for catalogue manifest files"
-        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org) >> searchCodeResults
+        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org, null) >> searchCodeResults
 
         and: "github is checked if the user is a collaborator of each repository returned"
         1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> true
@@ -147,7 +147,7 @@ class CatalogueServiceTest extends Specification {
         def result = catalogueService.getCataloguesForOrgAndUser(org, username)
 
         then: "github is search for instance manifest files"
-        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org) >> searchCodeResults
+        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org, null) >> searchCodeResults
 
         and: "github is checked if the user is a collaborator of each repository returned"
         1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> false
@@ -180,7 +180,7 @@ class CatalogueServiceTest extends Specification {
         def result = catalogueService.getCataloguesForOrgAndUser(org, username)
 
         then: "github is search for instance manifest files"
-        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org) >> searchCodeResults
+        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org, null) >> searchCodeResults
 
         and: "no catalogues are returned"
         result.isEmpty()

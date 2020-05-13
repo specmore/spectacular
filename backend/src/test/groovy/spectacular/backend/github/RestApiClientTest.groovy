@@ -184,7 +184,7 @@ class RestApiClientTest extends Specification {
                 .andRespond(withSuccess(responseContent, MediaType.APPLICATION_JSON));
 
         and: "the search results to be returned"
-        def searchCodeResults = client.findFiles(filename, null, null, null)
+        def searchCodeResults = client.findFiles(filename, null, null, null, null)
         searchCodeResults
         !searchCodeResults.isIncompleteResults()
         searchCodeResults.getItems()

@@ -90,7 +90,7 @@ public class CatalogueService {
     var searchCodeResults = restApiClient.findFiles(CATALOGUE_MANIFEST_FILE_NAME,
         List.of(CATALOGUE_MANIFEST_YAML_FILE_EXTENSION, CATALOGUE_MANIFEST_YML_FILE_EXTENSION),
         CATALOGUE_MANIFEST_FILE_PATH,
-        orgName);
+        orgName, null);
     logger.debug("find catalogue manifest files results for org '" + orgName + "': " + searchCodeResults.toString());
 
     var repositorySearchCodeResultsMap = searchCodeResults.getItems().stream()
