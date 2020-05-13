@@ -196,9 +196,13 @@ class CatalogueServiceTest extends Specification {
         given: "a github user"
         def username = "test-user"
 
-        and: "a github repository with a valid Yaml catalogue config Manifest with 2 files"
+        and: "a github repository with a valid Yaml catalogue config Manifest"
         def repo = new spectacular.backend.github.domain.Repository(123, "test-owner/test-repo987", "test-url")
         def requestRepo = Repository.createRepositoryFrom(repo)
+        def searchCodeResultItem = new SearchCodeResultItem(catalogueManifestYmlFilename, catalogueManifestYmlFilename, "test_url", "test_git_url", "test_html_url", repo)
+        def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
+
+        and: "the catalogue config Manifest contains references to 2 spec files"
         def secondSpecRepo = Repository.createForNameWithOwner("test-owner2/specs-test2")
         def validYamlManifest = "name: \"Test Catalogue 1\"\n" +
                 "description: \"Specifications for all the interfaces in the across the system X.\"\n" +
@@ -226,8 +230,8 @@ class CatalogueServiceTest extends Specification {
         then: "github is checked if the user is a collaborator of the repository successfully"
         1 * restApiClient.isUserRepositoryCollaborator(requestRepo, username) >> true
 
-        and: "the repository details are retrieved"
-        1 * restApiClient.getRepository(requestRepo) >> repo
+        and: "the repository is search for config files"
+        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", null, requestRepo) >> searchCodeResults
 
         and: "the .yml manifest file contents is retrieved"
         1 * restApiClient.getRepositoryContent(_, catalogueManifestYmlFilename, null) >> manifestFileContentItem
@@ -282,9 +286,6 @@ class CatalogueServiceTest extends Specification {
 
         then: "github is checked if the user is a collaborator of the repository and the user is not"
         1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> false
-
-        and: "no repository details are retrieved"
-        0 * restApiClient.getRepository(_)
 
         and: "no file contents are retrieved"
         0 * restApiClient.getRepositoryContent(*_)

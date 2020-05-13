@@ -89,11 +89,11 @@ public class RestApiClient {
    * @param fileExtensions a list of possible extensions the files can have
    * @param path the path of the files to find
    * @param org limit to the repositories owned by the specified organisation
-   * @param repo limit the search to the specific repository with name and owner
+   * @param repo limit the search to the specific repository
    * @return a SearchCodeResults object representing the result of the search
    */
   public SearchCodeResults findFiles(String filename, List<String> fileExtensions, String path, String org,
-                                     String repo) {
+                                     Repository repo) {
     StringJoiner joiner = new StringJoiner("+");
     if (filename != null && filename.length() > 0) {
       joiner.add("filename:" + filename);
@@ -106,8 +106,8 @@ public class RestApiClient {
     if (path != null && path.length() > 0) {
       joiner.add("path:" + path);
     }
-    if (repo != null && repo.length() > 0) {
-      joiner.add("repo:" + org);
+    if (repo != null) {
+      joiner.add("repo:" + repo.getNameWithOwner());
     } else if (org != null && org.length() > 0) {
       joiner.add("org:" + org);
     }

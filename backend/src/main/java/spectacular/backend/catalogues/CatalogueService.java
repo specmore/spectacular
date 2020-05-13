@@ -63,9 +63,9 @@ public class CatalogueService {
    * @return a list of all the accessible catalogues
    */
   public List<Catalogue> getCataloguesForOrgAndUser(String orgName, String username) {
-    var catalogues = findCatalogueRepositoriesForOrg(orgName).stream()
-        .filter(repository -> isUserCollaboratorForRepository(repository, username))
-        .map(this::getCatalogueForRepository).collect(Collectors.toList());
+    var catalogues = findCataloguesForOrg(orgName).stream()
+        .filter(catalogueId -> isUserCollaboratorForRepository(catalogueId.getRepository(), username))
+        .map(this::getCatalogue).collect(Collectors.toList());
     return catalogues;
   }
 
@@ -81,12 +81,41 @@ public class CatalogueService {
       return null;
     }
 
-    var responseRepo = restApiClient.getRepository(repo);
+    var searchCodeResults = restApiClient.findFiles(CATALOGUE_MANIFEST_FILE_NAME,
+        List.of(CATALOGUE_MANIFEST_YAML_FILE_EXTENSION, CATALOGUE_MANIFEST_YML_FILE_EXTENSION),
+        CATALOGUE_MANIFEST_FILE_PATH,
+        null, repo);
 
-    return getFullCatalogueDetailsForRepository(Repository.createRepositoryFrom(responseRepo));
+    var catalogueId = pickCatalogueFileFromSearchResults(searchCodeResults.getItems());
+
+    if (catalogueId == null) {
+      return null;
+    }
+
+    return getFullCatalogueDetails(catalogueId);
   }
 
-  private List<Repository> findCatalogueRepositoriesForOrg(String orgName) {
+  private CatalogueId pickCatalogueFileFromSearchResults(List<SearchCodeResultItem> searchCodeResultItems) {
+    var manifestFileResult = searchCodeResultItems.stream()
+        .filter(resultItem -> isExactFileNameMatch(resultItem, CATALOGUE_MANIFEST_FULL_YML_FILE_NAME))
+        .findFirst();
+
+    if (manifestFileResult.isPresent()) {
+      return CatalogueId.createFrom(manifestFileResult.get());
+    }
+
+    manifestFileResult = searchCodeResultItems.stream()
+        .filter(resultItem -> isExactFileNameMatch(resultItem, CATALOGUE_MANIFEST_FULL_YAML_FILE_NAME))
+        .findFirst();
+
+    if (manifestFileResult.isPresent()) {
+      return CatalogueId.createFrom(manifestFileResult.get());
+    }
+
+    return null;
+  }
+
+  private List<CatalogueId> findCataloguesForOrg(String orgName) {
     var searchCodeResults = restApiClient.findFiles(CATALOGUE_MANIFEST_FILE_NAME,
         List.of(CATALOGUE_MANIFEST_YAML_FILE_EXTENSION, CATALOGUE_MANIFEST_YML_FILE_EXTENSION),
         CATALOGUE_MANIFEST_FILE_PATH,
@@ -99,7 +128,7 @@ public class CatalogueService {
         .collect(Collectors.groupingBy(SearchCodeResultItem::getRepository));
 
     return repositorySearchCodeResultsMap.entrySet().stream()
-        .map(entry -> Repository.createRepositoryFrom(entry.getKey()))
+        .map(entry -> pickCatalogueFileFromSearchResults(entry.getValue()))
         .collect(Collectors.toList());
   }
 
@@ -111,31 +140,31 @@ public class CatalogueService {
     return restApiClient.isUserRepositoryCollaborator(repo, username);
   }
 
-  private Catalogue getCatalogueForRepository(Repository repository) {
-    var fileContentItem = restApiClient.getRepositoryContent(repository, CATALOGUE_MANIFEST_FULL_YML_FILE_NAME, null);
+  private Catalogue getCatalogue(CatalogueId catalogueId) {
+    var fileContentItem = restApiClient.getRepositoryContent(catalogueId.getRepository(), catalogueId.getPath(), null);
 
     CatalogueManifest manifest = null;
     String error = null;
     try {
       manifest = CatalogueManifest.parse(fileContentItem.getDecodedContent());
     } catch (MismatchedInputException e) {
-      logger.debug("An error occurred while parsing the catalogue manifest yaml file for repo: " + repository.getNameWithOwner(), e);
+      logger.debug("An error occurred while parsing the catalogue manifest yaml file: " + catalogueId.toString(), e);
       error = "An error occurred while parsing the catalogue manifest yaml file. The following field is missing: " + e.getPathReference();
     } catch (IOException e) {
-      logger.error("An error occurred while parsing the catalogue manifest yaml file for repo: " + repository.getNameWithOwner(), e);
+      logger.error("An error occurred while parsing the catalogue manifest yaml file: " + catalogueId.toString(), e);
       error = "An error occurred while parsing the catalogue manifest yaml file: " + e.getMessage();
     }
 
-    return Catalogue.create(repository, manifest, error);
+    return Catalogue.create(catalogueId.getRepository(), manifest, error);
   }
 
-  private Catalogue getFullCatalogueDetailsForRepository(Repository repository) {
+  private Catalogue getFullCatalogueDetails(CatalogueId catalogueId) {
     List<SpecLog> specLogs = null;
-    var catalogue = getCatalogueForRepository(repository);
+    var catalogue = getCatalogue(catalogueId);
 
     if (catalogue.getCatalogueManifest() != null) {
       var specFileLocationsWithRepos = addCatalogueRepoToSpecFileLocationsWithoutRepo(
-          catalogue.getCatalogueManifest().getSpecFileLocations(), repository);
+          catalogue.getCatalogueManifest().getSpecFileLocations(), catalogueId.getRepository());
       var repoPullRequests = getRepoPullRequestsForManifestSpecs(specFileLocationsWithRepos);
       specLogs = specFileLocationsWithRepos.stream()
           .map(specFileLocation -> getSpecLogForFileLocation(specFileLocation, repoPullRequests))
