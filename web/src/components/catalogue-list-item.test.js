@@ -27,8 +27,11 @@ describe('CatalogueListItem component', () => {
 
 
   test('renders catalogue list item error item when an error are given', async () => {
-    // given a catalogue data item
-    const catalogue = Generator.Catalogue.generateCatalogueWithError('An error occurred while parsing the catalogue manifest yaml file. The following field is missing: bla bla bla');
+    // given a catalogue manifest error
+    const errorMessage = 'An error occurred while parsing the catalogue manifest yaml file. The following field is missing: bla bla bla';
+
+    // and a catalogue data item with the error
+    const catalogue = Generator.Catalogue.generateCatalogueWithError(errorMessage);
 
     // when catalogue list item component renders
     const { getByTestId, getByText, queryByTestId } = renderWithRouter(<CatalogueListItem catalogue={catalogue} />);
@@ -40,7 +43,7 @@ describe('CatalogueListItem component', () => {
     expect(getByText('test-owner/specs-test')).toBeInTheDocument();
 
     // and the error message is shown
-    expect(getByText('An error occurred while parsing the catalogue manifest yaml file. The following field is missing: bla bla bla'))
+    expect(getByText(errorMessage))
       .toBeInTheDocument();
 
     // and view catalogue button is not found
