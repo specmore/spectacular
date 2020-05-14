@@ -30,7 +30,7 @@ class FilesServiceTest extends Specification {
         def catalogueRepo = new Repository("test-owner", "catalogue-repo")
         def specFileLocation = new SpecFileLocation(specFileRepo.getNameWithOwner(), specFilePath)
         def catalogueManifest = new CatalogueManifest("test manifest", "test description", [specFileLocation])
-        def catalogue = Catalogue.create(catalogueRepo, catalogueManifest, null)
+        def catalogue = Catalogue.create(catalogueRepo, "test-path", catalogueManifest, null)
 
         when: "retrieving the spec file contents"
         def result = fileService.getFileContent(catalogueRepo, specFileRepo, specFilePath, null, username)
@@ -57,7 +57,7 @@ class FilesServiceTest extends Specification {
         and: "a catalogue manifest in the same repo containing the requested spec file but with out a repo in the location"
         def specFileLocation = new SpecFileLocation((String)null, specFilePath)
         def catalogueManifest = new CatalogueManifest("test manifest", "test description", [specFileLocation])
-        def catalogue = Catalogue.create(specFileRepo, catalogueManifest, null)
+        def catalogue = Catalogue.create(specFileRepo, "test-path", catalogueManifest, null)
 
         when: "retrieving the spec file contents"
         def result = fileService.getFileContent(specFileRepo, specFileRepo, specFilePath, null, username)
@@ -84,7 +84,7 @@ class FilesServiceTest extends Specification {
         and: "a catalogue manifest in the same repo containing the requested spec file but with out a repo in the location"
         def specFileLocation = new SpecFileLocation((String)null, specFilePath)
         def catalogueManifest = new CatalogueManifest("test manifest", "test description", [specFileLocation])
-        def catalogue = Catalogue.create(specFileRepo, catalogueManifest, null)
+        def catalogue = Catalogue.create(specFileRepo, "test-path", catalogueManifest, null)
 
         and: "a ref specified for a test branch"
         def refName = "test-branch"
@@ -115,7 +115,7 @@ class FilesServiceTest extends Specification {
         def catalogueRepo = new Repository("test-owner", "catalogue-repo")
         def specFileLocation = new SpecFileLocation("another-owner/another-repo", "another/spec-file.yaml")
         def catalogueManifest = new CatalogueManifest("test manifest", "test description", [specFileLocation])
-        def catalogue = Catalogue.create(catalogueRepo, catalogueManifest, null)
+        def catalogue = Catalogue.create(catalogueRepo, "test-path", catalogueManifest, null)
         when: "retrieving the spec file contents"
         def result = fileService.getFileContent(catalogueRepo, specFileRepo, specFilePath, null, username)
 

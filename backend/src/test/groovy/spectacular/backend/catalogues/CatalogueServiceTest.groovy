@@ -60,8 +60,8 @@ class CatalogueServiceTest extends Specification {
         def catalogue1 = result.get(0)
 
         and: "the catalogue config is for the repo with the manifest file"
-        catalogue1.getId() == searchCodeResultRepo.getFull_name()
-        catalogue1.getRepository().getNameWithOwner() == searchCodeResultRepo.getFull_name()
+        catalogue1.getId().getRepository() == repo
+        catalogue1.getId().getPath() == catalogueManifestYmlFilename
 
         and: "the .yml manifest file is retrieved"
         1 * restApiClient.getRepositoryContent(repo, catalogueManifestYmlFilename, null) >> manifestFileContentItem
@@ -122,8 +122,8 @@ class CatalogueServiceTest extends Specification {
         def catalogue1 = result.get(0)
 
         and: "the catalogue config is for the repo with the manifest file"
-        catalogue1.getId() == searchCodeResultRepo.getFull_name()
-        catalogue1.getRepository().getNameWithOwner() == searchCodeResultRepo.getFull_name()
+        catalogue1.getId().getRepository() == repo
+        catalogue1.getId().getPath() == catalogueManifestYmlFilename
 
         and: "the .yml manifest file is retrieved"
         1 * restApiClient.getRepositoryContent(repo, catalogueManifestYmlFilename, null) >> manifestFileContentItem
@@ -238,8 +238,8 @@ class CatalogueServiceTest extends Specification {
 
         and: "a valid catalogue is returned for the requested repo"
         catalogue
-        catalogue.getId() == requestRepo.getNameWithOwner()
-        catalogue.getRepository() == requestRepo
+        catalogue.getId().getRepository() == requestRepo
+        catalogue.getId().getPath() == catalogueManifestYmlFilename
 
         and: "the catalogue has a manifest item with the name and description set"
         catalogue.getCatalogueManifest()

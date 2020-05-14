@@ -155,7 +155,7 @@ public class CatalogueService {
       error = "An error occurred while parsing the catalogue manifest yaml file: " + e.getMessage();
     }
 
-    return Catalogue.create(catalogueId.getRepository(), manifest, error);
+    return Catalogue.create(catalogueId, manifest, error);
   }
 
   private Catalogue getFullCatalogueDetails(CatalogueId catalogueId) {

@@ -6,32 +6,34 @@ import spectacular.backend.common.Repository;
 import spectacular.backend.specs.SpecLog;
 
 public class Catalogue {
-  private final String id;
-  private final Repository repository;
+  private final CatalogueId id;
   private final CatalogueManifest catalogueManifest;
   private final List<SpecLog> specLogs;
   private final String error;
 
-  private Catalogue(String id, Repository repository, CatalogueManifest catalogueManifest,
+  private Catalogue(CatalogueId id, CatalogueManifest catalogueManifest,
                     List<SpecLog> specLogs, String error) {
     this.id = id;
-    this.repository = repository;
     this.catalogueManifest = catalogueManifest;
     this.specLogs = specLogs;
     this.error = error;
   }
 
   public static Catalogue create(@NotNull Repository repository,
-                                 CatalogueManifest catalogueManifest, String error) {
-    return new Catalogue(repository.getNameWithOwner(), repository, catalogueManifest, null, error);
+                                 @NotNull String path,
+                                 CatalogueManifest catalogueManifest,
+                                 String error) {
+    return new Catalogue(new CatalogueId(repository, path), catalogueManifest, null, error);
   }
 
-  public String getId() {
+  public static Catalogue create(@NotNull CatalogueId catalogueId,
+                                 CatalogueManifest catalogueManifest,
+                                 String error) {
+    return new Catalogue(catalogueId, catalogueManifest, null, error);
+  }
+
+  public CatalogueId getId() {
     return id;
-  }
-
-  public Repository getRepository() {
-    return repository;
   }
 
   public CatalogueManifest getCatalogueManifest() {
@@ -47,6 +49,6 @@ public class Catalogue {
   }
 
   public Catalogue with(List<SpecLog> specLogs) {
-    return new Catalogue(this.id, this.repository, this.catalogueManifest, specLogs, this.error);
+    return new Catalogue(this.id, this.catalogueManifest, specLogs, this.error);
   }
 }
