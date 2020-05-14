@@ -1,12 +1,20 @@
-const catalogueId = {
-  repository: {
-    owner: 'test-owner',
-    name: 'specs-test',
-    htmlUrl: 'https://github.com/test-owner/specs-test',
-    nameWithOwner: 'test-owner/specs-test',
-  },
-  path: 'spectacular-config.yml',
-  encoded: 'cGJ1cmxzL3NwZWNzLXRlc3Qvc3BlY3RhY3VsYXItY29uZmlnLnltbA==',
+const generateCatalogueId = (repoName, repoOwner) => {
+  const name = repoName || 'specs-test';
+  const owner = repoOwner || 'test-owner';
+  const nameWithOwner = `${owner}/${name}`;
+  const path = 'spectacular-config.yml';
+  const encoded = btoa(`${owner}/${name}/${path}`);
+
+  return {
+    repository: {
+      owner,
+      name,
+      htmlUrl: `https://github.com/${owner}/${name}`,
+      nameWithOwner,
+    },
+    path: 'spectacular-config.yml',
+    encoded,
+  };
 };
 
 const catalogueManifest = {
@@ -24,11 +32,13 @@ const catalogueManifest = {
       'file-path': 'specs/example-spec.yaml',
     },
   ],
-}
+};
 
-const generateValidCatalogue = () => {
+const generateValidCatalogue = (catalogueId) => {
+  const id = catalogueId || generateCatalogueId();
+
   const catalogue = {
-    id: catalogueId,
+    id,
     catalogueManifest,
     specLogs: null,
     error: null,
@@ -38,8 +48,10 @@ const generateValidCatalogue = () => {
 };
 
 const generateCatalogueWithError = (errorMessage) => {
+  const id = generateCatalogueId();
+
   const catalogue = {
-    id: catalogueId,
+    id,
     catalogueManifest: null,
     specLogs: null,
     error: errorMessage,
@@ -50,6 +62,7 @@ const generateCatalogueWithError = (errorMessage) => {
 
 export default {
   Catalogue: {
+    generateCatalogueId,
     generateValidCatalogue,
     generateCatalogueWithError,
   },

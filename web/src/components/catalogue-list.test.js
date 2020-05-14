@@ -4,6 +4,7 @@ import axiosMock from 'axios';
 import CatalogueList from './catalogue-list';
 import CatalogueListItemMock from './catalogue-list-item';
 import { renderWithRouter } from '../__tests__/test-utils';
+import Generator from '../__tests__/test-data';
 
 jest.mock('axios');
 
@@ -13,9 +14,11 @@ jest.mock('./catalogue-list-item', () => jest.fn(() => null));
 describe('CatalogueList component', () => {
   test('successful fetch displays catalogue items', async () => {
     // given a mocked successful catalogues response with 2 catalogues
+    const catalogue1 = Generator.Catalogue.generateValidCatalogue(Generator.Catalogue.generateCatalogueId('repo1'));
+    const catalogue2 = Generator.Catalogue.generateValidCatalogue(Generator.Catalogue.generateCatalogueId('repo2'));
     const cataloguesResponse = {
       data: {
-        catalogues: [{ id: 'a' }, { id: 'b' }],
+        catalogues: [catalogue1, catalogue2],
       },
     };
 

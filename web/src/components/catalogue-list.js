@@ -31,7 +31,7 @@ const CatalogueList = ({ catalogues }) => (
   <Segment vertical>
     <Header as="h4">The following specification catalogues are available to you:</Header>
     <Item.Group divided data-testid="catalogue-list-item-group">
-      {catalogues.map((catalogue) => (<CatalogueListItem key={catalogue.id} catalogue={catalogue} />))}
+      {catalogues.map((catalogue) => (<CatalogueListItem key={catalogue.id.encoded} catalogue={catalogue} />))}
     </Item.Group>
   </Segment>
 );
