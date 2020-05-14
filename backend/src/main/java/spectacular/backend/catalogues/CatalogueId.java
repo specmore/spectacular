@@ -14,7 +14,7 @@ public class CatalogueId {
     this.repository = repository;
     this.path = path;
 
-    var combinedLocation = repository + "/" + path;
+    var combinedLocation = repository.getNameWithOwner() + "/" + path;
     this.encoded = Base64.getEncoder().encodeToString(combinedLocation.getBytes());
   }
 
