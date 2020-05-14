@@ -5,7 +5,7 @@ import {
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
 import { CatalogueContainerLinkButton } from '../routes';
 
-const CatalogueErrorItem = ({ error, repository }) => (
+const CatalogueErrorItem = ({ error, catalogueId }) => (
   <Item data-testid="catalogue-list-item-error-item">
     <Item.Content>
       <Item.Description>
@@ -15,7 +15,7 @@ const CatalogueErrorItem = ({ error, repository }) => (
             <Message.Header>
               An error occurred while parsing the catalogue manifest file in
               {' '}
-              <a href={repository.htmlUrl} target="_blank" rel="noopener noreferrer">{repository.nameWithOwner}</a>
+              <a href={catalogueId.repository.htmlUrl} target="_blank" rel="noopener noreferrer">{catalogueId.repository.nameWithOwner}</a>
             </Message.Header>
             {error}
           </Message.Content>
@@ -25,7 +25,7 @@ const CatalogueErrorItem = ({ error, repository }) => (
   </Item>
 );
 
-const CatalogueItemDetails = ({ repository, catalogueManifest, selectButton }) => (
+const CatalogueItemDetails = ({ catalogueId, catalogueManifest, selectButton }) => (
   <Item data-testid="catalogue-list-item-details-item">
     <Item.Image size="tiny" src={ImagePlaceHolder} />
     <Item.Content>
@@ -35,9 +35,9 @@ const CatalogueItemDetails = ({ repository, catalogueManifest, selectButton }) =
       </Item.Description>
       <Item.Extra>
         {selectButton}
-        <Label as="a" href={repository.htmlUrl} target="_blank">
+        <Label as="a" href={catalogueId.repository.htmlUrl} target="_blank">
           <Icon name="github" />
-          {repository.nameWithOwner}
+          {catalogueId.repository.nameWithOwner}
         </Label>
         <Label color="teal">
           <Icon name="file alternate" />
@@ -51,13 +51,13 @@ const CatalogueItemDetails = ({ repository, catalogueManifest, selectButton }) =
 );
 
 const CatalogueListItem = ({ catalogue }) => {
-  const selectButton = (<CatalogueContainerLinkButton repository={catalogue.repository} />);
+  const selectButton = (<CatalogueContainerLinkButton catalogueId={catalogue.id} />);
 
-  if (catalogue.error) return (<CatalogueErrorItem error={catalogue.error} repository={catalogue.repository} />);
+  if (catalogue.error) return (<CatalogueErrorItem error={catalogue.error} catalogueId={catalogue.id} />);
 
   return (
     <CatalogueItemDetails
-      repository={catalogue.repository}
+      catalogueId={catalogue.id}
       catalogueManifest={catalogue.catalogueManifest}
       selectButton={selectButton}
     />

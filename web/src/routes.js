@@ -18,8 +18,8 @@ export const BackToCatalogueListLinkButton = () => (
   </Button>
 );
 
-export const CatalogueContainerLinkButton = ({ repository }) => {
-  const catalogueLink = CreateCatalogueContainerLocation(repository.owner, repository.name);
+export const CatalogueContainerLinkButton = ({ catalogueId }) => {
+  const catalogueLink = CreateCatalogueContainerLocation(catalogueId.repository.owner, catalogueId.repository.name);
   return (
     <Button primary floated="right" icon labelPosition="right" as={Link} to={catalogueLink} data-testid="view-catalogue-button">
       View Catalogue
