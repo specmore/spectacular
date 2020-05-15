@@ -41,7 +41,7 @@ const CatalogueItemDetails = ({ catalogueId, catalogueManifest, selectButton }) 
         </Label>
         <Label color="teal">
           <Icon name="file alternate" />
-          {catalogueManifest['spec-files'].length}
+          {catalogueManifest['spec-files'] ? catalogueManifest['spec-files'].length : 0}
           {' '}
           specs
         </Label>

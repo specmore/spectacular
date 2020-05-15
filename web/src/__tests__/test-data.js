@@ -1,6 +1,4 @@
-const generateCatalogueId = (repoName, repoOwner) => {
-  const name = repoName || 'specs-test';
-  const owner = repoOwner || 'test-owner';
+const generateCatalogueId = ({ name = 'specs-test', owner = 'test-owner' } = {}) => {
   const nameWithOwner = `${owner}/${name}`;
   const path = 'spectacular-config.yml';
   const encoded = btoa(`${owner}/${name}/${path}`);
@@ -17,10 +15,8 @@ const generateCatalogueId = (repoName, repoOwner) => {
   };
 };
 
-const catalogueManifest = {
-  name: 'Test Catalogue 1',
-  description: 'Specifications for all the interfaces in the across the system X.',
-  'spec-files': [
+const generateCatalogueManifest = ({ hasNoSpecFiles = false } = {}) => {
+  const specFiles = hasNoSpecFiles ? null : [
     {
       repo: null,
       'file-path': 'specs/example-template.yaml',
@@ -31,12 +27,16 @@ const catalogueManifest = {
       },
       'file-path': 'specs/example-spec.yaml',
     },
-  ],
+  ];
+
+  return {
+    name: 'Test Catalogue 1',
+    description: 'Specifications for all the interfaces in the across the system X.',
+    'spec-files': specFiles,
+  };
 };
 
-const generateValidCatalogue = (catalogueId) => {
-  const id = catalogueId || generateCatalogueId();
-
+const generateValidCatalogue = ({ id = generateCatalogueId(), catalogueManifest = generateCatalogueManifest() } = {}) => {
   const catalogue = {
     id,
     catalogueManifest,
@@ -63,6 +63,7 @@ const generateCatalogueWithError = (errorMessage) => {
 export default {
   Catalogue: {
     generateCatalogueId,
+    generateCatalogueManifest,
     generateValidCatalogue,
     generateCatalogueWithError,
   },

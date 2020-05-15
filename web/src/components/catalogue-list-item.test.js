@@ -25,6 +25,23 @@ describe('CatalogueListItem component', () => {
     expect(getByTestId('view-catalogue-button')).toBeInTheDocument();
   });
 
+  test('renders catalogue list item details with no spec files', async () => {
+    // given a catalogue manifest with no files
+    const catalogueManifest = Generator.Catalogue.generateCatalogueManifest({ hasNoSpecFiles: true });
+
+    // and a catalogue data item with the manifest
+    const catalogue = Generator.Catalogue.generateValidCatalogue({ catalogueManifest });
+
+    // when catalogue list item component renders
+    const { getByTestId, getByText } = renderWithRouter(<CatalogueListItem catalogue={catalogue} />);
+
+    // then a catalogue list item details item is found
+    expect(getByTestId('catalogue-list-item-details-item')).toBeInTheDocument();
+
+    // and the label 0 specs is shown
+    expect(getByText('0 specs')).toBeInTheDocument();
+  });
+
 
   test('renders catalogue list item error item when an error are given', async () => {
     // given a catalogue manifest error
