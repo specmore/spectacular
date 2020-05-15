@@ -64,7 +64,8 @@
     },
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "test-utils.js"
+      "test-utils.js",
+      "test-data-generator/"
     ]
   }
 }
