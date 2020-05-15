@@ -48,14 +48,14 @@ const generateValidCatalogue = ({ id = generateCatalogueId(), catalogueManifest 
 };
 
 const generateCatalogueWithError = (errorMessage) => {
-  const id = generateCatalogueId();
+  const catalogue = generateValidCatalogue({ catalogueManifest: null });
+  catalogue.error = errorMessage;
 
-  const catalogue = {
-    id,
-    catalogueManifest: null,
-    specLogs: null,
-    error: errorMessage,
-  };
+  return catalogue;
+};
+
+const generateCatalogueWithSpecLogs = () => {
+  const catalogue = generateValidCatalogue();
 
   return catalogue;
 };
@@ -66,5 +66,6 @@ export default {
     generateCatalogueManifest,
     generateValidCatalogue,
     generateCatalogueWithError,
+    generateCatalogueWithSpecLogs,
   },
 };

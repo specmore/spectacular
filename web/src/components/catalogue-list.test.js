@@ -4,7 +4,7 @@ import axiosMock from 'axios';
 import CatalogueList from './catalogue-list';
 import CatalogueListItemMock from './catalogue-list-item';
 import { renderWithRouter } from '../__tests__/test-utils';
-import Generator from '../__tests__/test-data';
+import Generator from '../__tests__/test-data-generator/test-data';
 
 jest.mock('axios');
 
