@@ -1,15 +1,11 @@
-const generateCatalogueId = ({ name = 'specs-test', owner = 'test-owner' } = {}) => {
-  const nameWithOwner = `${owner}/${name}`;
+import Repository from './repository';
+
+const generateCatalogueId = ({ repository = Repository.generateRepository() } = {}) => {
   const path = 'spectacular-config.yml';
-  const encoded = btoa(`${owner}/${name}/${path}`);
+  const encoded = btoa(`${repository.nameWithOwner}/${path}`);
 
   return {
-    repository: {
-      owner,
-      name,
-      htmlUrl: `https://github.com/${owner}/${name}`,
-      nameWithOwner,
-    },
+    repository,
     path: 'spectacular-config.yml',
     encoded,
   };
