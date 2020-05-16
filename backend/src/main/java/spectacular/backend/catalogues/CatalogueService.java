@@ -125,7 +125,7 @@ public class CatalogueService {
     var repositorySearchCodeResultsMap = searchCodeResults.getItems().stream()
         .filter(resultItem -> isExactFileNameMatch(resultItem, CATALOGUE_MANIFEST_FULL_YAML_FILE_NAME) ||
             isExactFileNameMatch(resultItem, CATALOGUE_MANIFEST_FULL_YML_FILE_NAME))
-        .collect(Collectors.groupingBy(SearchCodeResultItem::getRepository));
+        .collect(Collectors.groupingBy(Repository::createRepositoryFrom));
 
     return repositorySearchCodeResultsMap.entrySet().stream()
         .map(entry -> pickCatalogueFileFromSearchResults(entry.getValue()))

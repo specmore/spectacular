@@ -95,7 +95,8 @@ class CatalogueServiceTest extends Specification {
         def repo = new Repository("test-owner","test-repo987")
         def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), null)
         def searchCodeResultItem = new SearchCodeResultItem(catalogueManifestYamlFilename, catalogueManifestYamlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
-        def searchCodeResultItem2 = new SearchCodeResultItem(catalogueManifestYmlFilename, catalogueManifestYmlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
+        def searchCodeResultRepo2 = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), null)
+        def searchCodeResultItem2 = new SearchCodeResultItem(catalogueManifestYmlFilename, catalogueManifestYmlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo2)
         def searchCodeResults = new SearchCodeResults(2, List.of(searchCodeResultItem, searchCodeResultItem2), false)
 
         and: "valid catalogue manifest YAML content in the manifest file"
