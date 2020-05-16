@@ -7,6 +7,7 @@ import { renderWithRouter } from '../__tests__/test-utils';
 import {
   CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE, CreateCatalogueContainerLocation, CreateViewSpecLocation,
 } from '../routes';
+import Generator from '../__tests__/test-data-generator';
 
 jest.mock('axios');
 
@@ -16,50 +17,26 @@ jest.mock('./catalogue-details', () => jest.fn(() => null));
 describe('CatalogueContainer component', () => {
   test('successful fetch displays catalogue', async () => {
     // given a repo for a catalogue
-    const owner = 'test-owner';
-    const repo = 'repo1';
+    const catalogue = Generator.Catalogue.generateValidCatalogue();
+    const { owner, name } = catalogue.id.repository;
 
     // and a mocked successful catalogue response
     const catalogueResponse = {
-      data: {
-        repository: {
-          owner,
-          name: repo,
-          htmlUrl: 'https://github.com/pburls/specs-test',
-          nameWithOwner: `${owner}/${repo}`,
-        },
-        catalogueManifest: {
-          name: 'Test Catalogue 1',
-          description: 'Specifications for all the interfaces in the across the system X.',
-          'spec-files': [
-            {
-              repo: null,
-              'file-path': 'specs/example-template.yaml',
-            },
-            {
-              repo: {
-                owner: 'test-owner', name: 'specs-test2', htmlUrl: null, nameWithOwner: 'test-owner/specs-test2',
-              },
-              'file-path': 'specs/example-spec.yaml',
-            },
-          ],
-        },
-        error: null,
-      },
+      data: catalogue,
     };
 
     axiosMock.get.mockResolvedValueOnce(catalogueResponse);
 
     // when catalogue container component renders
     const { findByTestId } = renderWithRouter(<CatalogueContainer />,
-      CreateCatalogueContainerLocation(owner, repo),
+      CreateCatalogueContainerLocation(owner, name),
       CATALOGUE_CONTAINER_ROUTE);
 
     // then a catalogue container should be found
     expect(await findByTestId('catalogue-container-segment')).toBeInTheDocument();
 
     // and it fetched the catalogue details
-    expect(axiosMock.get.mock.calls[0][0]).toBe(`/api/catalogues/${owner}/${repo}`);
+    expect(axiosMock.get.mock.calls[0][0]).toBe(`/api/catalogues/${owner}/${name}`);
 
     // and CatalogueDetails should have been shown
     expect(CatalogueDetailsMock).toHaveBeenCalledTimes(1);
@@ -107,40 +84,16 @@ describe('CatalogueContainer component', () => {
 
   test('swagger UI is shown when a spec file location is set', async () => {
     // given a repo for a catalogue
-    const owner = 'test-owner';
-    const repo = 'repo1';
-
-    // and a spec file location
-    const specFileLocation = 'test-owner/specs-test2/specs/example-spec.yaml';
+    const catalogue = Generator.Catalogue.generateValidCatalogue();
+    const { owner, name } = catalogue.id.repository;
 
     // and a mocked successful catalogue response
     const catalogueResponse = {
-      data: {
-        repository: {
-          owner,
-          name: repo,
-          htmlUrl: 'https://github.com/pburls/specs-test',
-          nameWithOwner: `${owner}/${repo}`,
-        },
-        catalogueManifest: {
-          name: 'Test Catalogue 1',
-          description: 'Specifications for all the interfaces in the across the system X.',
-          'spec-files': [
-            {
-              repo: null,
-              'file-path': 'specs/example-template.yaml',
-            },
-            {
-              repo: {
-                owner: 'test-owner', name: 'specs-test2', htmlUrl: null, nameWithOwner: 'test-owner/specs-test2',
-              },
-              'file-path': 'specs/example-spec.yaml',
-            },
-          ],
-        },
-        error: null,
-      },
+      data: catalogue,
     };
+
+    // and a spec file location
+    const specFileLocation = 'test-owner/specs-test2/specs/example-spec.yaml';
 
     axiosMock.get.mockResolvedValueOnce(catalogueResponse);
 
@@ -150,7 +103,7 @@ describe('CatalogueContainer component', () => {
 
     // when catalogue container component renders
     const { findByTestId } = renderWithRouter(<CatalogueContainer />,
-      CreateViewSpecLocation(owner, repo, specFileLocation),
+      CreateViewSpecLocation(owner, name, specFileLocation),
       CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE);
 
     // then a catalogue container should be found
@@ -160,7 +113,7 @@ describe('CatalogueContainer component', () => {
     expect(await findByTestId('catalogue-container-swagger-ui')).toBeInTheDocument();
 
     // and file contents should have been fetched
-    const url = `/api/catalogues/${owner}/${repo}/files/test-owner/specs-test2/specs/example-spec.yaml`;
+    const url = `/api/catalogues/${owner}/${name}/files/test-owner/specs-test2/specs/example-spec.yaml`;
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(global.fetch).toHaveBeenCalledWith(url,
       expect.objectContaining({ url }));
