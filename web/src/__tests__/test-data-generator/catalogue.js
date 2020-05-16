@@ -32,11 +32,15 @@ const generateCatalogueManifest = ({ hasNoSpecFiles = false } = {}) => {
   };
 };
 
-const generateValidCatalogue = ({ id = generateCatalogueId(), catalogueManifest = generateCatalogueManifest() } = {}) => {
+const generateValidCatalogue = ({
+  id = generateCatalogueId(),
+  catalogueManifest = generateCatalogueManifest(),
+  specLogs = null,
+} = {}) => {
   const catalogue = {
     id,
     catalogueManifest,
-    specLogs: null,
+    specLogs,
     error: null,
   };
 
@@ -44,14 +48,8 @@ const generateValidCatalogue = ({ id = generateCatalogueId(), catalogueManifest 
 };
 
 const generateCatalogueWithError = (errorMessage) => {
-  const catalogue = generateValidCatalogue({ catalogueManifest: null });
+  const catalogue = generateValidCatalogue({ catalogueManifest: null, specLogs: null });
   catalogue.error = errorMessage;
-
-  return catalogue;
-};
-
-const generateCatalogueWithSpecLogs = () => {
-  const catalogue = generateValidCatalogue();
 
   return catalogue;
 };
@@ -61,5 +59,4 @@ export default {
   generateCatalogueManifest,
   generateValidCatalogue,
   generateCatalogueWithError,
-  generateCatalogueWithSpecLogs,
 };

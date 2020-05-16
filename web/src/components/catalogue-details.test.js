@@ -3,6 +3,7 @@ import '@testing-library/jest-dom/extend-expect';
 import CatalogueDetails from './catalogue-details';
 import SpecLogMock from './spec-log';
 import { renderWithRouter } from '../__tests__/test-utils';
+import Generator from '../__tests__/test-data-generator';
 
 // mock out the actual spec-file-item
 jest.mock('./spec-log', () => jest.fn(() => null));
@@ -10,21 +11,9 @@ jest.mock('./spec-log', () => jest.fn(() => null));
 describe('CatalogueDetails component', () => {
   test('renders catalogue details when no error is given', async () => {
     // given a catalogue data item with 2 spec files
-    const catalogue = {
-      repository: {
-        owner: 'test-owner',
-        name: 'specs-test',
-        htmlUrl: 'https://github.com/test-owner/specs-test',
-        nameWithOwner: 'test-owner/specs-test',
-      },
-      catalogueManifest: {
-        name: 'Test Catalogue 1',
-        description: 'Specifications for all the interfaces in the across the system X.',
-        'spec-files': [],
-      },
-      specLogs: [{ id: '123' }, { id: '456' }],
-      error: null,
-    };
+    const specLog1 = Generator.SpecLog.generateSpecLog({ filePath: 'spec1' });
+    const specLog2 = Generator.SpecLog.generateSpecLog({ filePath: 'spec2' });
+    const catalogue = Generator.Catalogue.generateValidCatalogue({ specLogs: [specLog1, specLog2] });
 
     // when catalogue details component renders
     const { getByTestId, getByText } = renderWithRouter(<CatalogueDetails catalogue={catalogue} />);
@@ -44,17 +33,9 @@ describe('CatalogueDetails component', () => {
 
 
   test('renders a catalogue details error message when an error is given', async () => {
-    // given a catalogue data item
-    const catalogue = {
-      repository: {
-        owner: 'test-owner',
-        name: 'specs-test',
-        htmlUrl: 'https://github.com/test-owner/specs-test',
-        nameWithOwner: 'test-owner/specs-test',
-      },
-      catalogueManifest: null,
-      error: 'An error occurred while parsing the catalogue manifest yaml file. The following field is missing: bla bla bla',
-    };
+    // given a catalogue item with an error
+    const errorMessage = 'An error occurred while parsing the catalogue manifest yaml file. The following field is missing: bla bla bla';
+    const catalogue = Generator.Catalogue.generateCatalogueWithError(errorMessage);
 
     // when catalogue details component renders
     const { getByTestId, getByText } = renderWithRouter(<CatalogueDetails catalogue={catalogue} />);
@@ -66,7 +47,7 @@ describe('CatalogueDetails component', () => {
     expect(getByText('test-owner/specs-test')).toBeInTheDocument();
 
     // and the error message is shown
-    expect(getByText('An error occurred while parsing the catalogue manifest yaml file. The following field is missing: bla bla bla'))
+    expect(getByText(errorMessage))
       .toBeInTheDocument();
   });
 });
