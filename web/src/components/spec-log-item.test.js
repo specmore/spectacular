@@ -3,22 +3,12 @@ import '@testing-library/jest-dom/extend-expect';
 import SpecLogItem from './spec-log-item';
 import { renderWithRouter } from '../__tests__/test-utils';
 import { CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE, CreateViewSpecLocation } from '../routes';
-
-const validSpecItem = {
-  repository: {
-    owner: 'test-owner', name: 'specs-test', htmlUrl: 'https://github.com/test-owner/specs-test', nameWithOwner: 'test-owner/specs-test',
-  },
-  filePath: 'specs/example-template.yaml',
-  ref: 'master',
-  sha: 'e6f9f693f080018158d1dd0394c53ab354a8be42',
-  lastModified: '2020-02-18T22:33:51Z',
-  parseResult: { openApiSpec: { title: 'An empty API spec', version: '0.1.0', operations: [] }, errors: [] },
-};
+import Generator from '../__tests__/test-data-generator';
 
 describe('SpecLogItem component', () => {
   test('uses selected class if browser location is for given spec item', async () => {
     // given a spec item
-    const specItem = validSpecItem;
+    const specItem = Generator.SpecItem.generateSpecItem();
 
     // and a browser location with the spec item selected
     const specFileLocation = `${specItem.repository.nameWithOwner}/${specItem.ref}/${specItem.filePath}`;
@@ -33,7 +23,7 @@ describe('SpecLogItem component', () => {
 
   test('shows a view spec button', async () => {
     // given a spec item
-    const specItem = validSpecItem;
+    const specItem = Generator.SpecItem.generateSpecItem();
 
     // when the component renders
     const { getByTestId } = renderWithRouter(<SpecLogItem specItem={specItem} />);
