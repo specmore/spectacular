@@ -53,6 +53,7 @@ const InstallationWelcome = () => {
         Welcome to Spectacular
         <Header.Subheader>
           Connected to the
+          {' '}
           <a href={orgUrl} target="_blank" rel="noopener noreferrer">{installation.owner}</a>
           {' '}
           GitHub organization
