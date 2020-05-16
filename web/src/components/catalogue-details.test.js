@@ -11,8 +11,8 @@ jest.mock('./spec-log', () => jest.fn(() => null));
 describe('CatalogueDetails component', () => {
   test('renders catalogue details when no error is given', async () => {
     // given a catalogue data item with 2 spec files
-    const specLog1 = Generator.SpecLog.generateSpecLog({ filePath: 'spec1' });
-    const specLog2 = Generator.SpecLog.generateSpecLog({ filePath: 'spec2' });
+    const specLog1 = Generator.SpecLog.generateSpecLog({ latestAgreed: Generator.SpecItem.generateSpecItem({ filePath: 'spec1' }) });
+    const specLog2 = Generator.SpecLog.generateSpecLog({ latestAgreed: Generator.SpecItem.generateSpecItem({ filePath: 'spec2' }) });
     const catalogue = Generator.Catalogue.generateValidCatalogue({ specLogs: [specLog1, specLog2] });
 
     // when catalogue details component renders

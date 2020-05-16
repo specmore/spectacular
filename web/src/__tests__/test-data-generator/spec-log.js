@@ -1,16 +1,14 @@
-import Repository from './repository';
 import SpecItem from './spec-item';
 
 const generateSpecLog = ({
-  filePath = 'specs/example-template.yaml',
-  repository = Repository.generateRepository(),
-  latestAgreed = SpecItem.generateSpecItem({ filePath, repository }),
+  latestAgreed = SpecItem.generateSpecItem(),
+  proposedChanges = [],
 } = {}) => {
-  const id = `${repository.nameWithOwner}/${filePath}`;
+  const id = `${latestAgreed.repository.nameWithOwner}/${latestAgreed.filePath}`;
   return {
     id,
     latestAgreed,
-    proposedChanges: [],
+    proposedChanges,
   };
 };
 

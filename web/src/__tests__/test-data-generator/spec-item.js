@@ -18,6 +18,15 @@ const generateSpecItem = ({
   };
 };
 
+const generateSpecItemWithError = (errorMessage) => {
+  const specItem = generateSpecItem();
+  specItem.parseResult.openApiSpec = null;
+  specItem.parseResult.errors = [errorMessage];
+
+  return specItem;
+};
+
 export default {
   generateSpecItem,
+  generateSpecItemWithError,
 };

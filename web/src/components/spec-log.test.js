@@ -4,6 +4,7 @@ import SpecLog from './spec-log';
 import { renderWithRouter } from '../__tests__/test-utils';
 import LatestAgreedVersionMock from './latest-agreed-version';
 import ProposedChangeItemMock from './proposed-change-item';
+import Generator from '../__tests__/test-data-generator';
 
 // mock out the actual implementations
 jest.mock('./latest-agreed-version', () => jest.fn(() => null));
@@ -19,48 +20,18 @@ afterEach(() => {
 describe('SpecLog component', () => {
   test("shows latest agreed spec item's openApiSpec title as header", async () => {
     // given a valid latest agreed spec item with title
-    const specItem = {
-      repository: {
-        owner: 'test-owner',
-        name: 'specs-test',
-        htmlUrl: 'https://github.com/test-owner/specs-test',
-        nameWithOwner: 'test-owner/specs-test',
-      },
-      filePath: 'specs/example-template.yaml',
-      ref: 'master',
-      parseResult: { openApiSpec: { title: 'An empty API spec', version: '0.1.0', operations: [] }, errors: [] },
-    };
-
-    const specLog = {
-      latestAgreed: specItem,
-      proposedChanges: [],
-    };
+    const specLog = Generator.SpecLog.generateSpecLog();
 
     // when spec log component renders
     const { getByText } = renderWithRouter(<SpecLog specLog={specLog} />);
 
     // then the open api spec title is shown
-    expect(getByText('An empty API spec')).toBeInTheDocument();
+    expect(getByText(specLog.latestAgreed.parseResult.openApiSpec.title)).toBeInTheDocument();
   });
 
   test('shows latest agreed version component for valid latest agreed spec item', async () => {
     // given a valid latest agreed spec item with title
-    const specItem = {
-      repository: {
-        owner: 'test-owner',
-        name: 'specs-test',
-        htmlUrl: 'https://github.com/test-owner/specs-test',
-        nameWithOwner: 'test-owner/specs-test',
-      },
-      filePath: 'specs/example-template.yaml',
-      ref: 'master',
-      parseResult: { openApiSpec: { title: 'An empty API spec', version: '0.1.0', operations: [] }, errors: [] },
-    };
-
-    const specLog = {
-      latestAgreed: specItem,
-      proposedChanges: [],
-    };
+    const specLog = Generator.SpecLog.generateSpecLog();
 
     // when spec log component renders
     renderWithRouter(<SpecLog specLog={specLog} />);
@@ -71,22 +42,9 @@ describe('SpecLog component', () => {
 
   test('shows spec item error message for spec item with parse result errors', async () => {
     // given a spec item with parse errors
-    const specItem = {
-      repository: {
-        owner: 'test-owner',
-        name: 'specs-test',
-        htmlUrl: 'https://github.com/test-owner/specs-test',
-        nameWithOwner: 'test-owner/specs-test',
-      },
-      filePath: 'specs/example-template.yaml',
-      ref: 'master',
-      parseResult: { openApiSpec: null, errors: ['The spec file could not be found.'] },
-    };
+    const specItem = Generator.SpecItem.generateSpecItemWithError('The spec file could not be found.');
 
-    const specLog = {
-      latestAgreed: specItem,
-      proposedChanges: [],
-    };
+    const specLog = Generator.SpecLog.generateSpecLog({ latestAgreed: specItem });
 
     // when spec file item component renders
     const { getByText, getByTestId } = renderWithRouter(<SpecLog specLog={specLog} />);
@@ -100,28 +58,12 @@ describe('SpecLog component', () => {
   });
 
   test('shows proposed changes list for one or many proposed changes', async () => {
-    // given valid latest agreed spec item with title and version
-    const specItem = {
-      repository: {
-        owner: 'test-owner',
-        name: 'specs-test',
-        htmlUrl: 'https://github.com/test-owner/specs-test',
-        nameWithOwner: 'test-owner/specs-test',
-      },
-      filePath: 'specs/example-template.yaml',
-      ref: 'master',
-      parseResult: { openApiSpec: { title: 'An empty API spec', version: '0.1.0', operations: [] }, errors: [] },
-    };
-
-    // and a spec log containing two proposed changes
-    const proposedSpec1 = JSON.parse(JSON.stringify(specItem));
-    proposedSpec1.ref = 'proposal1';
-    const proposedSpec2 = JSON.parse(JSON.stringify(specItem));
-    proposedSpec2.ref = 'proposal2';
-    const specLog = {
-      latestAgreed: specItem,
-      proposedChanges: [{ id: 98, specItem: proposedSpec1 }, { id: 99, specItem: proposedSpec2 }],
-    };
+    // given a spec log containing two proposed changes
+    const pullRequest1 = Generator.PullRequest.generatePullRequest({ number: 98, branchName: 'proposal1' });
+    const pullRequest2 = Generator.PullRequest.generatePullRequest({ number: 99, branchName: 'proposal2' });
+    const proposedChange1 = Generator.ProposedChange.generateProposedChange({ pullRequest: pullRequest1 });
+    const proposedChange2 = Generator.ProposedChange.generateProposedChange({ pullRequest: pullRequest2 });
+    const specLog = Generator.SpecLog.generateSpecLog({ proposedChanges: [proposedChange1, proposedChange2] });
 
     // when spec file item component renders
     const { getByText } = renderWithRouter(<SpecLog specLog={specLog} />);
