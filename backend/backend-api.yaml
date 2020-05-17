@@ -1,0 +1,212 @@
+openapi: 3.0.0
+info:
+  title: Spectacular Backend API
+  description: The RESTful API for the Spectacular tool's Backend Service.
+  version: 0.1.0
+paths:
+  /api/{org}/catalogues:
+    get:
+      tags:
+        - Catalogues
+      description: Gets all the catalogues for a given organisation available to the user
+      operationId: getCataloguesForOrg
+      parameters:
+        - name: org
+          in: path
+          description: The organisation
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/CataloguesResponse'
+components:
+  schemas:
+    CataloguesResponse:
+      type: object
+      properties:
+        catalogueManifests:
+          type: array
+          items:
+            $ref: '#/components/schemas/CatalogueManifest'
+      required:
+        - catalogueManifests
+    CatalogueManifest:
+      type: object
+      properties:
+        repository:
+          $ref: '#/components/schemas/Repository'
+        filePath:
+          type: string
+        catalogues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Catalogue'
+        error:
+          type: string
+      required:
+        - repository
+        - filePath
+        - catalogues
+      x-keys:
+        - repository
+        - filePath
+    Catalogue:
+      type: object
+      properties:
+        repository:
+          $ref: '#/components/schemas/Repository'
+        filePath:
+          type: string
+        name:
+          type: string
+        encoded:
+          type: string
+          format: byte
+        specLogs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpecLog'
+      required:
+        - repository
+        - filePath
+        - name
+        - specLogs
+      x-keys:
+        - repository
+        - filePath
+        - name
+    SpecLog:
+      type: object
+      properties:
+        id:
+          type: string
+        latestAgreed:
+          $ref: '#/components/schemas/SpecItem'
+        proposedChanges:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChangeProposal'
+      required:
+        - id
+        - latestAgreed
+        - proposedChanges
+    ChangeProposal:
+      type: object
+      properties:
+        id:
+          type: integer
+        pullRequest:
+          $ref: '#/components/schemas/PullRequest'
+        specItem:
+          $ref: '#/components/schemas/SpecItem'
+      required:
+        - id
+        - pullRequest
+        - specItem
+    SpecItem:
+      type: object
+      properties:
+        id:
+          type: string
+        repository:
+          $ref: '#/components/schemas/Repository'
+        filePath:
+          type: string
+        htmlUrl:
+          type: string
+          format: uri
+        ref:
+          type: string
+        sha:
+          type: string
+        lastModified:
+          type: string
+          format: date-time
+        parseResult:
+          $ref: '#/components/schemas/OpenApiSpecParseResult'
+      required:
+        - id
+        - repository
+        - filePath
+        - ref
+    OpenApiSpecParseResult:
+      type: object
+      properties:
+        openApiSpec:
+          $ref: '#/components/schemas/OpenApiSpec'
+        errors:
+          type: array
+          items:
+            type: string
+      required:
+        - openApiSpec
+        - errors
+    OpenApiSpec:
+      type: object
+      properties:
+        title:
+          type: string
+        version:
+          type: string
+        operations:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpenApiOperation'
+      required:
+        - title
+        - version
+        - operations
+    OpenApiOperation:
+      type: object
+      properties:
+        path:
+          type: string
+        name:
+          type: string
+      required:
+        - path
+        - name
+    PullRequest:
+      type: object
+      properties:
+        repository:
+          $ref: '#/components/schemas/Repository'
+        branchName:
+          type: string
+        number:
+          type: integer
+        url:
+          type: string
+          format: uri
+        title:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+        labels:
+          type: array
+          items:
+            type: string
+      required:
+        - repository
+        - number
+    Repository:
+      type: object
+      properties:
+        owner:
+          type: string
+        name:
+          type: string
+        nameWithOwner:
+          type: string
+        htmlUrl:
+          type: string
+          format: uri
+      required:
+        - owner
+        - name
