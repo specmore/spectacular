@@ -23,10 +23,31 @@ paths:
           content:
               application/json:
                 schema:
-                  $ref: '#/components/schemas/CataloguesResponse'
+                  $ref: '#/components/schemas/GetCataloguesResult'
+  /api/catalogues/{encoded}:
+    get:
+      tags:
+        - Catalogues
+      description: Gets a catalogue
+      operationId: getCatalogue
+      parameters:
+        - name: encoded
+          in: path
+          description: The encoded id of the Catalogue being fetched
+          required: true
+          schema:
+            type: string
+            format: byte
+      responses:
+        '200':
+          description: Successful operation
+          content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/GetCatalogueResult'
 components:
   schemas:
-    CataloguesResponse:
+    GetCataloguesResult:
       type: object
       properties:
         catalogueManifests:
@@ -35,6 +56,13 @@ components:
             $ref: '#/components/schemas/CatalogueManifest'
       required:
         - catalogueManifests
+    GetCatalogueResult:
+      type: object
+      properties:
+        catalogue:
+            $ref: '#/components/schemas/Catalogue'
+        error:
+          type: string
     CatalogueManifest:
       type: object
       properties:
