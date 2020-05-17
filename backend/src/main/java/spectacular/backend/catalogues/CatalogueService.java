@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import spectacular.backend.common.Repository;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.github.app.AppInstallationContextProvider;
@@ -64,7 +65,7 @@ public class CatalogueService {
    */
   public List<Catalogue> getCataloguesForOrgAndUser(String orgName, String username) {
     var catalogues = findCataloguesForOrg(orgName).stream()
-        .filter(catalogueId -> isUserCollaboratorForRepository(catalogueId.getRepository(), username))
+        .filter(catalogueId -> isRepositoryAccessible(catalogueId.getRepository(), username))
         .map(this::getCatalogue).collect(Collectors.toList());
     return catalogues;
   }
@@ -77,7 +78,7 @@ public class CatalogueService {
    * @return A Catalogue object
    */
   public Catalogue getCatalogueForRepoAndUser(Repository repo, String username) {
-    if (!isUserCollaboratorForRepository(repo, username)) {
+    if (!isRepositoryAccessible(repo, username)) {
       return null;
     }
 
@@ -136,8 +137,13 @@ public class CatalogueService {
     return searchCodeResultItem.getName().equals(filename);
   }
 
-  private boolean isUserCollaboratorForRepository(Repository repo, String username) {
-    return restApiClient.isUserRepositoryCollaborator(repo, username);
+  private boolean isRepositoryAccessible(Repository repo, String username) {
+    try {
+      return restApiClient.isUserRepositoryCollaborator(repo, username);
+    } catch (HttpClientErrorException ex) {
+      logger.debug("An error occurred while trying to check collaborators for repo: " + repo.getNameWithOwner(), ex);
+      return false;
+    }
   }
 
   private Catalogue getCatalogue(CatalogueId catalogueId) {

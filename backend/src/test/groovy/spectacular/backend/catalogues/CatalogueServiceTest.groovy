@@ -1,6 +1,7 @@
 package spectacular.backend.catalogues
 
-
+import org.springframework.http.HttpStatus
+import org.springframework.web.client.HttpClientErrorException
 import spectacular.backend.common.Repository
 import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.app.AppInstallationContextProvider
@@ -160,6 +161,36 @@ class CatalogueServiceTest extends Specification {
         0 * restApiClient.getRepositoryContent(*_)
     }
 
+    def "get catalogues filters out repos the github app installation does not have access to"() {
+        given: "a github user"
+        def username = "test-user"
+
+        and: "a github org"
+        def org = "test-org"
+
+        and: "an app installation with access to 1 repository with a catalogue config manifest file"
+        appInstallationContextProvider.getInstallationId() >> "99"
+        def repo = new Repository("test-owner","test-repo987")
+        def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), null)
+        def searchCodeResultItem = new SearchCodeResultItem(catalogueManifestYmlFilename, catalogueManifestYmlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
+        def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
+
+        when: "the get catalogues for a user is called"
+        def result = catalogueService.getCataloguesForOrgAndUser(org, username)
+
+        then: "github is search for instance manifest files"
+        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org, null) >> searchCodeResults
+
+        and: "github return a 403 Forbidden error when the repository is checked"
+        1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> { throw new HttpClientErrorException(HttpStatus.FORBIDDEN) }
+
+        and: "no catalogues are returned"
+        result.isEmpty()
+
+        and: "no file contents are retrieved"
+        0 * restApiClient.getRepositoryContent(*_)
+    }
+
     def "get catalogues filters out incorrect filename matches"() {
         given: "a github user"
         def username = "test-user"
@@ -287,6 +318,32 @@ class CatalogueServiceTest extends Specification {
 
         then: "github is checked if the user is a collaborator of the repository and the user is not"
         1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> false
+
+        and: "no file contents are retrieved"
+        0 * restApiClient.getRepositoryContent(*_)
+
+        and: "no catalogue is returned"
+        !catalogue
+
+        and: "no spec items are retrieved"
+        0 * specLogService.getSpecLogForSpecRepoAndFile(_, _)
+    }
+
+    def "get catalogue returns null for a repository the app installation does not have access to"() {
+        given: "a github user"
+        def username = "test-user"
+
+        and: "a repository with a valid Yaml catalogue config Manifest"
+        def repo = new Repository("test-owner","test-repo987")
+
+        and: "an app installation with access to the repository"
+        appInstallationContextProvider.getInstallationId() >> "99"
+
+        when: "the get catalogue for a user is called"
+        def catalogue = catalogueService.getCatalogueForRepoAndUser(repo, username)
+
+        then: "github is checked if the user is a collaborator of the repository and the repo access is not allow"
+        1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> { throw new HttpClientErrorException(HttpStatus.FORBIDDEN) }
 
         and: "no file contents are retrieved"
         0 * restApiClient.getRepositoryContent(*_)

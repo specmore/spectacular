@@ -39,11 +39,12 @@ public class CatalogueController {
                                 @PathVariable("repo") String repo,
                                 JwtAuthenticationToken authToken) {
     var repository = new Repository(owner, repo);
+    var catalogue = this.catalogueService.getCatalogueForRepoAndUser(repository, authToken.getName());
 
-    if (repository == null) {
+    if (catalogue == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
-    return this.catalogueService.getCatalogueForRepoAndUser(repository, authToken.getName());
+    return catalogue;
   }
 }
