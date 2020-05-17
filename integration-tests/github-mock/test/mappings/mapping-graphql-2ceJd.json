@@ -1,0 +1,36 @@
+{
+  "id" : "ca52a8a0-30ae-39c5-9ff1-d5230e231e49",
+  "request" : {
+    "url" : "/graphql",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "equalToJson" : "{\"query\":\"query {\\n    repository(owner: \\\"pburls\\\", name:\\\"specs-test-no-access\\\") {\\n        nameWithOwner\\n        url\\n        pullRequests(first: 100, baseRefName: \\\"master\\\", states: [OPEN]) {\\n            totalCount\\n            nodes {\\n                number\\n                url\\n                updatedAt\\n                headRef { name repository { nameWithOwner url } }\\n                labels(first: 100) {\\n                    totalCount\\n                    nodes { name }\\n                }\\n                files(first:100) {\\n                    totalCount\\n                    nodes { path }\\n                }\\n                title\\n            }\\n        }\\n    }\\n}\"}",
+      "ignoreArrayOrder" : true,
+      "ignoreExtraElements" : true
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-graphql-2ceJd.json",
+    "headers" : {
+      "Date" : "Sun, 17 May 2020 07:25:36 GMT",
+      "Content-Type" : "application/json; charset=utf-8",
+      "Server" : "GitHub.com",
+      "Status" : "200 OK",
+      "Cache-Control" : "no-cache",
+      "X-GitHub-Media-Type" : "github.v4",
+      "X-RateLimit-Limit" : "5000",
+      "X-RateLimit-Remaining" : "4982",
+      "X-RateLimit-Reset" : "1589703791",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "1; mode=block",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "Vary" : "Accept-Encoding, Accept, X-Requested-With",
+      "X-GitHub-Request-Id" : "E6AA:F889:2B1CD94:311F723:5EC0E6F0"
+    }
+  },
+  "uuid" : "ca52a8a0-30ae-39c5-9ff1-d5230e231e49"
+}

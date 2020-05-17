@@ -1,0 +1,31 @@
+{
+  "id" : "724bcc2c-21dc-363f-8e33-231f152ab1aa",
+  "request" : {
+    "url" : "/search/code?q=filename:spectacular-config+extension:yaml+extension:yml+path:/+repo:pburls/specs-test",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-search-code-AfGj3.json",
+    "headers" : {
+      "Date" : "Sun, 17 May 2020 07:25:35 GMT",
+      "Content-Type" : "application/json; charset=utf-8",
+      "Server" : "GitHub.com",
+      "Status" : "200 OK",
+      "X-RateLimit-Limit" : "30",
+      "X-RateLimit-Remaining" : "27",
+      "X-RateLimit-Reset" : "1589700393",
+      "Cache-Control" : "no-cache",
+      "X-GitHub-Media-Type" : "github.v3",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "1; mode=block",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "Vary" : "Accept-Encoding, Accept, X-Requested-With",
+      "X-GitHub-Request-Id" : "E6AA:F889:2B1CBDE:311F56B:5EC0E6EE"
+    }
+  },
+  "uuid" : "724bcc2c-21dc-363f-8e33-231f152ab1aa"
+}

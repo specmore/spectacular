@@ -1,0 +1,29 @@
+{
+  "id" : "677d2802-480d-3c90-8d7b-516e00ac3d10",
+  "request" : {
+    "url" : "/repos/pburls/specs-test-manifest-error/collaborators/pburls",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 204,
+    "bodyFileName" : "body-repos-pburls-specs-test-manifest-error-collaborators-pburls-Je2kN.txt",
+    "headers" : {
+      "Date" : "Sun, 17 May 2020 07:25:33 GMT",
+      "Server" : "GitHub.com",
+      "Status" : "204 No Content",
+      "X-RateLimit-Limit" : "5000",
+      "X-RateLimit-Remaining" : "4976",
+      "X-RateLimit-Reset" : "1589703295",
+      "X-GitHub-Media-Type" : "github.v3",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "1; mode=block",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "Vary" : "Accept-Encoding, Accept, X-Requested-With",
+      "X-GitHub-Request-Id" : "E6AA:F889:2B1C96A:311F274:5EC0E6EC"
+    }
+  },
+  "uuid" : "677d2802-480d-3c90-8d7b-516e00ac3d10"
+}

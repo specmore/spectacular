@@ -1,0 +1,29 @@
+{
+  "id" : "975d808f-c49b-3d05-848f-fe26f14f018a",
+  "request" : {
+    "url" : "/repos/pburls/specs-test/collaborators/pburls",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 204,
+    "bodyFileName" : "body-repos-pburls-specs-test-collaborators-pburls-7zneO.txt",
+    "headers" : {
+      "Date" : "Sun, 17 May 2020 07:25:33 GMT",
+      "Server" : "GitHub.com",
+      "Status" : "204 No Content",
+      "X-RateLimit-Limit" : "5000",
+      "X-RateLimit-Remaining" : "4973",
+      "X-RateLimit-Reset" : "1589703294",
+      "X-GitHub-Media-Type" : "github.v3",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "1; mode=block",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "Vary" : "Accept-Encoding, Accept, X-Requested-With",
+      "X-GitHub-Request-Id" : "E6B6:2D081:4D3ED42:585F666:5EC0E6ED"
+    }
+  },
+  "uuid" : "975d808f-c49b-3d05-848f-fe26f14f018a"
+}
