@@ -1,0 +1,70 @@
+{
+   "id": "https://spectacular/0.1/catalogue-manifest",
+   "$schema": "http://json-schema.org/draft-04/schema#",
+   "description": "Validation schema for Catalogue Manifest File v0.1.",
+   "type": "object",
+   "properties": {
+      "spectacular": {
+         "type": "string",
+         "pattern": "^1\\.0?(-.+)?$"
+      },
+      "catalogues": {
+         "type": "object"
+      }
+   },
+   "required": [
+      "spectacular"
+   ],
+   "additionalProperties": false,
+   "definitions": {
+      "Catalogue": {
+         "type": "object",
+         "properties": {
+            "title": {
+               "type": "string"
+            },
+            "description": {
+               "type": "string"
+            },
+            "interfaces": {
+               "type": "object",
+               "additionalProperties": {
+                  "$ref": "#/definitions/Interface"
+               }
+            }
+         },
+         "required": [
+            "title"
+         ],
+         "additionalProperties": false
+      },
+      "Interface": {
+         "type": "object",
+         "properties": {
+            "specFile": {
+               "$ref": "#/definitions/SpecFileLocation"
+            }
+         },
+         "required": [
+            "specFile"
+         ],
+         "additionalProperties": false
+      },
+      "SpecFileLocation": {
+         "type": "object",
+         "properties": {
+            "filePath": {
+               "type": "string"
+            },
+            "repo": {
+               "type": "string",
+               "pattern": "^[^\\/]+\\/[^\\/]+$"
+            }
+         },
+         "required": [
+            "filePath"
+         ],
+         "additionalProperties": false
+      }
+   }
+}
