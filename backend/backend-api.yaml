@@ -50,10 +50,10 @@ components:
     GetCataloguesResult:
       type: object
       properties:
-        catalogueManifests:
+        catalogueManifestParseResults:
           type: array
           items:
-            $ref: '#/components/schemas/CatalogueManifest'
+            $ref: '#/components/schemas/CatalogueManifestParseResult'
       required:
         - catalogueManifests
     GetCatalogueResult:
@@ -63,7 +63,7 @@ components:
             $ref: '#/components/schemas/Catalogue'
         error:
           type: string
-    CatalogueManifest:
+    CatalogueManifestParseResult:
       type: object
       properties:
         repository:

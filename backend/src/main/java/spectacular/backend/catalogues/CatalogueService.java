@@ -1,6 +1,8 @@
 package spectacular.backend.catalogues;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -147,12 +149,14 @@ public class CatalogueService {
   }
 
   private Catalogue getCatalogue(CatalogueId catalogueId) {
+    var mapper = new ObjectMapper(new YAMLFactory());
     var fileContentItem = restApiClient.getRepositoryContent(catalogueId.getRepository(), catalogueId.getPath(), null);
 
     CatalogueManifest manifest = null;
     String error = null;
     try {
-      manifest = CatalogueManifest.parse(fileContentItem.getDecodedContent());
+      manifest = mapper.readValue(fileContentItem.getDecodedContent(), CatalogueManifest.class);
+      //manifest = CatalogueManifest.parse(fileContentItem.getDecodedContent());
     } catch (MismatchedInputException e) {
       logger.debug("An error occurred while parsing the catalogue manifest yaml file: " + catalogueId.toString(), e);
       error = "An error occurred while parsing the catalogue manifest yaml file. The following field is missing: " + e.getPathReference();
