@@ -9,7 +9,10 @@
          "pattern": "^1\\.0?(-.+)?$"
       },
       "catalogues": {
-         "type": "object"
+         "type": "object",
+         "additionalProperties": {
+            "$ref": "#/definitions/Catalogue"
+         }
       }
    },
    "required": [

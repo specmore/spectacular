@@ -8,6 +8,8 @@ properties:
     pattern: ^1\.0?(-.+)?$
   catalogues:
     type: object
+    additionalProperties: 
+      $ref: '#/definitions/Catalogue'
 required:
   - spectacular
 additionalProperties: false
