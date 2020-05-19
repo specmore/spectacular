@@ -43,7 +43,7 @@ springBoot {
 }
 
 jsonSchema2Pojo {
-	source = files("schemas/catalogue-manifest.yaml")
+	source = files("specs/catalogue-manifest.yaml")
 	targetDirectory = catalogueManifestModelsDir
 	targetPackage = "spectacular.backend.catalogue.model"
 	includeAdditionalProperties = true
@@ -53,7 +53,7 @@ jsonSchema2Pojo {
 
 openApiGenerate {
 	generatorName = "spring"
-	inputSpec = "$rootDir/backend-api.yaml".toString()
+	inputSpec = file("specs/backend-api.yaml").toString()
 	outputDir = apiModelsDir.toString()
 	modelPackage = "spectacular.backend.api.model"
 	modelFilesConstrainedTo = [
