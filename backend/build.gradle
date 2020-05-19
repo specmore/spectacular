@@ -43,7 +43,7 @@ springBoot {
 }
 
 jsonSchema2Pojo {
-	source = files("../schemas/catalogue-manifest.yaml")
+	source = files("schemas/catalogue-manifest.yaml")
 	targetDirectory = catalogueManifestModelsDir
 	targetPackage = "spectacular.backend.catalogue.model"
 	includeAdditionalProperties = true
