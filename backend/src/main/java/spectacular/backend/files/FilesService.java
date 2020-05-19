@@ -26,32 +26,17 @@ public class FilesService {
    * @param ref the commit ref version of the file contents
    * @param username the username of the user the access should be verified against
    * @return the file contents as a String
+   * or null if the spec file doesn't exist in the catalogue or the user does not have access to the catalogue
    * @throws UnsupportedEncodingException if an error is occurred when decoding the file contents returned by the git source system
    */
   public String getFileContent(Repository catalogueRepo, Repository specRepo, String path, String ref, String username)
       throws UnsupportedEncodingException {
-    var catalogue = catalogueService.getCatalogueForRepoAndUser(catalogueRepo, username);
+    var isInCatalogue = catalogueService.isSpecFileInCatalogue(catalogueRepo, username, specRepo, path);
 
-    if (catalogue == null || catalogue.getCatalogueManifest() == null || catalogue.getCatalogueManifest().getSpecFileLocations() == null) {
-      return null;
-    }
-
-    if (!catalogue.getCatalogueManifest().getSpecFileLocations().stream()
-        .anyMatch(specFileLocation -> specFileMatches(specFileLocation, catalogueRepo, specRepo, path))) {
+    if (!isInCatalogue) {
       return null;
     }
 
     return restApiClient.getRepositoryContent(specRepo, path, ref).getDecodedContent();
-  }
-
-  private static boolean specFileMatches(SpecFileLocation specFileLocation, Repository catalogueRepo, Repository specRepo,
-                                         String specFilePath) {
-    if (specFileLocation.getRepo() == null && !catalogueRepo.equals(specRepo)) {
-      return false;
-    }
-    if (specFileLocation.getRepo() != null && !specFileLocation.getRepo().equals(specRepo)) {
-      return false;
-    }
-    return specFileLocation.getFilePath().equalsIgnoreCase(specFilePath);
   }
 }

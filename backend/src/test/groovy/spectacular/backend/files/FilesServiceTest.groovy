@@ -15,9 +15,13 @@ class FilesServiceTest extends Specification {
     def restApiMock = Mock(RestApiClient)
     def fileService = new FilesService(catalogueServiceMock, restApiMock)
 
-    def "get file content for spec path in catalogue manifest from different repo returns the raw file contents from github"() {
-        given: "a user with access to the catalogue repo"
+    def "get file content for a spec path from a different repo to the catalogue returns the raw file contents from github"() {
+        given: "a user"
         def username = "test-user"
+
+        and: "a catalogue repo with a manifest containing the requested spec file"
+        def catalogueRepo = new Repository("test-owner", "catalogue-repo")
+        def isInManifest = true
 
         and: "a spec file repo and path with content"
         def specFileRepo = new Repository("test-owner2", "spec-repo");
@@ -25,84 +29,78 @@ class FilesServiceTest extends Specification {
         def specFileContent = "test content"
         def specFileContentItem = Mock(ContentItem)
         specFileContentItem.getDecodedContent() >> specFileContent
-
-        and: "a catalogue repo with a manifest containing the requested spec file"
-        def catalogueRepo = new Repository("test-owner", "catalogue-repo")
-        def specFileLocation = new SpecFileLocation(specFileRepo.getNameWithOwner(), specFilePath)
-        def catalogueManifest = new CatalogueManifest("test manifest", "test description", [specFileLocation])
-        def catalogue = Catalogue.create(catalogueRepo, "test-path", catalogueManifest, null)
 
         when: "retrieving the spec file contents"
         def result = fileService.getFileContent(catalogueRepo, specFileRepo, specFilePath, null, username)
 
-        then: "the catalogue is retrieved for the repo and user"
-        1 * catalogueServiceMock.getCatalogueForRepoAndUser(catalogueRepo, username) >> catalogue
+        then: "the presence of the spec file in the catalogue is checked"
+        1 * catalogueServiceMock.isSpecFileInCatalogue(catalogueRepo, username, specFileRepo, specFilePath) >> isInManifest
 
         and: "the contents is retrieved from the spec file repo and path from the github api"
         1 * restApiMock.getRepositoryContent(specFileRepo, specFilePath, null) >> specFileContentItem
         result == specFileContent
     }
 
-    def "get file content for spec path in catalogue manifest in same repo returns the raw file contents from github"() {
-        given: "a user with access to the catalogue repo"
+    def "get file content for spec path in the same repo as the catalogue returns the raw file contents from github"() {
+        given: "a user"
         def username = "test-user"
 
+        and: "a catalogue repo with a manifest containing the requested spec file"
+        def catalogueRepo = new Repository("test-owner", "catalogue-repo")
+        def isInManifest = true
+
         and: "a spec file repo and path with content"
-        def specFileRepo = new Repository("test-owner2", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def specFileContent = "test content"
         def specFileContentItem = Mock(ContentItem)
         specFileContentItem.getDecodedContent() >> specFileContent
 
-        and: "a catalogue manifest in the same repo containing the requested spec file but with out a repo in the location"
-        def specFileLocation = new SpecFileLocation((String)null, specFilePath)
-        def catalogueManifest = new CatalogueManifest("test manifest", "test description", [specFileLocation])
-        def catalogue = Catalogue.create(specFileRepo, "test-path", catalogueManifest, null)
-
         when: "retrieving the spec file contents"
-        def result = fileService.getFileContent(specFileRepo, specFileRepo, specFilePath, null, username)
+        def result = fileService.getFileContent(catalogueRepo, catalogueRepo, specFilePath, null, username)
 
-        then: "the catalogue is retrieved for the repo and user"
-        1 * catalogueServiceMock.getCatalogueForRepoAndUser(specFileRepo, username) >> catalogue
+        then: "the presence of the spec file in the catalogue is checked"
+        1 * catalogueServiceMock.isSpecFileInCatalogue(catalogueRepo, username, catalogueRepo, specFilePath) >> isInManifest
 
         and: "the contents is retrieved from the spec file repo and path from the github api"
-        1 * restApiMock.getRepositoryContent(specFileRepo, specFilePath, null) >> specFileContentItem
+        1 * restApiMock.getRepositoryContent(catalogueRepo, specFilePath, null) >> specFileContentItem
         result == specFileContent
     }
 
     def "get file content retrieves content from the ref specified"() {
-        given: "a user with access to the catalogue repo"
+        given: "a user"
         def username = "test-user"
 
+        and: "a catalogue repo with a manifest containing the requested spec file"
+        def catalogueRepo = new Repository("test-owner", "catalogue-repo")
+        def isInManifest = true
+
         and: "a spec file repo and path with content"
-        def specFileRepo = new Repository("test-owner2", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def specFileContent = "test content"
         def specFileContentItem = Mock(ContentItem)
         specFileContentItem.getDecodedContent() >> specFileContent
-
-        and: "a catalogue manifest in the same repo containing the requested spec file but with out a repo in the location"
-        def specFileLocation = new SpecFileLocation((String)null, specFilePath)
-        def catalogueManifest = new CatalogueManifest("test manifest", "test description", [specFileLocation])
-        def catalogue = Catalogue.create(specFileRepo, "test-path", catalogueManifest, null)
 
         and: "a ref specified for a test branch"
         def refName = "test-branch"
 
         when: "retrieving the spec file contents"
-        def result = fileService.getFileContent(specFileRepo, specFileRepo, specFilePath, refName, username)
+        def result = fileService.getFileContent(catalogueRepo, catalogueRepo, specFilePath, refName, username)
 
-        then: "the catalogue is retrieved for the repo and user"
-        1 * catalogueServiceMock.getCatalogueForRepoAndUser(specFileRepo, username) >> catalogue
+        then: "the presence of the spec file in the catalogue is checked"
+        1 * catalogueServiceMock.isSpecFileInCatalogue(catalogueRepo, username, catalogueRepo, specFilePath) >> isInManifest
 
         and: "the contents is retrieved from the github api using the ref specified"
-        1 * restApiMock.getRepositoryContent(specFileRepo, specFilePath, "test-branch") >> specFileContentItem
+        1 * restApiMock.getRepositoryContent(catalogueRepo, specFilePath, "test-branch") >> specFileContentItem
         result == specFileContent
     }
 
     def "get file content for spec path not contained in catalogue manifest returns null contents"() {
-        given: "a user with access to the catalogue repo"
+        given: "a user"
         def username = "test-user"
+
+        and: "a catalogue repo with a manifest not containing the requested spec file"
+        def catalogueRepo = new Repository("test-owner", "catalogue-repo")
+        def isInManifest = false
 
         and: "a spec file repo and path with content"
         def specFileRepo = new Repository("test-owner2", "spec-repo");
@@ -111,16 +109,11 @@ class FilesServiceTest extends Specification {
         def specFileContentItem = Mock(ContentItem)
         specFileContentItem.getDecodedContent() >> specFileContent
 
-        and: "a catalogue repo with a manifest not containing the requested spec file"
-        def catalogueRepo = new Repository("test-owner", "catalogue-repo")
-        def specFileLocation = new SpecFileLocation("another-owner/another-repo", "another/spec-file.yaml")
-        def catalogueManifest = new CatalogueManifest("test manifest", "test description", [specFileLocation])
-        def catalogue = Catalogue.create(catalogueRepo, "test-path", catalogueManifest, null)
         when: "retrieving the spec file contents"
         def result = fileService.getFileContent(catalogueRepo, specFileRepo, specFilePath, null, username)
 
-        then: "the catalogue is retrieved for the repo and user"
-        1 * catalogueServiceMock.getCatalogueForRepoAndUser(catalogueRepo, username) >> catalogue
+        then: "the presence of the spec file in the catalogue is checked"
+        1 * catalogueServiceMock.isSpecFileInCatalogue(catalogueRepo, username, specFileRepo, specFilePath) >> isInManifest
 
         and: "no contents is retrieved for the spec file repo and path from the github api"
         0 * restApiMock.getRepositoryContent(specFileRepo, specFilePath, null) >> specFileContentItem
@@ -128,8 +121,12 @@ class FilesServiceTest extends Specification {
     }
 
     def "get file content for catalogue that the user has no access to or does not exist returns null contents"() {
-        given: "a user with access to the catalogue repo"
+        given: "a user"
         def username = "test-user"
+
+        and: "a catalogue repo the user does not have access to"
+        def catalogueRepo = new Repository("test-owner", "catalogue-repo")
+        def isInManifest = false
 
         and: "a spec file repo and path with content"
         def specFileRepo = new Repository("test-owner2", "spec-repo");
@@ -138,14 +135,11 @@ class FilesServiceTest extends Specification {
         def specFileContentItem = Mock(ContentItem)
         specFileContentItem.getDecodedContent() >> specFileContent
 
-        and: "a catalogue repo the user does not have access to or does not exist"
-        def catalogueRepo = new Repository("test-owner", "catalogue-repo")
-
         when: "retrieving the spec file contents"
         def result = fileService.getFileContent(catalogueRepo, specFileRepo, specFilePath, null, username)
 
-        then: "the catalogue cannot be retrieved the repo and user"
-        1 * catalogueServiceMock.getCatalogueForRepoAndUser(catalogueRepo, username) >> null
+        then: "the presence of the spec file in the catalogue is checked"
+        1 * catalogueServiceMock.isSpecFileInCatalogue(catalogueRepo, username, specFileRepo, specFilePath) >> isInManifest
 
         and: "no contents is retrieved for the spec file repo and path from the github api"
         0 * restApiMock.getRepositoryContent(specFileRepo, specFilePath, null) >> specFileContentItem

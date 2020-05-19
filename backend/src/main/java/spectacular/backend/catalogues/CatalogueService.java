@@ -98,6 +98,36 @@ public class CatalogueService {
     return getFullCatalogueDetails(catalogueId);
   }
 
+  /**
+   * Checks if a Spec File belongs to the specified Catalogue for a given user
+   *
+   * @param catalogueRepo the repository of the catalogue to check
+   * @param username the user who's access needs to be checked
+   * @param specRepo the repository where the spec file can be found
+   * @param specFilePath the filepath of the spec file
+   * @return true if the spec file specified is listed in the specified catalogue and the user has access to the catalogue
+   */
+  public boolean isSpecFileInCatalogue(Repository catalogueRepo, String username, Repository specRepo, String specFilePath) {
+    var catalogue = getCatalogueForRepoAndUser(catalogueRepo, username);
+
+    if (catalogue == null || catalogue.getCatalogueManifest() == null || catalogue.getCatalogueManifest().getSpecFileLocations() == null) {
+      return false;
+    }
+
+    return catalogue.getCatalogueManifest().getSpecFileLocations().stream()
+        .anyMatch(specFileLocation -> specFileMatches(specFileLocation, catalogueRepo, specRepo, specFilePath));
+  }
+
+  private boolean specFileMatches(SpecFileLocation specFileLocation, Repository catalogueRepo, Repository specRepo, String specFilePath) {
+    if (specFileLocation.getRepo() == null && !catalogueRepo.equals(specRepo)) {
+      return false;
+    }
+    if (specFileLocation.getRepo() != null && !specFileLocation.getRepo().equals(specRepo)) {
+      return false;
+    }
+    return specFileLocation.getFilePath().equalsIgnoreCase(specFilePath);
+  }
+
   private CatalogueId pickCatalogueFileFromSearchResults(List<SearchCodeResultItem> searchCodeResultItems) {
     var manifestFileResult = searchCodeResultItems.stream()
         .filter(resultItem -> isExactFileNameMatch(resultItem, CATALOGUE_MANIFEST_FULL_YML_FILE_NAME))
