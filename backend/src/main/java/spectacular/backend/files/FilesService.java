@@ -26,7 +26,7 @@ public class FilesService {
    * @param ref the commit ref version of the file contents
    * @param username the username of the user the access should be verified against
    * @return the file contents as a String
-   * or null if the spec file doesn't exist in the catalogue or the user does not have access to the catalogue
+   *     or null if the spec file doesn't exist in the catalogue or the user does not have access to the catalogue
    * @throws UnsupportedEncodingException if an error is occurred when decoding the file contents returned by the git source system
    */
   public String getFileContent(Repository catalogueRepo, Repository specRepo, String path, String ref, String username)

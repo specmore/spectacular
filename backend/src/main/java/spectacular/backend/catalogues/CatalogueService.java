@@ -99,7 +99,7 @@ public class CatalogueService {
   }
 
   /**
-   * Checks if a Spec File belongs to the specified Catalogue for a given user
+   * Checks if a Spec File belongs to the specified Catalogue for a given user.
    *
    * @param catalogueRepo the repository of the catalogue to check
    * @param username the user who's access needs to be checked
