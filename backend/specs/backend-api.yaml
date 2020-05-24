@@ -4,7 +4,7 @@ info:
   description: The RESTful API for the Spectacular tool's Backend Service.
   version: 0.1.0
 paths:
-  /api/catalogues:
+  /catalogues:
     get:
       tags:
         - Catalogues
@@ -24,7 +24,7 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/FindCataloguesResult'
-  /api/catalogues/{encoded}:
+  /catalogues/{encoded}:
     get:
       tags:
         - Catalogues
