@@ -22,8 +22,8 @@ public class CatalogueController {
   @GetMapping("api/{org}/catalogues")
   public CataloguesResponse getCataloguesForOrg(@PathVariable("org") String orgName,
                                                 JwtAuthenticationToken authToken) {
-    var catalogues = this.catalogueService.getCataloguesForOrgAndUser(orgName, authToken.getName());
-    return new CataloguesResponse(catalogues);
+    //var catalogues = this.catalogueService.getCataloguesForOrgAndUser(orgName, authToken.getName());
+    return new CataloguesResponse(null);
   }
 
   /**

@@ -4,15 +4,15 @@ info:
   description: The RESTful API for the Spectacular tool's Backend Service.
   version: 0.1.0
 paths:
-  /api/{org}/catalogues:
+  /api/catalogues:
     get:
       tags:
         - Catalogues
-      description: Gets all the catalogues for a given organisation available to the user
-      operationId: getCataloguesForOrg
+      description: Finds catalogues available to the user
+      operationId: findCataloguesForUser
       parameters:
         - name: org
-          in: path
+          in: query
           description: The organisation
           required: true
           schema:
@@ -23,7 +23,7 @@ paths:
           content:
               application/json:
                 schema:
-                  $ref: '#/components/schemas/GetCataloguesResult'
+                  $ref: '#/components/schemas/FindCataloguesResult'
   /api/catalogues/{encoded}:
     get:
       tags:
@@ -47,42 +47,22 @@ paths:
                   $ref: '#/components/schemas/GetCatalogueResult'
 components:
   schemas:
-    GetCataloguesResult:
+    FindCataloguesResult:
       type: object
       properties:
-        catalogueManifestParseResults:
+        catalogues:
           type: array
           items:
-            $ref: '#/components/schemas/CatalogueManifestParseResult'
+            $ref: '#/components/schemas/Catalogue'
       required:
-        - catalogueManifests
+        - catalogues
     GetCatalogueResult:
       type: object
       properties:
         catalogue:
             $ref: '#/components/schemas/Catalogue'
-        error:
-          type: string
-    CatalogueManifestParseResult:
-      type: object
-      properties:
-        repository:
-          $ref: '#/components/schemas/Repository'
-        filePath:
-          type: string
-        catalogues:
-          type: array
-          items:
-            $ref: '#/components/schemas/Catalogue'
-        error:
-          type: string
       required:
-        - repository
-        - filePath
-        - catalogues
-      x-keys:
-        - repository
-        - filePath
+        - catalogue
     Catalogue:
       type: object
       properties:
@@ -92,9 +72,17 @@ components:
           type: string
         name:
           type: string
+        title:
+          type: string
+        description:
+          type: string
         encoded:
           type: string
           format: byte
+        parseError:
+          type: string
+        interfaceCount:
+          type: integer
         specLogs:
           type: array
           items:
@@ -103,7 +91,6 @@ components:
         - repository
         - filePath
         - name
-        - specLogs
       x-keys:
         - repository
         - filePath

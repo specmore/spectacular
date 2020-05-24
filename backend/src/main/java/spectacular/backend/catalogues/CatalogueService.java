@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -12,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import spectacular.backend.cataloguemanifest.CatalogueManifestParser;
 import spectacular.backend.common.Repository;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.github.app.AppInstallationContextProvider;
@@ -59,16 +62,18 @@ public class CatalogueService {
   }
 
   /**
-   * Get the list of all catalogues a given user can access in a specific organisation.
+   * Find all catalogues a given user can access in a specific organisation.
    *
    * @param orgName the name of the organisation
    * @param username the username of the user
    * @return a list of all the accessible catalogues
    */
-  public List<Catalogue> getCataloguesForOrgAndUser(String orgName, String username) {
+  public List<spectacular.backend.api.model.Catalogue> findCataloguesForOrgAndUser(String orgName, String username) {
     var catalogues = findCataloguesForOrg(orgName).stream()
-        .filter(catalogueId -> isRepositoryAccessible(catalogueId.getRepository(), username))
-        .map(this::getCatalogue).collect(Collectors.toList());
+        .filter(catalogueManifestId -> isRepositoryAccessible(catalogueManifestId.getRepository(), username))
+        .map(this::getCataloguesFromManifest)
+        .flatMap(cataloguesList -> cataloguesList.stream())
+        .collect(Collectors.toList());
     return catalogues;
   }
 
@@ -128,13 +133,13 @@ public class CatalogueService {
     return specFileLocation.getFilePath().equalsIgnoreCase(specFilePath);
   }
 
-  private CatalogueId pickCatalogueFileFromSearchResults(List<SearchCodeResultItem> searchCodeResultItems) {
+  private CatalogueManifestId pickCatalogueFileFromSearchResults(List<SearchCodeResultItem> searchCodeResultItems) {
     var manifestFileResult = searchCodeResultItems.stream()
         .filter(resultItem -> isExactFileNameMatch(resultItem, CATALOGUE_MANIFEST_FULL_YML_FILE_NAME))
         .findFirst();
 
     if (manifestFileResult.isPresent()) {
-      return CatalogueId.createFrom(manifestFileResult.get());
+      return CatalogueManifestId.createFrom(manifestFileResult.get());
     }
 
     manifestFileResult = searchCodeResultItems.stream()
@@ -142,13 +147,13 @@ public class CatalogueService {
         .findFirst();
 
     if (manifestFileResult.isPresent()) {
-      return CatalogueId.createFrom(manifestFileResult.get());
+      return CatalogueManifestId.createFrom(manifestFileResult.get());
     }
 
     return null;
   }
 
-  private List<CatalogueId> findCataloguesForOrg(String orgName) {
+  private List<CatalogueManifestId> findCataloguesForOrg(String orgName) {
     var searchCodeResults = restApiClient.findFiles(CATALOGUE_MANIFEST_FILE_NAME,
         List.of(CATALOGUE_MANIFEST_YAML_FILE_EXTENSION, CATALOGUE_MANIFEST_YML_FILE_EXTENSION),
         CATALOGUE_MANIFEST_FILE_PATH,
@@ -178,9 +183,26 @@ public class CatalogueService {
     }
   }
 
-  private Catalogue getCatalogue(CatalogueId catalogueId) {
+  private List<spectacular.backend.api.model.Catalogue> getCataloguesFromManifest(CatalogueManifestId manifestId) {
+    var fileContentItem = restApiClient.getRepositoryContent(manifestId.getRepository(), manifestId.getPath(), null);
+    try {
+      var catalogueManifestParseResult = CatalogueManifestParser.parseManifestFileContents(fileContentItem.getDecodedContent());
+      if(catalogueManifestParseResult.getError() == null) {
+        return catalogueManifestParseResult.getCatalogueManifest().getCatalogues().getAdditionalProperties().entrySet().stream()
+            .map(catalogueEntry -> CatalogueMapper.mapCatalogueManifestEntry(catalogueEntry, manifestId)).collect(Collectors.toList());
+      } else {
+        return Collections.singletonList(CatalogueMapper.createForParseError(catalogueManifestParseResult.getError(), manifestId));
+      }
+    } catch (UnsupportedEncodingException e) {
+      logger.error("An error occurred while decoding the catalogue manifest yaml file: " + manifestId.toString(), e);
+      var error = "An error occurred while decoding the catalogue manifest yaml file: " + e.getMessage();
+      return Collections.singletonList(CatalogueMapper.createForParseError(error, manifestId));
+    }
+  }
+
+  private Catalogue getCatalogue(CatalogueManifestId catalogueManifestId) {
     var mapper = new ObjectMapper(new YAMLFactory());
-    var fileContentItem = restApiClient.getRepositoryContent(catalogueId.getRepository(), catalogueId.getPath(), null);
+    var fileContentItem = restApiClient.getRepositoryContent(catalogueManifestId.getRepository(), catalogueManifestId.getPath(), null);
 
     CatalogueManifest manifest = null;
     String error = null;
@@ -188,23 +210,23 @@ public class CatalogueService {
       manifest = mapper.readValue(fileContentItem.getDecodedContent(), CatalogueManifest.class);
       //manifest = CatalogueManifest.parse(fileContentItem.getDecodedContent());
     } catch (MismatchedInputException e) {
-      logger.debug("An error occurred while parsing the catalogue manifest yaml file: " + catalogueId.toString(), e);
+      logger.debug("An error occurred while parsing the catalogue manifest yaml file: " + catalogueManifestId.toString(), e);
       error = "An error occurred while parsing the catalogue manifest yaml file. The following field is missing: " + e.getPathReference();
     } catch (IOException e) {
-      logger.error("An error occurred while parsing the catalogue manifest yaml file: " + catalogueId.toString(), e);
+      logger.error("An error occurred while parsing the catalogue manifest yaml file: " + catalogueManifestId.toString(), e);
       error = "An error occurred while parsing the catalogue manifest yaml file: " + e.getMessage();
     }
 
-    return Catalogue.create(catalogueId, manifest, error);
+    return Catalogue.create(catalogueManifestId, manifest, error);
   }
 
-  private Catalogue getFullCatalogueDetails(CatalogueId catalogueId) {
+  private Catalogue getFullCatalogueDetails(CatalogueManifestId catalogueManifestId) {
     List<SpecLog> specLogs = null;
-    var catalogue = getCatalogue(catalogueId);
+    var catalogue = getCatalogue(catalogueManifestId);
 
     if (catalogue.getCatalogueManifest() != null) {
       var specFileLocationsWithRepos = addCatalogueRepoToSpecFileLocationsWithoutRepo(
-          catalogue.getCatalogueManifest().getSpecFileLocations(), catalogueId.getRepository());
+          catalogue.getCatalogueManifest().getSpecFileLocations(), catalogueManifestId.getRepository());
       var repoPullRequests = getRepoPullRequestsForManifestSpecs(specFileLocationsWithRepos);
       specLogs = specFileLocationsWithRepos.stream()
           .map(specFileLocation -> getSpecLogForFileLocation(specFileLocation, repoPullRequests))

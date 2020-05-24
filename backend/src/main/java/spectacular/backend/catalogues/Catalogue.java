@@ -6,12 +6,12 @@ import spectacular.backend.common.Repository;
 import spectacular.backend.specs.SpecLog;
 
 public class Catalogue {
-  private final CatalogueId id;
+  private final CatalogueManifestId id;
   private final CatalogueManifest catalogueManifest;
   private final List<SpecLog> specLogs;
   private final String error;
 
-  private Catalogue(CatalogueId id, CatalogueManifest catalogueManifest,
+  private Catalogue(CatalogueManifestId id, CatalogueManifest catalogueManifest,
                     List<SpecLog> specLogs, String error) {
     this.id = id;
     this.catalogueManifest = catalogueManifest;
@@ -23,16 +23,16 @@ public class Catalogue {
                                  @NotNull String path,
                                  CatalogueManifest catalogueManifest,
                                  String error) {
-    return new Catalogue(new CatalogueId(repository, path), catalogueManifest, null, error);
+    return new Catalogue(new CatalogueManifestId(repository, path), catalogueManifest, null, error);
   }
 
-  public static Catalogue create(@NotNull CatalogueId catalogueId,
+  public static Catalogue create(@NotNull CatalogueManifestId catalogueManifestId,
                                  CatalogueManifest catalogueManifest,
                                  String error) {
-    return new Catalogue(catalogueId, catalogueManifest, null, error);
+    return new Catalogue(catalogueManifestId, catalogueManifest, null, error);
   }
 
-  public CatalogueId getId() {
+  public CatalogueManifestId getId() {
     return id;
   }
 

@@ -45,9 +45,10 @@ springBoot {
 jsonSchema2Pojo {
 	source = files("specs/catalogue-manifest.yaml")
 	targetDirectory = catalogueManifestModelsDir
-	targetPackage = "spectacular.backend.catalogue.model"
+	targetPackage = "spectacular.backend.cataloguemanifest.model"
 	includeAdditionalProperties = true
 	includeJsr303Annotations = true
+	generateBuilders = true
 	sourceType = 'yamlschema'
 }
 

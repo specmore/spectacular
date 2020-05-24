@@ -23,207 +23,6 @@ class CatalogueServiceTest extends Specification {
     def pullRequestService = Mock(PullRequestService)
     def catalogueService = new CatalogueService(restApiClient, appInstallationContextProvider, specLogService, pullRequestService)
 
-    def "get catalogues for valid user"() {
-        given: "a github user"
-        def username = "test-user"
-
-        and: "a github org"
-        def org = "test-org"
-
-        and: "an app installation with access to 1 repository with a catalogue config manifest file"
-        appInstallationContextProvider.getInstallationId() >> "99"
-        def repo = new Repository("test-owner","test-repo987")
-        def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), null)
-        def searchCodeResultItem = new SearchCodeResultItem(catalogueManifestYmlFilename, catalogueManifestYmlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
-        def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
-
-        and: "valid catalogue manifest YAML content in the manifest file"
-        def validYamlManifest = "name: \"Test Catalogue 1\"\n" +
-                "description: \"Specifications for all the interfaces in the across the system X.\"\n" +
-                "spec-files: \n" +
-                "- file-path: \"specs/example-template.yaml\"\n" +
-                "- repo: \"test-owner2/specs-test2\"\n" +
-                "  file-path: \"specs/example-spec.yaml\""
-        def manifestFileContentItem = Mock(ContentItem)
-        manifestFileContentItem.getDecodedContent() >> validYamlManifest
-
-        when: "the get catalogues for a user is called"
-        def result = catalogueService.getCataloguesForOrgAndUser(org, username)
-
-        then: "github is searched for catalogue manifest files"
-        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org, null) >> searchCodeResults
-
-        and: "github is checked if the user is a collaborator of each repository returned"
-        1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> true
-
-        and: "a list of 1 catalogue is returned"
-        result.size() == 1
-        def catalogue1 = result.get(0)
-
-        and: "the catalogue config is for the repo with the manifest file"
-        catalogue1.getId().getRepository() == repo
-        catalogue1.getId().getPath() == catalogueManifestYmlFilename
-
-        and: "the .yml manifest file is retrieved"
-        1 * restApiClient.getRepositoryContent(repo, catalogueManifestYmlFilename, null) >> manifestFileContentItem
-
-        and: "the catalogue config contains the values of the manifest"
-        catalogue1.getCatalogueManifest()
-        catalogue1.getCatalogueManifest().getName() == "Test Catalogue 1"
-        catalogue1.getCatalogueManifest().getDescription() == "Specifications for all the interfaces in the across the system X."
-
-        and: "the catalogue config contains 2 spec files"
-        !catalogue1.getCatalogueManifest().getSpecFileLocations().isEmpty()
-
-        def specFile1 = catalogue1.getCatalogueManifest().getSpecFileLocations()[0]
-        !specFile1.getRepo()
-        specFile1.getFilePath() == "specs/example-template.yaml"
-
-        def specFile2 = catalogue1.getCatalogueManifest().getSpecFileLocations()[1]
-        specFile2.getRepo().getNameWithOwner() == "test-owner2/specs-test2"
-        specFile2.getFilePath() == "specs/example-spec.yaml"
-    }
-
-    def "get catalogues for valid user uses .yml config file when files with both extensions is found"() {
-        given: "a github user"
-        def username = "test-user"
-
-        and: "a github org"
-        def org = "test-org"
-
-        and: "an app installation with access to 1 repository with a both catalogue config manifest file extensions"
-        appInstallationContextProvider.getInstallationId() >> "99"
-        def repo = new Repository("test-owner","test-repo987")
-        def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), null)
-        def searchCodeResultItem = new SearchCodeResultItem(catalogueManifestYamlFilename, catalogueManifestYamlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
-        def searchCodeResultRepo2 = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), null)
-        def searchCodeResultItem2 = new SearchCodeResultItem(catalogueManifestYmlFilename, catalogueManifestYmlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo2)
-        def searchCodeResults = new SearchCodeResults(2, List.of(searchCodeResultItem, searchCodeResultItem2), false)
-
-        and: "valid catalogue manifest YAML content in the manifest file"
-        def validYamlManifest = "name: \"Test Catalogue 1\"\n" +
-                "description: \"Specifications for all the interfaces in the across the system X.\"\n" +
-                "spec-files: \n" +
-                "- file-path: \"specs/example-template.yaml\"\n" +
-                "- repo: \"test-owner2/specs-test2\"\n" +
-                "  file-path: \"specs/example-spec.yaml\""
-        def manifestFileContentItem = Mock(ContentItem)
-        manifestFileContentItem.getDecodedContent() >> validYamlManifest
-
-        when: "the get catalogues for a user is called"
-        def result = catalogueService.getCataloguesForOrgAndUser(org, username)
-
-        then: "github is searched for catalogue manifest files"
-        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org, null) >> searchCodeResults
-
-        and: "github is checked if the user is a collaborator of each repository returned"
-        1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> true
-
-        and: "a list of 1 catalogue is returned"
-        result.size() == 1
-        def catalogue1 = result.get(0)
-
-        and: "the catalogue config is for the repo with the manifest file"
-        catalogue1.getId().getRepository() == repo
-        catalogue1.getId().getPath() == catalogueManifestYmlFilename
-
-        and: "the .yml manifest file is retrieved"
-        1 * restApiClient.getRepositoryContent(repo, catalogueManifestYmlFilename, null) >> manifestFileContentItem
-    }
-
-    def "get catalogues filters out repos the user does not have access to"() {
-        given: "a github user"
-        def username = "test-user"
-
-        and: "a github org"
-        def org = "test-org"
-
-        and: "an app installation with access to 1 repository with a catalogue config manifest file"
-        appInstallationContextProvider.getInstallationId() >> "99"
-        def repo = new Repository("test-owner","test-repo987")
-        def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), null)
-        def searchCodeResultItem = new SearchCodeResultItem(catalogueManifestYmlFilename, catalogueManifestYmlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
-        def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
-
-        when: "the get catalogues for a user is called"
-        def result = catalogueService.getCataloguesForOrgAndUser(org, username)
-
-        then: "github is search for instance manifest files"
-        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org, null) >> searchCodeResults
-
-        and: "github is checked if the user is a collaborator of each repository returned"
-        1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> false
-
-        and: "no catalogues are returned"
-        result.isEmpty()
-
-        and: "no file contents are retrieved"
-        0 * restApiClient.getRepositoryContent(*_)
-    }
-
-    def "get catalogues filters out repos the github app installation does not have access to"() {
-        given: "a github user"
-        def username = "test-user"
-
-        and: "a github org"
-        def org = "test-org"
-
-        and: "an app installation with access to 1 repository with a catalogue config manifest file"
-        appInstallationContextProvider.getInstallationId() >> "99"
-        def repo = new Repository("test-owner","test-repo987")
-        def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), null)
-        def searchCodeResultItem = new SearchCodeResultItem(catalogueManifestYmlFilename, catalogueManifestYmlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
-        def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
-
-        when: "the get catalogues for a user is called"
-        def result = catalogueService.getCataloguesForOrgAndUser(org, username)
-
-        then: "github is search for instance manifest files"
-        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org, null) >> searchCodeResults
-
-        and: "github return a 403 Forbidden error when the repository is checked"
-        1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> { throw new HttpClientErrorException(HttpStatus.FORBIDDEN) }
-
-        and: "no catalogues are returned"
-        result.isEmpty()
-
-        and: "no file contents are retrieved"
-        0 * restApiClient.getRepositoryContent(*_)
-    }
-
-    def "get catalogues filters out incorrect filename matches"() {
-        given: "a github user"
-        def username = "test-user"
-
-        and: "a github org"
-        def org = "test-org"
-
-        and: "an incorrect filename search result"
-        def searchFilename = "spectacular-app-config.yaml"
-
-        and: "an app installation with access to 1 repository with a catalogue config manifest file"
-        appInstallationContextProvider.getInstallationId() >> "99"
-        def repo = new Repository("test-owner","test-repo987")
-        def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), null)
-        def searchCodeResultItem = new SearchCodeResultItem(searchFilename, searchFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
-        def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
-
-        when: "the get catalogues for a user is called"
-        def result = catalogueService.getCataloguesForOrgAndUser(org, username)
-
-        then: "github is search for instance manifest files"
-        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org, null) >> searchCodeResults
-
-        and: "no catalogues are returned"
-        result.isEmpty()
-
-        and: "github is not checked if the user is a collaborator of any repository returned"
-        0 * restApiClient.isUserRepositoryCollaborator(*_)
-
-        and: "no file contents are retrieved"
-        0 * restApiClient.getRepositoryContent(*_)
-    }
-
     def "get catalogue for repository and valid user"() {
         given: "a github user"
         def username = "test-user"
@@ -353,5 +152,212 @@ class CatalogueServiceTest extends Specification {
 
         and: "no spec items are retrieved"
         0 * specLogService.getSpecLogForSpecRepoAndFile(_, _)
+    }
+
+    def "find catalogues for valid user and org"() {
+        given: "a github user"
+        def username = "test-user"
+
+        and: "a github org"
+        def org = "test-org"
+
+        and: "an app installation with access to 1 repository with a catalogue config manifest file"
+        appInstallationContextProvider.getInstallationId() >> "99"
+        def repo = new Repository("test-owner","test-repo987")
+        def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), "https://test-url")
+        def searchCodeResultItem = new SearchCodeResultItem(catalogueManifestYmlFilename, catalogueManifestYmlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
+        def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
+
+        and: "valid catalogue manifest YAML content in the manifest file"
+        def validYamlManifest = "spectacular: '0.1'\n" +
+                "catalogues:\n" +
+                "  testCatalogue1:\n" +
+                "    title: \"Test Catalogue 1\"\n" +
+                "    description: \"Specifications for all the interfaces across system X.\"\n" +
+                "    interfaces:\n" +
+                "      interface1:\n" +
+                "        specFile:\n" +
+                "          filePath: \"specs/example-template.yaml\"\n" +
+                "      interface2:\n" +
+                "        specFile:\n" +
+                "          filePath: \"specs/example-spec.yaml\"\n" +
+                "          repo: \"test-owner2/specs-test2\""
+        def manifestFileContentItem = Mock(ContentItem)
+        manifestFileContentItem.getDecodedContent() >> validYamlManifest
+
+        when: "the find catalogues for user and org is called"
+        def result = catalogueService.findCataloguesForOrgAndUser(org, username)
+
+        then: "github is searched for catalogue manifest files"
+        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org, null) >> searchCodeResults
+
+        and: "github is checked if the user is a collaborator of each repository returned"
+        1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> true
+
+        and: "a list of 1 catalogue is returned"
+        result.size() == 1
+        def catalogue1 = result.get(0)
+
+        and: "the catalogue is for the repo with the manifest file"
+        catalogue1.getRepository().getNameWithOwner() == repo.getNameWithOwner()
+        catalogue1.getFilePath() == catalogueManifestYmlFilename
+
+        and: "the .yml manifest file is retrieved"
+        1 * restApiClient.getRepositoryContent(repo, catalogueManifestYmlFilename, null) >> manifestFileContentItem
+
+        and: "the catalogue config contains the values of the manifest"
+        catalogue1.getName() == "testCatalogue1"
+        catalogue1.getTitle() == "Test Catalogue 1"
+        catalogue1.getDescription() == "Specifications for all the interfaces across system X."
+
+        and: "the catalogue config contains 2 spec files"
+        catalogue1.getInterfaceCount() == 2
+    }
+
+    def "find catalogues for valid user uses .yml config file when files with both extensions is found"() {
+        given: "a github user"
+        def username = "test-user"
+
+        and: "a github org"
+        def org = "test-org"
+
+        and: "an app installation with access to 1 repository with a both catalogue config manifest file extensions"
+        appInstallationContextProvider.getInstallationId() >> "99"
+        def repo = new Repository("test-owner","test-repo987")
+        def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), "https://test-url")
+        def searchCodeResultItem = new SearchCodeResultItem(catalogueManifestYamlFilename, catalogueManifestYamlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
+        def searchCodeResultRepo2 = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), "https://test-url")
+        def searchCodeResultItem2 = new SearchCodeResultItem(catalogueManifestYmlFilename, catalogueManifestYmlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo2)
+        def searchCodeResults = new SearchCodeResults(2, List.of(searchCodeResultItem, searchCodeResultItem2), false)
+
+        and: "valid catalogue manifest YAML content in the manifest file"
+        def validYamlManifest = "spectacular: '0.1'\n" +
+                "catalogues:\n" +
+                "  testCatalogue1:\n" +
+                "    title: \"Test Catalogue 1\"\n" +
+                "    description: \"Specifications for all the interfaces across system X.\"\n" +
+                "    interfaces:\n" +
+                "      interface1:\n" +
+                "        specFile:\n" +
+                "          filePath: \"specs/example-template.yaml\"\n" +
+                "      interface2:\n" +
+                "        specFile:\n" +
+                "          filePath: \"specs/example-spec.yaml\"\n" +
+                "          repo: \"test-owner2/specs-test2\""
+        def manifestFileContentItem = Mock(ContentItem)
+        manifestFileContentItem.getDecodedContent() >> validYamlManifest
+
+        when: "the find catalogues for user and org is called"
+        def result = catalogueService.findCataloguesForOrgAndUser(org, username)
+
+        then: "github is searched for catalogue manifest files"
+        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org, null) >> searchCodeResults
+
+        and: "github is checked if the user is a collaborator of each repository returned"
+        1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> true
+
+        and: "a list of 1 catalogue is returned"
+        result.size() == 1
+        def catalogue1 = result.get(0)
+
+        and: "the catalogue config is for the repo with the manifest file"
+        catalogue1.getRepository().getNameWithOwner() == repo.getNameWithOwner()
+        catalogue1.getFilePath() == catalogueManifestYmlFilename
+
+        and: "the .yml manifest file is retrieved"
+        1 * restApiClient.getRepositoryContent(repo, catalogueManifestYmlFilename, null) >> manifestFileContentItem
+    }
+
+    def "find catalogues filters out repos the user does not have access to"() {
+        given: "a github user"
+        def username = "test-user"
+
+        and: "a github org"
+        def org = "test-org"
+
+        and: "an app installation with access to 1 repository with a catalogue config manifest file"
+        appInstallationContextProvider.getInstallationId() >> "99"
+        def repo = new Repository("test-owner","test-repo987")
+        def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), "https://test-url")
+        def searchCodeResultItem = new SearchCodeResultItem(catalogueManifestYmlFilename, catalogueManifestYmlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
+        def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
+
+        when: "the find catalogues for user and org is called"
+        def result = catalogueService.findCataloguesForOrgAndUser(org, username)
+
+        then: "github is search for instance manifest files"
+        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org, null) >> searchCodeResults
+
+        and: "github is checked if the user is a collaborator of each repository returned"
+        1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> false
+
+        and: "no catalogues are returned"
+        result.isEmpty()
+
+        and: "no file contents are retrieved"
+        0 * restApiClient.getRepositoryContent(*_)
+    }
+
+    def "find catalogues filters out repos the github app installation does not have access to"() {
+        given: "a github user"
+        def username = "test-user"
+
+        and: "a github org"
+        def org = "test-org"
+
+        and: "an app installation with access to 1 repository with a catalogue config manifest file"
+        appInstallationContextProvider.getInstallationId() >> "99"
+        def repo = new Repository("test-owner","test-repo987")
+        def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), "https://test-url")
+        def searchCodeResultItem = new SearchCodeResultItem(catalogueManifestYmlFilename, catalogueManifestYmlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
+        def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
+
+        when: "the find catalogues for user and org is called"
+        def result = catalogueService.findCataloguesForOrgAndUser(org, username)
+
+        then: "github is search for instance manifest files"
+        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org, null) >> searchCodeResults
+
+        and: "github return a 403 Forbidden error when the repository is checked"
+        1 * restApiClient.isUserRepositoryCollaborator(repo, username) >> { throw new HttpClientErrorException(HttpStatus.FORBIDDEN) }
+
+        and: "no catalogues are returned"
+        result.isEmpty()
+
+        and: "no file contents are retrieved"
+        0 * restApiClient.getRepositoryContent(*_)
+    }
+
+    def "find catalogues filters out incorrect filename matches"() {
+        given: "a github user"
+        def username = "test-user"
+
+        and: "a github org"
+        def org = "test-org"
+
+        and: "an incorrect filename search result"
+        def searchFilename = "spectacular-app-config.yaml"
+
+        and: "an app installation with access to 1 repository with a catalogue config manifest file"
+        appInstallationContextProvider.getInstallationId() >> "99"
+        def repo = new Repository("test-owner","test-repo987")
+        def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), "https://test-url")
+        def searchCodeResultItem = new SearchCodeResultItem(searchFilename, searchFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
+        def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
+
+        when: "the find catalogues for user and org is called"
+        def result = catalogueService.findCataloguesForOrgAndUser(org, username)
+
+        then: "github is search for instance manifest files"
+        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", org, null) >> searchCodeResults
+
+        and: "no catalogues are returned"
+        result.isEmpty()
+
+        and: "github is not checked if the user is a collaborator of any repository returned"
+        0 * restApiClient.isUserRepositoryCollaborator(*_)
+
+        and: "no file contents are retrieved"
+        0 * restApiClient.getRepositoryContent(*_)
     }
 }
