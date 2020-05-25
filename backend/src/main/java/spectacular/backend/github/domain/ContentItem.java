@@ -3,7 +3,9 @@ package spectacular.backend.github.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.Base64;
 
 public class ContentItem {
@@ -11,16 +13,16 @@ public class ContentItem {
   private final String path;
   private final String sha;
   private final String type;
-  private final String html_url;
+  private final URI html_url;
   private final String content;
   private final String encoding;
-  private Instant lastModified;
+  private OffsetDateTime lastModified;
 
   public ContentItem(@JsonProperty("name") String name,
                      @JsonProperty("path") String path,
                      @JsonProperty("sha") String sha,
                      @JsonProperty("type") String type,
-                     @JsonProperty("html_url") String html_url,
+                     @JsonProperty("html_url") URI html_url,
                      @JsonProperty("content") String content,
                      @JsonProperty("encoding") String encoding) {
     this.name = name;
@@ -48,7 +50,7 @@ public class ContentItem {
     return type;
   }
 
-  public String getHtml_url() {
+  public URI getHtml_url() {
     return html_url;
   }
 
@@ -70,11 +72,11 @@ public class ContentItem {
     throw new UnsupportedEncodingException(encoding);
   }
 
-  public Instant getLastModified() {
+  public OffsetDateTime getLastModified() {
     return lastModified;
   }
 
-  public void setLastModified(Instant lastModified) {
+  public void setLastModified(OffsetDateTime lastModified) {
     this.lastModified = lastModified;
   }
 }

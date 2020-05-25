@@ -7,7 +7,9 @@ import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.domain.ContentItem
 import spock.lang.Specification
 
+import java.time.OffsetDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 class SpecServiceTest extends Specification {
@@ -29,7 +31,9 @@ class SpecServiceTest extends Specification {
                 "bWU6IFNhbXBsZSBSZXNvdXJjZQogICAgZGVzY3JpcHRpb246ICJTYW1wbGUg\n" +
                 "UmVzb3VyY2UgZGVzY3JpcHRpb24iCnBhdGhzOiB7fQpjb21wb25lbnRzOgog\n" +
                 "IHNjaGVtYXM6IHt9"
-        def contentItem = new ContentItem("htmlUrl", specFilePath, "some sha", "file", "some url", encodedContent, "base64")
+        def contentItem = new ContentItem("htmlUrl", specFilePath, "some sha", "file", new URI("some-url"), encodedContent, "base64")
+        def lastModifiedDate = OffsetDateTime.of(2020, 2, 16, 20, 46, 03, 0, ZoneOffset.UTC) //"Sun, 16 Feb 2020 20:46:03 GMT"
+        contentItem.setLastModified(lastModifiedDate)
 
         when: "the spec item is retrieved"
         def specItem = specService.getSpecItem(specFileRepo, specFilePath, ref)
@@ -37,10 +41,10 @@ class SpecServiceTest extends Specification {
         then: "a spec item is returned with the spec file's id, repository, filepath, ref and html url"
         specItem
         specItem.getId() == "test-owner/spec-repo/xyz/test-specs/example-spec.yaml"
-        specItem.getRepository() == specFileRepo
-        specItem.getFilePath() == specFilePath
+        specItem.getFullPath() == "test-owner/spec-repo/test-specs/example-spec.yaml"
         specItem.getRef() == ref
-        specItem.getHtmlUrl() == "some url"
+        specItem.getHtmlUrl() == new URI("some-url")
+        specItem.getLastModified() == lastModifiedDate
 
         and: "the content of the spec file is retrieved from github"
         1 * restApiClient.getRepositoryContent(specFileRepo, specFilePath, ref) >> contentItem
@@ -49,34 +53,12 @@ class SpecServiceTest extends Specification {
         specItem.getParseResult()
 
         and: "the parse result has no errors and an open api spec result"
-        !specItem.getParseResult().hasErrors()
+        !specItem.getParseResult().getErrors()
         specItem.getParseResult().getOpenApiSpec()
 
         and: "the openapi spec has a title and version set"
         specItem.getParseResult().getOpenApiSpec().getTitle() == "An empty API spec"
         specItem.getParseResult().getOpenApiSpec().getVersion() == "0.1.0"
-    }
-
-    def "Get spec item for spec repo and file path returns spec item with last modified date for content item with last modified date"() {
-        given: "a spec file repo, path and ref"
-        def specFileRepo = new Repository("test-owner", "spec-repo");
-        def specFilePath = "test-specs/example-spec.yaml"
-        def ref = "xyz"
-
-        and: "a content item with a last modified date for the spec file"
-        def lastModifiedDate = ZonedDateTime.of(2020, 2, 16, 20, 46, 03, 0, ZoneId.of("GMT")) //"Sun, 16 Feb 2020 20:46:03 GMT"
-        def contentItem = new ContentItem("htmlUrl", specFilePath, "some sha", "file", "some url", "", "base64")
-        contentItem.setLastModified(lastModifiedDate.toInstant())
-
-        when: "the spec item is retrieved"
-        def specItem = specService.getSpecItem(specFileRepo, specFilePath, ref)
-
-        then: "the content item of the spec file is retrieved from github"
-        1 * restApiClient.getRepositoryContent(specFileRepo, specFilePath, ref) >> contentItem
-
-        and: "a spec item is returned with the content item's last modified date"
-        specItem
-        specItem.getLastModified() == lastModifiedDate.toInstant()
     }
 
     def "Get spec item returns parse error for spec file contents not found"() {
@@ -91,8 +73,7 @@ class SpecServiceTest extends Specification {
         then: "a spec item is returned with the spec file's id, repository, filepath and ref"
         specItem
         specItem.getId() == "test-owner/spec-repo/xyz/test-specs/example-spec.yaml"
-        specItem.getRepository() == specFileRepo
-        specItem.getFilePath() == specFilePath
+        specItem.getFullPath() == "test-owner/spec-repo/test-specs/example-spec.yaml"
         specItem.getRef() == "xyz"
 
         and: "the content of the spec file not found on github"
@@ -104,7 +85,7 @@ class SpecServiceTest extends Specification {
         specItem.getParseResult()
 
         and: "the parse result has a no content found error"
-        specItem.getParseResult().hasErrors()
+        specItem.getParseResult().getErrors()
         specItem.getParseResult().getErrors()[0] == "The spec file could not be found."
 
         and: "the parse result has no open api spec"

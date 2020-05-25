@@ -1,7 +1,9 @@
 package spectacular.backend.pullrequests;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,31 +42,45 @@ public class PullRequestService {
       "}";
 
   private final RestApiClient restApiClient;
+  private final Map<Repository, List<PullRequest>> cache;
 
   public PullRequestService(RestApiClient restApiClient) {
     this.restApiClient = restApiClient;
+    cache = new HashMap<>();
   }
 
   /**
    * Gets all the open Pull Requests for a specific repository.
    *
-   * @param repo the repository to get Pull Requests for
+   * @param repoId the repository to get Pull Requests for
    * @return a list of open PullRequests
    */
-  public List<PullRequest> getPullRequestsForRepo(Repository repo) {
-    String formattedQuery = String.format(PullRequestsGraphQLQuery, repo.getOwner(), repo.getName());
+  public List<PullRequest> getPullRequestsForRepo(Repository repoId) {
+    var cachedPullRequest = cache.get(repoId);
+    if (cachedPullRequest == null) {
+      String formattedQuery = String.format(PullRequestsGraphQLQuery, repoId.getOwner(), repoId.getName());
 
-    var response = restApiClient.graphQlQuery(new GraphQlRequest(formattedQuery));
+      var response = restApiClient.graphQlQuery(new GraphQlRequest(formattedQuery));
 
-    if (!response.getErrors().isEmpty()) {
-      logger.error("The following error occurred while fetching pull requests for repo '" +
-          repo.getNameWithOwner() + "': " + response.getErrors().toString());
-      return new ArrayList<>();
+      if (!response.getErrors().isEmpty()) {
+        logger.error("The following error occurred while fetching pull requests for repo '" +
+            repoId.getNameWithOwner() + "': " + response.getErrors().toString());
+        cachedPullRequest = new ArrayList<>();
+      } else {
+        cachedPullRequest = response.getData().getRepository().getPullRequests().getNodes().stream()
+            .filter(pullRequest -> pullRequest.getHeadRef() != null)
+            .map(PullRequest::createPullRequestFrom)
+            .collect(Collectors.toList());
+      }
+      cache.put(repoId, cachedPullRequest);
     }
+    return cachedPullRequest;
+  }
 
-    return response.getData().getRepository().getPullRequests().getNodes().stream()
-        .filter(pullRequest -> pullRequest.getHeadRef() != null)
-        .map(PullRequest::createPullRequestFrom)
+  public List<PullRequest> getPullRequestsForRepoAndFile(Repository repoId, String filePath) {
+    var openPullRequests = getPullRequestsForRepo(repoId);
+    return openPullRequests.stream()
+        .filter(pullRequest -> pullRequest.changesFile(repoId, filePath))
         .collect(Collectors.toList());
   }
 }

@@ -2,14 +2,15 @@ package spectacular.backend.github.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.net.URI;
 
 public class Repository {
   private final int id;
   private final String full_name;
-  private final String html_url;
+  private final URI html_url;
 
   @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-  public Repository(@JsonProperty("id") int id, @JsonProperty("full_name") String full_name, @JsonProperty("html_url") String html_url) {
+  public Repository(@JsonProperty("id") int id, @JsonProperty("full_name") String full_name, @JsonProperty("html_url") URI html_url) {
     this.id = id;
     this.full_name = full_name;
     this.html_url = html_url;
@@ -23,7 +24,7 @@ public class Repository {
     return full_name;
   }
 
-  public String getHtml_url() {
+  public URI getHtml_url() {
     return html_url;
   }
 }

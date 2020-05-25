@@ -2,8 +2,8 @@ package spectacular.backend.specs;
 
 import java.time.Instant;
 import javax.validation.constraints.NotNull;
+import spectacular.backend.api.model.OpenApiSpecParseResult;
 import spectacular.backend.common.Repository;
-import spectacular.backend.specs.openapi.OpenApiSpecParseResult;
 
 public class SpecItem {
   private final String id;

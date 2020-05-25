@@ -10,9 +10,13 @@ import org.springframework.http.MediaType
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.test.web.client.MockRestServiceServer
+import spectacular.backend.common.Repository
+import spectacular.backend.github.app.AppInstallationAuthenticationHeaderRequestInterceptor
 import spock.lang.Specification
 
+import java.time.OffsetDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header
@@ -29,14 +33,14 @@ class RestApiClientTest extends Specification {
     private MockRestServiceServer server
 
     @SpringBean
-    spectacular.backend.github.app.AppInstallationAuthenticationHeaderRequestInterceptor appInstallationAuthenticationHeaderRequestInterceptor = Mock()
+    AppInstallationAuthenticationHeaderRequestInterceptor appInstallationAuthenticationHeaderRequestInterceptor = Mock()
 
     @SpringBean
     HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = Mock()
 
     def "GetRepositoryContent"() {
         given: "a content file to fetch"
-        def repo = new spectacular.backend.common.Repository("testOwner", "testRepo", null)
+        def repo = new Repository("testOwner", "testRepo", null)
         def filePath = "specs/test-file.yaml"
 
         and: "a content item response"
@@ -61,8 +65,8 @@ class RestApiClientTest extends Specification {
 
         and: "a last-modified header on the response"
         def responseHeaders = new HttpHeaders()
-        def lastModifiedDate = ZonedDateTime.of(2020, 2, 16, 20, 46, 03, 0, ZoneId.of("GMT")) //"Sun, 16 Feb 2020 20:46:03 GMT"
-        responseHeaders.setLastModified(lastModifiedDate);
+        def lastModifiedDate = OffsetDateTime.of(2020, 2, 16, 20, 46, 03, 0, ZoneOffset.UTC) //"Sun, 16 Feb 2020 20:46:03 GMT"
+        responseHeaders.setLastModified(lastModifiedDate.toInstant());
 
         and: "the app installation authentication header interceptor to be used for the request"
         1 * appInstallationAuthenticationHeaderRequestInterceptor.intercept(_,_,_) >> { HttpRequest request, byte[] body, ClientHttpRequestExecution execution ->
@@ -84,7 +88,7 @@ class RestApiClientTest extends Specification {
         contentItemResult.getPath() == filePath
 
         and: "the last modified date of the content to match the response header"
-        contentItemResult.getLastModified() == lastModifiedDate.toInstant()
+        contentItemResult.getLastModified() == lastModifiedDate
     }
 
     def "findFiles"() {
@@ -190,6 +194,6 @@ class RestApiClientTest extends Specification {
         searchCodeResults.getItems()
         searchCodeResults.getItems()[0].getName() == filename
         searchCodeResults.getItems()[0].getRepository().getFull_name() == "pburls/specs-app"
-        searchCodeResults.getItems()[0].getRepository().getHtml_url() == "https://github.com/pburls/specs-app"
+        searchCodeResults.getItems()[0].getRepository().getHtml_url() == new URI("https://github.com/pburls/specs-app");
     }
 }

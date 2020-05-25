@@ -1,10 +1,7 @@
 package spectacular.backend.files
 
 
-import spectacular.backend.catalogues.Catalogue
-import spectacular.backend.catalogues.CatalogueManifest
 import spectacular.backend.catalogues.CatalogueService
-import spectacular.backend.catalogues.SpecFileLocation
 import spectacular.backend.common.Repository
 import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.domain.ContentItem

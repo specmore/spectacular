@@ -13,6 +13,9 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import spectacular.backend.api.model.OpenApiOperation;
+import spectacular.backend.api.model.OpenApiSpec;
+import spectacular.backend.api.model.OpenApiSpecParseResult;
 
 public class OpenApiParser {
   private static final Logger logger = LoggerFactory.getLogger(OpenApiParser.class);
@@ -38,14 +41,14 @@ public class OpenApiParser {
           String title = infoNode.path("title").asText();
           String version = infoNode.path("version").asText();
           var operationList = getOperationsFromRoot(rootNode, errorList);
-
-          return new OpenApiSpecParseResult(new OpenApiSpec(title, version, operationList), errorList);
+          var spec = new OpenApiSpec().title(title).version(version).operations(operationList);
+          return new OpenApiSpecParseResult().openApiSpec(spec).errors(errorList);
         }
       }
     } catch (IOException e) {
       logger.debug("an io error occurred while parsing yaml contents", e);
     }
-    return new OpenApiSpecParseResult(null, errorList);
+    return new OpenApiSpecParseResult().errors(errorList);
   }
 
   private static List<OpenApiOperation> getOperationsFromRoot(JsonNode rootNode, List<String> errorList) {
@@ -76,7 +79,7 @@ public class OpenApiParser {
   }
 
   private static OpenApiOperation createOperationFromOperation(Map.Entry<String, JsonNode> operationField, String pathKey) {
-    var topicName = operationField.getValue().path("x-topic-name").asText();
-    return new OpenApiOperation(pathKey, operationField.getKey(), topicName);
+    //var topicName = operationField.getValue().path("x-topic-name").asText();
+    return new OpenApiOperation().name(operationField.getKey()).path(pathKey);
   }
 }

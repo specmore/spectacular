@@ -1,6 +1,8 @@
 package spectacular.backend.github;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.StringJoiner;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,7 +78,7 @@ public class RestApiClient {
     var response = restTemplate.exchange(contentUri, HttpMethod.GET, entity, ContentItem.class);
 
     var contentItem = response.getBody();
-    var lastModified = Instant.ofEpochMilli(response.getHeaders().getLastModified());
+    var lastModified = OffsetDateTime.ofInstant(Instant.ofEpochMilli(response.getHeaders().getLastModified()), ZoneId.of("GMT"));
     contentItem.setLastModified(lastModified);
 
     return contentItem;
@@ -144,16 +146,16 @@ public class RestApiClient {
   /**
    * Get details about a repository.
    *
-   * @param repo the repository identifier to get more information about
+   * @param repoId the repository identifier to get more information about
    * @return a Repository object with the information retrieved from the API
    */
-  public spectacular.backend.github.domain.Repository getRepository(Repository repo) {
+  public spectacular.backend.github.domain.Repository getRepository(Repository repoId) {
     UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(REPO_PATH);
 
     HttpHeaders headers = new HttpHeaders();
     HttpEntity entity = new HttpEntity(headers);
 
-    String contentUri = uriComponentsBuilder.buildAndExpand(repo.getNameWithOwner()).toUriString();
+    String contentUri = uriComponentsBuilder.buildAndExpand(repoId.getNameWithOwner()).toUriString();
     ResponseEntity<spectacular.backend.github.domain.Repository> response = restTemplate
         .exchange(contentUri, HttpMethod.GET, entity, spectacular.backend.github.domain.Repository.class);
     return response.getBody();

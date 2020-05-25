@@ -1,19 +1,22 @@
 package spectacular.backend.pullrequests;
 
-import java.time.Instant;
+import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import spectacular.backend.common.Repository;
+import spectacular.backend.github.graphql.ChangedFile;
+import spectacular.backend.github.graphql.Label;
 
 public class PullRequest {
   private final Repository repository;
   private final String branchName;
   private final int number;
-  private final String url;
+  private final URI url;
   private final List<String> labels;
   private final List<String> changedFiles;
   private final String title;
-  private final Instant updatedAt;
+  private final OffsetDateTime updatedAt;
 
   /**
    * Constructs a PullRequest object representing a PullRequest in the git source control system.
@@ -27,9 +30,9 @@ public class PullRequest {
    * @param title the title of the PR
    * @param updatedAt the last time the PR was updated
    */
-  public PullRequest(Repository repository, String branchName, int number, String url,
+  public PullRequest(Repository repository, String branchName, int number, URI url,
                      List<String> labels, List<String> changedFiles, String title,
-                     Instant updatedAt) {
+                     OffsetDateTime updatedAt) {
     this.repository = repository;
     this.branchName = branchName;
     this.number = number;
@@ -49,15 +52,15 @@ public class PullRequest {
   public static PullRequest createPullRequestFrom(spectacular.backend.github.graphql.PullRequest pullRequest) {
     var repository = Repository.createRepositoryFrom(pullRequest.getHeadRef().getRepository());
     var branchName = pullRequest.getHeadRef().getName();
-    List<String> labels = pullRequest.getLabels().getNodes().stream().map(label -> label.getName()).collect(Collectors.toList());
-    List<String> changedFiles = pullRequest.getChangedFiles().getNodes().stream().map(file -> file.getPath()).collect(Collectors.toList());
+    List<String> labels = pullRequest.getLabels().getNodes().stream().map(Label::getName).collect(Collectors.toList());
+    List<String> changedFiles = pullRequest.getChangedFiles().getNodes().stream().map(ChangedFile::getPath).collect(Collectors.toList());
 
     return new PullRequest(repository, branchName, pullRequest.getNumber(), pullRequest.getUrl(), labels, changedFiles,
         pullRequest.getTitle(), pullRequest.getUpdatedAt());
   }
 
-  public boolean changesFile(Repository repo, String filePath) {
-    return repo.equals(this.repository) && changedFiles.contains(filePath);
+  public boolean changesFile(spectacular.backend.common.Repository repoId, String filePath) {
+    return repoId.getNameWithOwner().equals(this.repository.getNameWithOwner()) && changedFiles.contains(filePath);
   }
 
   public String getBranchName() {
@@ -68,7 +71,7 @@ public class PullRequest {
     return number;
   }
 
-  public String getUrl() {
+  public URI getUrl() {
     return url;
   }
 
@@ -88,7 +91,7 @@ public class PullRequest {
     return repository;
   }
 
-  public Instant getUpdatedAt() {
+  public OffsetDateTime getUpdatedAt() {
     return updatedAt;
   }
 }

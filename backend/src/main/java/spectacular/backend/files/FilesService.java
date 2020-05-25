@@ -3,7 +3,6 @@ package spectacular.backend.files;
 import java.io.UnsupportedEncodingException;
 import org.springframework.stereotype.Service;
 import spectacular.backend.catalogues.CatalogueService;
-import spectacular.backend.catalogues.SpecFileLocation;
 import spectacular.backend.common.Repository;
 import spectacular.backend.github.RestApiClient;
 

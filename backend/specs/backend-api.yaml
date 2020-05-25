@@ -24,16 +24,16 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/FindCataloguesResult'
-  /catalogues/{encoded}:
+  /catalogues/{encodedId}:
     get:
       tags:
         - Catalogues
       description: Gets a catalogue
       operationId: getCatalogue
       parameters:
-        - name: encoded
+        - name: encodedId
           in: path
-          description: The encoded id of the Catalogue being fetched
+          description: The base64 encoded id of the Catalogue being fetched
           required: true
           schema:
             type: string
@@ -66,19 +66,20 @@ components:
     Catalogue:
       type: object
       properties:
-        repository:
-          $ref: '#/components/schemas/Repository'
-        filePath:
+        fullPath:
           type: string
         name:
           type: string
+        encodedId:
+          type: string
+          format: byte
+        htmlUrl:
+          type: string
+          format: uri
         title:
           type: string
         description:
           type: string
-        encoded:
-          type: string
-          format: byte
         parseError:
           type: string
         interfaceCount:
@@ -88,17 +89,15 @@ components:
           items:
             $ref: '#/components/schemas/SpecLog'
       required:
-        - repository
-        - filePath
+        - fullPath
         - name
       x-keys:
-        - repository
-        - filePath
+        - fullPath
         - name
     SpecLog:
       type: object
       properties:
-        id:
+        interfaceName:
           type: string
         latestAgreed:
           $ref: '#/components/schemas/SpecItem'
@@ -128,9 +127,7 @@ components:
       properties:
         id:
           type: string
-        repository:
-          $ref: '#/components/schemas/Repository'
-        filePath:
+        fullPath:
           type: string
         htmlUrl:
           type: string
@@ -146,8 +143,7 @@ components:
           $ref: '#/components/schemas/OpenApiSpecParseResult'
       required:
         - id
-        - repository
-        - filePath
+        - fullPath
         - ref
     OpenApiSpecParseResult:
       type: object
@@ -189,10 +185,6 @@ components:
     PullRequest:
       type: object
       properties:
-        repository:
-          $ref: '#/components/schemas/Repository'
-        branchName:
-          type: string
         number:
           type: integer
         url:
@@ -208,20 +200,4 @@ components:
           items:
             type: string
       required:
-        - repository
         - number
-    Repository:
-      type: object
-      properties:
-        owner:
-          type: string
-        name:
-          type: string
-        nameWithOwner:
-          type: string
-        htmlUrl:
-          type: string
-          format: uri
-      required:
-        - owner
-        - name

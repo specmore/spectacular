@@ -1,64 +1,141 @@
 package spectacular.backend.specs
 
+import spectacular.backend.cataloguemanifest.model.Catalogue
+import spectacular.backend.cataloguemanifest.model.Interface
+import spectacular.backend.cataloguemanifest.model.Interfaces
+import spectacular.backend.cataloguemanifest.model.SpecFileLocation
+import spectacular.backend.catalogues.CatalogueId
 import spectacular.backend.common.Repository
 import spectacular.backend.pullrequests.PullRequest
+import spectacular.backend.pullrequests.PullRequestService
 import spock.lang.Specification
 
 import java.time.Instant
+import java.time.OffsetDateTime
 
 class SpecLogServiceTest extends Specification {
     def specService = Mock(SpecService)
-    def specLogService = new SpecLogService(specService)
+    def pullRequestService = Mock(PullRequestService)
+    def specLogService = new SpecLogService(specService, pullRequestService)
 
-    def "getSpecLogForSpecRepoAndFile returns a spec item from master as the latest agreed spec item"() {
-        given: "a catalogue spec file repo and path"
-        def specFileRepo = new Repository("test-owner", "spec-repo")
-        def specFilePath = "test-specs/example-spec.yaml"
-
-        and: "a spec item on the master branch"
-        def masterBranchSpecItem = new SpecItem(specFileRepo, specFilePath, null, "xyz", null, null, null)
-
-        when: "the spec log is retrieved"
-        def specLogResult = specLogService.getSpecLogForSpecRepoAndFile(specFileRepo, specFilePath, [])
-
-        then: "the spec item on the master branch is retrieved"
-        1 * specService.getSpecItem(specFileRepo, specFilePath, "master") >> masterBranchSpecItem
-
-        and: "a valid spec log returned has the master branch spec item set as the latest agreed spec item"
-        specLogResult
-        specLogResult.getId() == "test-owner/spec-repo/test-specs/example-spec.yaml"
-        specLogResult.getLatestAgreed() == masterBranchSpecItem
+    def generateTestCatalogueId() {
+        def catalogueRepository = Repository.createForNameWithOwner("test-owner/test-catalogue-repo")
+        def catalogueFilePath = "test-file.yml"
+        def catalogueName = "testCatalogue"
+        return new CatalogueId(catalogueRepository, catalogueFilePath, catalogueName)
     }
 
-    def "getSpecLogForSpecRepoAndFile returns a spec change proposal an open pull request that changed the spec file"() {
-        given: "a catalogue spec file repo and path"
-        def specFileRepo = new Repository("test-owner", "spec-repo")
-        def specFilePath = "test-specs/example-spec.yaml"
+    def generateTestInterface(String specFilePath, Repository specFileRepository) {
+        def _interface = new Interface();
+        def specFileLocation = new SpecFileLocation().withFilePath(specFilePath)
+        if(specFileRepository) {
+            specFileLocation.setRepo(specFileRepository.getNameWithOwner())
+        }
+        return _interface.withSpecFile(specFileLocation)
+    }
 
-        and: "a spec item on the master branch"
-        def masterBranchSpecItem = new SpecItem(specFileRepo, specFilePath, null, "xyz", null, null, null)
+    def "getSpecLogsFor returns a SpecLog for interface in catalogue without repo specified"() {
+        given: "a catalogue from a catalogue manifest"
+        def catalogue = new Catalogue();
+        def catalogueId = generateTestCatalogueId();
 
-        and: "an open pull request that changed the spec file in another branch"
-        def changeBranch = "test-branch"
-        def openPullRequest = new PullRequest(specFileRepo, changeBranch, 99, "test-url", [], [specFilePath], "test-pr", Instant.now())
-        def changedSpecItem = new SpecItem(specFileRepo, specFilePath, null, changeBranch, null, null, null)
+        and: "with an interface and spec file location set with only a file path"
+        def specFilePath = "test-spec-file-path";
+        def _interface = generateTestInterface(specFilePath, null)
+        catalogue.setInterfaces(new Interfaces().withAdditionalProperty("testInterface1", _interface));
 
-        when: "the spec log is retrieved"
-        def specLogResult = specLogService.getSpecLogForSpecRepoAndFile(specFileRepo, specFilePath, [openPullRequest])
+        and: "a spec item at the file path on the master branch"
+        def masterBranchSpecItem = Mock(spectacular.backend.api.model.SpecItem)
 
-        then: "the spec item on the master branch is retrieved"
-        1 * specService.getSpecItem(specFileRepo, specFilePath, "master") >> masterBranchSpecItem
+        and: "a single open pull request changing the spec file"
+        def prBranch = "test-branch"
+        def openPullRequest = new PullRequest(catalogueId.getRepository(), prBranch, 99, new URI("https://test-url"), [], [specFilePath], "test-pr", OffsetDateTime.now())
 
-        and: "the spec item is retrieved from the branch of the pull request"
-        1 * specService.getSpecItem(specFileRepo, specFilePath, changeBranch) >> changedSpecItem
+        and: "a spec item at the file path on the open pull request's source branch"
+        def prBranchSpecItem = Mock(spectacular.backend.api.model.SpecItem)
 
-        and: "a valid spec log is returned"
-        specLogResult
+        when: "the specLogs for the catalogue are retrieved"
+        def specLogs = specLogService.getSpecLogsFor(catalogue, catalogueId)
 
-        and: "contains a proposal for the open pull request with the changed spec item"
-        specLogResult.getProposedChanges().size() == 1
-        specLogResult.getProposedChanges()[0].getId() == 99
-        specLogResult.getProposedChanges()[0].getPullRequest() == openPullRequest
-        specLogResult.getProposedChanges()[0].getSpecItem() == changedSpecItem
+        then: "a specLog item is return for the interface"
+        specLogs
+        specLogs.size() == 1
+        def specLog = specLogs.first()
+        specLog.getInterfaceName() == "testInterface1"
+
+        and: "a spec item on the master branch is retrieved for the spec file location in the catalogue's repo"
+        1 * specService.getSpecItem(catalogueId.getRepository(), specFilePath, "master") >> masterBranchSpecItem
+
+        and: "the master branch spec item is set as the latest agreed item on the spec log"
+        specLog.getLatestAgreed() == masterBranchSpecItem
+
+        and: "the open pull request is retrieved for changing the spec file in the catalogue's repo"
+        1 * pullRequestService.getPullRequestsForRepoAndFile(catalogueId.getRepository(), "test-spec-file-path") >> [openPullRequest]
+
+        and: "a single proposed change is returned on the specLog item for the open pull request"
+        specLog.getProposedChanges()
+        specLog.getProposedChanges().size() == 1
+        def proposedChange = specLog.getProposedChanges().first()
+        proposedChange.getId() == openPullRequest.getNumber()
+        proposedChange.getPullRequest().getNumber() == openPullRequest.getNumber()
+
+        and: "a spec item on the pull request's source branch is retrieved for the spec file location in the catalogue's repo"
+        1 * specService.getSpecItem(catalogueId.getRepository(), specFilePath, prBranch) >> prBranchSpecItem
+
+        and: "the pull request's source branch spec item is set as the spec item for the proposed change"
+        proposedChange.getSpecItem() == prBranchSpecItem
+    }
+
+    def "getSpecLogsFor returns a SpecLog for interface in catalogue with repo specified"() {
+        given: "a catalogue from a catalogue manifest"
+        def catalogue = new Catalogue();
+        def catalogueId = generateTestCatalogueId();
+
+        and: "with an interface and spec file location set with a file path and repository"
+        def specFilePath = "test-spec-file-path";
+        def specFileRepository = Repository.createForNameWithOwner("test-owner/test-catalogue-repo")
+        def _interface = generateTestInterface(specFilePath, specFileRepository)
+        catalogue.setInterfaces(new Interfaces().withAdditionalProperty("testInterface1", _interface));
+
+        and: "a spec item at the file path on the master branch"
+        def masterBranchSpecItem = Mock(spectacular.backend.api.model.SpecItem)
+
+        and: "a single open pull request changing the spec file"
+        def prBranch = "test-branch"
+        def openPullRequest = new PullRequest(specFileRepository, prBranch, 99, new URI("https://test-url"), [], [specFilePath], "test-pr", OffsetDateTime.now())
+
+        and: "a spec item at the file path on the open pull request's source branch"
+        def prBranchSpecItem = Mock(spectacular.backend.api.model.SpecItem)
+
+        when: "the specLogs for the catalogue are retrieved"
+        def specLogs = specLogService.getSpecLogsFor(catalogue, catalogueId)
+
+        then: "a specLog item is return for the interface"
+        specLogs
+        specLogs.size() == 1
+        def specLog = specLogs.first()
+        specLog.getInterfaceName() == "testInterface1"
+
+        and: "a spec item on the master branch is retrieved for the spec file location in the spec file location's repo"
+        1 * specService.getSpecItem(specFileRepository, specFilePath, "master") >> masterBranchSpecItem
+
+        and: "the master branch spec item is set as the latest agreed item on the spec log"
+        specLog.getLatestAgreed() == masterBranchSpecItem
+
+        and: "the open pull request is retrieved for changing the spec file in the spec file location's repo"
+        1 * pullRequestService.getPullRequestsForRepoAndFile(specFileRepository, "test-spec-file-path") >> [openPullRequest]
+
+        and: "a single proposed change is returned on the specLog item for the open pull request"
+        specLog.getProposedChanges()
+        specLog.getProposedChanges().size() == 1
+        def proposedChange = specLog.getProposedChanges().first()
+        proposedChange.getId() == openPullRequest.getNumber()
+        proposedChange.getPullRequest().getNumber() == openPullRequest.getNumber()
+
+        and: "a spec item on the pull request's source branch is retrieved for the spec file location in the spec file location's repo"
+        1 * specService.getSpecItem(specFileRepository, specFilePath, prBranch) >> prBranchSpecItem
+
+        and: "the pull request's source branch spec item is set as the spec item for the proposed change"
+        proposedChange.getSpecItem() == prBranchSpecItem
     }
 }

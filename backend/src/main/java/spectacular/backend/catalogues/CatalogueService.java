@@ -1,14 +1,8 @@
 package spectacular.backend.catalogues;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +11,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import spectacular.backend.cataloguemanifest.CatalogueManifestParser;
 import spectacular.backend.common.Repository;
 import spectacular.backend.github.RestApiClient;
-import spectacular.backend.github.app.AppInstallationContextProvider;
 import spectacular.backend.github.domain.SearchCodeResultItem;
-import spectacular.backend.pullrequests.PullRequest;
-import spectacular.backend.pullrequests.PullRequestService;
-import spectacular.backend.specs.SpecLog;
 import spectacular.backend.specs.SpecLogService;
 
 @Service
@@ -38,27 +28,20 @@ public class CatalogueService {
   private static final Logger logger = LoggerFactory.getLogger(CatalogueService.class);
 
   private final RestApiClient restApiClient;
-  private final AppInstallationContextProvider appInstallationContextProvider;
   private final SpecLogService specLogService;
-  private final PullRequestService pullRequestService;
 
   /**
    * A service component that encapsulates all the logic required to build Catalogue objects from the information stored in git repositories
    * accessible for a given request's installation context.
    *
    * @param restApiClient an API client to retrieve information about the git repositories
-   * @param appInstallationContextProvider a provider of the installation context in which any catalogue requests are being made
    * @param specLogService a service component providing the functionality to retrieve Spec Log items referenced within the catalogue
-   * @param pullRequestService a service component providing the functionality to find all open Pull Requests changing the referenced spec
    *     files
    */
   public CatalogueService(RestApiClient restApiClient,
-                          AppInstallationContextProvider appInstallationContextProvider,
-                          SpecLogService specLogService, PullRequestService pullRequestService) {
+                          SpecLogService specLogService) {
     this.restApiClient = restApiClient;
-    this.appInstallationContextProvider = appInstallationContextProvider;
     this.specLogService = specLogService;
-    this.pullRequestService = pullRequestService;
   }
 
   /**
@@ -78,25 +61,14 @@ public class CatalogueService {
   }
 
   /**
-   * Get a Catalogue stored in a specific repository for a given user.
+   * Get a Catalogue matching the given identifier and accessible for the given user.
    *
-   * @param repo the repository the catalogue is stored in
+   * @param catalogueId the identifier giving the exact location of the catalogue definition
    * @param username the username of the user
    * @return A Catalogue object
    */
-  public Catalogue getCatalogueForRepoAndUser(Repository repo, String username) {
-    if (!isRepositoryAccessible(repo, username)) {
-      return null;
-    }
-
-    var searchCodeResults = restApiClient.findFiles(CATALOGUE_MANIFEST_FILE_NAME,
-        List.of(CATALOGUE_MANIFEST_YAML_FILE_EXTENSION, CATALOGUE_MANIFEST_YML_FILE_EXTENSION),
-        CATALOGUE_MANIFEST_FILE_PATH,
-        null, repo);
-
-    var catalogueId = pickCatalogueFileFromSearchResults(searchCodeResults.getItems());
-
-    if (catalogueId == null) {
+  public spectacular.backend.api.model.Catalogue getCatalogueForUser(CatalogueId catalogueId, String username) {
+    if (!isRepositoryAccessible(catalogueId.getRepository(), username)) {
       return null;
     }
 
@@ -113,24 +85,25 @@ public class CatalogueService {
    * @return true if the spec file specified is listed in the specified catalogue and the user has access to the catalogue
    */
   public boolean isSpecFileInCatalogue(Repository catalogueRepo, String username, Repository specRepo, String specFilePath) {
-    var catalogue = getCatalogueForRepoAndUser(catalogueRepo, username);
-
-    if (catalogue == null || catalogue.getCatalogueManifest() == null || catalogue.getCatalogueManifest().getSpecFileLocations() == null) {
-      return false;
-    }
-
-    return catalogue.getCatalogueManifest().getSpecFileLocations().stream()
-        .anyMatch(specFileLocation -> specFileMatches(specFileLocation, catalogueRepo, specRepo, specFilePath));
-  }
-
-  private boolean specFileMatches(SpecFileLocation specFileLocation, Repository catalogueRepo, Repository specRepo, String specFilePath) {
-    if (specFileLocation.getRepo() == null && !catalogueRepo.equals(specRepo)) {
-      return false;
-    }
-    if (specFileLocation.getRepo() != null && !specFileLocation.getRepo().equals(specRepo)) {
-      return false;
-    }
-    return specFileLocation.getFilePath().equalsIgnoreCase(specFilePath);
+//    var catalogue = getCatalogueForRepoAndUser(catalogueRepo, username);
+//
+//    if (catalogue == null || catalogue.getCatalogueManifest() == null || catalogue.getCatalogueManifest().getSpecFileLocations() == null) {
+//      return false;
+//    }
+//
+//    return catalogue.getCatalogueManifest().getSpecFileLocations().stream()
+//        .anyMatch(specFileLocation -> specFileMatches(specFileLocation, catalogueRepo, specRepo, specFilePath));
+//  }
+//
+//  private boolean specFileMatches(SpecFileLocation specFileLocation, Repository catalogueRepo, Repository specRepo, String specFilePath) {
+//    if (specFileLocation.getRepo() == null && !catalogueRepo.equals(specRepo)) {
+//      return false;
+//    }
+//    if (specFileLocation.getRepo() != null && !specFileLocation.getRepo().equals(specRepo)) {
+//      return false;
+//    }
+//    return specFileLocation.getFilePath().equalsIgnoreCase(specFilePath);
+    return false;
   }
 
   private CatalogueManifestId pickCatalogueFileFromSearchResults(List<SearchCodeResultItem> searchCodeResultItems) {
@@ -187,9 +160,8 @@ public class CatalogueService {
     var fileContentItem = restApiClient.getRepositoryContent(manifestId.getRepository(), manifestId.getPath(), null);
     try {
       var catalogueManifestParseResult = CatalogueManifestParser.parseManifestFileContents(fileContentItem.getDecodedContent());
-      if(catalogueManifestParseResult.getError() == null) {
-        return catalogueManifestParseResult.getCatalogueManifest().getCatalogues().getAdditionalProperties().entrySet().stream()
-            .map(catalogueEntry -> CatalogueMapper.mapCatalogueManifestEntry(catalogueEntry, manifestId)).collect(Collectors.toList());
+      if(catalogueManifestParseResult.getCatalogueManifest() != null) {
+        return CatalogueMapper.mapCatalogueManifestEntries(catalogueManifestParseResult.getCatalogueManifest(), manifestId);
       } else {
         return Collections.singletonList(CatalogueMapper.createForParseError(catalogueManifestParseResult.getError(), manifestId));
       }
@@ -200,60 +172,24 @@ public class CatalogueService {
     }
   }
 
-  private Catalogue getCatalogue(CatalogueManifestId catalogueManifestId) {
-    var mapper = new ObjectMapper(new YAMLFactory());
-    var fileContentItem = restApiClient.getRepositoryContent(catalogueManifestId.getRepository(), catalogueManifestId.getPath(), null);
-
-    CatalogueManifest manifest = null;
-    String error = null;
+  private spectacular.backend.api.model.Catalogue getFullCatalogueDetails(CatalogueId catalogueId) {
+    spectacular.backend.api.model.Catalogue catalogue = null;
+    List<spectacular.backend.api.model.SpecLog> specLogs = null;
+    var fileContentItem = restApiClient.getRepositoryContent(catalogueId.getRepository(), catalogueId.getPath(), null);
     try {
-      manifest = mapper.readValue(fileContentItem.getDecodedContent(), CatalogueManifest.class);
-      //manifest = CatalogueManifest.parse(fileContentItem.getDecodedContent());
-    } catch (MismatchedInputException e) {
-      logger.debug("An error occurred while parsing the catalogue manifest yaml file: " + catalogueManifestId.toString(), e);
-      error = "An error occurred while parsing the catalogue manifest yaml file. The following field is missing: " + e.getPathReference();
-    } catch (IOException e) {
-      logger.error("An error occurred while parsing the catalogue manifest yaml file: " + catalogueManifestId.toString(), e);
-      error = "An error occurred while parsing the catalogue manifest yaml file: " + e.getMessage();
+      var catalogueParseResult = CatalogueManifestParser.findAndParseCatalogueInManifestFileContents(fileContentItem.getDecodedContent(), catalogueId.getCatalogueName());
+      if(catalogueParseResult.getCatalogue() != null) {
+        catalogue = CatalogueMapper.mapCatalogue(catalogueParseResult.getCatalogue(), catalogueId);
+        specLogs = specLogService.getSpecLogsFor(catalogueParseResult.getCatalogue(), catalogueId);
+      } else {
+        return CatalogueMapper.createForParseError(catalogueParseResult.getError(), catalogueId);
+      }
+    } catch (UnsupportedEncodingException e) {
+      logger.error("An error occurred while decoding the catalogue manifest yaml file: " + ((CatalogueManifestId)catalogueId).toString(), e);
+      var error = "An error occurred while decoding the catalogue manifest yaml file: " + e.getMessage();
+      return CatalogueMapper.createForParseError(error, catalogueId);
     }
 
-    return Catalogue.create(catalogueManifestId, manifest, error);
-  }
-
-  private Catalogue getFullCatalogueDetails(CatalogueManifestId catalogueManifestId) {
-    List<SpecLog> specLogs = null;
-    var catalogue = getCatalogue(catalogueManifestId);
-
-    if (catalogue.getCatalogueManifest() != null) {
-      var specFileLocationsWithRepos = addCatalogueRepoToSpecFileLocationsWithoutRepo(
-          catalogue.getCatalogueManifest().getSpecFileLocations(), catalogueManifestId.getRepository());
-      var repoPullRequests = getRepoPullRequestsForManifestSpecs(specFileLocationsWithRepos);
-      specLogs = specFileLocationsWithRepos.stream()
-          .map(specFileLocation -> getSpecLogForFileLocation(specFileLocation, repoPullRequests))
-          .collect(Collectors.toList());
-    }
-
-    return catalogue.with(specLogs);
-  }
-
-  private List<SpecFileLocation> addCatalogueRepoToSpecFileLocationsWithoutRepo(List<SpecFileLocation> specFileLocations,
-                                                                                Repository catalogueRepo) {
-    return specFileLocations.stream().map(specFileLocation -> {
-      var specRepo = specFileLocation.getRepo() != null ? specFileLocation.getRepo() : catalogueRepo;
-      return new SpecFileLocation(specRepo, specFileLocation.getFilePath());
-    }).collect(Collectors.toList());
-  }
-
-  private Map<Repository, List<PullRequest>> getRepoPullRequestsForManifestSpecs(List<SpecFileLocation> specFileLocations) {
-    var uniqueRepos = specFileLocations.stream().map(specFileLocation -> specFileLocation.getRepo()).distinct();
-    return uniqueRepos.collect(Collectors.toMap(Function.identity(), repository -> pullRequestService.getPullRequestsForRepo(repository)));
-  }
-
-  private SpecLog getSpecLogForFileLocation(SpecFileLocation specFileLocation, Map<Repository, List<PullRequest>> repoPullRequests) {
-    var specFilePath = specFileLocation.getFilePath();
-    var specRepo = specFileLocation.getRepo();
-    var pullRequests = repoPullRequests.get(specRepo);
-
-    return specLogService.getSpecLogForSpecRepoAndFile(specRepo, specFilePath, pullRequests);
+    return catalogue.specLogs(specLogs);
   }
 }

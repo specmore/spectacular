@@ -2,15 +2,16 @@ package spectacular.backend.github.graphql;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.time.Instant;
+import java.net.URI;
+import java.time.OffsetDateTime;
 
 public class PullRequest {
   private final int number;
-  private final String url;
+  private final URI url;
   private final Connection<Label> labels;
   private final Connection<ChangedFile> changedFiles;
   private final String title;
-  private final Instant updatedAt;
+  private final OffsetDateTime updatedAt;
   private final Ref headRef;
 
   /**
@@ -26,11 +27,11 @@ public class PullRequest {
    */
   @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
   public PullRequest(@JsonProperty("number") int number,
-                     @JsonProperty("url") String url,
+                     @JsonProperty("url") URI url,
                      @JsonProperty("labels") Connection<Label> labels,
                      @JsonProperty("files") Connection<ChangedFile> changedFiles,
                      @JsonProperty("title") String title,
-                     @JsonProperty("updatedAt") Instant updatedAt,
+                     @JsonProperty("updatedAt") OffsetDateTime updatedAt,
                      @JsonProperty("headRef") Ref headRef) {
     this.number = number;
     this.url = url;
@@ -45,7 +46,7 @@ public class PullRequest {
     return number;
   }
 
-  public String getUrl() {
+  public URI getUrl() {
     return url;
   }
 
@@ -65,7 +66,7 @@ public class PullRequest {
     return headRef;
   }
 
-  public Instant getUpdatedAt() {
+  public OffsetDateTime getUpdatedAt() {
     return updatedAt;
   }
 }

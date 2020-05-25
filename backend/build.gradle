@@ -73,6 +73,10 @@ openApiGenerate {
 	]
 }
 
+task regenerateCode {
+	dependsOn tasks.clean, tasks.openApiGenerate, tasks.generateJsonSchema2Pojo
+}
+
 sourceSets {
 	main {
 		java {

@@ -58,12 +58,12 @@ public class Repository {
 
   public static Repository createRepositoryFrom(
       spectacular.backend.github.domain.Repository repository) {
-    return createForNameWithOwner(repository.getFull_name(), repository.getHtml_url());
+    return createForNameWithOwner(repository.getFull_name(), repository.getHtml_url().toString());
   }
 
   public static Repository createRepositoryFrom(
       spectacular.backend.github.graphql.Repository repository) {
-    return createForNameWithOwner(repository.getNameWithOwner(), repository.getUrl());
+    return createForNameWithOwner(repository.getNameWithOwner(), repository.getUrl().toString());
   }
 
   public String getOwner() {

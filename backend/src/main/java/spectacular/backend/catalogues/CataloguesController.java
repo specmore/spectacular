@@ -2,8 +2,10 @@ package spectacular.backend.catalogues;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.web.server.ResponseStatusException;
 import spectacular.backend.api.CataloguesApi;
 import spectacular.backend.api.model.FindCataloguesResult;
 import spectacular.backend.api.model.GetCatalogueResult;
@@ -28,6 +30,13 @@ public class CataloguesController implements CataloguesApi {
 
   @Override
   public ResponseEntity<GetCatalogueResult> getCatalogue(byte[] encoded) {
-    return null;
+    var catalogueId = CatalogueId.createFrom(new String(encoded));
+    var catalogue = catalogueService.getCatalogueForUser(catalogueId, authToken.getName());
+    if (catalogue == null) {
+      ResponseEntity.notFound();
+    }
+    var getCatalogueResult = new GetCatalogueResult()
+        .catalogue(catalogue);
+    return ResponseEntity.ok(getCatalogueResult);
   }
 }
