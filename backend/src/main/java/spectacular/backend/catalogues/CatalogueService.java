@@ -85,26 +85,28 @@ public class CatalogueService {
    * @return true if the spec file specified is listed in the specified catalogue and the user has access to the catalogue
    */
   public boolean isSpecFileInCatalogue(Repository catalogueRepo, String username, Repository specRepo, String specFilePath) {
-//    var catalogue = getCatalogueForRepoAndUser(catalogueRepo, username);
-//
-//    if (catalogue == null || catalogue.getCatalogueManifest() == null || catalogue.getCatalogueManifest().getSpecFileLocations() == null) {
-//      return false;
-//    }
-//
-//    return catalogue.getCatalogueManifest().getSpecFileLocations().stream()
-//        .anyMatch(specFileLocation -> specFileMatches(specFileLocation, catalogueRepo, specRepo, specFilePath));
-//  }
-//
-//  private boolean specFileMatches(SpecFileLocation specFileLocation, Repository catalogueRepo, Repository specRepo, String specFilePath) {
-//    if (specFileLocation.getRepo() == null && !catalogueRepo.equals(specRepo)) {
-//      return false;
-//    }
-//    if (specFileLocation.getRepo() != null && !specFileLocation.getRepo().equals(specRepo)) {
-//      return false;
-//    }
-//    return specFileLocation.getFilePath().equalsIgnoreCase(specFilePath);
+    //    var catalogue = getCatalogueForRepoAndUser(catalogueRepo, username);
+    //
+    //    if (catalogue == null || catalogue.getCatalogueManifest() == null ||
+    //    catalogue.getCatalogueManifest().getSpecFileLocations() == null) {
+    //      return false;
+    //    }
+    //
+    //    return catalogue.getCatalogueManifest().getSpecFileLocations().stream()
+    //        .anyMatch(specFileLocation -> specFileMatches(specFileLocation, catalogueRepo, specRepo, specFilePath));
     return false;
   }
+
+  //  private boolean specFileMatches(SpecFileLocation specFileLocation, Repository catalogueRepo, Repository specRepo,
+  //  String specFilePath) {
+  //    if (specFileLocation.getRepo() == null && !catalogueRepo.equals(specRepo)) {
+  //      return false;
+  //    }
+  //    if (specFileLocation.getRepo() != null && !specFileLocation.getRepo().equals(specRepo)) {
+  //      return false;
+  //    }
+  //    return specFileLocation.getFilePath().equalsIgnoreCase(specFilePath);
+  //  }
 
   private CatalogueManifestId pickCatalogueFileFromSearchResults(List<SearchCodeResultItem> searchCodeResultItems) {
     var manifestFileResult = searchCodeResultItems.stream()
@@ -160,7 +162,8 @@ public class CatalogueService {
     var fileContentItem = restApiClient.getRepositoryContent(manifestId.getRepository(), manifestId.getPath(), null);
     try {
       var catalogueManifestParseResult = CatalogueManifestParser.parseManifestFileContents(fileContentItem.getDecodedContent());
-      if(catalogueManifestParseResult.getCatalogueManifest() != null) {
+
+      if (catalogueManifestParseResult.getCatalogueManifest() != null) {
         return CatalogueMapper.mapCatalogueManifestEntries(catalogueManifestParseResult.getCatalogueManifest(), manifestId);
       } else {
         return Collections.singletonList(CatalogueMapper.createForParseError(catalogueManifestParseResult.getError(), manifestId));
@@ -177,15 +180,19 @@ public class CatalogueService {
     List<spectacular.backend.api.model.SpecLog> specLogs = null;
     var fileContentItem = restApiClient.getRepositoryContent(catalogueId.getRepository(), catalogueId.getPath(), null);
     try {
-      var catalogueParseResult = CatalogueManifestParser.findAndParseCatalogueInManifestFileContents(fileContentItem.getDecodedContent(), catalogueId.getCatalogueName());
-      if(catalogueParseResult.getCatalogue() != null) {
+      var catalogueParseResult = CatalogueManifestParser.findAndParseCatalogueInManifestFileContents(
+          fileContentItem.getDecodedContent(),
+          catalogueId.getCatalogueName());
+
+      if (catalogueParseResult.getCatalogue() != null) {
         catalogue = CatalogueMapper.mapCatalogue(catalogueParseResult.getCatalogue(), catalogueId);
         specLogs = specLogService.getSpecLogsFor(catalogueParseResult.getCatalogue(), catalogueId);
       } else {
         return CatalogueMapper.createForParseError(catalogueParseResult.getError(), catalogueId);
       }
     } catch (UnsupportedEncodingException e) {
-      logger.error("An error occurred while decoding the catalogue manifest yaml file: " + ((CatalogueManifestId)catalogueId).toString(), e);
+      logger.error("An error occurred while decoding the catalogue manifest yaml file: " +
+          ((CatalogueManifestId)catalogueId).toString(), e);
       var error = "An error occurred while decoding the catalogue manifest yaml file: " + e.getMessage();
       return CatalogueMapper.createForParseError(error, catalogueId);
     }

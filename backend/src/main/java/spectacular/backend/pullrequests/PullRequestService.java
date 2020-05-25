@@ -77,6 +77,13 @@ public class PullRequestService {
     return cachedPullRequest;
   }
 
+  /**
+   * Gets all the open Pull Requests for a specific repository that have changed a specific file.
+   *
+   * @param repoId the id of the Repository to get open Pull Requests for
+   * @param filePath the file path of the file that has changed in the Pull Requests
+   * @return a List of PullRequest
+   */
   public List<PullRequest> getPullRequestsForRepoAndFile(Repository repoId, String filePath) {
     var openPullRequests = getPullRequestsForRepo(repoId);
     return openPullRequests.stream()

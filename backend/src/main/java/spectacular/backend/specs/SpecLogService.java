@@ -25,6 +25,13 @@ public class SpecLogService {
     this.pullRequestService = pullRequestService;
   }
 
+  /**
+   * Gets the SpecLogs representing the interfaces described in a manifest catalogue item.
+   *
+   * @param catalogue the manifest catalogue item
+   * @param catalogueId the full id of the catalogue
+   * @return a List of SpecLog items
+   */
   public List<spectacular.backend.api.model.SpecLog> getSpecLogsFor(Catalogue catalogue, CatalogueId catalogueId) {
     return catalogue.getInterfaces().getAdditionalProperties().entrySet().stream()
         .map(interfaceEntry -> createSpecLog(interfaceEntry, catalogueId))
@@ -32,7 +39,9 @@ public class SpecLogService {
   }
 
   private spectacular.backend.api.model.SpecLog createSpecLog(Map.Entry<String, Interface> interfaceEntry, CatalogueId catalogueId) {
-    var specRepo = interfaceEntry.getValue().getSpecFile().getRepo() != null ? Repository.createForNameWithOwner(interfaceEntry.getValue().getSpecFile().getRepo()) : catalogueId.getRepository();
+    var specRepo = interfaceEntry.getValue().getSpecFile().getRepo() != null ?
+        Repository.createForNameWithOwner(interfaceEntry.getValue().getSpecFile().getRepo()) :
+        catalogueId.getRepository();
     var specFilePath = interfaceEntry.getValue().getSpecFile().getFilePath();
     var latestAgreedSpecItem = specService.getSpecItem(specRepo, specFilePath, LATEST_AGREED_BRANCH);
     var pullRequestsWithSpecFile = pullRequestService.getPullRequestsForRepoAndFile(specRepo, specFilePath);

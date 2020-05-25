@@ -29,6 +29,14 @@ public class CatalogueMapper {
     return mapCatalogue(catalogue, catalogueId, catalogueId.getCatalogueName());
   }
 
+  /**
+   * Maps a manifest catalogue item to an API Catalogue model.
+   *
+   * @param catalogue the manifest catalogue item
+   * @param manifestId the id of the manifest
+   * @param catalogueName the name of the catalogue item
+   * @return a Catalogue API model
+   */
   public static Catalogue mapCatalogue(
       spectacular.backend.cataloguemanifest.model.Catalogue catalogue,
       CatalogueManifestId manifestId,
@@ -41,6 +49,13 @@ public class CatalogueMapper {
         .interfaceCount(catalogue.getInterfaces().getAdditionalProperties().size());
   }
 
+  /**
+   * Creates an API Catalogue model that represents a fail parsing of an entire Catalogue Manifest file.
+   *
+   * @param parseError the error that occurred while parsing the manifest file
+   * @param manifestId the id of the manifest file being parsed
+   * @return a Catalogue API model
+   */
   public static Catalogue createForParseError(String parseError, CatalogueManifestId manifestId) {
     return new Catalogue()
         .fullPath(manifestId.getFullPath())
@@ -48,22 +63,16 @@ public class CatalogueMapper {
         .parseError(parseError);
   }
 
+  /**
+   * Creates an API Catalogue model that represents a fail parsing of a specific catalogue in a Catalogue Manifest file.
+   * @param parseError the error that occurred while parsing the manifest file
+   * @param catalogueId the id of the catalogue being parsed
+   * @return a Catalogue API model
+   */
   public static Catalogue createForParseError(String parseError, CatalogueId catalogueId) {
     return new Catalogue()
         .fullPath(catalogueId.getFullPath())
         .name(catalogueId.getCatalogueName())
         .parseError(parseError);
-  }
-
-  public static List<SpecFileLocation> getSpecFileLocationsWithRepos(
-      spectacular.backend.cataloguemanifest.model.Catalogue catalogue,
-      CatalogueManifestId manifestId
-      ) {
-    return catalogue.getInterfaces().getAdditionalProperties().entrySet().stream()
-        .map(interfaceEntry -> {
-          var specRepo = interfaceEntry.getValue().getSpecFile().getRepo() != null ? interfaceEntry.getValue().getSpecFile().getRepo() : manifestId.getRepository().getNameWithOwner();
-          return new SpecFileLocation().withRepo(specRepo).withFilePath(interfaceEntry.getValue().getSpecFile().getFilePath());
-        })
-        .collect(Collectors.toList());
   }
 }

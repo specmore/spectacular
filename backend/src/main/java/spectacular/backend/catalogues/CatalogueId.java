@@ -20,6 +20,11 @@ public class CatalogueId extends CatalogueManifestId {
     return catalogueName;
   }
 
+  /**
+   * Calculates the base64 encoded combined id to represent this catalogue.
+   *
+   * @return a base64 encoded string
+   */
   public String getEncoded() {
     if (encoded == null) {
       var combined = String.join("/", this.repository.getNameWithOwner(), this.path, this.catalogueName);
@@ -28,8 +33,14 @@ public class CatalogueId extends CatalogueManifestId {
     return encoded;
   }
 
-  public static CatalogueId createFrom(String encodedString) {
-    byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
+  /**
+   * Creates a CatalogueId from the values combined together in a base64 encoded string.
+   *
+   * @param encodedId a base64 encoded combined id string
+   * @return a CatalogueId representing the values stored in the encoded string
+   */
+  public static CatalogueId createFrom(String encodedId) {
+    byte[] decodedBytes = Base64.getDecoder().decode(encodedId);
     var combined = new String(decodedBytes);
     int firstSlash = combined.indexOf("/");
     int secondSlash = combined.indexOf("/", firstSlash + 1);
@@ -43,7 +54,7 @@ public class CatalogueId extends CatalogueManifestId {
     }
 
     var repository = Repository.createForNameWithOwner(combined.substring(0, secondSlash - 1));
-    var path = combined.substring(secondSlash + 1, afterPathSlash -1);
+    var path = combined.substring(secondSlash + 1, afterPathSlash - 1);
     var name = combined.substring(afterPathSlash + 1);
 
     return new CatalogueId(repository, path, name);

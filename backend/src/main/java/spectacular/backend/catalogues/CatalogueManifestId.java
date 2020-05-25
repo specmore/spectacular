@@ -24,6 +24,12 @@ public class CatalogueManifestId {
     return path;
   }
 
+  /**
+   * Calculates a combined full path representing the location of this CatalogueManifest
+   * built up from joining the repository full name and manifest file path.
+   *
+   * @return a combined string of the manifest repository and file path
+   */
   public String getFullPath() {
     if (fullPath == null) {
       fullPath = String.join("/", repository.getNameWithOwner(), path);

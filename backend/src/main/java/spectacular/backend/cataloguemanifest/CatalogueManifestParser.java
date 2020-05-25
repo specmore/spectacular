@@ -13,6 +13,12 @@ import spectacular.backend.cataloguemanifest.model.CatalogueManifest;
 public class CatalogueManifestParser {
   private static final Logger logger = LoggerFactory.getLogger(CatalogueManifestParser.class);
 
+  /**
+   * Parses the YAML contents of a catalogue manifest file and returns the result.
+   *
+   * @param manifestFileContents the YAML contents of a catalogue manifest file to be parsed
+   * @return the CatalogueManifestParseResult
+   */
   public static CatalogueManifestParseResult parseManifestFileContents(String manifestFileContents) {
     var mapper = new ObjectMapper(new YAMLFactory());
 
@@ -22,7 +28,8 @@ public class CatalogueManifestParser {
       manifest = mapper.readValue(manifestFileContents, CatalogueManifest.class);
     } catch (MismatchedInputException e) {
       logger.debug("A mapping error occurred while parsing a catalogue manifest yaml file. ", e);
-      error = "A mapping error occurred while parsing the catalogue manifest yaml file. The following field is missing: " + e.getPathReference();
+      error = "A mapping error occurred while parsing the catalogue manifest yaml file. The following field is missing: " +
+          e.getPathReference();
     } catch (IOException e) {
       logger.error("An IO error occurred while parsing a catalogue manifest yaml file.", e);
       error = "An IO error occurred while parsing the catalogue manifest yaml file: " + e.getMessage();
@@ -31,6 +38,13 @@ public class CatalogueManifestParser {
     return new CatalogueManifestParseResult(manifest, error);
   }
 
+  /**
+   * Finds a specific catalogue in the YAML contents of a catalogue manifest file and returns the parsed result.
+   *
+   * @param manifestFileContents the YAML contents of a catalogue manifest file to be searched and parsed
+   * @param catalogueName the name of the specific catalogue to be found
+   * @return the CatalogueParseResult
+   */
   public static CatalogueParseResult findAndParseCatalogueInManifestFileContents(String manifestFileContents, String catalogueName) {
     var mapper = new ObjectMapper(new YAMLFactory());
 
@@ -46,14 +60,15 @@ public class CatalogueManifestParser {
       }
       var catalogueNode = cataloguesNode.get(catalogueName);
       if (catalogueNode == null) {
-        error = String.format("Unable to find catalogue node '%s' in 'catalogues' node catalogue manifest yaml file.", catalogueName);;
+        error = String.format("Unable to find catalogue node '%s' in 'catalogues' node catalogue manifest yaml file.", catalogueName);
         logger.debug(error);
         return new CatalogueParseResult(null, error);
       }
       catalogue = mapper.treeToValue(catalogueNode, Catalogue.class);
     } catch (MismatchedInputException e) {
       logger.debug("A mapping error occurred while parsing a catalogue manifest yaml file. ", e);
-      error = "A mapping error occurred while parsing the catalogue manifest yaml file. The following field is missing: " + e.getPathReference();
+      error = "A mapping error occurred while parsing the catalogue manifest yaml file. The following field is missing: " +
+          e.getPathReference();
     } catch (IOException e) {
       logger.error("An IO error occurred while parsing a catalogue manifest yaml file.", e);
       error = "An IO error occurred while parsing the catalogue manifest yaml file: " + e.getMessage();
