@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import spectacular.backend.cataloguemanifest.CatalogueManifestParser;
-import spectacular.backend.common.Repository;
+import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.github.domain.SearchCodeResultItem;
 import spectacular.backend.specs.SpecLogService;
@@ -53,7 +53,7 @@ public class CatalogueService {
    */
   public List<spectacular.backend.api.model.Catalogue> findCataloguesForOrgAndUser(String orgName, String username) {
     var catalogues = findCataloguesForOrg(orgName).stream()
-        .filter(catalogueManifestId -> isRepositoryAccessible(catalogueManifestId.getRepository(), username))
+        .filter(catalogueManifestId -> isRepositoryAccessible(catalogueManifestId.getRepositoryId(), username))
         .map(this::getCataloguesFromManifest)
         .flatMap(cataloguesList -> cataloguesList.stream())
         .collect(Collectors.toList());
@@ -68,7 +68,7 @@ public class CatalogueService {
    * @return A Catalogue object
    */
   public spectacular.backend.api.model.Catalogue getCatalogueForUser(CatalogueId catalogueId, String username) {
-    if (!isRepositoryAccessible(catalogueId.getRepository(), username)) {
+    if (!isRepositoryAccessible(catalogueId.getRepositoryId(), username)) {
       return null;
     }
 
@@ -84,7 +84,7 @@ public class CatalogueService {
    * @param specFilePath the filepath of the spec file
    * @return true if the spec file specified is listed in the specified catalogue and the user has access to the catalogue
    */
-  public boolean isSpecFileInCatalogue(Repository catalogueRepo, String username, Repository specRepo, String specFilePath) {
+  public boolean isSpecFileInCatalogue(RepositoryId catalogueRepo, String username, RepositoryId specRepo, String specFilePath) {
     //    var catalogue = getCatalogueForRepoAndUser(catalogueRepo, username);
     //
     //    if (catalogue == null || catalogue.getCatalogueManifest() == null ||
@@ -138,7 +138,7 @@ public class CatalogueService {
     var repositorySearchCodeResultsMap = searchCodeResults.getItems().stream()
         .filter(resultItem -> isExactFileNameMatch(resultItem, CATALOGUE_MANIFEST_FULL_YAML_FILE_NAME) ||
             isExactFileNameMatch(resultItem, CATALOGUE_MANIFEST_FULL_YML_FILE_NAME))
-        .collect(Collectors.groupingBy(Repository::createRepositoryFrom));
+        .collect(Collectors.groupingBy(RepositoryId::createRepositoryFrom));
 
     return repositorySearchCodeResultsMap.entrySet().stream()
         .map(entry -> pickCatalogueFileFromSearchResults(entry.getValue()))
@@ -149,7 +149,7 @@ public class CatalogueService {
     return searchCodeResultItem.getName().equals(filename);
   }
 
-  private boolean isRepositoryAccessible(Repository repo, String username) {
+  private boolean isRepositoryAccessible(RepositoryId repo, String username) {
     try {
       return restApiClient.isUserRepositoryCollaborator(repo, username);
     } catch (HttpClientErrorException ex) {
@@ -159,7 +159,7 @@ public class CatalogueService {
   }
 
   private List<spectacular.backend.api.model.Catalogue> getCataloguesFromManifest(CatalogueManifestId manifestId) {
-    var fileContentItem = restApiClient.getRepositoryContent(manifestId.getRepository(), manifestId.getPath(), null);
+    var fileContentItem = restApiClient.getRepositoryContent(manifestId.getRepositoryId(), manifestId.getPath(), null);
     try {
       var catalogueManifestParseResult = CatalogueManifestParser.parseManifestFileContents(fileContentItem.getDecodedContent());
 
@@ -178,7 +178,7 @@ public class CatalogueService {
   private spectacular.backend.api.model.Catalogue getFullCatalogueDetails(CatalogueId catalogueId) {
     spectacular.backend.api.model.Catalogue catalogue = null;
     List<spectacular.backend.api.model.SpecLog> specLogs = null;
-    var fileContentItem = restApiClient.getRepositoryContent(catalogueId.getRepository(), catalogueId.getPath(), null);
+    var fileContentItem = restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), catalogueId.getPath(), null);
     try {
       var catalogueParseResult = CatalogueManifestParser.findAndParseCatalogueInManifestFileContents(
           fileContentItem.getDecodedContent(),

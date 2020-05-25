@@ -10,14 +10,12 @@ import org.springframework.http.MediaType
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.test.web.client.MockRestServiceServer
-import spectacular.backend.common.Repository
+import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.app.AppInstallationAuthenticationHeaderRequestInterceptor
 import spock.lang.Specification
 
 import java.time.OffsetDateTime
-import java.time.ZoneId
 import java.time.ZoneOffset
-import java.time.ZonedDateTime
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method
@@ -40,7 +38,7 @@ class RestApiClientTest extends Specification {
 
     def "GetRepositoryContent"() {
         given: "a content file to fetch"
-        def repo = new Repository("testOwner", "testRepo", null)
+        def repo = new RepositoryId("testOwner", "testRepo")
         def filePath = "specs/test-file.yaml"
 
         and: "a content item response"

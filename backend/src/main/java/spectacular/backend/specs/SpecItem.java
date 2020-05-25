@@ -3,11 +3,11 @@ package spectacular.backend.specs;
 import java.time.Instant;
 import javax.validation.constraints.NotNull;
 import spectacular.backend.api.model.OpenApiSpecParseResult;
-import spectacular.backend.common.Repository;
+import spectacular.backend.common.RepositoryId;
 
 public class SpecItem {
   private final String id;
-  private final Repository repository;
+  private final RepositoryId repositoryId;
   private final String filePath;
   private final String htmlUrl;
   private final String ref;
@@ -19,7 +19,7 @@ public class SpecItem {
    * Constructs a SpecItem object representing a snapshot of a specific spec file at a point in the git repository's commit history and
    * the parsed contents of the OpenAPI YAML file.
    *
-   * @param repository the repository the spec file belongs to
+   * @param repositoryId the repository the spec file belongs to
    * @param filePath the path of the spec file
    * @param htmlUrl the url of the spec file
    * @param ref a reference to the commit at which the snapshot is taken
@@ -27,11 +27,11 @@ public class SpecItem {
    * @param lastModified the date and time when the commit was made
    * @param parseResult the OpenApiSpecParseResult of the Spec File's contents
    */
-  public SpecItem(@NotNull Repository repository, @NotNull String filePath, String htmlUrl,
+  public SpecItem(@NotNull RepositoryId repositoryId, @NotNull String filePath, String htmlUrl,
                   String ref, String sha, Instant lastModified,
                   OpenApiSpecParseResult parseResult) {
-    this.id = repository.getNameWithOwner() + "/" + ref + "/" + filePath;
-    this.repository = repository;
+    this.id = repositoryId.getNameWithOwner() + "/" + ref + "/" + filePath;
+    this.repositoryId = repositoryId;
     this.filePath = filePath;
     this.htmlUrl = htmlUrl;
     this.ref = ref;
@@ -44,8 +44,8 @@ public class SpecItem {
     return id;
   }
 
-  public Repository getRepository() {
-    return repository;
+  public RepositoryId getRepositoryId() {
+    return repositoryId;
   }
 
   public String getFilePath() {

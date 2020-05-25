@@ -2,15 +2,13 @@ package spectacular.backend.specs
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
-import spectacular.backend.common.Repository
+import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.domain.ContentItem
 import spock.lang.Specification
 
 import java.time.OffsetDateTime
-import java.time.ZoneId
 import java.time.ZoneOffset
-import java.time.ZonedDateTime
 
 class SpecServiceTest extends Specification {
     def restApiClient = Mock(RestApiClient)
@@ -18,7 +16,7 @@ class SpecServiceTest extends Specification {
 
     def "Get spec item for spec repo and file path returns spec item"() {
         given: "a spec file repo, path and ref"
-        def specFileRepo = new Repository("test-owner", "spec-repo")
+        def specFileRepo = new RepositoryId("test-owner", "spec-repo")
         def specFilePath = "test-specs/example-spec.yaml"
         def ref = "xyz"
 
@@ -63,7 +61,7 @@ class SpecServiceTest extends Specification {
 
     def "Get spec item returns parse error for spec file contents not found"() {
         given: "a spec file repo, path and ref"
-        def specFileRepo = new Repository("test-owner", "spec-repo");
+        def specFileRepo = new RepositoryId("test-owner", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def ref = "xyz"
 

@@ -3,7 +3,7 @@ package spectacular.backend.files;
 import java.io.UnsupportedEncodingException;
 import org.springframework.stereotype.Service;
 import spectacular.backend.catalogues.CatalogueService;
-import spectacular.backend.common.Repository;
+import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
 
 @Service
@@ -28,7 +28,7 @@ public class FilesService {
    *     or null if the spec file doesn't exist in the catalogue or the user does not have access to the catalogue
    * @throws UnsupportedEncodingException if an error is occurred when decoding the file contents returned by the git source system
    */
-  public String getFileContent(Repository catalogueRepo, Repository specRepo, String path, String ref, String username)
+  public String getFileContent(RepositoryId catalogueRepo, RepositoryId specRepo, String path, String ref, String username)
       throws UnsupportedEncodingException {
     var isInCatalogue = catalogueService.isSpecFileInCatalogue(catalogueRepo, username, specRepo, path);
 

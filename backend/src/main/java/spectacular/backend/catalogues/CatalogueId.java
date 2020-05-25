@@ -3,13 +3,13 @@ package spectacular.backend.catalogues;
 import java.util.Base64;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
-import spectacular.backend.common.Repository;
+import spectacular.backend.common.RepositoryId;
 
 public class CatalogueId extends CatalogueManifestId {
   protected final String catalogueName;
   private String encoded;
 
-  public CatalogueId(@NotNull Repository repository,
+  public CatalogueId(@NotNull RepositoryId repository,
                      @NotNull String path,
                      @NotNull String catalogueName) {
     super(repository, path);
@@ -27,7 +27,7 @@ public class CatalogueId extends CatalogueManifestId {
    */
   public String getEncoded() {
     if (encoded == null) {
-      var combined = String.join("/", this.repository.getNameWithOwner(), this.path, this.catalogueName);
+      var combined = String.join("/", this.repositoryId.getNameWithOwner(), this.path, this.catalogueName);
       encoded = Base64.getEncoder().encodeToString(combined.getBytes());
     }
     return encoded;
@@ -53,7 +53,7 @@ public class CatalogueId extends CatalogueManifestId {
       afterPathSlash = fileExtensionAndSlash + 5;
     }
 
-    var repository = Repository.createForNameWithOwner(combined.substring(0, secondSlash - 1));
+    var repository = RepositoryId.createForNameWithOwner(combined.substring(0, secondSlash - 1));
     var path = combined.substring(secondSlash + 1, afterPathSlash - 1);
     var name = combined.substring(afterPathSlash + 1);
 
@@ -84,7 +84,7 @@ public class CatalogueId extends CatalogueManifestId {
   public String toString() {
     return "CatalogueId{" +
         "catalogueName='" + catalogueName + '\'' +
-        ", repository=" + repository +
+        ", repositoryId=" + repositoryId +
         ", path='" + path + '\'' +
         '}';
   }

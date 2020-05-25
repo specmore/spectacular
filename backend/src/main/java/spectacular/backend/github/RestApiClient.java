@@ -16,7 +16,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import spectacular.backend.common.Repository;
+import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.app.AppInstallationAuthenticationHeaderRequestInterceptor;
 import spectacular.backend.github.domain.ContentItem;
 import spectacular.backend.github.domain.SearchCodeResults;
@@ -62,7 +62,7 @@ public class RestApiClient {
    * @param ref the reference to the commit at which to take the contents from
    * @return a ContentItem representing the details and encoded contents of the file
    */
-  public ContentItem getRepositoryContent(Repository repo, String path, String ref) {
+  public ContentItem getRepositoryContent(RepositoryId repo, String path, String ref) {
     UriComponentsBuilder uriComponentsBuilder =
         UriComponentsBuilder.fromUriString(REPO_CONTENT_PATH);
     if (ref != null && ref.length() > 0) {
@@ -95,7 +95,7 @@ public class RestApiClient {
    * @return a SearchCodeResults object representing the result of the search
    */
   public SearchCodeResults findFiles(String filename, List<String> fileExtensions, String path, String org,
-                                     Repository repo) {
+                                     RepositoryId repo) {
     StringJoiner joiner = new StringJoiner("+");
     if (filename != null && filename.length() > 0) {
       joiner.add("filename:" + filename);
@@ -132,7 +132,7 @@ public class RestApiClient {
    * @param username the name of the user to check is a collaborator
    * @return true if the user is a collaborator of the repository
    */
-  public boolean isUserRepositoryCollaborator(Repository repo, String username) {
+  public boolean isUserRepositoryCollaborator(RepositoryId repo, String username) {
     UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(REPO_COLLABORATORS_PATH);
 
     HttpHeaders headers = new HttpHeaders();
@@ -149,7 +149,7 @@ public class RestApiClient {
    * @param repoId the repository identifier to get more information about
    * @return a Repository object with the information retrieved from the API
    */
-  public spectacular.backend.github.domain.Repository getRepository(Repository repoId) {
+  public spectacular.backend.github.domain.Repository getRepository(RepositoryId repoId) {
     UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(REPO_PATH);
 
     HttpHeaders headers = new HttpHeaders();

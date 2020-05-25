@@ -2,16 +2,16 @@ package spectacular.backend.catalogues;
 
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
-import spectacular.backend.common.Repository;
+import spectacular.backend.common.RepositoryId;
 
 public class InterfaceId extends CatalogueId {
   protected final String interfaceName;
 
-  public InterfaceId(@NotNull Repository repository,
+  public InterfaceId(@NotNull RepositoryId repositoryId,
                      @NotNull String path,
                      @NotNull String catalogueName,
                      @NotNull String interfaceName) {
-    super(repository, path, catalogueName);
+    super(repositoryId, path, catalogueName);
     this.interfaceName = interfaceName;
   }
 
@@ -44,7 +44,7 @@ public class InterfaceId extends CatalogueId {
     return "InterfaceId{" +
         "interfaceName='" + interfaceName + '\'' +
         ", catalogueName='" + catalogueName + '\'' +
-        ", repository=" + repository +
+        ", repository=" + repositoryId +
         ", path='" + path + '\'' +
         '}';
   }

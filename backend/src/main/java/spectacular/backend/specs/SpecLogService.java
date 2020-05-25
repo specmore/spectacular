@@ -9,7 +9,7 @@ import spectacular.backend.api.model.ChangeProposal;
 import spectacular.backend.cataloguemanifest.model.Catalogue;
 import spectacular.backend.cataloguemanifest.model.Interface;
 import spectacular.backend.catalogues.CatalogueId;
-import spectacular.backend.common.Repository;
+import spectacular.backend.common.RepositoryId;
 import spectacular.backend.pullrequests.PullRequest;
 import spectacular.backend.pullrequests.PullRequestService;
 
@@ -40,8 +40,8 @@ public class SpecLogService {
 
   private spectacular.backend.api.model.SpecLog createSpecLog(Map.Entry<String, Interface> interfaceEntry, CatalogueId catalogueId) {
     var specRepo = interfaceEntry.getValue().getSpecFile().getRepo() != null ?
-        Repository.createForNameWithOwner(interfaceEntry.getValue().getSpecFile().getRepo()) :
-        catalogueId.getRepository();
+        RepositoryId.createForNameWithOwner(interfaceEntry.getValue().getSpecFile().getRepo()) :
+        catalogueId.getRepositoryId();
     var specFilePath = interfaceEntry.getValue().getSpecFile().getFilePath();
     var latestAgreedSpecItem = specService.getSpecItem(specRepo, specFilePath, LATEST_AGREED_BRANCH);
     var pullRequestsWithSpecFile = pullRequestService.getPullRequestsForRepoAndFile(specRepo, specFilePath);
@@ -55,7 +55,7 @@ public class SpecLogService {
   }
 
   private ChangeProposal createChangeProposalFor(PullRequest internalPullRequest, String specFilePath) {
-    var changedSpecItem = specService.getSpecItem(internalPullRequest.getRepository(), specFilePath, internalPullRequest.getBranchName());
+    var changedSpecItem = specService.getSpecItem(internalPullRequest.getRepositoryId(), specFilePath, internalPullRequest.getBranchName());
     spectacular.backend.api.model.PullRequest pullRequest = PullRequestMapper.mapGitHubPullRequest(internalPullRequest);
     var id = pullRequest.getNumber();
     return new ChangeProposal()

@@ -2,7 +2,7 @@ package spectacular.backend.files
 
 
 import spectacular.backend.catalogues.CatalogueService
-import spectacular.backend.common.Repository
+import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.domain.ContentItem
 import spock.lang.Specification
@@ -17,11 +17,11 @@ class FilesServiceTest extends Specification {
         def username = "test-user"
 
         and: "a catalogue repo with a manifest containing the requested spec file"
-        def catalogueRepo = new Repository("test-owner", "catalogue-repo")
+        def catalogueRepo = new RepositoryId("test-owner", "catalogue-repo")
         def isInManifest = true
 
         and: "a spec file repo and path with content"
-        def specFileRepo = new Repository("test-owner2", "spec-repo");
+        def specFileRepo = new RepositoryId("test-owner2", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def specFileContent = "test content"
         def specFileContentItem = Mock(ContentItem)
@@ -43,7 +43,7 @@ class FilesServiceTest extends Specification {
         def username = "test-user"
 
         and: "a catalogue repo with a manifest containing the requested spec file"
-        def catalogueRepo = new Repository("test-owner", "catalogue-repo")
+        def catalogueRepo = new RepositoryId("test-owner", "catalogue-repo")
         def isInManifest = true
 
         and: "a spec file repo and path with content"
@@ -68,7 +68,7 @@ class FilesServiceTest extends Specification {
         def username = "test-user"
 
         and: "a catalogue repo with a manifest containing the requested spec file"
-        def catalogueRepo = new Repository("test-owner", "catalogue-repo")
+        def catalogueRepo = new RepositoryId("test-owner", "catalogue-repo")
         def isInManifest = true
 
         and: "a spec file repo and path with content"
@@ -96,11 +96,11 @@ class FilesServiceTest extends Specification {
         def username = "test-user"
 
         and: "a catalogue repo with a manifest not containing the requested spec file"
-        def catalogueRepo = new Repository("test-owner", "catalogue-repo")
+        def catalogueRepo = new RepositoryId("test-owner", "catalogue-repo")
         def isInManifest = false
 
         and: "a spec file repo and path with content"
-        def specFileRepo = new Repository("test-owner2", "spec-repo");
+        def specFileRepo = new RepositoryId("test-owner2", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def specFileContent = "test content"
         def specFileContentItem = Mock(ContentItem)
@@ -122,11 +122,11 @@ class FilesServiceTest extends Specification {
         def username = "test-user"
 
         and: "a catalogue repo the user does not have access to"
-        def catalogueRepo = new Repository("test-owner", "catalogue-repo")
+        def catalogueRepo = new RepositoryId("test-owner", "catalogue-repo")
         def isInManifest = false
 
         and: "a spec file repo and path with content"
-        def specFileRepo = new Repository("test-owner2", "spec-repo");
+        def specFileRepo = new RepositoryId("test-owner2", "spec-repo");
         def specFilePath = "test-specs/example-spec.yaml"
         def specFileContent = "test content"
         def specFileContentItem = Mock(ContentItem)

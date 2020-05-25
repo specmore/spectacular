@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerMapping;
-import spectacular.backend.common.Repository;
+import spectacular.backend.common.RepositoryId;
 
 @RestController
 public class FilesController {
@@ -48,8 +48,8 @@ public class FilesController {
       @PathVariable("ref-name") String refName,
       HttpServletRequest request,
       JwtAuthenticationToken authToken) throws UnsupportedEncodingException {
-    Repository catalogueRepo = new Repository(catalogueOwner, catalogueRepoName);
-    Repository fileRepo = new Repository(fileOwner, fileRepoName);
+    RepositoryId catalogueRepo = new RepositoryId(catalogueOwner, catalogueRepoName);
+    RepositoryId fileRepo = new RepositoryId(fileOwner, fileRepoName);
     String path = extractPathFromPattern(request);
     String fileContent;
     try {

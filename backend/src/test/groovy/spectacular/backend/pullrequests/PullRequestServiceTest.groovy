@@ -1,7 +1,7 @@
 package spectacular.backend.pullrequests
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
-import spectacular.backend.common.Repository
+import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.graphql.ChangedFile
 import spectacular.backend.github.graphql.Connection
@@ -11,7 +11,6 @@ import spectacular.backend.github.graphql.RepositoryWithPullRequests
 import spectacular.backend.github.graphql.ResponseData
 import spock.lang.Specification
 
-import java.time.Instant
 import java.time.OffsetDateTime
 
 class PullRequestServiceTest extends Specification {
@@ -21,7 +20,7 @@ class PullRequestServiceTest extends Specification {
     def "GetPullRequestsForRepo ignores pull requests from unknown branches"() {
         given: "A repository"
         def graphQlRepo = new spectacular.backend.github.graphql.Repository("test-owner/test-repo", new URI("some-url"))
-        def repo = Repository.createRepositoryFrom(graphQlRepo)
+        def repo = RepositoryId.createRepositoryFrom(graphQlRepo)
 
         and: "a Pull Request from a valid branch"
         def validRef = new Ref("a-valid-branch-name", graphQlRepo)

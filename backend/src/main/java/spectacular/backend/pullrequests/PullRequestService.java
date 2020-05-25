@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import spectacular.backend.common.Repository;
+import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.github.graphql.GraphQlRequest;
 
@@ -42,7 +42,7 @@ public class PullRequestService {
       "}";
 
   private final RestApiClient restApiClient;
-  private final Map<Repository, List<PullRequest>> cache;
+  private final Map<RepositoryId, List<PullRequest>> cache;
 
   public PullRequestService(RestApiClient restApiClient) {
     this.restApiClient = restApiClient;
@@ -55,7 +55,7 @@ public class PullRequestService {
    * @param repoId the repository to get Pull Requests for
    * @return a list of open PullRequests
    */
-  public List<PullRequest> getPullRequestsForRepo(Repository repoId) {
+  public List<PullRequest> getPullRequestsForRepo(RepositoryId repoId) {
     var cachedPullRequest = cache.get(repoId);
     if (cachedPullRequest == null) {
       String formattedQuery = String.format(PullRequestsGraphQLQuery, repoId.getOwner(), repoId.getName());
@@ -84,7 +84,7 @@ public class PullRequestService {
    * @param filePath the file path of the file that has changed in the Pull Requests
    * @return a List of PullRequest
    */
-  public List<PullRequest> getPullRequestsForRepoAndFile(Repository repoId, String filePath) {
+  public List<PullRequest> getPullRequestsForRepoAndFile(RepositoryId repoId, String filePath) {
     var openPullRequests = getPullRequestsForRepo(repoId);
     return openPullRequests.stream()
         .filter(pullRequest -> pullRequest.changesFile(repoId, filePath))

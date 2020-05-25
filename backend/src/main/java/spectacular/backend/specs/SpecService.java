@@ -2,7 +2,6 @@ package spectacular.backend.specs;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import org.slf4j.Logger;
@@ -10,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import spectacular.backend.api.model.OpenApiSpecParseResult;
-import spectacular.backend.common.Repository;
+import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.specs.openapi.OpenApiParser;
 
@@ -31,7 +30,7 @@ public class SpecService {
    * @param ref a reference to the commit in the git repository's history at which to take the file's contents
    * @return a SpecItem object containing the file details and parsed OpenAPI YAML of the file's contents
    */
-  public spectacular.backend.api.model.SpecItem getSpecItem(Repository repoId, String filePath, String ref) {
+  public spectacular.backend.api.model.SpecItem getSpecItem(RepositoryId repoId, String filePath, String ref) {
     OpenApiSpecParseResult parseResult = null;
     URI htmlUrl = null;
     String sha = null;

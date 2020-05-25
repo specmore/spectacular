@@ -3,7 +3,7 @@ package spectacular.backend.catalogues
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 import spectacular.backend.api.model.SpecLog
-import spectacular.backend.common.Repository
+import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.domain.ContentItem
 import spectacular.backend.github.domain.SearchCodeResultItem
@@ -19,7 +19,7 @@ class CatalogueServiceTest extends Specification {
     def catalogueService = new CatalogueService(restApiClient, specLogService)
 
     def aCatalogue() {
-        def catalogueRepo = new Repository("test-owner","test-repo987")
+        def catalogueRepo = new RepositoryId("test-owner","test-repo987")
         def catalogueManifestFile = catalogueManifestYmlFilename;
         def catalogueName = "testCatalogue1"
         return new CatalogueId(catalogueRepo, catalogueManifestFile, catalogueName)
@@ -44,7 +44,7 @@ class CatalogueServiceTest extends Specification {
         return manifestFileContentItem
     }
 
-    def searchCodeResultsForInstallation(Repository catalogueRepository, boolean isBothFilesPresent = false) {
+    def searchCodeResultsForInstallation(RepositoryId catalogueRepository, boolean isBothFilesPresent = false) {
         def searchCodeResultItems = [];
 
         def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, catalogueRepository.getNameWithOwner(), new URI("https://test-url"))
@@ -79,10 +79,10 @@ class CatalogueServiceTest extends Specification {
         def catalogue = catalogueService.getCatalogueForUser(catalogueId, username)
 
         then: "github is checked if the user is a collaborator of the repository"
-        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepository(), username) >> userAndInstallationAccessToCatalogueRepository
+        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), username) >> userAndInstallationAccessToCatalogueRepository
 
         and: "the .yml manifest file contents is retrieved"
-        1 * restApiClient.getRepositoryContent(catalogueId.getRepository(), catalogueId.getPath(), null) >> manifestFileContentItem
+        1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), catalogueId.getPath(), null) >> manifestFileContentItem
 
         and: "a valid catalogue is returned for specific catalogue"
         catalogue
@@ -117,7 +117,7 @@ class CatalogueServiceTest extends Specification {
         def catalogue = catalogueService.getCatalogueForUser(catalogueId, username)
 
         then: "github is checked if the user is a collaborator of the repository"
-        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepository(), username) >> userAndInstallationAccessToCatalogueRepository
+        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), username) >> userAndInstallationAccessToCatalogueRepository
 
         and: "no file contents are retrieved"
         0 * restApiClient.getRepositoryContent(*_)
@@ -140,7 +140,7 @@ class CatalogueServiceTest extends Specification {
         def catalogue = catalogueService.getCatalogueForUser(catalogueId, username)
 
         then: "github is checked if the user is a collaborator of the repository"
-        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepository(), username) >> { throw new HttpClientErrorException(HttpStatus.FORBIDDEN) }
+        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), username) >> { throw new HttpClientErrorException(HttpStatus.FORBIDDEN) }
 
         and: "no file contents are retrieved"
         0 * restApiClient.getRepositoryContent(*_)
@@ -160,7 +160,7 @@ class CatalogueServiceTest extends Specification {
         def org = "test-org"
 
         and: "user and app installation access to 1 repository with a catalogue config manifest file"
-        def repo = new Repository("test-owner","test-repo987")
+        def repo = new RepositoryId("test-owner","test-repo987")
         def searchCodeResults = searchCodeResultsForInstallation(repo)
         def userAndInstallationAccessToCatalogueRepository = true
 
@@ -203,7 +203,7 @@ class CatalogueServiceTest extends Specification {
         def org = "test-org"
 
         and: "user and app installation access to 1 repository with a both catalogue config manifest file extensions"
-        def repo = new Repository("test-owner","test-repo987")
+        def repo = new RepositoryId("test-owner","test-repo987")
         def searchCodeResults = searchCodeResultsForInstallation(repo, true)
         def userAndInstallationAccessToCatalogueRepository = true
 
@@ -238,7 +238,7 @@ class CatalogueServiceTest extends Specification {
         def org = "test-org"
 
         and: "1 repository with a catalogue config manifest file the user does not have access to"
-        def repo = new Repository("test-owner","test-repo987")
+        def repo = new RepositoryId("test-owner","test-repo987")
         def searchCodeResults = searchCodeResultsForInstallation(repo)
         def userAndInstallationAccessToCatalogueRepository = false
 
@@ -266,7 +266,7 @@ class CatalogueServiceTest extends Specification {
         def org = "test-org"
 
         and: "1 repository with a catalogue config manifest file the app installation does not have access to"
-        def repo = new Repository("test-owner","test-repo987")
+        def repo = new RepositoryId("test-owner","test-repo987")
         def searchCodeResults = searchCodeResultsForInstallation(repo)
 
         when: "the find catalogues for user and org is called"
@@ -296,7 +296,7 @@ class CatalogueServiceTest extends Specification {
         def searchResultFilename = "spectacular-app-config.yaml"
 
         and: "an app installation with access to 1 repository with a catalogue config manifest file"
-        def repo = new Repository("test-owner","test-repo987")
+        def repo = new RepositoryId("test-owner","test-repo987")
         def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), new URI("https://test-url"))
         def searchCodeResultItem = new SearchCodeResultItem(searchResultFilename, searchResultFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
         def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)

@@ -1,46 +1,35 @@
 package spectacular.backend.common;
 
 import java.util.Objects;
+import javax.validation.constraints.NotNull;
 import org.springframework.util.Assert;
 import spectacular.backend.github.domain.SearchCodeResultItem;
 
-public class Repository {
+public class RepositoryId {
   private final String owner;
   private final String name;
-  private final String htmlUrl;
-
-  public Repository(String owner, String name) {
-    this(owner, name, null);
-  }
 
   /**
-   * Constructs a Repository object representing the location of a Git Repository.
+   * Creates a RepositoryId that represents an unique repository.
    *
-   * @param owner the owner of the Repository
-   * @param name the name of the Repository
-   * @param htmlUrl the URL to the repository
+   * @param owner the repository owner name
+   * @param name the name of the repository
    */
-  public Repository(String owner, String name, String htmlUrl) {
+  public RepositoryId(@NotNull String owner, @NotNull String name) {
     Assert.hasText(owner, "owner cannot be null or empty");
     Assert.hasText(name, "name cannot be null or empty");
 
     this.owner = owner;
     this.name = name;
-    this.htmlUrl = htmlUrl;
-  }
-
-  public static Repository createForNameWithOwner(String nameWithOwner) {
-    return createForNameWithOwner(nameWithOwner, null);
   }
 
   /**
    * Creates a Repository object using a / delimited string representing the repository Owner and Name.
    *
    * @param nameWithOwner a / delimited string containing the repository owner and name using the following format: {owner}/{name}
-   * @param htmlUrl the url of the repository
    * @return a new Repository
    */
-  public static Repository createForNameWithOwner(String nameWithOwner, String htmlUrl) {
+  public static RepositoryId createForNameWithOwner(String nameWithOwner) {
     Assert.hasText(nameWithOwner, "nameWithOwner cannot be null or empty");
 
     var parts = nameWithOwner.split("/");
@@ -49,21 +38,21 @@ public class Repository {
           "nameWithOwner needs to be in the format :owner-name/:repository-name");
     }
 
-    return new Repository(parts[0], parts[1], htmlUrl);
+    return new RepositoryId(parts[0], parts[1]);
   }
 
-  public static Repository createRepositoryFrom(SearchCodeResultItem searchCodeResultItem) {
+  public static RepositoryId createRepositoryFrom(SearchCodeResultItem searchCodeResultItem) {
     return createRepositoryFrom(searchCodeResultItem.getRepository());
   }
 
-  public static Repository createRepositoryFrom(
+  public static RepositoryId createRepositoryFrom(
       spectacular.backend.github.domain.Repository repository) {
-    return createForNameWithOwner(repository.getFull_name(), repository.getHtml_url().toString());
+    return createForNameWithOwner(repository.getFull_name());
   }
 
-  public static Repository createRepositoryFrom(
+  public static RepositoryId createRepositoryFrom(
       spectacular.backend.github.graphql.Repository repository) {
-    return createForNameWithOwner(repository.getNameWithOwner(), repository.getUrl().toString());
+    return createForNameWithOwner(repository.getNameWithOwner());
   }
 
   public String getOwner() {
@@ -78,10 +67,6 @@ public class Repository {
     return String.join("/", owner, name);
   }
 
-  public String getHtmlUrl() {
-    return htmlUrl;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -90,7 +75,7 @@ public class Repository {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Repository that = (Repository) o;
+    RepositoryId that = (RepositoryId) o;
     return getOwner().equals(that.getOwner()) &&
         getName().equals(that.getName());
   }

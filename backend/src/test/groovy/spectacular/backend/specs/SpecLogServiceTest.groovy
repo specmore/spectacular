@@ -5,12 +5,11 @@ import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.cataloguemanifest.model.Interfaces
 import spectacular.backend.cataloguemanifest.model.SpecFileLocation
 import spectacular.backend.catalogues.CatalogueId
-import spectacular.backend.common.Repository
+import spectacular.backend.common.RepositoryId
 import spectacular.backend.pullrequests.PullRequest
 import spectacular.backend.pullrequests.PullRequestService
 import spock.lang.Specification
 
-import java.time.Instant
 import java.time.OffsetDateTime
 
 class SpecLogServiceTest extends Specification {
@@ -19,13 +18,13 @@ class SpecLogServiceTest extends Specification {
     def specLogService = new SpecLogService(specService, pullRequestService)
 
     def generateTestCatalogueId() {
-        def catalogueRepository = Repository.createForNameWithOwner("test-owner/test-catalogue-repo")
+        def catalogueRepository = RepositoryId.createForNameWithOwner("test-owner/test-catalogue-repo")
         def catalogueFilePath = "test-file.yml"
         def catalogueName = "testCatalogue"
         return new CatalogueId(catalogueRepository, catalogueFilePath, catalogueName)
     }
 
-    def generateTestInterface(String specFilePath, Repository specFileRepository) {
+    def generateTestInterface(String specFilePath, RepositoryId specFileRepository) {
         def _interface = new Interface();
         def specFileLocation = new SpecFileLocation().withFilePath(specFilePath)
         if(specFileRepository) {
@@ -49,7 +48,7 @@ class SpecLogServiceTest extends Specification {
 
         and: "a single open pull request changing the spec file"
         def prBranch = "test-branch"
-        def openPullRequest = new PullRequest(catalogueId.getRepository(), prBranch, 99, new URI("https://test-url"), [], [specFilePath], "test-pr", OffsetDateTime.now())
+        def openPullRequest = new PullRequest(catalogueId.getRepositoryId(), prBranch, 99, new URI("https://test-url"), [], [specFilePath], "test-pr", OffsetDateTime.now())
 
         and: "a spec item at the file path on the open pull request's source branch"
         def prBranchSpecItem = Mock(spectacular.backend.api.model.SpecItem)
@@ -64,13 +63,13 @@ class SpecLogServiceTest extends Specification {
         specLog.getInterfaceName() == "testInterface1"
 
         and: "a spec item on the master branch is retrieved for the spec file location in the catalogue's repo"
-        1 * specService.getSpecItem(catalogueId.getRepository(), specFilePath, "master") >> masterBranchSpecItem
+        1 * specService.getSpecItem(catalogueId.getRepositoryId(), specFilePath, "master") >> masterBranchSpecItem
 
         and: "the master branch spec item is set as the latest agreed item on the spec log"
         specLog.getLatestAgreed() == masterBranchSpecItem
 
         and: "the open pull request is retrieved for changing the spec file in the catalogue's repo"
-        1 * pullRequestService.getPullRequestsForRepoAndFile(catalogueId.getRepository(), "test-spec-file-path") >> [openPullRequest]
+        1 * pullRequestService.getPullRequestsForRepoAndFile(catalogueId.getRepositoryId(), "test-spec-file-path") >> [openPullRequest]
 
         and: "a single proposed change is returned on the specLog item for the open pull request"
         specLog.getProposedChanges()
@@ -80,7 +79,7 @@ class SpecLogServiceTest extends Specification {
         proposedChange.getPullRequest().getNumber() == openPullRequest.getNumber()
 
         and: "a spec item on the pull request's source branch is retrieved for the spec file location in the catalogue's repo"
-        1 * specService.getSpecItem(catalogueId.getRepository(), specFilePath, prBranch) >> prBranchSpecItem
+        1 * specService.getSpecItem(catalogueId.getRepositoryId(), specFilePath, prBranch) >> prBranchSpecItem
 
         and: "the pull request's source branch spec item is set as the spec item for the proposed change"
         proposedChange.getSpecItem() == prBranchSpecItem
@@ -93,7 +92,7 @@ class SpecLogServiceTest extends Specification {
 
         and: "with an interface and spec file location set with a file path and repository"
         def specFilePath = "test-spec-file-path";
-        def specFileRepository = Repository.createForNameWithOwner("test-owner/test-catalogue-repo")
+        def specFileRepository = RepositoryId.createForNameWithOwner("test-owner/test-catalogue-repo")
         def _interface = generateTestInterface(specFilePath, specFileRepository)
         catalogue.setInterfaces(new Interfaces().withAdditionalProperty("testInterface1", _interface));
 
