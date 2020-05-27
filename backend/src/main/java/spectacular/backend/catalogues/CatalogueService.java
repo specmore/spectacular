@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import spectacular.backend.cataloguemanifest.CatalogueManifestParser;
+import spectacular.backend.common.CatalogueId;
+import spectacular.backend.common.CatalogueManifestId;
 import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.github.domain.SearchCodeResultItem;

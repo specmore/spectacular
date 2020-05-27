@@ -2,13 +2,12 @@ package spectacular.backend.catalogues;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.web.server.ResponseStatusException;
 import spectacular.backend.api.CataloguesApi;
 import spectacular.backend.api.model.FindCataloguesResult;
 import spectacular.backend.api.model.GetCatalogueResult;
+import spectacular.backend.common.CatalogueId;
 
 public class CataloguesController implements CataloguesApi {
   private final CatalogueService catalogueService;

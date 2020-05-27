@@ -8,7 +8,7 @@ import spectacular.backend.api.mapper.PullRequestMapper;
 import spectacular.backend.api.model.ChangeProposal;
 import spectacular.backend.cataloguemanifest.model.Catalogue;
 import spectacular.backend.cataloguemanifest.model.Interface;
-import spectacular.backend.catalogues.CatalogueId;
+import spectacular.backend.common.CatalogueId;
 import spectacular.backend.common.RepositoryId;
 import spectacular.backend.pullrequests.PullRequest;
 import spectacular.backend.pullrequests.PullRequestService;

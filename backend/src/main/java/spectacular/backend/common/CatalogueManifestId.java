@@ -1,8 +1,7 @@
-package spectacular.backend.catalogues;
+package spectacular.backend.common;
 
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
-import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.domain.SearchCodeResultItem;
 
 public class CatalogueManifestId {

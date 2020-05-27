@@ -1,9 +1,8 @@
-package spectacular.backend.catalogues;
+package spectacular.backend.common;
 
 import java.util.Base64;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
-import spectacular.backend.common.RepositoryId;
 
 public class CatalogueId extends CatalogueManifestId {
   protected final String catalogueName;

@@ -1,8 +1,7 @@
-package spectacular.backend.catalogues;
+package spectacular.backend.common;
 
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
-import spectacular.backend.common.RepositoryId;
 
 public class InterfaceId extends CatalogueId {
   protected final String interfaceName;

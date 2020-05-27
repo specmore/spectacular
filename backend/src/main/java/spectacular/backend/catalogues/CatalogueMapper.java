@@ -7,7 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spectacular.backend.api.model.Catalogue;
 import spectacular.backend.cataloguemanifest.model.CatalogueManifest;
-import spectacular.backend.cataloguemanifest.model.SpecFileLocation;
+import spectacular.backend.common.CatalogueId;
+import spectacular.backend.common.CatalogueManifestId;
 
 public class CatalogueMapper {
   private static final Logger logger = LoggerFactory.getLogger(CatalogueMapper.class);

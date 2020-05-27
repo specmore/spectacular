@@ -4,7 +4,7 @@ import spectacular.backend.cataloguemanifest.model.Catalogue
 import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.cataloguemanifest.model.Interfaces
 import spectacular.backend.cataloguemanifest.model.SpecFileLocation
-import spectacular.backend.catalogues.CatalogueId
+import spectacular.backend.common.CatalogueId
 import spectacular.backend.common.RepositoryId
 import spectacular.backend.pullrequests.PullRequest
 import spectacular.backend.pullrequests.PullRequestService
