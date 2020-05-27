@@ -7,14 +7,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.github.graphql.GraphQlRequest;
 
-@Service
-public class PullRequestService {
-  private static final Logger logger = LoggerFactory.getLogger(PullRequestService.class);
+@Repository
+public class PullRequestRepository {
+  private static final Logger logger = LoggerFactory.getLogger(PullRequestRepository.class);
 
   private static final String PullRequestsGraphQLQuery = "query {\n" +
       "    repository(owner: \"%s\", name:\"%s\") {\n" +
@@ -44,7 +44,7 @@ public class PullRequestService {
   private final RestApiClient restApiClient;
   private final Map<RepositoryId, List<PullRequest>> cache;
 
-  public PullRequestService(RestApiClient restApiClient) {
+  public PullRequestRepository(RestApiClient restApiClient) {
     this.restApiClient = restApiClient;
     cache = new HashMap<>();
   }

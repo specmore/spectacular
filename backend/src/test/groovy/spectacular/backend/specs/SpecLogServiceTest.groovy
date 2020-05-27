@@ -7,15 +7,15 @@ import spectacular.backend.cataloguemanifest.model.SpecFileLocation
 import spectacular.backend.common.CatalogueId
 import spectacular.backend.common.RepositoryId
 import spectacular.backend.pullrequests.PullRequest
-import spectacular.backend.pullrequests.PullRequestService
+import spectacular.backend.pullrequests.PullRequestRepository
 import spock.lang.Specification
 
 import java.time.OffsetDateTime
 
 class SpecLogServiceTest extends Specification {
     def specService = Mock(SpecService)
-    def pullRequestService = Mock(PullRequestService)
-    def specLogService = new SpecLogService(specService, pullRequestService)
+    def pullRequestRepository = Mock(PullRequestRepository)
+    def specLogService = new SpecLogService(specService, pullRequestRepository)
 
     def generateTestCatalogueId() {
         def catalogueRepository = RepositoryId.createForNameWithOwner("test-owner/test-catalogue-repo")
@@ -69,7 +69,7 @@ class SpecLogServiceTest extends Specification {
         specLog.getLatestAgreed() == masterBranchSpecItem
 
         and: "the open pull request is retrieved for changing the spec file in the catalogue's repo"
-        1 * pullRequestService.getPullRequestsForRepoAndFile(catalogueId.getRepositoryId(), "test-spec-file-path") >> [openPullRequest]
+        1 * pullRequestRepository.getPullRequestsForRepoAndFile(catalogueId.getRepositoryId(), "test-spec-file-path") >> [openPullRequest]
 
         and: "a single proposed change is returned on the specLog item for the open pull request"
         specLog.getProposedChanges()
@@ -122,7 +122,7 @@ class SpecLogServiceTest extends Specification {
         specLog.getLatestAgreed() == masterBranchSpecItem
 
         and: "the open pull request is retrieved for changing the spec file in the spec file location's repo"
-        1 * pullRequestService.getPullRequestsForRepoAndFile(specFileRepository, "test-spec-file-path") >> [openPullRequest]
+        1 * pullRequestRepository.getPullRequestsForRepoAndFile(specFileRepository, "test-spec-file-path") >> [openPullRequest]
 
         and: "a single proposed change is returned on the specLog item for the open pull request"
         specLog.getProposedChanges()

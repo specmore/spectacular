@@ -11,18 +11,18 @@ import spectacular.backend.cataloguemanifest.model.Interface;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.common.RepositoryId;
 import spectacular.backend.pullrequests.PullRequest;
-import spectacular.backend.pullrequests.PullRequestService;
+import spectacular.backend.pullrequests.PullRequestRepository;
 
 @Service
 public class SpecLogService {
   private static final String LATEST_AGREED_BRANCH = "master";
 
   private final SpecService specService;
-  private final PullRequestService pullRequestService;
+  private final PullRequestRepository pullRequestRepository;
 
-  public SpecLogService(SpecService specService, PullRequestService pullRequestService) {
+  public SpecLogService(SpecService specService, PullRequestRepository pullRequestRepository) {
     this.specService = specService;
-    this.pullRequestService = pullRequestService;
+    this.pullRequestRepository = pullRequestRepository;
   }
 
   /**
@@ -44,7 +44,7 @@ public class SpecLogService {
         catalogueId.getRepositoryId();
     var specFilePath = interfaceEntry.getValue().getSpecFile().getFilePath();
     var latestAgreedSpecItem = specService.getSpecItem(specRepo, specFilePath, LATEST_AGREED_BRANCH);
-    var pullRequestsWithSpecFile = pullRequestService.getPullRequestsForRepoAndFile(specRepo, specFilePath);
+    var pullRequestsWithSpecFile = pullRequestRepository.getPullRequestsForRepoAndFile(specRepo, specFilePath);
     var proposedChanges = pullRequestsWithSpecFile.stream()
         .map(pullRequest -> createChangeProposalFor(pullRequest, specFilePath))
         .collect(Collectors.toList());

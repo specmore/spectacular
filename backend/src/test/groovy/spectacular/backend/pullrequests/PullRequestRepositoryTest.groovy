@@ -13,9 +13,9 @@ import spock.lang.Specification
 
 import java.time.OffsetDateTime
 
-class PullRequestServiceTest extends Specification {
+class PullRequestRepositoryTest extends Specification {
     def restApiClient = Mock(RestApiClient)
-    def pullRequestService = new PullRequestService(restApiClient)
+    def pullRequestRepository = new PullRequestRepository(restApiClient)
 
     def "GetPullRequestsForRepo ignores pull requests from unknown branches"() {
         given: "A repository"
@@ -39,7 +39,7 @@ class PullRequestServiceTest extends Specification {
         def graphQlReponse = new GraphQlResponse(graphQlResponseData, JsonNodeFactory.instance.arrayNode())
 
         when: "the Pull Requests are retrieved for changed file"
-        def pullRequestsResult = pullRequestService.getPullRequestsForRepoAndFile(repo, "test-changed-file")
+        def pullRequestsResult = pullRequestRepository.getPullRequestsForRepoAndFile(repo, "test-changed-file")
 
         then: "the Pull Requests should have been queried from the GitHub GraphQL API for the repository"
         1 * restApiClient.graphQlQuery(_) >> graphQlReponse
