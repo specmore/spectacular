@@ -10,8 +10,8 @@ import spectacular.backend.cataloguemanifest.model.Catalogue;
 import spectacular.backend.cataloguemanifest.model.Interface;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.common.RepositoryId;
-import spectacular.backend.pullrequests.PullRequest;
-import spectacular.backend.pullrequests.PullRequestRepository;
+import spectacular.backend.github.pullrequests.PullRequest;
+import spectacular.backend.github.pullrequests.PullRequestRepository;
 
 @Service
 public class SpecLogService {

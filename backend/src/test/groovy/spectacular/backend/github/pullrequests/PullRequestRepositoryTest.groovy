@@ -1,4 +1,4 @@
-package spectacular.backend.pullrequests
+package spectacular.backend.github.pullrequests
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import spectacular.backend.common.RepositoryId

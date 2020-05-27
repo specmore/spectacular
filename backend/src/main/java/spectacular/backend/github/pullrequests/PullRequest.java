@@ -1,4 +1,4 @@
-package spectacular.backend.pullrequests;
+package spectacular.backend.github.pullrequests;
 
 import java.net.URI;
 import java.time.OffsetDateTime;

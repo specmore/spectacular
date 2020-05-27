@@ -9,7 +9,7 @@ public class PullRequestMapper {
    * @param pullRequest the PullRequest to be mapped
    * @return a PullRequest API model
    */
-  public static PullRequest mapGitHubPullRequest(spectacular.backend.pullrequests.PullRequest pullRequest) {
+  public static PullRequest mapGitHubPullRequest(spectacular.backend.github.pullrequests.PullRequest pullRequest) {
     return new PullRequest()
         .number(pullRequest.getNumber())
         .title(pullRequest.getTitle())

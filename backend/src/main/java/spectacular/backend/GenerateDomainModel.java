@@ -2,7 +2,7 @@ package spectacular.backend;
 
 import ch.ifocusit.plantuml.classdiagram.ClassDiagramBuilder;
 import spectacular.backend.installation.InstallationResponse;
-import spectacular.backend.pullrequests.PullRequest;
+import spectacular.backend.github.pullrequests.PullRequest;
 
 public class GenerateDomainModel {
   /**
