@@ -30,3 +30,5 @@ rules:
     - 2
     - code: 140
   "@typescript-eslint/camelcase": off
+ignorePatterns:
+ - __generated__
