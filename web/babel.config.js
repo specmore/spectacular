@@ -1,14 +1,14 @@
 const presets = [
-    [
-      "@babel/env",
-      {
-        targets: {
-          node: 'current',
-        },
+  [
+    '@babel/env',
+    {
+      targets: {
+        node: 'current',
       },
-    ],
-    "@babel/preset-react",
-  ];
-  
-  module.exports = { presets };
-  
+    },
+  ],
+  '@babel/preset-react',
+  '@babel/typescript',
+];
+
+module.exports = { presets };
