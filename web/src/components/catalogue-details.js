@@ -1,9 +1,10 @@
 import React from 'react';
 import {
-  Icon, Image, Message, Segment, Header, Grid, Label,
+  Icon, Image, Message, Segment, Header, Grid,
 } from 'semantic-ui-react';
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
 import SpecLog from './spec-log';
+import RepositoryLabel from './repository-label';
 
 const CatalogueError = ({ error, catalogueId }) => (
   <Message icon negative data-testid="catalogue-details-error-message">
@@ -36,10 +37,7 @@ const CatalogueDetails = ({ catalogueId, catalogueManifest, specLogs }) => (
           </Grid.Column>
         </Grid.Row>
       </Grid>
-      <Label as="a" href={catalogueId.repository.htmlUrl} target="_blank">
-        <Icon name="github" />
-        {catalogueId.repository.nameWithOwner}
-      </Label>
+      <RepositoryLabel repository={catalogueId.repository} />
     </Segment>
     <Header as="h3" attached="top">
       <Icon name="list" />
