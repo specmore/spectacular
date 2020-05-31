@@ -11,7 +11,7 @@ public class InstallationController {
     this.installationService = installationService;
   }
 
-  @GetMapping("api/installation")
+  @GetMapping("installation")
   public InstallationResponse getCurrentInstallation() {
     var installation = this.installationService.getCurrentInstallation();
     return new InstallationResponse(installation);

@@ -19,6 +19,7 @@ management:
         include: info, health, metrics
 #logging:
 #  level:
+#    root: DEBUG
 #    spectacular: DEBUG
 #    org:
 #      springframework:

@@ -71,6 +71,7 @@ module.exports = () => {
         '/api': {
           target: 'http://localhost:5000', // actual api
           // target: 'http://localhost:5005', //wiremock
+          pathRewrite: { '^/api': '' },
           headers: {
             'x-spec-installation-id': process.env.SPECTACULAR_GITHUB_APP_INSTALLATION_ID,
           },
