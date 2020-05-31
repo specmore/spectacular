@@ -29,14 +29,14 @@ module.exports = () => {
       rules: [
         {
           enforce: 'pre',
-          test: /\.(js|jsx)$/,
+          test: /\.(js|jsx|ts|tsx)$/,
           exclude: /node_modules/,
           use: {
             loader: 'eslint-loader',
           },
         },
         {
-          test: /\.(js|jsx)$/,
+          test: /\.(js|jsx|ts|tsx)$/,
           exclude: /node_modules/,
           use: {
             loader: 'babel-loader',
@@ -53,6 +53,9 @@ module.exports = () => {
           },
         },
       ],
+    },
+    resolve: {
+      extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     },
     plugins: [definePlugin, htmlPlugin, miniCssExtractPlugin],
     output: {
