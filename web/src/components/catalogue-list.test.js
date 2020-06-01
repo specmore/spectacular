@@ -1,12 +1,12 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
-import axiosMock from 'axios';
 import CatalogueList from './catalogue-list';
 import CatalogueListItemMock from './catalogue-list-item';
 import { renderWithRouter } from '../__tests__/test-utils';
 import Generator from '../__tests__/test-data-generator';
+import { useFindCataloguesForUser as useFindCataloguesForUserMock } from '../__generated__/backend-api-client';
 
-jest.mock('axios');
+jest.mock('../__generated__/backend-api-client');
 
 // mock out the actual list items
 jest.mock('./catalogue-list-item', () => jest.fn(() => null));
@@ -24,7 +24,7 @@ describe('CatalogueList component', () => {
       },
     };
 
-    axiosMock.get.mockResolvedValueOnce(cataloguesResponse);
+    useFindCataloguesForUserMock.mockReturnValueOnce(cataloguesResponse);
 
     // when catalogue list component renders
     const { findByTestId } = renderWithRouter(<CatalogueList org="test-org" />);
@@ -37,22 +37,27 @@ describe('CatalogueList component', () => {
   });
 
   test('unsuccessful fetch displays error message', async () => {
-    // given a mocked error thrown
-    axiosMock.get.mockImplementation(() => {
-      throw new Error('test error');
-    });
+    // given a fetch error
+    const cataloguesResponse = {
+      error: {
+        message: 'An error message.',
+      },
+    };
+    useFindCataloguesForUserMock.mockReturnValueOnce(cataloguesResponse);
 
     // when catalogue list component renders
     const { findByText } = renderWithRouter(<CatalogueList />);
 
     // then it contains an error message
-    expect(await findByText('An error occurred while fetching catalogues.')).toBeInTheDocument();
+    expect(await findByText('An error message.')).toBeInTheDocument();
   });
 
   test('loader is shown before fetch result', async () => {
     // given a mocked catalogues response that is not yet resolved
-    const responsePromise = new Promise(() => {});
-    axiosMock.get.mockImplementation(() => responsePromise);
+    const cataloguesResponse = {
+      loading: true,
+    };
+    useFindCataloguesForUserMock.mockReturnValueOnce(cataloguesResponse);
 
     // when catalogue list component renders
     const { getByText, getByTestId } = renderWithRouter(<CatalogueList />);

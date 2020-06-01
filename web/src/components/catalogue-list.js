@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   Dimmer, Loader, Item, Segment, Message, Header,
 } from 'semantic-ui-react';
-import { fetchCatalogues } from '../api-client';
 import EmptyCatalogueItemImage from '../assets/images/empty-catalogue-item.png';
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
 import CatalogueListItem from './catalogue-list-item';
+import { useFindCataloguesForUser } from '../__generated__/backend-api-client';
 
 const CatalogueListLoading = () => (
   <Segment vertical>
@@ -37,28 +37,14 @@ const CatalogueList = ({ catalogues }) => (
 );
 
 const CatalogueListContainer = ({ org }) => {
-  const [catalogues, setCatalogues] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const findCataloguesForUser = useFindCataloguesForUser({ queryParams: { org } });
+  const { data: catalogues, loading, error } = findCataloguesForUser;
 
-  const fetchCatalogueData = async (orgName) => {
-    try {
-      const cataloguesData = await fetchCatalogues(orgName);
-      setCatalogues(cataloguesData.catalogues);
-    } catch (error) {
-      // console.error(error);
-      setErrorMessage('An error occurred while fetching catalogues.');
-    }
-  };
+  if (loading) return (<CatalogueListLoading />);
 
-  useEffect(() => {
-    fetchCatalogueData(org);
-  }, [org]);
+  if (error) return (<CatalogueListError errorMessage={error.message} />);
 
-  if (!catalogues && !errorMessage) return (<CatalogueListLoading />);
-
-  if (errorMessage) return (<CatalogueListError errorMessage={errorMessage} />);
-
-  return (<CatalogueList catalogues={catalogues} />);
+  return (<CatalogueList catalogues={catalogues.catalogues} />);
 };
 
 export default CatalogueListContainer;
