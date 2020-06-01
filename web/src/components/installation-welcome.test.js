@@ -3,8 +3,10 @@ import { render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import axiosMock from 'axios';
 import InstallationWelcome from './installation-welcome';
+import CatalogueListMock from './catalogue-list';
 
 jest.mock('axios');
+jest.mock('./catalogue-list', () => jest.fn(() => null));
 
 describe('InstallationWelcome component', () => {
   test('successful fetch displays installation details', async () => {
@@ -27,6 +29,9 @@ describe('InstallationWelcome component', () => {
 
     // and the installation owner name
     expect(await findByText('test-owner')).toBeInTheDocument();
+
+    // and the catalogue list to be shown
+    expect(CatalogueListMock).toHaveBeenCalledTimes(1);
   });
 
   test('unsuccessful fetch displays error message', async () => {
