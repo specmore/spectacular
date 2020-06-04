@@ -14,10 +14,8 @@ jest.mock('./catalogue-list-item', () => jest.fn(() => null));
 describe('CatalogueList component', () => {
   test('successful fetch displays catalogue items', async () => {
     // given a mocked successful catalogues response with 2 catalogues
-    const repo1 = Generator.Repository.generateRepository({ name: 'repo1' });
-    const repo2 = Generator.Repository.generateRepository({ name: 'repo2' });
-    const catalogue1 = Generator.Catalogue.generateValidCatalogue({ id: Generator.Catalogue.generateCatalogueId({ repository: repo1 }) });
-    const catalogue2 = Generator.Catalogue.generateValidCatalogue({ id: Generator.Catalogue.generateCatalogueId({ repository: repo2 }) });
+    const catalogue1 = Generator.Catalogue.generateCatalogue({ name: 'testCatalogue1' });
+    const catalogue2 = Generator.Catalogue.generateCatalogue({ name: 'testCatalogue2' });
     const cataloguesResponse = {
       data: {
         catalogues: [catalogue1, catalogue2],

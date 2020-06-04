@@ -1,11 +1,12 @@
+import { ChangeProposal } from '../../__generated__/backend-api-client';
+
 import PullRequest from './pull-request';
 import SpecItem from './spec-item';
 
-const generateProposedChange = ({
+const generateChangeProposal = ({
   pullRequest = PullRequest.generatePullRequest(),
-  filePath = 'specs/example-template.yaml',
-  specItem = SpecItem.generateSpecItem({ repository: pullRequest.repository, ref: pullRequest.branchName, filePath }),
-} = {}) => {
+  specItem = SpecItem.generateSpecItem(),
+} = {}): ChangeProposal => {
   const id = pullRequest.number;
 
   return {
@@ -16,5 +17,5 @@ const generateProposedChange = ({
 };
 
 export default {
-  generateProposedChange,
+  generateChangeProposal,
 };

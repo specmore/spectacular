@@ -1,74 +1,68 @@
-import React, { useState, useEffect } from 'react';
+import React, { FunctionComponent } from 'react';
 import {
   Dimmer, Loader, Message, Segment, Container,
 } from 'semantic-ui-react';
 import { useParams } from 'react-router-dom';
 import SwaggerUI from 'swagger-ui-react';
-import { fetchCatalogue, createFileApiURL } from '../api-client';
 import EmptyItemImage from '../assets/images/empty-catalogue-item.png';
 import CatalogueDetails from './catalogue-details';
 import 'swagger-ui-react/swagger-ui.css';
 import './catalogue-container.css';
 import { CloseSpecButton, BackToCatalogueListLinkButton } from '../routes';
+import { useGetCatalogue, Catalogue } from '../__generated__/backend-api-client';
 
-const CatalogueContainerLoading = ({ owner, repo }) => (
+const CatalogueContainerLoading = () => (
   <Segment vertical textAlign="center">
     <Dimmer inverted active>
-      <Loader content={`Loading catalogue for ${owner}/${repo}`} />
+      <Loader content="Loading catalogue.." />
     </Dimmer>
     <img src={EmptyItemImage} data-testid="catalogue-container-placeholder-image" alt="placeholder" />
   </Segment>
 );
 
-const CatalogueContainerError = ({ errorMessage }) => (
+interface CatalogueContainerErrorProps {
+  errorMessage: string;
+}
+
+const CatalogueContainerError: FunctionComponent<CatalogueContainerErrorProps> = ({ errorMessage }) => (
   <Message negative>
     <Message.Header>{errorMessage}</Message.Header>
   </Message>
 );
 
-const CatalogueContainerSegment = ({ catalogue }) => (
+interface CatalogueContainerSegmentProps {
+  catalogue: Catalogue;
+}
+
+const CatalogueContainerSegment: FunctionComponent<CatalogueContainerSegmentProps> = ({ catalogue }) => (
   <div data-testid="catalogue-container-segment" style={{ marginBottom: '10px' }}>
     <CatalogueDetails catalogue={catalogue} />
   </div>
 );
 
-const CatalogueContainer = () => {
-  const [catalogue, setCatalogue] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const { 0: location, owner, repo } = useParams();
+const CatalogueContainer: FunctionComponent = () => {
+  const { encodedId, interfaceName } = useParams();
+  const getCatalogue = useGetCatalogue({ encodedId });
+  const { data: getCatalogueResult, loading, error } = getCatalogue;
 
-  const fileApiURL = createFileApiURL(owner, repo, location);
+  const fileApiURL = 'some-file-api-url'; // createFileApiURL(owner, repo, location);
 
-  const fetchCatalogueData = async (ownerName, repoName) => {
-    try {
-      const catalogueData = await fetchCatalogue(ownerName, repoName);
-      setCatalogue(catalogueData);
-    } catch (error) {
-      // console.error(error);
-      setErrorMessage('An error occurred while fetching catalogue details.');
-    }
-  };
+  if (loading) return (<CatalogueContainerLoading />);
 
-  useEffect(() => {
-    fetchCatalogueData(owner, repo);
-  }, [owner, repo]);
-
-  if (!catalogue && !errorMessage) return (<CatalogueContainerLoading owner={owner} repo={repo} />);
-
-  if (errorMessage) {
+  if (error) {
     return (
       <Container text>
         <BackToCatalogueListLinkButton />
-        <CatalogueContainerError errorMessage={errorMessage} />
+        <CatalogueContainerError errorMessage={error.message} />
       </Container>
     );
   }
 
-  if (!location) {
+  if (!interfaceName) {
     return (
       <Container text>
         <BackToCatalogueListLinkButton />
-        <CatalogueContainerSegment catalogue={catalogue} />
+        <CatalogueContainerSegment catalogue={getCatalogueResult.catalogue} />
       </Container>
     );
   }
@@ -77,7 +71,7 @@ const CatalogueContainer = () => {
     <div className="catalogue-container side-by-side-container">
       <Container text className="side-by-side-column">
         <BackToCatalogueListLinkButton />
-        <CatalogueContainerSegment catalogue={catalogue} />
+        <CatalogueContainerSegment catalogue={getCatalogueResult.catalogue} />
       </Container>
       <div className="side-by-side-column" data-testid="catalogue-container-swagger-ui">
         <CloseSpecButton />

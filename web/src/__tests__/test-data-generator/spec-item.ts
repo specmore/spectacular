@@ -1,16 +1,23 @@
-import Repository from './repository';
+import { SpecItem } from '../../__generated__/backend-api-client';
+
+interface GenerateSpecItemParameters {
+  repository?: string;
+  filePath?: string;
+  ref?: string;
+}
 
 const generateSpecItem = ({
   ref = 'master',
   filePath = 'specs/example-template.yaml',
-  repository = Repository.generateRepository(),
-} = {}) => {
-  const id = `${repository.nameWithOwner}/${ref}/${filePath}`;
+  repository = 'test-owner/specs-test',
+}: GenerateSpecItemParameters = {}): SpecItem => {
+  const fullPath = `${repository}/${filePath}`;
+  const id = `${repository}/${ref}/${filePath}`;
 
   return {
     id,
-    repository,
-    filePath,
+    fullPath,
+    htmlUrl: 'test-url',
     ref,
     sha: 'e6f9f693f080018158d1dd0394c53ab354a8be42',
     lastModified: '2020-02-18T22:33:51Z',
@@ -18,7 +25,7 @@ const generateSpecItem = ({
   };
 };
 
-const generateSpecItemWithError = (errorMessage) => {
+const generateSpecItemWithError = (errorMessage: string): SpecItem => {
   const specItem = generateSpecItem();
   specItem.parseResult.openApiSpec = null;
   specItem.parseResult.errors = [errorMessage];
