@@ -20,9 +20,7 @@ describe('ProposedChangeItem component', () => {
     });
 
     // and a proposed change for that pull request
-    const proposedChange = Generator.ProposedChange.generateProposedChange({
-      pullRequest,
-    });
+    const proposedChange = Generator.ProposedChange.generateChangeProposal({ pullRequest });
 
     // when a proposed change item component is rendered with the given proposed item
     const { getByText } = renderWithRouter(<ProposedChangeItem
@@ -47,9 +45,7 @@ describe('ProposedChangeItem component', () => {
     });
 
     // and a proposed change for that pull request
-    const proposedChange = Generator.ProposedChange.generateProposedChange({
-      pullRequest,
-    });
+    const proposedChange = Generator.ProposedChange.generateChangeProposal({ pullRequest });
 
     // when a proposed change item component is rendered with the given proposed item
     const { getByText } = renderWithRouter(<ProposedChangeItem
@@ -66,9 +62,7 @@ describe('ProposedChangeItem component', () => {
     const pullRequest = Generator.PullRequest.generatePullRequest();
 
     // and a proposed change for that pull request
-    const proposedChange = Generator.ProposedChange.generateProposedChange({
-      pullRequest,
-    });
+    const proposedChange = Generator.ProposedChange.generateChangeProposal({ pullRequest });
 
     // when the component is rendered
     renderWithRouter(<ProposedChangeItem pullRequest={proposedChange.pullRequest} specItem={proposedChange.specItem} />);

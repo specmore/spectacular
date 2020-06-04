@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { Label } from 'semantic-ui-react';
 import SpecRevision from './spec-revision';
+import { PullRequest, SpecItem } from '../__generated__/backend-api-client';
 
-const PullRequestHeader = ({ pullRequest }) => (
+interface PullRequestProps {
+  pullRequest: PullRequest;
+}
+
+const PullRequestHeader: FunctionComponent<PullRequestProps> = ({ pullRequest }) => (
   <a href={pullRequest.url} target="_blank" rel="noopener noreferrer">
     <Label circular color="grey">
       {`#${pullRequest.number}`}
@@ -11,13 +16,18 @@ const PullRequestHeader = ({ pullRequest }) => (
   </a>
 );
 
-const PullRequestLabels = ({ pullRequest }) => (
+const PullRequestLabels: FunctionComponent<PullRequestProps> = ({ pullRequest }) => (
   <>
     {pullRequest.labels.map((value) => (<Label key={value}>{value}</Label>)) }
   </>
 );
 
-const ProposedChange = ({ pullRequest, specItem }) => (
+interface ProposedChangeProps {
+  pullRequest: PullRequest;
+  specItem: SpecItem;
+}
+
+const ProposedChange: FunctionComponent<ProposedChangeProps> = ({ pullRequest, specItem }) => (
   <>
     <div>
       <PullRequestHeader pullRequest={pullRequest} />
