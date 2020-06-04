@@ -4,7 +4,8 @@ import PullRequest from './pull-request';
 import SpecItem from './spec-item';
 
 const generateChangeProposal = ({
-  pullRequest = PullRequest.generatePullRequest(),
+  number = 99,
+  pullRequest = PullRequest.generatePullRequest({ number }),
   specItem = SpecItem.generateSpecItem(),
 } = {}): ChangeProposal => {
   const id = pullRequest.number;

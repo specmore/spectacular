@@ -4,6 +4,7 @@ import SpecLog from './spec-log';
 import { renderWithRouter } from '../__tests__/test-utils';
 import LatestAgreedVersionMock from './latest-agreed-version';
 import ProposedChangeItemMock from './proposed-change-item';
+import SpecLogItemMock from './spec-log-item';
 import Generator from '../__tests__/test-data-generator';
 
 // mock out the actual implementations
@@ -15,6 +16,11 @@ afterEach(() => {
 jest.mock('./proposed-change-item', () => jest.fn(() => null));
 afterEach(() => {
   ProposedChangeItemMock.mockClear();
+});
+
+jest.mock('./spec-log-item', () => jest.fn(({ children }) => (<div>{children}</div>)));
+afterEach(() => {
+  SpecLogItemMock.mockClear();
 });
 
 describe('SpecLog component', () => {
@@ -59,10 +65,8 @@ describe('SpecLog component', () => {
 
   test('shows proposed changes list for one or many proposed changes', async () => {
     // given a spec log containing two proposed changes
-    const pullRequest1 = Generator.PullRequest.generatePullRequest({ number: 98, branchName: 'proposal1' });
-    const pullRequest2 = Generator.PullRequest.generatePullRequest({ number: 99, branchName: 'proposal2' });
-    const proposedChange1 = Generator.ProposedChange.generateProposedChange({ pullRequest: pullRequest1 });
-    const proposedChange2 = Generator.ProposedChange.generateProposedChange({ pullRequest: pullRequest2 });
+    const proposedChange1 = Generator.ProposedChange.generateChangeProposal({ number: 98 });
+    const proposedChange2 = Generator.ProposedChange.generateChangeProposal({ number: 99 });
     const specLog = Generator.SpecLog.generateSpecLog({ proposedChanges: [proposedChange1, proposedChange2] });
 
     // when spec file item component renders

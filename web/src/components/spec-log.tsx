@@ -1,32 +1,40 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import {
   Label, List, Icon, Message, Segment, Header,
 } from 'semantic-ui-react';
 import SpecLogItem from './spec-log-item';
 import ProposedChangeItem from './proposed-change-item';
 import LatestAgreedVersion from './latest-agreed-version';
+import { SpecLog, SpecItem } from '../__generated__/backend-api-client';
 
 
-const SpecLogError = ({ specFileFullLocation, errors }) => (
+interface SpecItemProps {
+  specItem: SpecItem
+}
+
+const SpecLogError: FunctionComponent<SpecItemProps> = ({ specItem }) => (
   <Message icon negative data-testid="spec-log-error">
     <Icon name="warning sign" />
     <Message.Content>
       <Message.Header>
-        {`The following errors occurred while processing the specification file '${specFileFullLocation}':`}
+        {`The following errors occurred while processing the specification file '${specItem.fullPath}':`}
       </Message.Header>
       <List bulleted>
-        {errors.map((error) => (<List.Item key={error}>{error}</List.Item>))}
+        {specItem.parseResult.errors.map((error) => (<List.Item key={error}>{error}</List.Item>))}
       </List>
     </Message.Content>
   </Message>
 );
 
-const SpecLog = ({ specLog }) => {
+interface SpecLogProps {
+  specLog: SpecLog
+}
+
+const SpecLogContainer: FunctionComponent<SpecLogProps> = ({ specLog }) => {
   const latestAgreedSpecItem = specLog.latestAgreed;
-  const specFileFullLocation = `${latestAgreedSpecItem.repository.nameWithOwner}/${latestAgreedSpecItem.filePath}`;
-  if (latestAgreedSpecItem.parseResult.errors.length > 0) {
+  if (specLog.latestAgreed.parseResult.errors.length > 0) {
     return (
-      <SpecLogError specFileFullLocation={specFileFullLocation} errors={latestAgreedSpecItem.parseResult.errors} />
+      <SpecLogError specItem={specLog.latestAgreed} />
     );
   }
 
@@ -57,4 +65,4 @@ const SpecLog = ({ specLog }) => {
   );
 };
 
-export default SpecLog;
+export default SpecLogContainer;
