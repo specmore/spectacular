@@ -11,9 +11,9 @@ jest.mock('./spec-log', () => jest.fn(() => null));
 describe('CatalogueDetails component', () => {
   test('renders catalogue details when no error is given', async () => {
     // given a catalogue data item with 2 spec files
-    const specLog1 = Generator.SpecLog.generateSpecLog({ latestAgreed: Generator.SpecItem.generateSpecItem({ filePath: 'spec1' }) });
-    const specLog2 = Generator.SpecLog.generateSpecLog({ latestAgreed: Generator.SpecItem.generateSpecItem({ filePath: 'spec2' }) });
-    const catalogue = Generator.Catalogue.generateValidCatalogue({ specLogs: [specLog1, specLog2] });
+    const specLog1 = Generator.SpecLog.generateSpecLog({ interfaceName: 'testInterface1' });
+    const specLog2 = Generator.SpecLog.generateSpecLog({ interfaceName: 'testInterface2' });
+    const catalogue = Generator.Catalogue.generateCatalogue({ specLogs: [specLog1, specLog2] });
 
     // when catalogue details component renders
     const { getByTestId, getByText } = renderWithRouter(<CatalogueDetails catalogue={catalogue} />);
@@ -24,8 +24,8 @@ describe('CatalogueDetails component', () => {
     // and the name of the catalogue is shown
     expect(getByText('Test Catalogue 1')).toBeInTheDocument();
 
-    // and the name of the repository is shown
-    expect(getByText('test-owner/specs-test')).toBeInTheDocument();
+    // and the path of the catalogue is shown
+    expect(getByText('test-owner/specs-test/spectacular-config.yml')).toBeInTheDocument();
 
     // and 2 spec file items were created
     expect(SpecLogMock).toHaveBeenCalledTimes(2);
@@ -43,8 +43,8 @@ describe('CatalogueDetails component', () => {
     // then a catalogue details error message is found
     expect(getByTestId('catalogue-details-error-message')).toBeInTheDocument();
 
-    // and the name of the repository is shown
-    expect(getByText('test-owner/specs-test')).toBeInTheDocument();
+    // and the path of the catalogue is shown
+    expect(getByText('test-owner/specs-test/error-config.yml')).toBeInTheDocument();
 
     // and the error message is shown
     expect(getByText(errorMessage))
