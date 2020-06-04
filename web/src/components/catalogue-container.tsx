@@ -41,7 +41,7 @@ const CatalogueContainerSegment: FunctionComponent<CatalogueContainerSegmentProp
 );
 
 const CatalogueContainer: FunctionComponent = () => {
-  const { encodedId, interfaceName } = useParams();
+  const { 0: selectedSpecItemId, encodedId } = useParams();
   const getCatalogue = useGetCatalogue({ encodedId });
   const { data: getCatalogueResult, loading, error } = getCatalogue;
 
@@ -58,7 +58,7 @@ const CatalogueContainer: FunctionComponent = () => {
     );
   }
 
-  if (!interfaceName) {
+  if (!selectedSpecItemId) {
     return (
       <Container text>
         <BackToCatalogueListLinkButton />
