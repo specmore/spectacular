@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import {
   Label, List, Icon, Message,
 } from 'semantic-ui-react';
 import Moment from 'react-moment';
+import { SemanticCOLORS } from 'semantic-ui-react/dist/commonjs/generic';
+import { SpecItem } from '../__generated__/backend-api-client';
 
-const SpecItemError = ({ specItem }) => (
+interface SpecItemProps {
+  specItem: SpecItem;
+}
+
+const SpecItemError: FunctionComponent<SpecItemProps> = ({ specItem }) => (
   <Message icon negative data-testid="spec-item-error">
     <Icon name="warning sign" />
     <Message.Content>
@@ -12,7 +18,7 @@ const SpecItemError = ({ specItem }) => (
         The following errors occurred while processing the specification file
         {' '}
         <a href={specItem.htmlUrl} target="_blank" rel="noopener noreferrer">
-          {`'${specItem.repository.nameWithOwner}/${specItem.filePath}' in branch '${specItem.ref}'`}
+          {`'${specItem.id}' in branch '${specItem.ref}'`}
         </a>
         :
       </Message.Header>
@@ -23,7 +29,12 @@ const SpecItemError = ({ specItem }) => (
   </Message>
 );
 
-const SpecRevision = ({ specItem, branchColor }) => {
+interface SpecRevisionProps {
+  specItem: SpecItem;
+  branchColor: SemanticCOLORS;
+}
+
+const SpecRevision: FunctionComponent<SpecRevisionProps> = ({ specItem, branchColor }) => {
   const labelColor = branchColor || 'olive';
 
   if (specItem.parseResult.errors.length > 0) return (<SpecItemError specItem={specItem} />);
