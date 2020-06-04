@@ -11,8 +11,7 @@ describe('SpecLogItem component', () => {
     const specItem = Generator.SpecItem.generateSpecItem();
 
     // and a browser location with the spec item selected
-    const specFileLocation = `${specItem.repository.nameWithOwner}/${specItem.ref}/${specItem.filePath}`;
-    const location = CreateViewSpecLocation('any-catalogue-owner', 'any-catalogue-repo', specFileLocation);
+    const location = CreateViewSpecLocation('any-catalogue-encoded-id', specItem.id);
 
     // when the component renders
     const { getByTestId } = renderWithRouter(<SpecLogItem specItem={specItem} />, location, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE);

@@ -7,9 +7,9 @@ export const CATALOGUE_LIST_ROUTE = '/';
 export const CATALOGUE_CONTAINER_ROUTE = '/catalogue/:encodedId';
 export const CreateCatalogueContainerLocation = (encodedId: string): string => `/catalogue/${encodedId}/`;
 
-export const CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE = '/catalogue/:encodedId/interface/:interfaceName';
-export const CreateViewSpecLocation = (encodedId: string, interfaceName: string): string => (
-  `/catalogue/${encodedId}/interface/${interfaceName}`
+export const CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE = '/catalogue/:encodedId/file/*';
+export const CreateViewSpecLocation = (encodedId: string, specItemId: string): string => (
+  `/catalogue/${encodedId}/file/${specItemId}`
 );
 
 export const BackToCatalogueListLinkButton: FunctionComponent = () => (
@@ -36,13 +36,13 @@ export const CatalogueContainerLinkButton: FunctionComponent<CatalogueContainerL
 };
 
 interface ViewSpecLinkButtonProps {
-  interfaceName: string;
+  specItemId: string;
   isSelected: boolean;
 }
 
-export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({ interfaceName, isSelected }) => {
+export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({ specItemId, isSelected }) => {
   const { encodedId } = useParams();
-  const viewSpecLink = CreateViewSpecLocation(encodedId, interfaceName);
+  const viewSpecLink = CreateViewSpecLocation(encodedId, specItemId);
   return (
     <Button
       primary
