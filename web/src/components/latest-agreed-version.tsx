@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import SpecRevision from './spec-revision';
+import { SpecItem } from '../__generated__/backend-api-client';
 
-const LatestAgreedVersion = ({ latestAgreedSpecItem }) => (
+interface LatestAgreedVersionProps {
+  latestAgreedSpecItem: SpecItem;
+}
+
+const LatestAgreedVersion: FunctionComponent<LatestAgreedVersionProps> = ({ latestAgreedSpecItem }) => (
   <>
     <SpecRevision specItem={latestAgreedSpecItem} />
   </>
