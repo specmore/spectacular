@@ -67,6 +67,7 @@ stages:
         command: build
         repository: $(testCandidateRepositoryName)/backend
         containerRegistry: $(dockerRegistryServiceConnection)
+        buildContext: .
         dockerfile: 'docker/Dockerfile-backend'
         arguments: --build-arg SEMVER=$(GitVersion.FullSemVer)
         tags: |
@@ -77,6 +78,7 @@ stages:
       inputs:
         command: push
         repository: $(testCandidateRepositoryName)/backend
+        buildContext: .
         dockerfile: 'docker/Dockerfile-backend'
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
@@ -98,6 +100,7 @@ stages:
         command: build
         repository: $(testCandidateRepositoryName)/web
         containerRegistry: $(dockerRegistryServiceConnection)
+        buildContext: .
         dockerfile: 'docker/Dockerfile-web'
         arguments: --build-arg SEMVER=$(GitVersion.FullSemVer) --build-arg SHORTSHA=$(GitVersion.ShortSha)
         tags: |
@@ -108,6 +111,7 @@ stages:
       inputs:
         command: push
         repository: $(testCandidateRepositoryName)/web
+        buildContext: .
         dockerfile: 'docker/Dockerfile-web'
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
