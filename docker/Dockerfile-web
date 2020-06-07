@@ -7,8 +7,8 @@ WORKDIR /usr/src/app
 COPY web/package*.json ./
 RUN npm install
 
-# Copy webpack config
-COPY web/*.config.js ./
+# Copy build config files
+COPY web/babel.config.js web/webpack.config.js web/tsconfig.json web/.eslintrc.yml ./
 
 # Copy api spec file
 COPY backend/specs/backend-api.yaml ../backend/specs/
