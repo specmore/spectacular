@@ -166,7 +166,7 @@ public class CatalogueService {
       var catalogueManifestParseResult = CatalogueManifestParser.parseManifestFileContents(fileContentItem.getDecodedContent());
 
       if (catalogueManifestParseResult.getCatalogueManifest() != null) {
-        return CatalogueMapper.mapCatalogueManifestEntries(catalogueManifestParseResult.getCatalogueManifest(), manifestId);
+        return CatalogueMapper.mapCatalogueManifestEntries(catalogueManifestParseResult.getCatalogueManifest(), manifestId, fileContentItem.getHtml_url());
       } else {
         return Collections.singletonList(CatalogueMapper.createForParseError(catalogueManifestParseResult.getError(), manifestId));
       }
@@ -187,7 +187,7 @@ public class CatalogueService {
           catalogueId.getCatalogueName());
 
       if (catalogueParseResult.getCatalogue() != null) {
-        catalogue = CatalogueMapper.mapCatalogue(catalogueParseResult.getCatalogue(), catalogueId);
+        catalogue = CatalogueMapper.mapCatalogue(catalogueParseResult.getCatalogue(), catalogueId, fileContentItem.getHtml_url());
         specLogs = specLogService.getSpecLogsFor(catalogueParseResult.getCatalogue(), catalogueId);
       } else {
         return CatalogueMapper.createForParseError(catalogueParseResult.getError(), catalogueId);

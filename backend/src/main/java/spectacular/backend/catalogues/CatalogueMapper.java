@@ -1,5 +1,6 @@
 package spectacular.backend.catalogues;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,21 +14,26 @@ import spectacular.backend.common.CatalogueManifestId;
 public class CatalogueMapper {
   private static final Logger logger = LoggerFactory.getLogger(CatalogueMapper.class);
 
-  public static List<Catalogue> mapCatalogueManifestEntries(CatalogueManifest catalogueManifest, CatalogueManifestId manifestId) {
+  public static List<Catalogue> mapCatalogueManifestEntries(
+      CatalogueManifest catalogueManifest,
+      CatalogueManifestId manifestId,
+      URI manifestURL) {
     return catalogueManifest.getCatalogues().getAdditionalProperties().entrySet().stream()
-        .map(catalogueEntry -> CatalogueMapper.mapCatalogueManifestEntry(catalogueEntry, manifestId)).collect(Collectors.toList());
+        .map(catalogueEntry -> CatalogueMapper.mapCatalogueManifestEntry(catalogueEntry, manifestId, manifestURL)).collect(Collectors.toList());
   }
 
   public static Catalogue mapCatalogueManifestEntry(
       Map.Entry<String, spectacular.backend.cataloguemanifest.model.Catalogue> catalogueEntry,
-      CatalogueManifestId manifestId) {
-    return mapCatalogue(catalogueEntry.getValue(), manifestId, catalogueEntry.getKey());
+      CatalogueManifestId manifestId,
+      URI manifestURL) {
+    return mapCatalogue(catalogueEntry.getValue(), manifestId, manifestURL, catalogueEntry.getKey());
   }
 
   public static Catalogue mapCatalogue(
       spectacular.backend.cataloguemanifest.model.Catalogue catalogue,
-      CatalogueId catalogueId) {
-    return mapCatalogue(catalogue, catalogueId, catalogueId.getCatalogueName());
+      CatalogueId catalogueId,
+      URI manifestURL) {
+    return mapCatalogue(catalogue, catalogueId, manifestURL, catalogueId.getCatalogueName());
   }
 
   /**
@@ -41,6 +47,7 @@ public class CatalogueMapper {
   public static Catalogue mapCatalogue(
       spectacular.backend.cataloguemanifest.model.Catalogue catalogue,
       CatalogueManifestId manifestId,
+      URI manifestURL,
       String catalogueName) {
     return new Catalogue()
         .encodedId(manifestId.createCatalogueId(catalogueName).getCombined().getBytes())
@@ -48,6 +55,7 @@ public class CatalogueMapper {
         .name(catalogueName)
         .title(catalogue.getTitle())
         .description(catalogue.getDescription())
+        .htmlUrl(manifestURL)
         .interfaceCount(catalogue.getInterfaces().getAdditionalProperties().size());
   }
 
