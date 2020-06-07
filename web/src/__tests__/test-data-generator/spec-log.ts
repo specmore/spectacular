@@ -1,4 +1,4 @@
-import { SpecLog } from '../../__generated__/backend-api-client';
+import { SpecLog } from '../../backend-api-client';
 import SpecItem from './spec-item';
 
 const generateSpecLog = ({

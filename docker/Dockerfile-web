@@ -18,10 +18,10 @@ COPY web/src src
 COPY web/__mocks__ __mocks__
 
 # Generate code
-RUN npm run create-generated-source-dir
 RUN npm run generate-fetcher
 
 # Test
+RUN npm run lint
 RUN npm run test
 
 # Set version

@@ -31,4 +31,4 @@ rules:
     - code: 140
   "@typescript-eslint/camelcase": off
 ignorePatterns:
- - __generated__
+ - backend-api-client.tsx

@@ -5,7 +5,7 @@ import {
 import SpecLogItem from './spec-log-item';
 import ProposedChangeItem from './proposed-change-item';
 import LatestAgreedVersion from './latest-agreed-version';
-import { SpecLog, SpecItem } from '../__generated__/backend-api-client';
+import { SpecLog, SpecItem } from '../backend-api-client';
 
 
 interface SpecItemProps {

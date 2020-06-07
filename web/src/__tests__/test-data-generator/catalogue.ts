@@ -1,4 +1,4 @@
-import { Catalogue, SpecLog } from '../../__generated__/backend-api-client';
+import { Catalogue, SpecLog } from '../../backend-api-client';
 
 interface GenerateCatalogueParameters {
   fullPath?: string;

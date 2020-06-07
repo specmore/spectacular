@@ -4,7 +4,7 @@ import {
 } from 'semantic-ui-react';
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
 import { CatalogueContainerLinkButton } from '../routes';
-import { Catalogue } from '../__generated__/backend-api-client';
+import { Catalogue } from '../backend-api-client';
 
 interface CatalogueErrorItemProps {
   catalogue: Catalogue;

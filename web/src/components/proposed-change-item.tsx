@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Label } from 'semantic-ui-react';
 import SpecRevision from './spec-revision';
-import { PullRequest, SpecItem } from '../__generated__/backend-api-client';
+import { PullRequest, SpecItem } from '../backend-api-client';
 
 interface PullRequestProps {
   pullRequest: PullRequest;

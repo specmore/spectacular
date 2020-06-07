@@ -1,4 +1,4 @@
-import { SpecItem } from '../../__generated__/backend-api-client';
+import { SpecItem } from '../../backend-api-client';
 
 interface GenerateSpecItemParameters {
   repository?: string;

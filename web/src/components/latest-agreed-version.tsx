@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import SpecRevision from './spec-revision';
-import { SpecItem } from '../__generated__/backend-api-client';
+import { SpecItem } from '../backend-api-client';
 
 interface LatestAgreedVersionProps {
   latestAgreedSpecItem: SpecItem;

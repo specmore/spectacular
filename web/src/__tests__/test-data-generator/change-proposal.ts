@@ -1,4 +1,4 @@
-import { ChangeProposal } from '../../__generated__/backend-api-client';
+import { ChangeProposal } from '../../backend-api-client';
 
 import PullRequest from './pull-request';
 import SpecItem from './spec-item';

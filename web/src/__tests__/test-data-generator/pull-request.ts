@@ -1,4 +1,4 @@
-import { PullRequest } from '../../__generated__/backend-api-client';
+import { PullRequest } from '../../backend-api-client';
 
 interface GeneratePullRequestParameters {
   number?: number;

@@ -4,7 +4,7 @@ import {
 } from 'semantic-ui-react';
 import Moment from 'react-moment';
 import { SemanticCOLORS } from 'semantic-ui-react/dist/commonjs/generic';
-import { SpecItem } from '../__generated__/backend-api-client';
+import { SpecItem } from '../backend-api-client';
 
 interface SpecItemProps {
   specItem: SpecItem;

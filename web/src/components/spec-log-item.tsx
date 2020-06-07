@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Segment } from 'semantic-ui-react';
 import './spec-log-item.css';
 import { ViewSpecLinkButton } from '../routes';
-import { SpecItem } from '../__generated__/backend-api-client';
+import { SpecItem } from '../backend-api-client';
 
 interface SpecLogItemProps {
   specItem: SpecItem;

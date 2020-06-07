@@ -7,8 +7,7 @@
     "build": "webpack --mode production",
     "test": "jest",
     "lint": "eslint src/ --ext .js,.ts,.tsx",
-    "create-generated-source-dir": "mkdir src/__generated__",
-    "generate-fetcher": "restful-react import --file ../backend/specs/backend-api.yaml --output src/__generated__/backend-api-client.tsx"
+    "generate-fetcher": "restful-react import --file ../backend/specs/backend-api.yaml --output src/backend-api-client.tsx"
   },
   "repository": {
     "type": "git",

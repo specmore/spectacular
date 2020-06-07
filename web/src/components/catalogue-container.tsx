@@ -9,7 +9,7 @@ import CatalogueDetails from './catalogue-details';
 import 'swagger-ui-react/swagger-ui.css';
 import './catalogue-container.css';
 import { CloseSpecButton, BackToCatalogueListLinkButton } from '../routes';
-import { useGetCatalogue, Catalogue } from '../__generated__/backend-api-client';
+import { useGetCatalogue, Catalogue } from '../backend-api-client';
 
 const CatalogueContainerLoading = () => (
   <Segment vertical textAlign="center">

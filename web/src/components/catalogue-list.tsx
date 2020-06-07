@@ -5,7 +5,7 @@ import {
 import EmptyCatalogueItemImage from '../assets/images/empty-catalogue-item.png';
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
 import CatalogueListItem from './catalogue-list-item';
-import { useFindCataloguesForUser, Catalogue } from '../__generated__/backend-api-client';
+import { useFindCataloguesForUser, Catalogue } from '../backend-api-client';
 
 const CatalogueListLoading = () => (
   <Segment vertical>

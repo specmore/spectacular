@@ -7,9 +7,9 @@ import {
   CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE, CreateCatalogueContainerLocation, CreateViewSpecLocation,
 } from '../routes';
 import Generator from '../__tests__/test-data-generator';
-import { useGetCatalogue as useGetCatalogueMock } from '../__generated__/backend-api-client';
+import { useGetCatalogue as useGetCatalogueMock } from '../backend-api-client';
 
-jest.mock('../__generated__/backend-api-client');
+jest.mock('../backend-api-client');
 
 // mock out the actual catalogue-details
 jest.mock('./catalogue-details', () => jest.fn(() => null));
