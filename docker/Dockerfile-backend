@@ -2,11 +2,11 @@ FROM gradle:6.3.0-jdk11 AS build
 ARG SEMVER
 
 WORKDIR /app
-COPY build.gradle gradle.properties settings.gradle ./
+COPY backend/build.gradle backend/gradle.properties backend/settings.gradle ./
 
-COPY src ./src
-COPY specs ./specs
-COPY config ./config
+COPY backend/src ./src
+COPY backend/specs ./specs
+COPY backend/config ./config
 
 RUN echo $SEMVER
 RUN gradle -Pversion=$SEMVER build

@@ -2,5 +2,10 @@
 **/build
 **/docs
 **/out
+**/dist
+**/__generated__
 .idea
 .gradle
+.vscode
+.env
+*.iml

@@ -4,15 +4,22 @@ FROM node:12.14.0 AS build
 WORKDIR /usr/src/app
 
 # Install app dependencies
-COPY package*.json ./
+COPY web/package*.json ./
 RUN npm install
 
 # Copy webpack config
-COPY *.config.js ./
+COPY web/*.config.js ./
+
+# Copy api spec file
+COPY backend/specs/backend-api.yaml ../backend/specs/
 
 # Copy app source & test mocks
-COPY src src
-COPY __mocks__ __mocks__
+COPY web/src src
+COPY web/__mocks__ __mocks__
+
+# Generate code
+RUN npm run create-generated-source-dir
+RUN npm run generate-fetcher
 
 # Test
 RUN npm run test
@@ -37,6 +44,6 @@ ENV API_LOCATION=http://backend
 COPY --from=build /usr/src/app/dist /usr/share/nginx/html
 
 # Copy and web config template
-COPY web.template.conf /etc/nginx/conf.d/web.template
+COPY web/web.template.conf /etc/nginx/conf.d/web.template
 
 CMD ["bash", "-c", "envsubst '$${API_LOCATION},$${AUTH_LOCATION},$${GITHUB_APP_INSTALLATION_ID}' < /etc/nginx/conf.d/web.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]

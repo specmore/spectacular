@@ -1,7 +1,0 @@
-**/node_modules
-**/build
-**/docs
-**/out
-**/dist
-.idea
-.gradle
