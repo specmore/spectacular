@@ -15,16 +15,6 @@ axios.interceptors.response.use((response) => response, (error) => {
   return Promise.reject(error);
 });
 
-export const fetchCatalogues = async (org) => {
-  const response = await axios.get(`/api/${org}/catalogues`);
-  return response.data;
-};
-
-export const fetchCatalogue = async (owner, repo) => {
-  const response = await axios.get(`/api/catalogues/${owner}/${repo}`);
-  return response.data;
-};
-
 export const fetchInstallation = async () => {
   const response = await axios.get('/api/installation');
   return response.data;
