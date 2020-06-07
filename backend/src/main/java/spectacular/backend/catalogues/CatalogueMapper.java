@@ -43,6 +43,7 @@ public class CatalogueMapper {
       CatalogueManifestId manifestId,
       String catalogueName) {
     return new Catalogue()
+        .encodedId(manifestId.createCatalogueId(catalogueName).getCombined().getBytes())
         .fullPath(manifestId.getFullPath())
         .name(catalogueName)
         .title(catalogue.getTitle())

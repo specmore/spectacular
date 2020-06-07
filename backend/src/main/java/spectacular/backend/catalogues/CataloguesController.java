@@ -1,5 +1,6 @@
 package spectacular.backend.catalogues;
 
+import java.util.Base64;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,9 @@ public class CataloguesController implements CataloguesApi {
   @Override
   public ResponseEntity<GetCatalogueResult> getCatalogue(byte[] encoded) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    var catalogueId = CatalogueId.createFrom(new String(encoded));
+    var decodedBytes = Base64.getDecoder().decode(encoded);
+    var combinedId = new String(decodedBytes);
+    var catalogueId = CatalogueId.createFrom(combinedId);
     var catalogue = catalogueService.getCatalogueForUser(catalogueId, authentication.getName());
     if (catalogue == null) {
       ResponseEntity.notFound();

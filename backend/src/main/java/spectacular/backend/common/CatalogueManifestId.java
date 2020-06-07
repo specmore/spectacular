@@ -39,6 +39,10 @@ public class CatalogueManifestId {
     return new CatalogueManifestId(RepositoryId.createRepositoryFrom(searchCodeResultItem.getRepository()), searchCodeResultItem.getPath());
   }
 
+  public CatalogueId createCatalogueId(String catalogueName) {
+    return new CatalogueId(this.repositoryId, this.path, catalogueName);
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

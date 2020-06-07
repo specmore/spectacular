@@ -181,6 +181,10 @@ class CatalogueServiceTest extends Specification {
         result.size() == 1
         def catalogue1 = result.get(0)
 
+        and: "the catalogue id is correct"
+        catalogue1.getEncodedId()
+        CatalogueId.createFrom(new String(catalogue1.getEncodedId())) == new CatalogueId(repo, catalogueManifestYmlFilename, "testCatalogue1")
+
         and: "the catalogue is from the repo and the manifest file"
         catalogue1.getFullPath() == repo.getNameWithOwner() + "/" + catalogueManifestYmlFilename
 
