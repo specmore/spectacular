@@ -48,7 +48,7 @@ const SpecLogContainer: FunctionComponent<SpecLogProps> = ({ specLog }) => {
       </Header>
       <Segment attached>
         <Header as="h5" attached="top">Latest agreed version</Header>
-        <SpecLogItem specItem={specLog.latestAgreed} type="latest-agreed-version">
+        <SpecLogItem interfaceName={specLog.interfaceName} specItem={specLog.latestAgreed} type="latest-agreed-version">
           <LatestAgreedVersion latestAgreedSpecItem={specLog.latestAgreed} />
         </SpecLogItem>
         <Header as="h5" attached="top">
@@ -56,7 +56,12 @@ const SpecLogContainer: FunctionComponent<SpecLogProps> = ({ specLog }) => {
           <Label size="small" color="grey">{proposedChangesCount}</Label>
         </Header>
         {specLog.proposedChanges.map((proposedChange) => (
-          <SpecLogItem key={proposedChange.id} specItem={proposedChange.specItem} type="proposed-change-item">
+          <SpecLogItem
+            key={proposedChange.id}
+            interfaceName={specLog.interfaceName}
+            specItem={proposedChange.specItem}
+            type="proposed-change-item"
+          >
             <ProposedChangeItem pullRequest={proposedChange.pullRequest} specItem={proposedChange.specItem} />
           </SpecLogItem>
         ))}

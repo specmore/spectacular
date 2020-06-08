@@ -1,16 +1,18 @@
 import React, { FunctionComponent } from 'react';
 import { Button, Icon } from 'semantic-ui-react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useLocation } from 'react-router-dom';
 
 export const CATALOGUE_LIST_ROUTE = '/';
 
 export const CATALOGUE_CONTAINER_ROUTE = '/catalogue/:encodedId';
 export const CreateCatalogueContainerLocation = (encodedId: string): string => `/catalogue/${encodedId}/`;
 
-export const CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE = '/catalogue/:encodedId/file/*';
-export const CreateViewSpecLocation = (encodedId: string, specItemId: string): string => (
-  `/catalogue/${encodedId}/file/${specItemId}`
+export const CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE = '/catalogue/:encodedId/interface/:interfaceName';
+export const CreateViewSpecLocation = (encodedId: string, interfaceName: string, refName: string): string => (
+  `/catalogue/${encodedId}/interface/${interfaceName}?ref=${refName}`
 );
+
+export const useQuery = (): URLSearchParams => new URLSearchParams(useLocation().search);
 
 export const BackToCatalogueListLinkButton: FunctionComponent = () => (
   <Button icon compact labelPosition="left" as={Link} to={CATALOGUE_LIST_ROUTE} data-testid="back-to-catalogue-list-button">
@@ -36,13 +38,14 @@ export const CatalogueContainerLinkButton: FunctionComponent<CatalogueContainerL
 };
 
 interface ViewSpecLinkButtonProps {
-  specItemId: string;
+  interfaceName: string;
+  refName: string;
   isSelected: boolean;
 }
 
-export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({ specItemId, isSelected }) => {
+export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({ interfaceName, refName, isSelected }) => {
   const { encodedId } = useParams();
-  const viewSpecLink = CreateViewSpecLocation(encodedId, specItemId);
+  const viewSpecLink = CreateViewSpecLocation(encodedId, interfaceName, refName);
   return (
     <Button
       primary
