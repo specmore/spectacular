@@ -44,4 +44,9 @@ public class CataloguesController implements CataloguesApi {
         .catalogue(catalogue);
     return ResponseEntity.ok(getCatalogueResult);
   }
+
+  @Override
+  public ResponseEntity<Void> getInterfaceFileContents(byte[] encodedId, String interfaceName, @Valid String ref) {
+    return null;
+  }
 }

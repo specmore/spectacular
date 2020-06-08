@@ -45,6 +45,35 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/GetCatalogueResult'
+  /catalogues/{encodedId}/interfaces/{interfaceName}/file:
+    get:
+      tags:
+        - Interfaces
+      description: Gets the file contents of an interface
+      operationId: getInterfaceFileContents
+      parameters:
+        - name: encodedId
+          in: path
+          description: The base64 encoded id of the Catalogue being referenced
+          required: true
+          schema:
+            type: string
+            format: byte
+        - name: interfaceName
+          in: path
+          description: The name of the Interface in the Catalogue being referenced
+          required: true
+          schema:
+            type: string
+        - name: ref
+          in: query
+          description: The branch or tag ref to take the interface from
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
 components:
   schemas:
     FindCataloguesResult:
