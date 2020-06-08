@@ -8,7 +8,7 @@ import EmptyItemImage from '../assets/images/empty-catalogue-item.png';
 import CatalogueDetails from './catalogue-details';
 import 'swagger-ui-react/swagger-ui.css';
 import './catalogue-container.css';
-import { CloseSpecButton, BackToCatalogueListLinkButton } from '../routes';
+import { CloseSpecButton, BackToCatalogueListLinkButton, useQuery } from '../routes';
 import { useGetCatalogue, Catalogue } from '../backend-api-client';
 
 const CatalogueContainerLoading = () => (
@@ -40,12 +40,19 @@ const CatalogueContainerSegment: FunctionComponent<CatalogueContainerSegmentProp
   </div>
 );
 
+const createInterfaceFileContentsPath = (
+  encodedId: string,
+  interfaceName: string,
+  refName: string,
+) => `/api/catalogues/${encodedId}/interfaces/${interfaceName}/file?ref=${refName}`;
+
 const CatalogueContainer: FunctionComponent = () => {
-  const { 0: selectedSpecItemId, encodedId } = useParams();
+  const { encodedId, interfaceName } = useParams();
+  const query = useQuery();
   const getCatalogue = useGetCatalogue({ encodedId });
   const { data: getCatalogueResult, loading, error } = getCatalogue;
 
-  const fileApiURL = 'some-file-api-url'; // createFileApiURL(owner, repo, location);
+  const interfaceFileContentsPath = createInterfaceFileContentsPath(encodedId, interfaceName, query.get('ref'));
 
   if (loading) return (<CatalogueContainerLoading />);
 
@@ -58,7 +65,7 @@ const CatalogueContainer: FunctionComponent = () => {
     );
   }
 
-  if (!selectedSpecItemId) {
+  if (!interfaceName) {
     return (
       <Container text>
         <BackToCatalogueListLinkButton />
@@ -75,7 +82,7 @@ const CatalogueContainer: FunctionComponent = () => {
       </Container>
       <div className="side-by-side-column" data-testid="catalogue-container-swagger-ui">
         <CloseSpecButton />
-        <SwaggerUI url={fileApiURL} />
+        <SwaggerUI url={interfaceFileContentsPath} />
       </div>
     </div>
   );
