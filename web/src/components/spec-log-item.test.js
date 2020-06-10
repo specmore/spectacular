@@ -7,14 +7,18 @@ import Generator from '../__tests__/test-data-generator';
 
 describe('SpecLogItem component', () => {
   test('uses selected class if browser location is for given spec item', async () => {
-    // given a spec item
-    const specItem = Generator.SpecItem.generateSpecItem();
+    // given a spec log
+    const specLog = Generator.SpecLog.generateSpecLog();
 
-    // and a browser location with the spec item selected
-    const location = CreateViewSpecLocation('any-catalogue-encoded-id', specItem.id);
+    // and a browser location with the spec log's latest agreed spec item selected
+    const location = CreateViewSpecLocation('any-catalogue-encoded-id', specLog.interfaceName, specLog.latestAgreed.ref);
 
     // when the component renders
-    const { getByTestId } = renderWithRouter(<SpecLogItem specItem={specItem} />, location, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE);
+    const { getByTestId } = renderWithRouter(
+      <SpecLogItem interfaceName={specLog.interfaceName} specItem={specLog.latestAgreed} />,
+      location,
+      CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE,
+    );
 
     // then the tertiary class is set
     expect(getByTestId('spec-log-item-segment')).toHaveClass('selected');

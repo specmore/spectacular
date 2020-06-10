@@ -89,8 +89,9 @@ describe('CatalogueContainer component', () => {
 
     useGetCatalogueMock.mockReturnValueOnce(catalogueResponse);
 
-    // and a spec file location
-    const specFileLocation = 'some-spec-file-location';
+    // and a selected interface and ref
+    const interfaceName = 'someInterface1';
+    const refName = 'some-branch';
 
     // and a mocked spec file fetch response
     const responsePromise = Promise.resolve({ });
@@ -98,7 +99,7 @@ describe('CatalogueContainer component', () => {
 
     // when catalogue container component renders
     const { findByTestId } = renderWithRouter(<CatalogueContainer />,
-      CreateViewSpecLocation(catalogue.encodedId, specFileLocation),
+      CreateViewSpecLocation(catalogue.encodedId, interfaceName, refName),
       CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE);
 
     // then a catalogue container should be found
@@ -108,7 +109,7 @@ describe('CatalogueContainer component', () => {
     expect(await findByTestId('catalogue-container-swagger-ui')).toBeInTheDocument();
 
     // and file contents should have been fetched
-    const url = 'some-file-api-url';
+    const url = `/api/catalogues/${catalogue.encodedId}/interfaces/${interfaceName}/file?ref=${refName}`;
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(global.fetch).toHaveBeenCalledWith(url,
       expect.objectContaining({ url }));
