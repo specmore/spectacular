@@ -14,26 +14,35 @@ import spectacular.backend.common.CatalogueManifestId;
 public class CatalogueMapper {
   private static final Logger logger = LoggerFactory.getLogger(CatalogueMapper.class);
 
+  /**
+   * Maps catalogue entries in a Catalogue Manifest file to API Catalogue objects.
+   *
+   * @param catalogueManifest the catalogue manifest with catalogue entries to be mapped
+   * @param manifestId the id of the manifest file
+   * @param manifestUrl the HTML URL location of the manifest file
+   * @return a list of API Catalogue objects found in the manifest file
+   */
   public static List<Catalogue> mapCatalogueManifestEntries(
       CatalogueManifest catalogueManifest,
       CatalogueManifestId manifestId,
-      URI manifestURL) {
+      URI manifestUrl) {
     return catalogueManifest.getCatalogues().getAdditionalProperties().entrySet().stream()
-        .map(catalogueEntry -> CatalogueMapper.mapCatalogueManifestEntry(catalogueEntry, manifestId, manifestURL)).collect(Collectors.toList());
+        .map(catalogueEntry -> CatalogueMapper.mapCatalogueManifestEntry(catalogueEntry, manifestId, manifestUrl))
+        .collect(Collectors.toList());
   }
 
   public static Catalogue mapCatalogueManifestEntry(
       Map.Entry<String, spectacular.backend.cataloguemanifest.model.Catalogue> catalogueEntry,
       CatalogueManifestId manifestId,
-      URI manifestURL) {
-    return mapCatalogue(catalogueEntry.getValue(), manifestId, manifestURL, catalogueEntry.getKey());
+      URI manifestUrl) {
+    return mapCatalogue(catalogueEntry.getValue(), manifestId, manifestUrl, catalogueEntry.getKey());
   }
 
   public static Catalogue mapCatalogue(
       spectacular.backend.cataloguemanifest.model.Catalogue catalogue,
       CatalogueId catalogueId,
-      URI manifestURL) {
-    return mapCatalogue(catalogue, catalogueId, manifestURL, catalogueId.getCatalogueName());
+      URI manifestUrl) {
+    return mapCatalogue(catalogue, catalogueId, manifestUrl, catalogueId.getCatalogueName());
   }
 
   /**
@@ -47,7 +56,7 @@ public class CatalogueMapper {
   public static Catalogue mapCatalogue(
       spectacular.backend.cataloguemanifest.model.Catalogue catalogue,
       CatalogueManifestId manifestId,
-      URI manifestURL,
+      URI manifestUrl,
       String catalogueName) {
     return new Catalogue()
         .encodedId(manifestId.createCatalogueId(catalogueName).getCombined().getBytes())
@@ -55,7 +64,7 @@ public class CatalogueMapper {
         .name(catalogueName)
         .title(catalogue.getTitle())
         .description(catalogue.getDescription())
-        .htmlUrl(manifestURL)
+        .htmlUrl(manifestUrl)
         .interfaceCount(catalogue.getInterfaces().getAdditionalProperties().size());
   }
 
