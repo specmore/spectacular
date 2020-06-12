@@ -51,13 +51,13 @@ public class FilesController {
     RepositoryId catalogueRepo = new RepositoryId(catalogueOwner, catalogueRepoName);
     RepositoryId fileRepo = new RepositoryId(fileOwner, fileRepoName);
     String path = extractPathFromPattern(request);
-    String fileContent;
-    try {
-      fileContent = filesService.getFileContent(catalogueRepo, fileRepo, path, refName, authToken.getName());
-    } catch (HttpClientErrorException.NotFound nf) {
-      logger.debug("Failed to retrieve file contents due an file not found on the github api.", nf);
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-    }
+    String fileContent = null;
+    //    try {
+    //      fileContent = filesService.getFileContent(catalogueRepo, fileRepo, path, refName, authToken.getName());
+    //    } catch (HttpClientErrorException.NotFound nf) {
+    //      logger.debug("Failed to retrieve file contents due an file not found on the github api.", nf);
+    //      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    //    }
 
     if (fileContent == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);

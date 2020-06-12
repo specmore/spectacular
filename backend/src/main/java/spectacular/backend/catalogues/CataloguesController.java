@@ -47,6 +47,10 @@ public class CataloguesController implements CataloguesApi {
 
   @Override
   public ResponseEntity<Void> getInterfaceFileContents(byte[] encodedId, String interfaceName, @Valid String ref) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    var decodedBytes = Base64.getDecoder().decode(encodedId);
+    var combinedId = new String(decodedBytes);
+    var catalogueId = CatalogueId.createFrom(combinedId);
     return null;
   }
 }

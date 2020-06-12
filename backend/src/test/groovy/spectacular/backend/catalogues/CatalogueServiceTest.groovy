@@ -65,7 +65,7 @@ class CatalogueServiceTest extends Specification {
         given: "a github user"
         def username = "test-user"
 
-        and: "a specific catalogue they have access to"
+        and: "a specific catalogue the user has access to"
         def catalogueId = aCatalogue()
         def userAndInstallationAccessToCatalogueRepository = true
 
@@ -110,7 +110,7 @@ class CatalogueServiceTest extends Specification {
         given: "a github user"
         def username = "test-user"
 
-        and: "a specific catalogue they do not have access to"
+        and: "a specific catalogue the user does not have access to"
         def catalogueId = aCatalogue()
         def userAndInstallationAccessToCatalogueRepository = false
 
@@ -145,6 +145,30 @@ class CatalogueServiceTest extends Specification {
 
         and: "no file contents are retrieved"
         0 * restApiClient.getRepositoryContent(*_)
+
+        and: "no catalogue is returned"
+        !catalogue
+
+        and: "no spec items are retrieved"
+        0 * specLogService.getSpecLogsFor(_, _)
+    }
+
+    def "get catalogue for manifest file that does not exist"() {
+        given: "a github user"
+        def username = "test-user"
+
+        and: "a specific catalogue the user has access to"
+        def catalogueId = aCatalogue()
+        def userAndInstallationAccessToCatalogueRepository = true
+
+        when: "the get catalogue for user is called"
+        def catalogue = catalogueService.getCatalogueForUser(catalogueId, username)
+
+        then: "github is checked if the user is a collaborator of the repository"
+        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), username) >> userAndInstallationAccessToCatalogueRepository
+
+        and: "the .yml manifest file does not exist"
+        1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), catalogueId.getPath(), null) >> { throw new HttpClientErrorException(HttpStatus.NOT_FOUND) }
 
         and: "no catalogue is returned"
         !catalogue
@@ -320,5 +344,135 @@ class CatalogueServiceTest extends Specification {
 
         and: "no file contents are retrieved"
         0 * restApiClient.getRepositoryContent(*_)
+    }
+
+    def "get interface entry from a catalogue"() {
+        given: "a github user"
+        def username = "test-user"
+
+        and: "a specific catalogue the user has access to"
+        def catalogueId = aCatalogue()
+        def userAndInstallationAccessToCatalogueRepository = true
+
+        and: "an interface name to get an interface entry for"
+        def interfaceName = "interface2"
+
+        and: "a catalogue config manifest containing the catalogue"
+        def manifestFileContentItem = aValidYamlManifestFileContentItem()
+
+        when: "the get interface entry for user is called"
+        def interfaceEntry = catalogueService.getInterfaceEntry(catalogueId, interfaceName, username)
+
+        then: "github is checked if the user is a collaborator of the repository"
+        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), username) >> userAndInstallationAccessToCatalogueRepository
+
+        and: "the .yml manifest file contents is retrieved"
+        1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), catalogueId.getPath(), null) >> manifestFileContentItem
+
+        and: "an interface entry is found for the specific interface name"
+        interfaceEntry
+    }
+
+    def "get interface entry from catalogue for name that does not exist in manifest"() {
+        given: "a github user"
+        def username = "test-user"
+
+        and: "a specific catalogue the user has access to"
+        def catalogueId = aCatalogue()
+        def userAndInstallationAccessToCatalogueRepository = true
+
+        and: "an interface name to get an interface entry for"
+        def interfaceName = "some-interface"
+
+        and: "a catalogue config manifest containing the catalogue"
+        def manifestFileContentItem = aValidYamlManifestFileContentItem()
+
+        when: "the get interface entry for user is called"
+        def interfaceEntry = catalogueService.getInterfaceEntry(catalogueId, interfaceName, username)
+
+        then: "github is checked if the user is a collaborator of the repository"
+        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), username) >> userAndInstallationAccessToCatalogueRepository
+
+        and: "the .yml manifest file contents is retrieved"
+        1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), catalogueId.getPath(), null) >> manifestFileContentItem
+
+        and: "no interface entry is found for the specific interface name"
+        !interfaceEntry
+    }
+
+    def "get interface entry from a catalogue that does not exist"() {
+        given: "a github user"
+        def username = "test-user"
+
+        and: "a specific catalogue that does not exist"
+        def catalogueId = aCatalogue()
+        def userAndInstallationAccessToCatalogueRepository = true
+
+        and: "an interface name to get an interface entry for"
+        def interfaceName = "some-interface"
+
+        when: "the get interface entry for user is called"
+        def interfaceEntry = catalogueService.getInterfaceEntry(catalogueId, interfaceName, username)
+
+        then: "github is checked if the user is a collaborator of the repository"
+        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), username) >> userAndInstallationAccessToCatalogueRepository
+
+        and: "the .yml manifest file contents is retrieved"
+        1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), catalogueId.getPath(), null) >> { throw new HttpClientErrorException(HttpStatus.NOT_FOUND) }
+
+        and: "no interface entry is returned"
+        !interfaceEntry
+    }
+
+    def "get interface entry from a catalogue that the user does not have access to"() {
+        given: "a github user"
+        def username = "test-user"
+
+        and: "a specific catalogue that does not exist"
+        def catalogueId = aCatalogue()
+        def userAndInstallationAccessToCatalogueRepository = false
+
+        and: "an interface name to get an interface entry for"
+        def interfaceName = "some-interface"
+
+        when: "the get interface entry for user is called"
+        def interfaceEntry = catalogueService.getInterfaceEntry(catalogueId, interfaceName, username)
+
+        then: "github is checked if the user is a collaborator of the repository"
+        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), username) >> userAndInstallationAccessToCatalogueRepository
+
+        and: "no file contents are retrieved"
+        0 * restApiClient.getRepositoryContent(*_)
+
+        and: "no interface entry is returned"
+        !interfaceEntry
+    }
+
+    def "get interface entry from a catalogue has parse errors"() {
+        given: "a github user"
+        def username = "test-user"
+
+        and: "a specific catalogue the user has access to"
+        def catalogueId = aCatalogue()
+        catalogueId = new CatalogueId(catalogueId.getRepositoryId(), catalogueId.getPath(), "someOtherCatalogue")
+        def userAndInstallationAccessToCatalogueRepository = true
+
+        and: "an interface name to get an interface entry for"
+        def interfaceName = "interface2"
+
+        and: "an invalid catalogue config manifest"
+        def manifestFileContentItem = aValidYamlManifestFileContentItem()
+
+        when: "the get interface entry for user is called"
+        def interfaceEntry = catalogueService.getInterfaceEntry(catalogueId, interfaceName, username)
+
+        then: "github is checked if the user is a collaborator of the repository"
+        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), username) >> userAndInstallationAccessToCatalogueRepository
+
+        and: "the .yml manifest file contents is retrieved"
+        1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), catalogueId.getPath(), null) >> manifestFileContentItem
+
+        and: "a runtime exception is thrown"
+        thrown(RuntimeException)
     }
 }

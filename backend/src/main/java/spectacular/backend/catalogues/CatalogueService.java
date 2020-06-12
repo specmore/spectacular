@@ -6,13 +6,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import spectacular.backend.cataloguemanifest.CatalogueManifestParser;
+import spectacular.backend.cataloguemanifest.CatalogueParseResult;
+import spectacular.backend.cataloguemanifest.model.Interface;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.common.CatalogueManifestId;
 import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
+import spectacular.backend.github.domain.ContentItem;
 import spectacular.backend.github.domain.SearchCodeResultItem;
 import spectacular.backend.specs.SpecLogService;
 
@@ -78,37 +82,36 @@ public class CatalogueService {
   }
 
   /**
-   * Checks if a Spec File belongs to the specified Catalogue for a given user.
+   * Gets a specific interface entry for a given interface name in the catalogue manifest that a given user has access to.
    *
-   * @param catalogueRepo the repository of the catalogue to check
+   * @param catalogueId the composite identifier of the catalogue to find the interface in
+   * @param interfaceName the identifier of interface to retrieve
    * @param username the user who's access needs to be checked
-   * @param specRepo the repository where the spec file can be found
-   * @param specFilePath the filepath of the spec file
-   * @return true if the spec file specified is listed in the specified catalogue and the user has access to the catalogue
+   * @return an interface object representing the interface entry in the specified catalogue manifest
+   *     or null if the Catalogue or Interface could not be found or the user does not have access to the catalogue
    */
-  public boolean isSpecFileInCatalogue(RepositoryId catalogueRepo, String username, RepositoryId specRepo, String specFilePath) {
-    //    var catalogue = getCatalogueForRepoAndUser(catalogueRepo, username);
-    //
-    //    if (catalogue == null || catalogue.getCatalogueManifest() == null ||
-    //    catalogue.getCatalogueManifest().getSpecFileLocations() == null) {
-    //      return false;
-    //    }
-    //
-    //    return catalogue.getCatalogueManifest().getSpecFileLocations().stream()
-    //        .anyMatch(specFileLocation -> specFileMatches(specFileLocation, catalogueRepo, specRepo, specFilePath));
-    return false;
-  }
+  public Interface getInterfaceEntry(CatalogueId catalogueId, String interfaceName, String username) throws UnsupportedEncodingException {
+    if (!isRepositoryAccessible(catalogueId.getRepositoryId(), username)) {
+      return null;
+    }
 
-  //  private boolean specFileMatches(SpecFileLocation specFileLocation, Repository catalogueRepo, Repository specRepo,
-  //  String specFilePath) {
-  //    if (specFileLocation.getRepo() == null && !catalogueRepo.equals(specRepo)) {
-  //      return false;
-  //    }
-  //    if (specFileLocation.getRepo() != null && !specFileLocation.getRepo().equals(specRepo)) {
-  //      return false;
-  //    }
-  //    return specFileLocation.getFilePath().equalsIgnoreCase(specFilePath);
-  //  }
+    var getAndParseCatalogueResult = getAndParseCatalogueInManifest(catalogueId);
+
+    if (getAndParseCatalogueResult.getCatalogueManifestFileContentItem() == null) {
+      return null;
+    }
+
+    var parseError = getAndParseCatalogueResult.getCatalogueParseResult().getError();
+    if (parseError != null) {
+      logger.warn("A request for an interface entry in a catalogue manifest that does not parse correctly was received. " +
+          "CatalogueId: {} and ParseError '{}'", catalogueId, parseError);
+      throw new RuntimeException("An error occurred while parsing the catalogue manifest file for interface requested.");
+    }
+
+    var catalogue = getAndParseCatalogueResult.getCatalogueParseResult().getCatalogue();
+
+    return catalogue.getInterfaces().getAdditionalProperties().get(interfaceName);
+  }
 
   private CatalogueManifestId pickCatalogueFileFromSearchResults(List<SearchCodeResultItem> searchCodeResultItems) {
     var manifestFileResult = searchCodeResultItems.stream()
@@ -166,7 +169,10 @@ public class CatalogueService {
       var catalogueManifestParseResult = CatalogueManifestParser.parseManifestFileContents(fileContentItem.getDecodedContent());
 
       if (catalogueManifestParseResult.getCatalogueManifest() != null) {
-        return CatalogueMapper.mapCatalogueManifestEntries(catalogueManifestParseResult.getCatalogueManifest(), manifestId, fileContentItem.getHtml_url());
+        return CatalogueMapper.mapCatalogueManifestEntries(
+            catalogueManifestParseResult.getCatalogueManifest(),
+            manifestId,
+            fileContentItem.getHtml_url());
       } else {
         return Collections.singletonList(CatalogueMapper.createForParseError(catalogueManifestParseResult.getError(), manifestId));
       }
@@ -178,27 +184,66 @@ public class CatalogueService {
   }
 
   private spectacular.backend.api.model.Catalogue getFullCatalogueDetails(CatalogueId catalogueId) {
-    spectacular.backend.api.model.Catalogue catalogue = null;
-    List<spectacular.backend.api.model.SpecLog> specLogs = null;
-    var fileContentItem = restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), catalogueId.getPath(), null);
+    GetAndParseCatalogueResult getAndParseCatalogueResult = null;
     try {
-      var catalogueParseResult = CatalogueManifestParser.findAndParseCatalogueInManifestFileContents(
-          fileContentItem.getDecodedContent(),
-          catalogueId.getCatalogueName());
-
-      if (catalogueParseResult.getCatalogue() != null) {
-        catalogue = CatalogueMapper.mapCatalogue(catalogueParseResult.getCatalogue(), catalogueId, fileContentItem.getHtml_url());
-        specLogs = specLogService.getSpecLogsFor(catalogueParseResult.getCatalogue(), catalogueId);
-      } else {
-        return CatalogueMapper.createForParseError(catalogueParseResult.getError(), catalogueId);
-      }
+      getAndParseCatalogueResult = getAndParseCatalogueInManifest(catalogueId);
     } catch (UnsupportedEncodingException e) {
-      logger.error("An error occurred while decoding the catalogue manifest yaml file: " +
-          ((CatalogueManifestId)catalogueId).toString(), e);
-      var error = "An error occurred while decoding the catalogue manifest yaml file: " + e.getMessage();
+      logger.error("An error occurred while decoding the catalogue manifest yml file: " + ((CatalogueManifestId)catalogueId).toString(), e);
+      var error = "An error occurred while decoding the catalogue manifest yml file: " + e.getMessage();
       return CatalogueMapper.createForParseError(error, catalogueId);
     }
 
-    return catalogue.specLogs(specLogs);
+    if (getAndParseCatalogueResult.getCatalogueManifestFileContentItem() == null) {
+      return null;
+    }
+
+    var parseError = getAndParseCatalogueResult.getCatalogueParseResult().getError();
+    if (parseError != null) {
+      return CatalogueMapper.createForParseError(parseError, catalogueId);
+    }
+
+    var catalogue = getAndParseCatalogueResult.getCatalogueParseResult().getCatalogue();
+    var catalogueManifestFileContentItem = getAndParseCatalogueResult.getCatalogueManifestFileContentItem();
+    var catalogueDetails = CatalogueMapper.mapCatalogue(catalogue, catalogueId, catalogueManifestFileContentItem.getHtml_url());
+    var specLogs = specLogService.getSpecLogsFor(catalogue, catalogueId);
+    return catalogueDetails.specLogs(specLogs);
+  }
+
+  private GetAndParseCatalogueResult getAndParseCatalogueInManifest(CatalogueId catalogueId) throws UnsupportedEncodingException {
+    ContentItem fileContentItem = null;
+
+    try {
+      fileContentItem = restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), catalogueId.getPath(), null);
+    } catch (HttpClientErrorException e) {
+      if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+        logger.warn("A request for a catalogue manifest that does not exist was received. CatalogueId: {}", catalogueId);
+        return new GetAndParseCatalogueResult(null, null);
+      }
+    }
+
+    String fileContents = fileContentItem.getDecodedContent();
+    var catalogueParseResult = CatalogueManifestParser.findAndParseCatalogueInManifestFileContents(fileContents,
+        catalogueId.getCatalogueName());
+
+    return new GetAndParseCatalogueResult(fileContentItem, catalogueParseResult);
+  }
+
+  private class GetAndParseCatalogueResult {
+    private final ContentItem catalogueManifestFileContentItem;
+    private final CatalogueParseResult catalogueParseResult;
+
+    private GetAndParseCatalogueResult(ContentItem catalogueManifestFileContentItem,
+                                       CatalogueParseResult catalogueParseResult) {
+      this.catalogueManifestFileContentItem = catalogueManifestFileContentItem;
+      this.catalogueParseResult = catalogueParseResult;
+    }
+
+    public ContentItem getCatalogueManifestFileContentItem() {
+      return catalogueManifestFileContentItem;
+    }
+
+    public CatalogueParseResult getCatalogueParseResult() {
+      return catalogueParseResult;
+    }
   }
 }
