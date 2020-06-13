@@ -1,15 +1,16 @@
 package spectacular.backend.cataloguemanifest;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import spectacular.backend.cataloguemanifest.model.Catalogue;
 import spectacular.backend.cataloguemanifest.model.CatalogueManifest;
 
+@Component
 public class CatalogueManifestParser {
   private static final Logger logger = LoggerFactory.getLogger(CatalogueManifestParser.class);
 
@@ -19,7 +20,7 @@ public class CatalogueManifestParser {
    * @param manifestFileContents the YAML contents of a catalogue manifest file to be parsed
    * @return the CatalogueManifestParseResult
    */
-  public static CatalogueManifestParseResult parseManifestFileContents(String manifestFileContents) {
+  public CatalogueManifestParseResult parseManifestFileContents(String manifestFileContents) {
     var mapper = new ObjectMapper(new YAMLFactory());
 
     CatalogueManifest manifest = null;
@@ -43,9 +44,9 @@ public class CatalogueManifestParser {
    *
    * @param manifestFileContents the YAML contents of a catalogue manifest file to be searched and parsed
    * @param catalogueName the name of the specific catalogue to be found
-   * @return the CatalogueParseResult
+   * @return the FindAndParseCatalogueResult
    */
-  public static CatalogueParseResult findAndParseCatalogueInManifestFileContents(String manifestFileContents, String catalogueName) {
+  public FindAndParseCatalogueResult findAndParseCatalogueInManifestFileContents(String manifestFileContents, String catalogueName) {
     var mapper = new ObjectMapper(new YAMLFactory());
 
     Catalogue catalogue = null;
@@ -54,15 +55,13 @@ public class CatalogueManifestParser {
       var rootNode = mapper.readTree(manifestFileContents);
       var cataloguesNode = rootNode.get("catalogues");
       if (cataloguesNode == null) {
-        error = "Unable to find 'catalogues' root node catalogue manifest yaml file.";
-        logger.debug(error);
-        return new CatalogueParseResult(null, error);
+        logger.debug("Unable to find 'catalogues' root node catalogue manifest yaml file.");
+        return new FindAndParseCatalogueResult(null, null);
       }
       var catalogueNode = cataloguesNode.get(catalogueName);
       if (catalogueNode == null) {
-        error = String.format("Unable to find catalogue node '%s' in 'catalogues' node catalogue manifest yaml file.", catalogueName);
-        logger.debug(error);
-        return new CatalogueParseResult(null, error);
+        logger.debug("Unable to find catalogue node '{}' in 'catalogues' node catalogue manifest yaml file.", catalogueName);
+        return new FindAndParseCatalogueResult(null, null);
       }
       catalogue = mapper.treeToValue(catalogueNode, Catalogue.class);
     } catch (MismatchedInputException e) {
@@ -74,6 +73,6 @@ public class CatalogueManifestParser {
       error = "An IO error occurred while parsing the catalogue manifest yaml file: " + e.getMessage();
     }
 
-    return new CatalogueParseResult(catalogue, error);
+    return new FindAndParseCatalogueResult(catalogue, error);
   }
 }

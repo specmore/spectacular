@@ -6,11 +6,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import spectacular.backend.api.model.Catalogue;
 import spectacular.backend.cataloguemanifest.model.CatalogueManifest;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.common.CatalogueManifestId;
 
+@Component
 public class CatalogueMapper {
   private static final Logger logger = LoggerFactory.getLogger(CatalogueMapper.class);
 
@@ -22,23 +24,23 @@ public class CatalogueMapper {
    * @param manifestUrl the HTML URL location of the manifest file
    * @return a list of API Catalogue objects found in the manifest file
    */
-  public static List<Catalogue> mapCatalogueManifestEntries(
+  public List<Catalogue> mapCatalogueManifestEntries(
       CatalogueManifest catalogueManifest,
       CatalogueManifestId manifestId,
       URI manifestUrl) {
     return catalogueManifest.getCatalogues().getAdditionalProperties().entrySet().stream()
-        .map(catalogueEntry -> CatalogueMapper.mapCatalogueManifestEntry(catalogueEntry, manifestId, manifestUrl))
+        .map(catalogueEntry -> this.mapCatalogueManifestEntry(catalogueEntry, manifestId, manifestUrl))
         .collect(Collectors.toList());
   }
 
-  public static Catalogue mapCatalogueManifestEntry(
+  public Catalogue mapCatalogueManifestEntry(
       Map.Entry<String, spectacular.backend.cataloguemanifest.model.Catalogue> catalogueEntry,
       CatalogueManifestId manifestId,
       URI manifestUrl) {
     return mapCatalogue(catalogueEntry.getValue(), manifestId, manifestUrl, catalogueEntry.getKey());
   }
 
-  public static Catalogue mapCatalogue(
+  public Catalogue mapCatalogue(
       spectacular.backend.cataloguemanifest.model.Catalogue catalogue,
       CatalogueId catalogueId,
       URI manifestUrl) {
@@ -53,7 +55,7 @@ public class CatalogueMapper {
    * @param catalogueName the name of the catalogue item
    * @return a Catalogue API model
    */
-  public static Catalogue mapCatalogue(
+  public Catalogue mapCatalogue(
       spectacular.backend.cataloguemanifest.model.Catalogue catalogue,
       CatalogueManifestId manifestId,
       URI manifestUrl,
@@ -75,7 +77,7 @@ public class CatalogueMapper {
    * @param manifestId the id of the manifest file being parsed
    * @return a Catalogue API model
    */
-  public static Catalogue createForParseError(String parseError, CatalogueManifestId manifestId) {
+  public Catalogue createForParseError(String parseError, CatalogueManifestId manifestId) {
     return new Catalogue()
         .fullPath(manifestId.getFullPath())
         .name("error")
@@ -88,7 +90,7 @@ public class CatalogueMapper {
    * @param catalogueId the id of the catalogue being parsed
    * @return a Catalogue API model
    */
-  public static Catalogue createForParseError(String parseError, CatalogueId catalogueId) {
+  public Catalogue createForParseError(String parseError, CatalogueId catalogueId) {
     return new Catalogue()
         .fullPath(catalogueId.getFullPath())
         .name(catalogueId.getCatalogueName())

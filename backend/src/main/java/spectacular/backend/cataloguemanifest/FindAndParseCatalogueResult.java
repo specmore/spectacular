@@ -2,11 +2,11 @@ package spectacular.backend.cataloguemanifest;
 
 import spectacular.backend.cataloguemanifest.model.Catalogue;
 
-public class CatalogueParseResult {
+public class FindAndParseCatalogueResult {
   private final Catalogue catalogue;
   private final String error;
 
-  public CatalogueParseResult(Catalogue catalogue, String error) {
+  public FindAndParseCatalogueResult(Catalogue catalogue, String error) {
     this.catalogue = catalogue;
     this.error = error;
   }
