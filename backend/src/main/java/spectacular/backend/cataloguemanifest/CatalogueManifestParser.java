@@ -33,14 +33,28 @@ public class CatalogueManifestParser {
       manifest = mapper.readValue(manifestFileContents, CatalogueManifest.class);
     } catch (MismatchedInputException e) {
       logger.debug("A mapping error occurred while parsing a catalogue manifest yaml file. ", e);
-      error = "A mapping error occurred while parsing the catalogue manifest yaml file. The following field is missing: " +
+      error = "A mapping error occurred while parsing the catalogue manifest yaml file. The following field is invalid: " +
           e.getPathReference();
     } catch (IOException e) {
       logger.error("An IO error occurred while parsing a catalogue manifest yaml file.", e);
       error = "An IO error occurred while parsing the catalogue manifest yaml file: " + e.getMessage();
     }
 
-    return new CatalogueManifestParseResult(manifest, error);
+    if (error != null) {
+      return new CatalogueManifestParseResult(null, error);
+    }
+
+    var violations = validator.validate(manifest);
+    if (violations.size() > 0) {
+      var violationMessage = violations.stream()
+          .map(violation -> violation.getPropertyPath() + " " + violation.getMessage())
+          .collect(Collectors.toList());
+      error = "The following validation errors were found with the catalogue manifest file: " +
+          String.join(", ", violationMessage);
+      return new CatalogueManifestParseResult(null, error);
+    }
+
+    return new CatalogueManifestParseResult(manifest, null);
   }
 
   /**
@@ -68,7 +82,7 @@ public class CatalogueManifestParser {
       catalogue = mapper.treeToValue(catalogueNode, Catalogue.class);
     } catch (MismatchedInputException e) {
       logger.debug("A mapping error occurred while parsing a catalogue manifest yaml file. ", e);
-      error = "A mapping error occurred while parsing the catalogue manifest yaml file. The following field is missing: " +
+      error = "A mapping error occurred while parsing the catalogue manifest yaml file. The following field is invalid: " +
           e.getPathReference();
     } catch (IOException e) {
       logger.error("An IO error occurred while parsing a catalogue manifest yaml file.", e);
@@ -81,7 +95,9 @@ public class CatalogueManifestParser {
 
     var violations = validator.validate(catalogue);
     if (violations.size() > 0) {
-      var violationMessage = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toList());
+      var violationMessage = violations.stream()
+          .map(violation -> violation.getPropertyPath() + " " + violation.getMessage())
+          .collect(Collectors.toList());
       error = "The following validation errors were found with catalogue entry '" + catalogueName + "': " +
           String.join(", ", violationMessage);
       return new FindAndParseCatalogueResult(null, error);

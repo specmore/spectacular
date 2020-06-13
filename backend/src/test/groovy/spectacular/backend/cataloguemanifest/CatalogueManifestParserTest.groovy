@@ -19,6 +19,19 @@ class CatalogueManifestParserTest extends Specification {
             "          filePath: \"specs/example-spec.yaml\"\n" +
             "          repo: \"test-owner2/specs-test2\""
 
+    def aCatalogueManifestWithMissingVersionHeader = "catalogues:\n" +
+            "  testCatalogue1:\n" +
+            "    title: \"Test Catalogue 1\"\n" +
+            "    description: \"Specifications for all the interfaces across system X.\"\n" +
+            "    interfaces:\n" +
+            "      interface1:\n" +
+            "        specFile:\n" +
+            "          filePath: \"specs/example-template.yaml\"\n" +
+            "      interface2:\n" +
+            "        specFile:\n" +
+            "          filePath: \"specs/example-spec.yaml\"\n" +
+            "          repo: \"test-owner2/specs-test2\""
+
     def aCatalogueManifestWithInvalidFields = "spectacular: '0.1'\n" +
             "catalogues:\n" +
             "  testCatalogue1:\n" +
@@ -36,6 +49,20 @@ class CatalogueManifestParserTest extends Specification {
             "        specFile:\n" +
             "          filePath: \"specs/example-spec.yaml\"\n" +
             "          repo: \"test-owner2/specs-test2\""
+
+    def "parseManifestFileContents returns parse error for invalid catalogue manifest with missing version header"() {
+        given: "an invalid catalogue manifest with missing version header"
+        def yamlManifest = aCatalogueManifestWithMissingVersionHeader
+
+        when: "parsing the manifest file contents"
+        def result = catalogueManifestParser.parseManifestFileContents(yamlManifest);
+
+        then: "no catalogue manifest is returned"
+        !result.catalogueManifest
+
+        and: "there is a parse error"
+        result.error == "The following validation errors were found with the catalogue manifest file: spectacular must not be null"
+    }
 
     def "FindAndParseCatalogueInManifestFileContents for valid catalogue manifest"() {
         given: "a valid catalogue manifest YAML content in the manifest file"
@@ -63,7 +90,7 @@ class CatalogueManifestParserTest extends Specification {
         !result.catalogue
 
         and: "there is a parse error"
-        result.error
+        result.error == "A mapping error occurred while parsing the catalogue manifest yaml file. The following field is invalid: spectacular.backend.cataloguemanifest.model.Catalogue[\"randomField\"]"
     }
 
     def "FindAndParseCatalogueInManifestFileContents returns parse error for missing required fields in catalogue manifest"() {
@@ -77,7 +104,7 @@ class CatalogueManifestParserTest extends Specification {
         !result.catalogue
 
         and: "there is a parse error"
-        result.error
+        result.error == "The following validation errors were found with catalogue entry 'testCatalogue1': title must not be null"
     }
 
     def "FindAndParseCatalogueInManifestFileContents for catalogue manifest with no catalogues field"() {
