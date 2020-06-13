@@ -38,25 +38,6 @@ class CatalogueServiceTest extends Specification {
         return new CatalogueId(catalogueRepo, catalogueManifestFile, catalogueName)
     }
 
-    def aValidYamlManifestFileContentItem() {
-        def validYamlManifest = "spectacular: '0.1'\n" +
-                "catalogues:\n" +
-                "  testCatalogue1:\n" +
-                "    title: \"Test Catalogue 1\"\n" +
-                "    description: \"Specifications for all the interfaces across system X.\"\n" +
-                "    interfaces:\n" +
-                "      interface1:\n" +
-                "        specFile:\n" +
-                "          filePath: \"specs/example-template.yaml\"\n" +
-                "      interface2:\n" +
-                "        specFile:\n" +
-                "          filePath: \"specs/example-spec.yaml\"\n" +
-                "          repo: \"test-owner2/specs-test2\""
-        def manifestFileContentItem = Mock(ContentItem)
-        manifestFileContentItem.getDecodedContent() >> validYamlManifest
-        return manifestFileContentItem
-    }
-
     def searchCodeResultsForInstallation(RepositoryId catalogueRepository, boolean isBothFilesPresent = false) {
         def searchCodeResultItems = [];
 
@@ -82,9 +63,8 @@ class CatalogueServiceTest extends Specification {
         def manifestFileContentItem = Mock(ContentItem)
 
         and: "a catalogue config parse result for catalogue in the manifest file contents with catalogue entry"
-        def catalogueParseResult = Mock(FindAndParseCatalogueResult)
         def catalogue = Mock(spectacular.backend.cataloguemanifest.model.Catalogue)
-        catalogueParseResult.getCatalogue() >> catalogue
+        def catalogueParseResult = new FindAndParseCatalogueResult(catalogue, null)
 
         and: "a catalogue API model representation of the catalogue manifest object without spec log items"
         def catalogueModel = Mock(Catalogue)
@@ -111,7 +91,7 @@ class CatalogueServiceTest extends Specification {
         1 * specLogService.getSpecLogsFor(_, catalogueId) >> specLogs
 
         and: "the spec logs are added to the catalogue API model object"
-        1* catalogueModel.specLogs(specLogs) >> catalogueModel
+        1 * catalogueModel.specLogs(specLogs) >> catalogueModel
 
         and: "the mapped catalogue API model object is returned"
         result == catalogueModel
@@ -189,9 +169,8 @@ class CatalogueServiceTest extends Specification {
         def manifestFileContentItem = Mock(ContentItem)
 
         and: "a catalogue manifest parse result the manifest file contents with valid catalogue manifest object"
-        def catalogueManifestParseResult = Mock(CatalogueManifestParseResult)
         def catalogueManifest = Mock(CatalogueManifest)
-        catalogueManifestParseResult.getCatalogueManifest() >> catalogueManifest
+        def catalogueManifestParseResult = new CatalogueManifestParseResult(catalogueManifest, null)
 
         and: "mapped catalogue API models for each catalogue entry in the manifest object"
         def mappedCatalogues = [Mock(Catalogue)]
@@ -229,9 +208,8 @@ class CatalogueServiceTest extends Specification {
         def manifestFileContentItem = Mock(ContentItem)
 
         and: "a catalogue manifest parse result the manifest file contents with valid catalogue manifest object"
-        def catalogueManifestParseResult = Mock(CatalogueManifestParseResult)
         def catalogueManifest = Mock(CatalogueManifest)
-        catalogueManifestParseResult.getCatalogueManifest() >> catalogueManifest
+        def catalogueManifestParseResult = new CatalogueManifestParseResult(catalogueManifest, null)
 
         and: "mapped catalogue API models for each catalogue entry in the manifest object"
         def mappedCatalogues = [Mock(Catalogue)]
@@ -253,6 +231,10 @@ class CatalogueServiceTest extends Specification {
 
         and: "the manifest catalogue entry object is mapped to an API catalogue model"
         1 * catalogueMapper.mapCatalogueManifestEntries(catalogueManifest, _, _) >> mappedCatalogues
+
+        and: "the catalogues returned contain the mapped entries"
+        result.size() == 1
+        result.first() == mappedCatalogues.first()
     }
 
     def "find catalogues filters out repos the user does not have access to"() {
@@ -336,9 +318,8 @@ class CatalogueServiceTest extends Specification {
         def manifestFileContentItem = Mock(ContentItem)
 
         and: "a catalogue config parse result with a catalogue entry in the manifest file contents"
-        def catalogueParseResult = Mock(FindAndParseCatalogueResult)
         def catalogue = Mock(spectacular.backend.cataloguemanifest.model.Catalogue)
-        catalogueParseResult.getCatalogue() >> catalogue
+        def catalogueParseResult = new FindAndParseCatalogueResult(catalogue, null)
 
         and: "the parse result catalogue object has an interface entry for the interface name"
         def interfaces = Mock(Interfaces)
@@ -374,8 +355,7 @@ class CatalogueServiceTest extends Specification {
         def manifestFileContentItem = Mock(ContentItem)
 
         and: "a catalogue config parse result without a catalogue entry in the manifest file contents"
-        def catalogueParseResult = Mock(FindAndParseCatalogueResult)
-        catalogueParseResult.getCatalogue() >> null
+        def catalogueParseResult = new FindAndParseCatalogueResult(null, null)
 
         when: "the get interface entry for user is called"
         def interfaceEntry = catalogueService.getInterfaceEntry(catalogueId, interfaceName, aUsername)
@@ -435,17 +415,20 @@ class CatalogueServiceTest extends Specification {
         !interfaceEntry
     }
 
-    def "get interface entry from a catalogue has parse errors"() {
+    def "get interface entry from a catalogue that has parse errors"() {
         given: "a specific catalogue the user has access to"
         def catalogueId = aCatalogue()
-        catalogueId = new CatalogueId(catalogueId.getRepositoryId(), catalogueId.getPath(), "someOtherCatalogue")
         def userAndInstallationAccessToCatalogueRepository = true
 
         and: "an interface name to get an interface entry for"
         def interfaceName = "interface2"
 
         and: "an invalid catalogue config manifest"
-        def manifestFileContentItem = aValidYamlManifestFileContentItem()
+        def manifestFileContentItem = Mock(ContentItem)
+
+        and: "a catalogue config parse result with an error"
+        def error = "some parse error"
+        def catalogueParseResult = new FindAndParseCatalogueResult(null, error)
 
         when: "the get interface entry for user is called"
         def interfaceEntry = catalogueService.getInterfaceEntry(catalogueId, interfaceName, aUsername)
@@ -456,7 +439,11 @@ class CatalogueServiceTest extends Specification {
         and: "the .yml manifest file contents is retrieved"
         1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), catalogueId.getPath(), null) >> manifestFileContentItem
 
+        and: "the catalogue entry in the manifest file contents is searched for"
+        1 * catalogueManifestParser.findAndParseCatalogueInManifestFileContents(_, catalogueId.getCatalogueName()) >> catalogueParseResult
+
         and: "a runtime exception is thrown"
-        thrown(RuntimeException)
+        def e = thrown(RuntimeException)
+        e.getMessage() == "An error occurred while parsing the catalogue manifest file for interface requested."
     }
 }
