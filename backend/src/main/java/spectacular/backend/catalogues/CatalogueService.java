@@ -233,6 +233,8 @@ public class CatalogueService {
       if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
         logger.warn("A request for a catalogue manifest that does not exist was received. CatalogueId: {}", catalogueId);
         return new GetAndParseCatalogueResult(null, null);
+      } else {
+        throw e;
       }
     }
 
