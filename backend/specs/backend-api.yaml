@@ -74,6 +74,13 @@ paths:
       responses:
         '200':
           description: Successful operation
+          content:
+            application/*:
+              schema:
+                type: object
+            text/plain:
+              schema:
+                type: object
 components:
   schemas:
     FindCataloguesResult:

@@ -1,6 +1,7 @@
 package spectacular.backend.interfaces
 
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.client.HttpClientErrorException
 import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.cataloguemanifest.model.SpecFileLocation
@@ -52,9 +53,9 @@ class InterfaceServiceTest extends Specification {
         and: "the file contents are retrieved"
         1 * restApiClient.getRepositoryContent(specFileRepoId, specFilePath, "some-ref") >> specFileContentItem
 
-        and: "the decoded file contents are returned with the yaml file extension"
+        and: "the decoded file contents are returned with yaml media type"
         result.contents == "test file content"
-        result.fileExtension.get() == "yaml"
+        result.getMediaTypeGuess().toString() == "application/yaml"
     }
 
     def "GetInterfaceFileContents uses catalogue repo when spec file location doesn't specify a repo"() {
@@ -82,9 +83,8 @@ class InterfaceServiceTest extends Specification {
         and: "the file contents are retrieved"
         1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), specFilePath, "some-ref") >> specFileContentItem
 
-        and: "the decoded file contents are returned with the yaml file extension"
+        and: "the decoded file contents are returned"
         result.contents == "test file content"
-        result.fileExtension.get() == "yaml"
     }
 
     def "GetInterfaceFileContents returns null for interfaceName not found in catalogue"() {

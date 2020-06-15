@@ -1,6 +1,7 @@
 package spectacular.backend.interfaces;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLConnection;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +44,8 @@ public class InterfaceService {
     try {
       var fileContentItem = restApiClient.getRepositoryContent(fileRepo, filePath, ref);
       var fileContents = fileContentItem.getDecodedContent();
-      var fileExtension = getFileExtension(fileContentItem.getName());
 
-      return new InterfaceFileContents(fileContents, fileExtension);
+      return new InterfaceFileContents(fileContents, filePath);
     } catch (HttpClientErrorException e) {
       if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
         logger.debug("A request for a interface spec file that does not exist was received. Spec File Location: {}", catalogueInterfaceEntry.getSpecFile());
@@ -54,11 +54,5 @@ public class InterfaceService {
         throw e;
       }
     }
-  }
-
-  private Optional<String> getFileExtension(String filename) {
-    return Optional.ofNullable(filename)
-        .filter(f -> f.contains("."))
-        .map(f -> f.substring(filename.lastIndexOf(".") + 1));
   }
 }
