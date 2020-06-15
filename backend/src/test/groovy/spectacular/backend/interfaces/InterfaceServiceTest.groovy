@@ -1,7 +1,6 @@
 package spectacular.backend.interfaces
 
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.web.client.HttpClientErrorException
 import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.cataloguemanifest.model.SpecFileLocation
@@ -45,7 +44,7 @@ class InterfaceServiceTest extends Specification {
         def specFileContentItem = new ContentItem(specFilePath, specFilePath, "some-sha", "type?", null, "dGVzdCBmaWxlIGNvbnRlbnQ=", "base64")
 
         when: "getting the interface file contents for the interface entry name and git ref"
-        def result = interfaceService.GetInterfaceFileContents(catalogueId, interfaceEntryName, ref, aUsername)
+        def result = interfaceService.getInterfaceFileContents(catalogueId, interfaceEntryName, ref, aUsername)
 
         then: "the interface entry is retrieved from the catalogue service"
         1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> interfaceEntry
@@ -75,7 +74,7 @@ class InterfaceServiceTest extends Specification {
         def specFileContentItem = new ContentItem(specFilePath, specFilePath, "some-sha", "type?", null, "dGVzdCBmaWxlIGNvbnRlbnQ=", "base64")
 
         when: "getting the interface file contents for the interface entry name and git ref"
-        def result = interfaceService.GetInterfaceFileContents(catalogueId, interfaceEntryName, ref, aUsername)
+        def result = interfaceService.getInterfaceFileContents(catalogueId, interfaceEntryName, ref, aUsername)
 
         then: "the interface entry is retrieved from the catalogue service"
         1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> interfaceEntry
@@ -95,7 +94,7 @@ class InterfaceServiceTest extends Specification {
         def interfaceEntryName = "missingInterface"
 
         when: "getting the interface file contents for the interface entry name"
-        def result = interfaceService.GetInterfaceFileContents(catalogueId, interfaceEntryName, "some-ref", aUsername)
+        def result = interfaceService.getInterfaceFileContents(catalogueId, interfaceEntryName, "some-ref", aUsername)
 
         then: "the interface entry is retrieved from the catalogue service"
         1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> null
@@ -111,7 +110,7 @@ class InterfaceServiceTest extends Specification {
         def interfaceEntry = new Interface()
 
         when: "getting the interface file contents for the interface entry name"
-        def result = interfaceService.GetInterfaceFileContents(catalogueId, interfaceEntryName, "some-ref", aUsername)
+        def result = interfaceService.getInterfaceFileContents(catalogueId, interfaceEntryName, "some-ref", aUsername)
 
         then: "the interface entry is retrieved from the catalogue service"
         1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> null
@@ -134,7 +133,7 @@ class InterfaceServiceTest extends Specification {
         interfaceEntry.setSpecFile(specFileLocation)
 
         when: "getting the interface file contents for the interface entry name and git ref"
-        def result = interfaceService.GetInterfaceFileContents(catalogueId, interfaceEntryName, "some-ref", aUsername)
+        def result = interfaceService.getInterfaceFileContents(catalogueId, interfaceEntryName, "some-ref", aUsername)
 
         then: "the interface entry is retrieved from the catalogue service"
         1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> interfaceEntry

@@ -62,8 +62,10 @@ public class CatalogueManifestParser {
    *
    * @param manifestFileContents the YAML contents of a catalogue manifest file to be searched and parsed
    * @param catalogueName the name of the specific catalogue to be found
-   * @return the FindAndParseCatalogueResult with the catalogue manifest entry. If the catalogue entry could not be found, then null is returned.
-   *     If an error occurred while trying to find the catalogue entry, then an error message is returned.
+   * @return the FindAndParseCatalogueResult with the catalogue manifest entry.
+   *     If the catalogue entry could not be found, then a FindAndParseCatalogueResult with a null catalogue property is returned.
+   *     If an error occurred while trying to find the catalogue entry, then a FindAndParseCatalogueResult with a null error message
+   *     property is returned.
    */
   public FindAndParseCatalogueResult findAndParseCatalogueInManifestFileContents(String manifestFileContents, String catalogueName) {
     Catalogue catalogue = null;

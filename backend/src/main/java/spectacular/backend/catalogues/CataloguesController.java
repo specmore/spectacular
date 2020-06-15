@@ -5,7 +5,6 @@ import java.util.Base64;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -58,7 +57,7 @@ public class CataloguesController implements CataloguesApi {
     var catalogueId = CatalogueId.createFrom(combinedId);
 
     try {
-      var interfaceFileContents = this.interfaceService.GetInterfaceFileContents(catalogueId, interfaceName, ref, authentication.getName());
+      var interfaceFileContents = this.interfaceService.getInterfaceFileContents(catalogueId, interfaceName, ref, authentication.getName());
 
       if (interfaceFileContents == null) {
         return ResponseEntity.notFound().build();

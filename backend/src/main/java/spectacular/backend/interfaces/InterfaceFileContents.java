@@ -8,6 +8,12 @@ public class InterfaceFileContents {
   private final String filePath;
   private final MediaType mediaTypeGuess;
 
+  /**
+   * Constructs a new InterfaceFileContents object.
+   *
+   * @param contents the decoded contents of the interface file retrieved from git
+   * @param filePath the file path of the interface file in the git repository
+   */
   public InterfaceFileContents(String contents, String filePath) {
     this.contents = contents;
     this.filePath = filePath;

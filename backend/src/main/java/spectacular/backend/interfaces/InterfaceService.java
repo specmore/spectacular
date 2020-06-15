@@ -25,7 +25,17 @@ public class InterfaceService {
     this.restApiClient = restApiClient;
   }
 
-  public InterfaceFileContents GetInterfaceFileContents(CatalogueId catalogueId, String interfaceName, String ref, String username)
+  /**
+   * Get the contents of a spec file at the location described by a specific interface entry in a catalogue manifest.
+   *
+   * @param catalogueId the location and name of the catalogue
+   * @param interfaceName the name of the interface entry in the catalogue
+   * @param ref the name of the git ref at which to get the file contents
+   * @param username the name of the user requesting the file contents
+   * @return a InterfaceFileContents result if the file is found and the user has access to it. Else it returns null
+   * @throws UnsupportedEncodingException if an error occurred while decoding the content
+   */
+  public InterfaceFileContents getInterfaceFileContents(CatalogueId catalogueId, String interfaceName, String ref, String username)
       throws UnsupportedEncodingException {
     var catalogueInterfaceEntry = this.catalogueService.getInterfaceEntry(catalogueId, interfaceName,username);
 
@@ -48,7 +58,8 @@ public class InterfaceService {
       return new InterfaceFileContents(fileContents, filePath);
     } catch (HttpClientErrorException e) {
       if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-        logger.debug("A request for a interface spec file that does not exist was received. Spec File Location: {}", catalogueInterfaceEntry.getSpecFile());
+        logger.debug("A request for a interface spec file that does not exist was received. Spec File Location: {}",
+            catalogueInterfaceEntry.getSpecFile());
         return null;
       } else {
         throw e;
