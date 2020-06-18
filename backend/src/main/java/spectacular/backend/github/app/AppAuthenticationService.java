@@ -39,6 +39,9 @@ public class AppAuthenticationService {
     this.appId = appId;
     this.privateKeyFilePath = privateKeyFilePath;
     this.jwtDuration = jwtDuration;
+    logger.info("Initialised AppAuthenticationService for GitHub App with id '{}' and using JWT Signing private key at path '{}'.",
+        appId,
+        privateKeyFilePath);
   }
 
   /**
