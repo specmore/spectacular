@@ -58,9 +58,6 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
-    - bash: echo SemVer $(GitVersion.SemVer);
-            echo FullSemVer $(GitVersion.FullSemVer);
-      displayName: Display versions
     - bash: docker build -f docker/Dockerfile-backend --target build --build-arg SEMVER=$(GitVersion.FullSemVer) -t backend-build-stage .;
             id=$(docker create backend-build-stage);
             mkdir out;
@@ -106,8 +103,20 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
+    - bash: docker build -f docker/Dockerfile-web --target build --build-arg SEMVER=$(GitVersion.FullSemVer) -t web-build-stage .;
+            id=$(docker create web-build-stage);
+            mkdir out;
+            docker cp $id:/usr/src/app/out/results ./out/results;
+            docker rm $id;
+      displayName: Run Docker build stage
+    - task: PublishTestResults@2
+      inputs:
+        testRunner: JUnit
+        testResultsFiles: 'out/results/**/junit.xml'
+        failTaskOnFailedTests: true
+        testRunTitle: Backend Build Tests
     - task: Docker@2
-      displayName: Build image
+      displayName: Build final image
       inputs:
         command: build
         repository: $(testCandidateRepositoryName)/web

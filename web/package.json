@@ -6,6 +6,7 @@
     "start": "webpack-dev-server --mode development --open",
     "build": "webpack --mode production",
     "test": "jest",
+    "test-ci": "jest --ci --reporters=default --reporters=jest-junit",
     "lint": "eslint src/ --ext .js,.ts,.tsx",
     "generate-fetcher": "restful-react import --file ../backend/specs/backend-api.yaml --output src/backend-api-client.tsx"
   },
@@ -47,6 +48,7 @@
     "eslint-plugin-react-hooks": "^2.5.1",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.9.0",
+    "jest-junit": "^11.0.0",
     "mini-css-extract-plugin": "^0.8.0",
     "style-loader": "^1.0.0",
     "typescript": "^3.9.3",
@@ -77,5 +79,9 @@
       "test-utils.js",
       "test-data-generator/"
     ]
+  },
+  "jest-junit": {
+    "suiteName": "web jest tests",
+    "outputDirectory": "out/results/"
   }
 }

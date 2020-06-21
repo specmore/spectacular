@@ -22,7 +22,7 @@ RUN npm run generate-fetcher
 
 # Test
 RUN npm run lint
-RUN npm run test
+RUN npm run test-ci
 
 # Set version
 ARG SEMVER
