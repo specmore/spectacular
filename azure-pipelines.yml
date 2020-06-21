@@ -129,17 +129,6 @@ stages:
         tags: |
           $(tag)
           $(GitVersion.SemVer)
-  # - job: TagSource
-  #   displayName: Tag git repository with build number
-  #   pool:
-  #     vmImage: $(vmImageName)
-  #   steps:
-  #   - checkout: self
-  #     persistCredentials: true
-  #   - bash: git tag build-$(tag)
-  #     displayName: Git Tag
-  #   - bash: git push --tags
-  #     displayName: Push Git Tags
 
 - stage: IntegrationTesting
   displayName: Integration Testing
@@ -238,14 +227,3 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         repository: $(releaseCandidateRepositoryName)/web
         tags: $(tag)
-  # - job: TagSource
-  #   displayName: Tag git repository
-  #   pool:
-  #     vmImage: $(vmImageName)
-  #   steps:
-  #   - checkout: self
-  #     persistCredentials: true
-  #   - bash: git tag rc-$(tag)
-  #     displayName: Git Tag
-  #   - bash: git push --tags
-  #     displayName: Push Git Tags
