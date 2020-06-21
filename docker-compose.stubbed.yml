@@ -1,0 +1,15 @@
+version: '3'
+services:
+    backend:
+        environment: 
+            - GITHUB_API_ROOT_URL=http://github-mock:8080
+        depends_on: 
+            - github-mock
+    github-mock:
+        image: rodolpheche/wiremock
+        ports:
+            - 8080:8080
+        volumes:
+            - ./integration-tests/github-mock/test:/home/wiremock
+        # command: --verbose
+        # command: --proxy-all="https://api.github.com" --record-mappings --verbose
