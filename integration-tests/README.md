@@ -1,5 +1,5 @@
 # Integration Tests
-This folder contains tests that test [all the architectural components](../docs/architecture.md) (that build up to form the Spectacular tool) integrated together and as a whole.
+This folder contains tests that test [all the architectural components](../docs/architecture.md) (that build up to form the Spectacular tool) integrated together as a whole.
 
 ## Decisions
 - External resources outside the Spectacular system are stubbed out. e.g. GitHup API
@@ -21,9 +21,11 @@ Because the End-to-End tests are written against a specific set of test data set
 Finally, start all the components manually or using the docker-compose file in root of the repository.
 
 #### Run the tests
-Run cypress using a docker container
+First change working directory to the [ui-e2e](ui-e2e/) folder.
+
+Then run cypress using a docker container
 ```
-docker run -it -v $PWD/:/e2e -w /e2e -e "CYPRESS_baseUrl=http://host.docker.internal:80" cypress/included:3.3.2
+docker run -it -v $PWD/:/e2e -w /e2e -e "CYPRESS_baseUrl=http://host.docker.internal:80" cypress/included:4.8.0
 ```
 
 Or if you have cypress installed in your development environment
