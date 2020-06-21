@@ -61,23 +61,24 @@ stages:
     - bash: echo SemVer $(GitVersion.SemVer);
             echo FullSemVer $(GitVersion.FullSemVer);
       displayName: Display versions
-    - task: Docker@2
-      displayName: Build build stage image
-      inputs:
-        command: build
-        repository: $(testCandidateRepositoryName)/backend
-        containerRegistry: $(dockerRegistryServiceConnection)
-        buildContext: .
-        dockerfile: 'docker/Dockerfile-backend'
-        arguments: --target build --build-arg SEMVER=$(GitVersion.FullSemVer)
-        tags: |
-          backend-build-stage
-          $(tag)
-          $(GitVersion.SemVer)
-    - bash: id=$(docker create backend-build-stage);
+    # - task: Docker@2
+    #   displayName: Build build stage image
+    #   inputs:
+    #     command: build
+    #     repository: $(testCandidateRepositoryName)/backend
+    #     containerRegistry: $(dockerRegistryServiceConnection)
+    #     buildContext: .
+    #     dockerfile: 'docker/Dockerfile-backend'
+    #     arguments: --target build --build-arg SEMVER=$(GitVersion.FullSemVer)
+    #     tags: |
+    #       backend-build-stage
+    #       $(tag)
+    #       $(GitVersion.SemVer)
+    - bash: docker build -f docker/Dockerfile-backend --target build --build-arg SEMVER=$(GitVersion.FullSemVer) -t backend-build-stage .;
+            id=$(docker create backend-build-stage);
             docker cp $id:/app/build/test-results ./out/results;
             docker rm $id;
-      displayName: Copy build test restuls
+      displayName: Run Docker build stage
     - task: PublishTestResults@2
       inputs:
         testRunner: JUnit
@@ -85,7 +86,7 @@ stages:
         failTaskOnFailedTests: true
         testRunTitle: Backend Build Tests
     - task: Docker@2
-      displayName: Build image
+      displayName: Build final image
       inputs:
         command: build
         repository: $(testCandidateRepositoryName)/backend
