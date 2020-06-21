@@ -182,10 +182,10 @@ stages:
         testRunTitle: E2E UI Tests
     - bash: if [ -d integration-tests/ui-e2e/cypress/screenshots ]; then
               echo "##vso[task.setVariable variable=SCREENSHOTSEXIST]true";
-            fi
+            fi;
             if [ -d integration-tests/ui-e2e/cypress/videos ]; then
               echo "##vso[task.setVariable variable=VIDEOSEXIST]true";
-            fi
+            fi;
       displayName: Check artifacts exist
     - task: PublishPipelineArtifact@1
       displayName: Publish Screenshots
