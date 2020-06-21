@@ -1,24 +1,24 @@
 {
-  "id" : "f2202988-2688-33ed-80fe-9d22612f9919",
+  "id" : "f2d40b82-0ebe-3f83-b081-bab65a5e6811",
   "request" : {
     "url" : "/repos/pburls/specs-test/contents/spectacular-config.yml",
     "method" : "GET"
   },
   "response" : {
     "status" : 200,
-    "bodyFileName" : "body-repos-pburls-specs-test-contents-spectacular-config.yml-Z0v5N.json",
+    "bodyFileName" : "body-repos-pburls-specs-test-contents-spectacular-config.yml-ZWUW4.json",
     "headers" : {
-      "Date" : "Sun, 17 May 2020 07:25:34 GMT",
+      "Date" : "Sun, 21 Jun 2020 09:30:24 GMT",
       "Content-Type" : "application/json; charset=utf-8",
       "Server" : "GitHub.com",
       "Status" : "200 OK",
       "X-RateLimit-Limit" : "5000",
-      "X-RateLimit-Remaining" : "4971",
-      "X-RateLimit-Reset" : "1589703294",
+      "X-RateLimit-Remaining" : "4983",
+      "X-RateLimit-Reset" : "1592735044",
       "Cache-Control" : "private, max-age=60, s-maxage=60",
-      "Vary" : [ "Accept, Authorization, Cookie, X-GitHub-OTP", "Accept-Encoding, Accept, X-Requested-With" ],
-      "ETag" : "W/\"4bee900d30934e3e0f5c464b8cebdae4f5e78594\"",
-      "Last-Modified" : "Tue, 12 May 2020 21:09:30 GMT",
+      "Vary" : [ "Accept, Authorization, Cookie, X-GitHub-OTP", "Accept-Encoding, Accept, X-Requested-With", "Accept-Encoding" ],
+      "ETag" : "W/\"a6781dc451a571074b089230f2967ab8835b418e\"",
+      "Last-Modified" : "Mon, 15 Jun 2020 22:45:08 GMT",
       "X-GitHub-Media-Type" : "github.v3",
       "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
       "X-Frame-Options" : "deny",
@@ -26,8 +26,8 @@
       "X-XSS-Protection" : "1; mode=block",
       "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
       "Content-Security-Policy" : "default-src 'none'",
-      "X-GitHub-Request-Id" : "E6B6:2D081:4D3EDC5:585F6E9:5EC0E6ED"
+      "X-GitHub-Request-Id" : "E2A5:34EAC:63EF41F:776E889:5EEF28AF"
     }
   },
-  "uuid" : "f2202988-2688-33ed-80fe-9d22612f9919"
+  "uuid" : "f2d40b82-0ebe-3f83-b081-bab65a5e6811"
 }

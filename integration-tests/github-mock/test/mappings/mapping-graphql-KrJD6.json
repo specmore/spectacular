@@ -1,5 +1,5 @@
 {
-  "id" : "9c89af09-435d-3850-8a4e-ff37410040e4",
+  "id" : "1a71ca84-2a2c-3eb7-88b8-413bb12d147a",
   "request" : {
     "url" : "/graphql",
     "method" : "POST",
@@ -11,26 +11,26 @@
   },
   "response" : {
     "status" : 200,
-    "bodyFileName" : "body-graphql-StQug.json",
+    "bodyFileName" : "body-graphql-KrJD6.json",
     "headers" : {
-      "Date" : "Sun, 17 May 2020 07:25:35 GMT",
+      "Date" : "Sun, 21 Jun 2020 09:30:36 GMT",
       "Content-Type" : "application/json; charset=utf-8",
       "Server" : "GitHub.com",
       "Status" : "200 OK",
       "Cache-Control" : "no-cache",
       "X-GitHub-Media-Type" : "github.v4",
       "X-RateLimit-Limit" : "5000",
-      "X-RateLimit-Remaining" : "4986",
-      "X-RateLimit-Reset" : "1589703791",
+      "X-RateLimit-Remaining" : "4992",
+      "X-RateLimit-Reset" : "1592735075",
       "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
       "X-Frame-Options" : "deny",
       "X-Content-Type-Options" : "nosniff",
       "X-XSS-Protection" : "1; mode=block",
       "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
       "Content-Security-Policy" : "default-src 'none'",
-      "Vary" : "Accept-Encoding, Accept, X-Requested-With",
-      "X-GitHub-Request-Id" : "E6AA:F889:2B1CC60:311F5D8:5EC0E6EF"
+      "Vary" : [ "Accept-Encoding, Accept, X-Requested-With", "Accept-Encoding" ],
+      "X-GitHub-Request-Id" : "E2A5:34EAC:63EFFC4:776F5FE:5EEF28BB"
     }
   },
-  "uuid" : "9c89af09-435d-3850-8a4e-ff37410040e4"
+  "uuid" : "1a71ca84-2a2c-3eb7-88b8-413bb12d147a"
 }

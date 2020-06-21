@@ -1,22 +1,22 @@
 {
-  "id" : "b3c07f21-4d56-3ada-93f1-b46cd7a0ac38",
+  "id" : "2a36c153-737e-3d45-b0a4-0b0f0a7f55c2",
   "request" : {
     "url" : "/repos/pburls/specs-test/contents/specs/example-template.yaml?ref=test-pr-example",
     "method" : "GET"
   },
   "response" : {
     "status" : 200,
-    "bodyFileName" : "body-repos-pburls-specs-test-contents-specs-example-template.yaml-B69MF.json",
+    "bodyFileName" : "body-repos-pburls-specs-test-contents-specs-example-template.yaml-gIsVG.json",
     "headers" : {
-      "Date" : "Sun, 17 May 2020 07:25:36 GMT",
+      "Date" : "Sun, 21 Jun 2020 09:30:36 GMT",
       "Content-Type" : "application/json; charset=utf-8",
       "Server" : "GitHub.com",
       "Status" : "200 OK",
       "X-RateLimit-Limit" : "5000",
-      "X-RateLimit-Remaining" : "4965",
-      "X-RateLimit-Reset" : "1589703294",
+      "X-RateLimit-Remaining" : "4979",
+      "X-RateLimit-Reset" : "1592735043",
       "Cache-Control" : "private, max-age=60, s-maxage=60",
-      "Vary" : [ "Accept, Authorization, Cookie, X-GitHub-OTP", "Accept-Encoding, Accept, X-Requested-With" ],
+      "Vary" : [ "Accept, Authorization, Cookie, X-GitHub-OTP", "Accept-Encoding, Accept, X-Requested-With", "Accept-Encoding" ],
       "ETag" : "W/\"dca9139a53371ad28975e14bb36d294132f43073\"",
       "Last-Modified" : "Fri, 21 Feb 2020 21:46:31 GMT",
       "X-GitHub-Media-Type" : "github.v3",
@@ -26,8 +26,8 @@
       "X-XSS-Protection" : "1; mode=block",
       "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
       "Content-Security-Policy" : "default-src 'none'",
-      "X-GitHub-Request-Id" : "E6AA:F889:2B1CE26:311F7E2:5EC0E6F0"
+      "X-GitHub-Request-Id" : "E2A5:34EAC:63F0011:776F66F:5EEF28BC"
     }
   },
-  "uuid" : "b3c07f21-4d56-3ada-93f1-b46cd7a0ac38"
+  "uuid" : "2a36c153-737e-3d45-b0a4-0b0f0a7f55c2"
 }

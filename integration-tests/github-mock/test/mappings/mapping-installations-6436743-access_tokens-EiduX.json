@@ -1,0 +1,32 @@
+{
+  "id" : "a30e0294-3ed7-3695-a01d-4ffa943c69fe",
+  "request" : {
+    "url" : "/installations/6436743/access_tokens",
+    "method" : "POST"
+  },
+  "response" : {
+    "status" : 201,
+    "bodyFileName" : "body-installations-6436743-access_tokens-EiduX.json",
+    "headers" : {
+      "Date" : "Sun, 21 Jun 2020 09:30:21 GMT",
+      "Content-Type" : "application/json; charset=utf-8",
+      "Server" : "GitHub.com",
+      "Status" : "201 Created",
+      "Cache-Control" : "public, max-age=60, s-maxage=60",
+      "Vary" : [ "Accept", "Accept-Encoding, Accept, X-Requested-With", "Accept-Encoding" ],
+      "ETag" : "\"1af2d3e00da24ea91190f5880781fbfa\"",
+      "X-GitHub-Media-Type" : "github.machine-man-preview; format=json",
+      "Deprecation" : "Wed, 15 Apr 2020 00:00:00 GMT",
+      "Sunset" : "Thu, 01 Oct 2020 00:00:00 GMT",
+      "Link" : "<https://developer.github.com/changes/2020-04-15-replacing-create-installation-access-token-endpoint>; rel=\"deprecation\"; type=\"text/html\", <https://api.github.com/app/installations/6436743/access_tokens>; rel=\"alternate\"",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "1; mode=block",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "X-GitHub-Request-Id" : "E2A5:34EAC:63EF1BA:776E517:5EEF28AD"
+    }
+  },
+  "uuid" : "a30e0294-3ed7-3695-a01d-4ffa943c69fe"
+}

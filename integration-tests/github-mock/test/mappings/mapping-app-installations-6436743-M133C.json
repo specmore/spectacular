@@ -1,20 +1,20 @@
 {
-  "id" : "0f2a7033-ca43-3605-a7f3-753a1a33d14b",
+  "id" : "c09d28a2-e54a-30fd-8ef6-76e9bad5ca68",
   "request" : {
-    "url" : "/installations/6436743/access_tokens",
-    "method" : "POST"
+    "url" : "/app/installations/6436743",
+    "method" : "GET"
   },
   "response" : {
-    "status" : 201,
-    "bodyFileName" : "body-installations-6436743-access_tokens-NMESn.json",
+    "status" : 200,
+    "bodyFileName" : "body-app-installations-6436743-M133C.json",
     "headers" : {
-      "Date" : "Sun, 17 May 2020 07:25:32 GMT",
+      "Date" : "Sun, 21 Jun 2020 09:30:21 GMT",
       "Content-Type" : "application/json; charset=utf-8",
       "Server" : "GitHub.com",
-      "Status" : "201 Created",
+      "Status" : "200 OK",
       "Cache-Control" : "public, max-age=60, s-maxage=60",
-      "Vary" : [ "Accept", "Accept-Encoding, Accept, X-Requested-With" ],
-      "ETag" : "\"948f4954be9e3a6500d4aa2ab9f0d5e5\"",
+      "Vary" : [ "Accept", "Accept-Encoding, Accept, X-Requested-With", "Accept-Encoding" ],
+      "ETag" : "W/\"ac007ff4214a67317548fe57171a46d7\"",
       "X-GitHub-Media-Type" : "github.machine-man-preview; format=json",
       "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
       "X-Frame-Options" : "deny",
@@ -22,8 +22,8 @@
       "X-XSS-Protection" : "1; mode=block",
       "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
       "Content-Security-Policy" : "default-src 'none'",
-      "X-GitHub-Request-Id" : "E6AA:F889:2B1C838:311EDC8:5EC0E6E9"
+      "X-GitHub-Request-Id" : "E2A5:34EAC:63EF0E9:776D1B0:5EEF289F"
     }
   },
-  "uuid" : "0f2a7033-ca43-3605-a7f3-753a1a33d14b"
+  "uuid" : "c09d28a2-e54a-30fd-8ef6-76e9bad5ca68"
 }

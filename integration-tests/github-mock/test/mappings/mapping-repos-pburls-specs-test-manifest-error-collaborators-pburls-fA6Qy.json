@@ -1,19 +1,19 @@
 {
-  "id" : "677d2802-480d-3c90-8d7b-516e00ac3d10",
+  "id" : "a05ef813-a116-3922-8506-9e4c08d9879a",
   "request" : {
     "url" : "/repos/pburls/specs-test-manifest-error/collaborators/pburls",
     "method" : "GET"
   },
   "response" : {
     "status" : 204,
-    "bodyFileName" : "body-repos-pburls-specs-test-manifest-error-collaborators-pburls-Je2kN.txt",
+    "bodyFileName" : "body-repos-pburls-specs-test-manifest-error-collaborators-pburls-fA6Qy.txt",
     "headers" : {
-      "Date" : "Sun, 17 May 2020 07:25:33 GMT",
+      "Date" : "Sun, 21 Jun 2020 09:30:23 GMT",
       "Server" : "GitHub.com",
       "Status" : "204 No Content",
       "X-RateLimit-Limit" : "5000",
-      "X-RateLimit-Remaining" : "4976",
-      "X-RateLimit-Reset" : "1589703295",
+      "X-RateLimit-Remaining" : "4986",
+      "X-RateLimit-Reset" : "1592735044",
       "X-GitHub-Media-Type" : "github.v3",
       "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
       "X-Frame-Options" : "deny",
@@ -21,9 +21,9 @@
       "X-XSS-Protection" : "1; mode=block",
       "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
       "Content-Security-Policy" : "default-src 'none'",
-      "Vary" : "Accept-Encoding, Accept, X-Requested-With",
-      "X-GitHub-Request-Id" : "E6AA:F889:2B1C96A:311F274:5EC0E6EC"
+      "Vary" : [ "Accept-Encoding, Accept, X-Requested-With", "Accept-Encoding" ],
+      "X-GitHub-Request-Id" : "E2A5:34EAC:63EF2EF:776E706:5EEF28AE"
     }
   },
-  "uuid" : "677d2802-480d-3c90-8d7b-516e00ac3d10"
+  "uuid" : "a05ef813-a116-3922-8506-9e4c08d9879a"
 }
