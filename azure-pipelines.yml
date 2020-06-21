@@ -62,6 +62,19 @@ stages:
             echo FullSemVer $(GitVersion.FullSemVer);
       displayName: Display versions
     - task: Docker@2
+      displayName: Build build stage image
+      inputs:
+        command: build
+        repository: $(testCandidateRepositoryName)/backend
+        containerRegistry: $(dockerRegistryServiceConnection)
+        buildContext: .
+        dockerfile: 'docker/Dockerfile-backend'
+        arguments: --target build --build-arg SEMVER=$(GitVersion.FullSemVer)
+        tags: |
+          backend-build-stage
+          $(tag)
+          $(GitVersion.SemVer)
+    - task: Docker@2
       displayName: Build image
       inputs:
         command: build
