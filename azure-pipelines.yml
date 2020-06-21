@@ -76,6 +76,7 @@ stages:
     #       $(GitVersion.SemVer)
     - bash: docker build -f docker/Dockerfile-backend --target build --build-arg SEMVER=$(GitVersion.FullSemVer) -t backend-build-stage .;
             id=$(docker create backend-build-stage);
+            mkdir out;
             docker cp $id:/app/build/test-results ./out/results;
             docker rm $id;
       displayName: Run Docker build stage
