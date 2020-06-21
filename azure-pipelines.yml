@@ -180,6 +180,14 @@ stages:
         testResultsFiles: '**/results/tests.xml'
         failTaskOnFailedTests: true
         testRunTitle: E2E UI Tests
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: $(Build.SourcesDirectory)/integration-tests/ui-e2e/cypress/screenshots
+        artifactName: E2E UI Tests Screenshots
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: $(Build.SourcesDirectory)/integration-tests/ui-e2e/cypress/videos
+        artifactName: E2E UI Tests Videos
     - task: DockerCompose@0
       displayName: Print Docker Compose logs
       condition: always()
