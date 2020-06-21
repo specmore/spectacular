@@ -4,6 +4,7 @@ services:
         image: rodolpheche/wiremock
         volumes:
             - ./github-mock/test:/home/wiremock
+        command: --verbose
     auth:
         image: tarent/loginsrv:1.3.0
         environment: 
