@@ -161,7 +161,7 @@ stages:
         detached: true
     - bash: docker ps
       displayName: List container
-    - bash: docker run -v $PWD/ui-e2e:/e2e -w /e2e -e "CYPRESS_baseUrl=http://host.docker.internal:80" --add-host=host.docker.internal:$(ip route | grep docker0 | awk '{print $9}') cypress/included:3.3.2
+    - bash: docker run -v $PWD/ui-e2e:/e2e -w /e2e -e "CYPRESS_baseUrl=http://host.docker.internal:80" --add-host=host.docker.internal:$(ip route | grep docker0 | awk '{print $9}') cypress/included:4.8.0
       workingDirectory: '$(Build.SourcesDirectory)/integration-tests'
       displayName: Run cypress tests
     - task: DockerCompose@0
