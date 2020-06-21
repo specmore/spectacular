@@ -74,6 +74,16 @@ stages:
           backend-build-stage
           $(tag)
           $(GitVersion.SemVer)
+    - bash: id=$(docker create backend-build-stage);
+            docker cp $id:/app/build/test-results ./out/results;
+            docker rm $id;
+      displayName: Copy build test restuls
+    - task: PublishTestResults@2
+      inputs:
+        testRunner: JUnit
+        testResultsFiles: 'out/results/**/TEST-*.xml'
+        failTaskOnFailedTests: true
+        testRunTitle: Backend Build Tests
     - task: Docker@2
       displayName: Build image
       inputs:
