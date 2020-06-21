@@ -64,6 +64,7 @@ module.exports = () => {
       publicPath: '/',
     },
     devServer: {
+      disableHostCheck: true,
       historyApiFallback: {
         disableDotRule: true,
       },
