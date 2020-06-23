@@ -11,8 +11,7 @@ Spectacular helps to make the change review process for interface specifications
 
 <!-- Todo: Link to demo -->
 
-## Getting Started
-### Run the Demo App locally
+## Run the Demo App Locally
 You can get Spectacular App up and running locally connected to our demo catalogue in no time. Just follow these steps:
 
 1. Clone this repository to your computer
@@ -25,19 +24,42 @@ $ cd spectacular
 $ ./start-demo.sh
 ```
 
-### Installation Guide
-As described in the [Architecture](docs/architecture.md) document, Spectacular is built up of 3 components.
+## Setup Guide
+To get Spectacular working with your own interface specification files (e.g. OpenAPI files), the Setup Guide section will help you get your own installation of Spectacular up and running.
 
-To help build, configure and run all 3 components in one quick command, a [docker-compose.yml](docker-compose.yml) file is provided. This requires Docker Engine v17.05 or above with Docker Compose to be installed.
+### 1. Give Spectacular Access to your Interface Specification Files
+Spectacular requires your interface specification files to be stored in git repositories. Therefore, you will first need to configure your git repository hosting solution (only GitHub is currently supported) to give Spectacular access.
 
-#### 1. Set Environment Variables
-The [docker-compose.yml](docker-compose.yml) requires 6 environment variables to be set to get a basic setup of Spectacular running. The following `.env` file can be used 
+This can be done by following the [Git Integration](/docs/git-integration.md) instructions.
+
+### 2. Create your Catalogue Config Manifest files
+To configure Spectacular display your interface specification files in nice organised catalogues, you will need to add a `spectacular-config.yml` in one of the git repositories Spectacular can access (as configured in the step above).
+
+Guidelines for creating a `spectacular-config.yml` can be found in the [Catalogue Configuration Document](docs/catalogue-configuration.md). Or you can use the Demo project's [spectacular-config.yml](https://github.com/specmore/spectacular-demo/blob/master/spectacular-config.yml) as a template.
+
+### 3. Configure your Spectacular instance
+After setting up a git integration with your git hosting solution (in step 1. above), you should be ready to configure and run your own instance of Spectacular with access to your spec files.
+
+As described in the [Architecture](docs/architecture.md) document, an instance of Spectacular is actually built up using 3 services. Please follow the instructions in the [Configuration](docs/configuration.md) guide on how to configure each service using their required Environment Variables.
+
+#### Configure and Run using Docker Compose
+To help build, configure and run all 3 components in one quick command, a [docker-compose.yml](docker-compose.yml) file is provided in this repository. (Docker Engine v17.05 or above with Docker Compose is required)
+
+The [docker-compose.yml](docker-compose.yml) requires 6 environment variables (beginning with the `SPECTACULAR_` prefix) to be set corresponding to each of the 6 environment variables in the [Configuration](docs/configuration.md) guide. It is recommended to create a [.env file](https://docs.docker.com/compose/environment-variables/#the-env-file) along side the [docker-compose.yml](docker-compose.yml) file to capture these environment variables in one place.
+
+For example:
 ```
-SPECTACULAR_GITHUB_APP_ID=52196
-SPECTACULAR_GITHUB_APP_INSTALLATION_ID=6436743
-SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH=c:/temp/spectacular-dev-app.2020-01-26.private-key.pem
-SPECTACULAR_GITHUB_CLIENT_ID=Iv1.41eb20b07bce2545
-SPECTACULAR_GITHUB_CLIENT_SECRET=3dd2b1d461df1688dfdd32169cc8075e19c4f59b
-SPECTACULAR_JWT_SHARED_SECRET=this_test_shared_key_is_32_bytes
+SPECTACULAR_GITHUB_APP_ID=12345
+SPECTACULAR_GITHUB_APP_INSTALLATION_ID=987654
+SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH=c:/temp/spectacular-app.private-key.pem
+SPECTACULAR_GITHUB_CLIENT_ID=Iv1.41eb20b07bce2547
+SPECTACULAR_GITHUB_CLIENT_SECRET=3dd2b1d461df1688dfdd32169cc8075e19c4f59a
+SPECTACULAR_JWT_SHARED_SECRET=0c4ec70dbe9cceba51455c402b35d3a5
 ```
-### Configuration Guide
+
+You can now start your Spectacular instance with the following command:
+```
+$ docker-compose up
+```
+
+Once started, your Spectacular app should be available at [http://localhost/](http://localhost/).
