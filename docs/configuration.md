@@ -46,5 +46,5 @@ After your GitHub App setup has been completed, the following configuration valu
 Spectacular uses JWTs to authorise requests to the backend REST API from the Web UI frontend application. The JWTs are generated at the end of a successful user login process by the [Authentication Service](architecture.md#user-authentication-service). The [Backend Service](architecture.md#backend-service) and the Authentication Service are configured with the same "Shared Secret" to allow the Backend Service to verify the JWT signatures.
 | Spectacular Component | Environment Variable Name | Value |
 | ----------------------| ------------------------- | ---------------- |
-| Authentication Service | `LOGINSRV_JWT_SECRET` | A 32-byte text value. e.g. `this_test_shared_key_is_32_bytes` |
+| Authentication Service | `LOGINSRV_JWT_SECRET` | A 32-byte text value. e.g. `this_test_shared_key_is_32_bytes` or `0c4ec70dbe9cceba51455c402b35d3a5`|
 | Backend Service | `JWT_SHARED_SECRET` | The same 32-byte text value as above |
