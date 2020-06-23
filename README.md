@@ -11,7 +11,20 @@ Spectacular helps to make the change review process for interface specifications
 
 <!-- Todo: Link to demo -->
 
-## Quick Setup Guide
+## Getting Started
+### Run the Demo App locally
+You can get Spectacular App up and running locally connected to our demo catalogue in no time. Just follow these steps:
+
+1. Clone this repository to your computer
+2. Run the `start-demo` script
+
+For example, on Mac:
+```shell
+$ git clone git@github.com:specmore/spectacular.git
+$ cd spectacular
+$ ./start-demo.sh
+```
+
 ### Installation Guide
 As described in the [Architecture](docs/architecture.md) document, Spectacular is built up of 3 components.
 
