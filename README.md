@@ -1,11 +1,13 @@
 # Spectacular
-Spectacular helps to make the change review process for interface specifications easier and more organised resulting in the healthier evolution of interfaces. Ultimately fostering an "API First" culture.
+Keep your interface specifications Spectacular!
+
+Spectacular helps to make the change review process for interface specifications more visible and organised, resulting in the healthier evolution of interfaces. Ultimately fostering an "API First" culture.
 
 ## Key Features
-* Integration with GitHub for user login and access to your interface spec files in your git repositories
-* Ability to organise your interface spec files into "Catalogues" making it easier to find them
-* Visualise your interface specifications using graphical documentation tools like [Swagger UI](https://github.com/swagger-api/swagger-ui) for OpenAPI files
-* Easier tracking of open change proposals to an interface by listing all the open Pull Requests against a given interface specification files
+* Integration with GitHub for user login and access control to your interface spec files
+* Ability to organise your interface spec files into "Catalogues", making them easier to find
+* Visualising your interface specifications using graphical documentation tools like [Swagger UI](https://github.com/swagger-api/swagger-ui) for OpenAPI files
+* Easier tracking of open change proposals for an interface by showing all the open Pull Requests in one place
 
 <!-- Todo: Link to demo -->
 
