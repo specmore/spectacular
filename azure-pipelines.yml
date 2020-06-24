@@ -14,13 +14,7 @@ trigger:
     - azure-pipelines.yml
 
 variables:
-  azureSubscriptionEndpoint: spectacular-azurerm
-  dockerRegistryServiceConnection: Specmore Docker Hub
-  containerRegistry: 'spectacular.azurecr.io'
-  testCandidateRepositoryName: test-candidate
-  releaseCandidateRepositoryName: release-candidate
-  imagePullSecret: 'spectacular-auth'
-  manifestArtifactName: 'backend-manifests'
+  dockerHubServiceConnection: Specmore Docker Hub
   tag: '$(Build.BuildId)'
   GitVersion.ShortSha: ''
   GitVersion.SemVer: ''
@@ -76,8 +70,8 @@ stages:
       displayName: Build final image
       inputs:
         command: build
-        repository: $(testCandidateRepositoryName)/backend
-        containerRegistry: $(dockerRegistryServiceConnection)
+        repository: specmore/spectacular-backend-test-candidate
+        containerRegistry: $(dockerHubServiceConnection)
         buildContext: .
         dockerfile: 'docker/Dockerfile-backend'
         arguments: --build-arg SEMVER=$(GitVersion.FullSemVer)
@@ -88,10 +82,10 @@ stages:
       displayName: Push image to container registry
       inputs:
         command: push
-        repository: $(testCandidateRepositoryName)/backend
+        repository: specmore/spectacular-backend-test-candidate
         buildContext: .
         dockerfile: 'docker/Dockerfile-backend'
-        containerRegistry: $(dockerRegistryServiceConnection)
+        containerRegistry: $(dockerHubServiceConnection)
         tags: |
           $(tag)
           $(GitVersion.SemVer)
@@ -121,8 +115,8 @@ stages:
       displayName: Build final image
       inputs:
         command: build
-        repository: $(testCandidateRepositoryName)/web
-        containerRegistry: $(dockerRegistryServiceConnection)
+        repository: specmore/spectacular-web-test-candidate
+        containerRegistry: $(dockerHubServiceConnection)
         buildContext: .
         dockerfile: 'docker/Dockerfile-web'
         arguments: --build-arg SEMVER=$(GitVersion.FullSemVer) --build-arg SHORTSHA=$(GitVersion.ShortSha)
@@ -133,10 +127,10 @@ stages:
       displayName: Push image to container registry
       inputs:
         command: push
-        repository: $(testCandidateRepositoryName)/web
+        repository: specmore/spectacular-web-test-candidate
         buildContext: .
         dockerfile: 'docker/Dockerfile-web'
-        containerRegistry: $(dockerRegistryServiceConnection)
+        containerRegistry: $(dockerHubServiceConnection)
         tags: |
           $(tag)
           $(GitVersion.SemVer)
@@ -165,7 +159,7 @@ stages:
       inputs:
         action: Run services
         containerregistrytype: Container Registry
-        dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+        dockerRegistryEndpoint: $(dockerHubServiceConnection)
         dockerComposeFile: ./integration-tests/docker-compose.ui-e2e.yml
         projectName: spectacular
         buildImages: false
@@ -211,7 +205,7 @@ stages:
       inputs:
         action: Run a Docker Compose command
         containerregistrytype: Container Registry
-        dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+        dockerRegistryEndpoint: $(dockerHubServiceConnection)
         dockerComposeFile: ./integration-tests/docker-compose.ui-e2e.yml
         projectName: spectacular
         dockerComposeCommand: logs
@@ -228,38 +222,38 @@ stages:
       displayName: Login to ACR
       inputs:
         command: login
-        containerRegistry: $(dockerRegistryServiceConnection)
+        containerRegistry: $(dockerHubServiceConnection)
     - task: Docker@2
       displayName: Pull backend Test Candidate image
       inputs:
         command: pull
-        arguments: $(containerRegistry)/$(testCandidateRepositoryName)/backend:$(tag)
+        arguments: docker.io/specmore/spectacular-backend-test-candidate:$(tag)
     - task: Docker@2
       displayName: Tag backend Release Candidate image
       inputs:
         command: tag
-        arguments: $(containerRegistry)/$(testCandidateRepositoryName)/backend:$(tag) $(containerRegistry)/$(releaseCandidateRepositoryName)/backend:$(tag)
+        arguments: docker.io/specmore/spectacular-backend-test-candidate:$(tag) docker.io/specmore/spectacular-backend-release-candidate:$(tag)
     - task: Docker@2
       displayName: Push backend Release Candidate image
       inputs:
         command: push
-        containerRegistry: $(dockerRegistryServiceConnection)
-        repository: $(releaseCandidateRepositoryName)/backend
+        containerRegistry: $(dockerHubServiceConnection)
+        repository: $specmore/spectacular-backend-release-candidate
         tags: $(tag)
     - task: Docker@2
       displayName: Pull web Test Candidate image
       inputs:
         command: pull
-        arguments: $(containerRegistry)/$(testCandidateRepositoryName)/web:$(tag)
+        arguments: docker.io/specmore/spectacular-web-test-candidate:$(tag)
     - task: Docker@2
       displayName: Tag web Release Candidate image
       inputs:
         command: tag
-        arguments: $(containerRegistry)/$(testCandidateRepositoryName)/web:$(tag) $(containerRegistry)/$(releaseCandidateRepositoryName)/web:$(tag)
+        arguments: docker.io/specmore/spectacular-web-test-candidate:$(tag) docker.io/specmore/spectacular-web-release-candidate:$(tag)
     - task: Docker@2
       displayName: Push web Release Candidate image
       inputs:
         command: push
-        containerRegistry: $(dockerRegistryServiceConnection)
-        repository: $(releaseCandidateRepositoryName)/web
+        containerRegistry: $(dockerHubServiceConnection)
+        repository: specmore/spectacular-web-release-candidate
         tags: $(tag)
