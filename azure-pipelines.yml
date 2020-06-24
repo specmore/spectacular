@@ -39,8 +39,8 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
-    - task: UseGitVersion@5
-      displayName: Run GitVersion
+    - task: gitversion/setup@0
+      displayName: Install GitVersion
       name: GitVersionTask
       inputs:
         versionSpec: '5.x'
