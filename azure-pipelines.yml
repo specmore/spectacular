@@ -15,7 +15,7 @@ trigger:
 
 variables:
   azureSubscriptionEndpoint: spectacular-azurerm
-  dockerRegistryServiceConnection: 'b49e6e37-26c8-421e-ac20-c8ea6239311e'
+  dockerRegistryServiceConnection: Specmore Docker Hub
   containerRegistry: 'spectacular.azurecr.io'
   testCandidateRepositoryName: test-candidate
   releaseCandidateRepositoryName: release-candidate
