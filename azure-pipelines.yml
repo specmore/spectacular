@@ -162,8 +162,8 @@ stages:
         SPECTACULAR_IMAGE_TAG: $(tag)
       inputs:
         action: Run services
-        azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
-        azureContainerRegistry: $(containerRegistry)
+        containerregistrytype: Container Registry
+        dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
         dockerComposeFile: ./integration-tests/docker-compose.ui-e2e.yml
         projectName: spectacular
         buildImages: false
@@ -208,8 +208,8 @@ stages:
         SPECTACULAR_IMAGE_TAG: $(tag)
       inputs:
         action: Run a Docker Compose command
-        azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
-        azureContainerRegistry: $(containerRegistry)
+        containerregistrytype: Container Registry
+        dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
         dockerComposeFile: ./integration-tests/docker-compose.ui-e2e.yml
         projectName: spectacular
         dockerComposeCommand: logs
