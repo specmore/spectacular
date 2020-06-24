@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pburls/spectacular.git"
+    "url": "git+https://github.com/specmore/spectacular.git"
   },
   "author": "Patrick Burls",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pburls/spectacular/issues"
+    "url": "https://github.com/specmore/spectacular/issues"
   },
-  "homepage": "https://github.com/pburls/spectacular#readme",
+  "homepage": "https://github.com/specmore/spectacular#readme",
   "devDependencies": {
     "@babel/core": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
