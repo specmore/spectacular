@@ -90,7 +90,7 @@ stages:
         tags: |
           $(tag)
           $(GitVersion.SemVer)
-          
+
   - job: BuildWeb
     displayName: Build Web App image
     dependsOn: SetVersion
@@ -240,7 +240,7 @@ stages:
       inputs:
         command: push
         containerRegistry: $(dockerHubServiceConnection)
-        repository: $specmore/spectacular-backend-release-candidate
+        repository: specmore/spectacular-backend-release-candidate
         tags: $(tag)
     - task: Docker@2
       displayName: Pull web Test Candidate image
