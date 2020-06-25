@@ -44,6 +44,7 @@ stages:
             echo SemVer $(GitVersion.SemVer);
             echo FullSemVer $(GitVersion.FullSemVer);
       displayName: Display versions
+
   - job: BuildBackend
     displayName: Build Backend Service image
     dependsOn: SetVersion
@@ -89,6 +90,7 @@ stages:
         tags: |
           $(tag)
           $(GitVersion.SemVer)
+          
   - job: BuildWeb
     displayName: Build Web App image
     dependsOn: SetVersion
