@@ -1,4 +1,4 @@
-# Spectacular &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/specmore/spectacular/blob/master/LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/specmore/spectacular/blob/master/CONTRIBUTING.md#your-first-pull-request)
+# Spectacular &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/specmore/spectacular/blob/master/LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/specmore/spectacular/blob/master/CONTRIBUTING.md#your-first-pull-request) [![Build Status](https://dev.azure.com/specmore/Spectacular/_apis/build/status/Spectacular%20CICD?branchName=master)](https://dev.azure.com/specmore/Spectacular/_build/latest?definitionId=1&branchName=master)
 Keep your interface specifications Spectacular!
 
 Spectacular helps to make the change review process for interface specifications more visible and organised, resulting in the healthier evolution of interfaces. Ultimately fostering an "API First" culture.
