@@ -1,9 +1,7 @@
 version: '3'
 services:
     web:
-        build: 
-            context: .
-            dockerfile: ./docker/Dockerfile-web
+        image: specmore/spectacular-web:latest
         ports:
             - "80:80"
         depends_on: 
@@ -14,9 +12,7 @@ services:
             - AUTH_LOCATION=http://auth:8080
             - GITHUB_APP_INSTALLATION_ID=${SPECTACULAR_GITHUB_APP_INSTALLATION_ID:?SPECTACULAR_GITHUB_APP_INSTALLATION_ID needs to be set in a .env file with a GitHub app installation id}
     backend:
-        build: 
-            context: .
-            dockerfile: ./docker/Dockerfile-backend
+        image: specmore/spectacular-backend:latest
         environment: 
             - GITHUB_APP_ID=${SPECTACULAR_GITHUB_APP_ID:?SPECTACULAR_GITHUB_APP_ID needs to be set in a .env file with a GitHub app id}
             - GITHUB_APP_PRIVATE_KEY_FILE_PATH=/usr/spectacular/github.private-key.pem
