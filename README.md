@@ -14,7 +14,7 @@ Spectacular helps to make the change review process for interface specifications
 ## Run the Demo App Locally
 You can get Spectacular App up and running locally connected to our demo catalogue in no time. Just follow these steps:
 
-1. Clone this repository to your computer
+1. Clone [the Spectacular project repository](https://github.com/specmore/spectacular) to your computer
 2. Run the `start-demo` script
 
 For example, on Mac:
