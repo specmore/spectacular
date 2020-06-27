@@ -147,31 +147,8 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
-    - task: DownloadSecureFile@1
-      displayName: Download GitHub App Signing Key
-      name: githubAppSigningKey
-      inputs:
-        secureFile: 'spectacular-dev-app.2020-01-26.private-key.pem'
-    - task: DockerCompose@0
-      displayName: Run services
-      env:
-        SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
-        SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH: $(githubAppSigningKey.secureFilePath)
-        SPECTACULAR_IMAGE_TAG: $(tag)
-      inputs:
-        action: Run services
-        containerregistrytype: Container Registry
-        dockerRegistryEndpoint: $(dockerHubServiceConnection)
-        dockerComposeFile: ./integration-tests/docker-compose.ui-e2e.yml
-        projectName: spectacular
-        buildImages: false
-        abortOnContainerExit: true
-        detached: true
-    - bash: docker ps
-      displayName: List container
-    - bash: docker run -v $PWD/ui-e2e:/e2e -w /e2e -e "CYPRESS_baseUrl=http://host.docker.internal:80" --add-host=host.docker.internal:$(ip route | grep docker0 | awk '{print $9}') cypress/included:4.8.0
-      workingDirectory: '$(Build.SourcesDirectory)/integration-tests'
-      displayName: Run cypress tests
+    - bash: run-int-tests.ci.sh
+      displayName: Run integration tests
     - task: PublishTestResults@2
       inputs:
         testRunner: JUnit
@@ -197,20 +174,6 @@ stages:
       inputs:
         targetPath: $(Build.SourcesDirectory)/integration-tests/ui-e2e/cypress/videos
         artifactName: E2E UI Tests Videos
-    - task: DockerCompose@0
-      displayName: Print Docker Compose logs
-      condition: always()
-      env:
-        SPECTACULAR_JWT_SHARED_SECRET: $(SPECTACULAR_JWT_SHARED_SECRET)
-        SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH: $(githubAppSigningKey.secureFilePath)
-        SPECTACULAR_IMAGE_TAG: $(tag)
-      inputs:
-        action: Run a Docker Compose command
-        containerregistrytype: Container Registry
-        dockerRegistryEndpoint: $(dockerHubServiceConnection)
-        dockerComposeFile: ./integration-tests/docker-compose.ui-e2e.yml
-        projectName: spectacular
-        dockerComposeCommand: logs
 
 - stage: CreateReleaseCandidate
   displayName: Tag images as Release Candidates
