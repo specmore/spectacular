@@ -147,8 +147,11 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
-    - bash: run-int-tests.ci.sh
+    - task: ShellScript@2
       displayName: Run integration tests
+      inputs:
+        scriptPath: run-int-tests.ci.sh
+    # - bash: run-int-tests.ci.sh
     - task: PublishTestResults@2
       inputs:
         testRunner: JUnit
