@@ -1,0 +1,6 @@
+version: '3'
+services:
+    web:
+        image: docker.io/specmore/spectacular-web-test-candidate:${CANDIDATE_TAG}
+    backend:
+        image: docker.io/specmore/spectacular-backend-test-candidate:${CANDIDATE_TAG}
