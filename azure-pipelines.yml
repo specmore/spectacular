@@ -142,16 +142,13 @@ stages:
   jobs:
   - job: E2EUITests
     displayName: End to End UI Tests
-    variables:
-      - group: docker-compose-variables
     pool:
       vmImage: $(vmImageName)
     steps:
     - task: ShellScript@2
       displayName: Run integration tests
       inputs:
-        scriptPath: run-int-tests.ci.sh
-    # - bash: run-int-tests.ci.sh
+        scriptPath: scripts/run-int-tests.ci.sh
     - task: PublishTestResults@2
       inputs:
         testRunner: JUnit
