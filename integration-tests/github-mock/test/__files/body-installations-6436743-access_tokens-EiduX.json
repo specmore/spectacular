@@ -1,1 +1,1 @@
-{"token":"v1.77755b01bd5d8d8e353ddd1b2be5f3980520c15c","expires_at":"2020-06-21T10:30:21Z"}
+{"token":"v1.77755b01bd5d8d8e353ddd1b2be5f3980520c15c","expires_at":"{{now offset='5 minutes'}}"}

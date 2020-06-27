@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-docker-compose --env-file="./demo/demo.env" up
+docker-compose --env-file="./config/demo.env" up

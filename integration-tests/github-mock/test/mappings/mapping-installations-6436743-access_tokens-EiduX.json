@@ -5,6 +5,7 @@
     "method" : "POST"
   },
   "response" : {
+    "transformers": ["response-template"],
     "status" : 201,
     "bodyFileName" : "body-installations-6436743-access_tokens-EiduX.json",
     "headers" : {

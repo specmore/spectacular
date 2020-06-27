@@ -11,5 +11,6 @@ services:
             - 8080:8080
         volumes:
             - ./integration-tests/github-mock/test:/home/wiremock
-        # command: --verbose
+        command: --local-response-templating
+        # command: --verbose --local-response-templating
         # command: --proxy-all="https://api.github.com" --record-mappings --verbose
