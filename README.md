@@ -9,7 +9,10 @@ Spectacular helps to make the change review process for interface specifications
 * Visualising your interface specifications using graphical documentation tools like [Swagger UI](https://github.com/swagger-api/swagger-ui) for OpenAPI files
 * Easier tracking of open change proposals for an interface by showing all the open Pull Requests in one place
 
-<!-- Todo: Link to demo -->
+## View the Spectacular Demo
+Checkout Spectacular in action by visiting our Spectacular Demo website: [https://spectacular-demo.specmore.org/](https://spectacular-demo.specmore.org/)
+
+The demo website is integrated with the our own [specmore/spectacular-demo](https://github.com/specmore/spectacular-demo) GitHub repository.
 
 ## Run the Demo App Locally
 You can get Spectacular App up and running locally connected to our demo catalogue in no time. Just follow these steps:
