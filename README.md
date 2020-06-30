@@ -1,4 +1,4 @@
-# Spectacular &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/specmore/spectacular/blob/master/LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/specmore/spectacular/blob/master/CONTRIBUTING.md#your-first-pull-request) [![Build Status](https://dev.azure.com/specmore/Spectacular/_apis/build/status/Spectacular%20CICD?branchName=master)](https://dev.azure.com/specmore/Spectacular/_build/latest?definitionId=1&branchName=master)
+# Spectacular &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/specmore/spectacular/blob/master/LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/specmore/spectacular/blob/master/CONTRIBUTING.md#your-first-pull-request) [![Build Status](https://dev.azure.com/specmore/Spectacular/_apis/build/status/Spectacular%20CICD?branchName=master)](https://dev.azure.com/specmore/Spectacular/_build/latest?definitionId=1&branchName=master) [![Latest Release](https://img.shields.io/github/v/release/specmore/spectacular)](https://github.com/specmore/spectacular/releases)
 Keep your interface specifications Spectacular!
 
 Spectacular helps to make the change review process for interface specifications more visible and organised, resulting in the healthier evolution of interfaces. Ultimately fostering an "API First" culture.
@@ -26,6 +26,15 @@ $ git clone git@github.com:specmore/spectacular.git
 $ cd spectacular
 $ ./start-demo.sh
 ```
+
+## Application Overview
+Before setting up your own installation of Spectacular, it is good to first familiarise yourself with the application's [Architecture](docs/architecture.md).
+
+The two key components that this project provides are the:
+| Component                   | Docker Hub Image | Latest Version |
+| --------------------------- | ---------------- | -------------- |
+| [Web UI](web/)              | [![Web Docker Image](https://img.shields.io/docker/pulls/specmore/spectacular-web)](https://hub.docker.com/r/specmore/spectacular-web) | [![Web Version](https://img.shields.io/docker/v/specmore/spectacular-web)](https://hub.docker.com/r/specmore/spectacular-web/tags) |
+| [Backend Service](backend/) | [![Backen Docker Image](https://img.shields.io/docker/pulls/specmore/spectacular-backend)](https://hub.docker.com/r/specmore/spectacular-backend) | [![Backend Version](https://img.shields.io/docker/v/specmore/spectacular-backend)](https://hub.docker.com/r/specmore/spectacular-backend/tags) |
 
 ## Setup Guide
 To get Spectacular working with your own interface specification files (e.g. OpenAPI files), the Setup Guide section will help you get your own installation of Spectacular up and running.
