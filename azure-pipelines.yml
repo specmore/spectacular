@@ -150,6 +150,7 @@ stages:
       inputs:
         scriptPath: scripts/run-int-tests.ci.sh
         cwd: '$(Build.SourcesDirectory)'
+        disableAutoCwd: true
         failOnStandardError: true
     - task: PublishTestResults@2
       inputs:
