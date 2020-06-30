@@ -12,7 +12,7 @@ Spectacular helps to make the change review process for interface specifications
 ## View the Spectacular Demo
 Checkout Spectacular in action by visiting our Spectacular Demo website: [https://spectacular-demo.specmore.org/](https://spectacular-demo.specmore.org/)
 
-The demo website is integrated with the our own [specmore/spectacular-demo](https://github.com/specmore/spectacular-demo) GitHub repository.
+The demo website is integrated with the our own demo interface catalogues in the [specmore/spectacular-demo](https://github.com/specmore/spectacular-demo) GitHub repository.
 
 ## Run the Demo App Locally
 You can get Spectacular App up and running locally connected to our demo catalogue in no time. Just follow these steps:
