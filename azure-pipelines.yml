@@ -149,6 +149,7 @@ stages:
       displayName: Run integration tests
       inputs:
         scriptPath: scripts/run-int-tests.ci.sh
+        cwd: $(Build.SourcesDirectory)
         failOnStandardError: true
     - task: PublishTestResults@2
       inputs:
