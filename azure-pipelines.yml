@@ -145,13 +145,8 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
-    - task: ShellScript@2
+    - bash: scripts/run-int-tests.ci.sh
       displayName: Run integration tests
-      inputs:
-        scriptPath: scripts/run-int-tests.ci.sh
-        cwd: '$(Build.SourcesDirectory)'
-        disableAutoCwd: true
-        failOnStandardError: true
     - task: PublishTestResults@2
       inputs:
         testRunner: JUnit
