@@ -181,6 +181,13 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
+    - task: gitversion/setup@0
+      displayName: Install GitVersion
+      inputs:
+        versionSpec: '5.x'
+    - task: gitversion/execute@0
+      name: GitVersion
+      displayName: Use GitVersion
     - bash: echo ShortSha $(GitVersion.ShortSha);
             echo SemVer $(GitVersion.SemVer);
             echo FullSemVer $(GitVersion.FullSemVer);
@@ -201,12 +208,19 @@ stages:
         command: tag
         arguments: docker.io/specmore/spectacular-backend-test-candidate:$(tag) docker.io/specmore/spectacular-backend-release-candidate:$(tag)
     - task: Docker@2
+      displayName: SemVer Tag backend Release Candidate image
+      inputs:
+        command: tag
+        arguments: docker.io/specmore/spectacular-backend-test-candidate:$(tag) docker.io/specmore/spectacular-backend-release-candidate:$(GitVersion.SemVer)
+    - task: Docker@2
       displayName: Push backend Release Candidate image
       inputs:
         command: push
         containerRegistry: $(dockerHubServiceConnection)
         repository: specmore/spectacular-backend-release-candidate
-        tags: $(tag)
+        tags: |
+          $(tag)
+          $(GitVersion.SemVer)
     - task: Docker@2
       displayName: Pull web Test Candidate image
       inputs:
@@ -218,9 +232,16 @@ stages:
         command: tag
         arguments: docker.io/specmore/spectacular-web-test-candidate:$(tag) docker.io/specmore/spectacular-web-release-candidate:$(tag)
     - task: Docker@2
+      displayName: SemVer Tag web Release Candidate image
+      inputs:
+        command: tag
+        arguments: docker.io/specmore/spectacular-web-test-candidate:$(tag) docker.io/specmore/spectacular-web-release-candidate:$(GitVersion.SemVer)
+    - task: Docker@2
       displayName: Push web Release Candidate image
       inputs:
         command: push
         containerRegistry: $(dockerHubServiceConnection)
         repository: specmore/spectacular-web-release-candidate
-        tags: $(tag)
+        tags: |
+          $(tag)
+          $(GitVersion.SemVer)
