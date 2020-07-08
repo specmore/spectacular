@@ -62,7 +62,30 @@ The core team is monitoring for pull requests. We will review your pull request 
 6. Ensure the docker images build. This can be by building and running the [docker-compose.yml](docker-compose.yml) file.
 
 ### Development Workflow
-**TBD**
+To be able to make your changes to the required components, first make sure you have the necessary development environment setup by following the [Contribution Prerequisites](#contribution-prerequisites) instructions.
+
+To help run components you don't need to change locally, the following convenience script has be provided to run any of the components in a local docker container using docker compose.
+Bash:
+```bash
+$ ./scripts/start-dev.sh [SERVICE...]
+```
+Batch:
+```powershell
+$ ..\scripts\start-auth.bat [SERVICE...]
+```
+
+The table below shows you the different options for building and running each architectural component locally on your development machine.
+| Spectacular Component | Setup Development Environment | Docker Compose Service Name |
+| ----------------------| ------------------------- | ---------------- |
+| Web UI | [Development Environment Requirements](web/README.md#development-environment-requirements) | `web` |
+| Backend Service | [Development Environment Requirements](backend/README.md#development-environment-requirements) | `backend` |
+| Auth Service | **N/A - 3rd party component** | `auth` |
+
+For example, you may wish to make changes to the [Web UI](web/) component by:
+1. Starting the Auth and Backend services in containers using `$ ./scripts/start-dev.sh auth backend`
+2. Build and run the Web UI using `npm run start`
+
+**WIP**
 
 ### License
 
