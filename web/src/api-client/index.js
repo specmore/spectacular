@@ -21,6 +21,6 @@ export const fetchInstallation = async () => {
 };
 
 export const fetchUserInfo = async () => {
-  const response = await axios.get('/login');
+  const response = await axios.get('/login/');
   return response.data;
 };
