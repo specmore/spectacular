@@ -82,7 +82,7 @@ const CatalogueContainer: FunctionComponent = () => {
       </Container>
       <div className="side-by-side-column" data-testid="catalogue-container-swagger-ui">
         <CloseSpecButton />
-        <SwaggerUI url={interfaceFileContentsPath} />
+        <SwaggerUI url={interfaceFileContentsPath} docExpansion="list" />
       </div>
     </div>
   );
