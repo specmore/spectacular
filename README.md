@@ -37,9 +37,9 @@ The two key components that this project provides are the:
 | [Backend Service](backend/) | [![Backen Docker Image](https://img.shields.io/docker/pulls/specmore/spectacular-backend)](https://hub.docker.com/r/specmore/spectacular-backend) | [![Backend Version](https://img.shields.io/docker/v/specmore/spectacular-backend)](https://hub.docker.com/r/specmore/spectacular-backend/tags) |
 
 ## Setup Guide
-To get Spectacular working with your own interface specification files (e.g. OpenAPI files), the Setup Guide section will help you get your own installation of Spectacular up and running.
+To get Spectacular working with your own interface specification files (e.g. OpenAPI files) this Setup Guide section will help you get your own installation of Spectacular up and running.
 
-### 1. Give Spectacular Access to your Interface Specification Files
+### 1. Give Spectacular access to your Interface Specification files
 Spectacular requires your interface specification files to be stored in git repositories. Therefore, you will first need to configure your git repository hosting solution (only GitHub is currently supported) to give Spectacular access.
 
 This can be done by following the [Git Integration](/docs/git-integration.md) instructions.
@@ -49,12 +49,19 @@ To configure Spectacular display your interface specification files in nice orga
 
 Guidelines for creating a `spectacular-config.yml` can be found in the [Catalogue Configuration Document](docs/catalogue-configuration.md). Or you can use the Demo project's [spectacular-config.yml](https://github.com/specmore/spectacular-demo/blob/master/spectacular-config.yml) as a template.
 
-### 3. Configure your Spectacular instance
+### 3. Configure and run your Spectacular instance
 After setting up a git integration with your git hosting solution (in step 1. above), you should be ready to configure and run your own instance of Spectacular with access to your spec files.
 
-As described in the [Architecture](docs/architecture.md) document, an instance of Spectacular is actually built up using 3 services. Please follow the instructions in the [Configuration](docs/configuration.md) guide on how to configure each service using their required Environment Variables.
+As described in the [Architecture](docs/architecture.md) document, an instance of Spectacular is actually built up using 3 services. Before trying to deploy and run your instance, please familiarise yourself with the [Configuration](docs/configuration.md) guide on how to configure each service using their required Environment Variables.
 
-#### Configure and Run using Docker Compose
+To deploy and run your own Spectacular instance, we provide the following two options:
+1. Using Helm Charts to deploy to your own Kubernetes cluster.
+2. Using Docker Compose to deploy to your own Docker host.
+
+#### 3.1 Configure and run using Helm
+Please refer to your [Spectacular Helm Charts GitHub repository](https://github.com/specmore/spectacular-helm/tree/master/spectacular) for more information.
+
+#### 3.2 Configure and run using Docker Compose
 To help build, configure and run all 3 components in one quick command, a [docker-compose.yml](docker-compose.yml) file is provided in this repository. (Docker Engine v17.05 or above with Docker Compose is required)
 
 The [docker-compose.yml](docker-compose.yml) requires 6 environment variables (beginning with the `SPECTACULAR_` prefix) to be set corresponding to each of the 6 environment variables in the [Configuration](docs/configuration.md) guide. It is recommended to create a [.env file](https://docs.docker.com/compose/environment-variables/#the-env-file) along side the [docker-compose.yml](docker-compose.yml) file to capture these environment variables in one place.
