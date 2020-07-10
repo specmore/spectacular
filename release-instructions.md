@@ -33,3 +33,17 @@ docker tag specmore/spectacular-backend-release-candidate:<version number> specm
 docker push specmore/spectacular-backend:latest
 ```
 
+## Update Spectacular Helm Charts
+Update the following files to reflect the new App version number:
+- Chart.yaml
+- templates/deployment.yaml
+- Readme.md - create a new release in #changelog section
+
+Create new release for the project.
+
+Check the new chart has been published by the [Spectacular Chart Publish](https://g.codefresh.io/pipelines/edit/new/builds?id=5f01aae83ba05b283bdc5d3b&pipeline=Spectacular%20Chart%20Publish&projects=Spectacular%20Publishing&projectId=5f01a9a13ba05be95fdc5d3a&rightbar=steps&context=github&filter=page:1;pageSize:10;timeFrameStart:week) build to the [Spectacular Helm](https://g.codefresh.io/helm/charts/CF_HELM_DEFAULT/spectacular) repo.
+
+
+## upgrade Demo Site
+Upgrade the demo environment with the latest helm chart as per instructions in [spectacular-demo-config](https://github.com/specmore/spectacular-demo-config).
+
