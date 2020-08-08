@@ -47,15 +47,30 @@ module.exports = () => {
           use: ['style-loader', MiniCssExtractPlugin.loader, 'css-loader'],
         },
         {
-          test: /\.(jpg|png)$/,
+          test: /\.(jpg|png)|\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)$/,
           use: {
             loader: 'url-loader',
           },
+        },
+        {
+          test: /\.less$/,
+          use: [
+            {
+              loader: MiniCssExtractPlugin.loader,
+            },
+            'css-loader',
+            'less-loader',
+          ],
         },
       ],
     },
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+      alias: {
+        '../../theme.config$': path.join(
+          __dirname,
+          '../my-custom-semantic-theme/theme.config',
+        ),
     },
     plugins: [definePlugin, htmlPlugin, miniCssExtractPlugin],
     output: {
