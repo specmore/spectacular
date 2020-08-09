@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   sodipodi:docname="spectacular-logo.svg"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   id="svg40"
+   version="1.1"
+   viewBox="0 0 27.939999 6.6939582"
+   height="23"
+   width="96">
+  <defs
+     id="defs34">
+    <rect
+       id="rect36-37-0"
+       height="83.199364"
+       width="243.44508"
+       y="39.058224"
+       x="84.536972" />
+    <rect
+       id="rect51"
+       height="83.199364"
+       width="243.44508"
+       y="39.058224"
+       x="84.536972" />
+  </defs>
+  <sodipodi:namedview
+     units="px"
+     viewbox-width="30.61314"
+     scale-x="1.1"
+     inkscape:window-maximized="0"
+     inkscape:window-y="374"
+     inkscape:window-x="1762"
+     inkscape:window-height="1228"
+     inkscape:window-width="1624"
+     showgrid="false"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="layer1"
+     inkscape:document-units="mm"
+     inkscape:cy="35.79734"
+     inkscape:cx="43.164768"
+     inkscape:zoom="11.2"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base" />
+  <metadata
+     id="metadata37">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(-56.697894,-58.36689)"
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1">
+    <rect
+       style="fill:#ccff00;fill-opacity:1;fill-rule:evenodd;stroke-width:0.00810136"
+       id="rect14-58-5"
+       width="2.8578846"
+       height="1.6131721"
+       x="71.248245"
+       y="99.330421"
+       ry="0.28416288"
+       transform="matrix(0.83516284,-0.55000276,-0.01345174,0.99990952,0,0)"
+       inkscape:transform-center-x="-0.065593397"
+       inkscape:transform-center-y="-2.8207413" />
+    <rect
+       inkscape:transform-center-y="-2.8207522"
+       inkscape:transform-center-x="-0.065587663"
+       transform="matrix(0.83516284,-0.55000276,-0.01345174,0.99990952,0,0)"
+       ry="0.28416288"
+       y="101.85368"
+       x="70.141586"
+       height="1.6131721"
+       width="2.8578846"
+       id="rect14-5-30-3"
+       style="fill:#ccff00;fill-opacity:1;fill-rule:evenodd;stroke-width:0.00810136" />
+    <rect
+       transform="matrix(0.83896102,-0.54419151,0.80085956,0.5988522,0,0)"
+       ry="0.11368135"
+       y="89.209946"
+       x="-16.997063"
+       height="0.22736271"
+       width="3.6618888"
+       id="rect32-1-9"
+       style="fill:#ccff00;fill-opacity:1;stroke:none;stroke-width:0.00813807" />
+    <text
+       transform="matrix(0.11779114,0,0,0.10874697,51.503516,55.164981)"
+       style="font-style:italic;font-variant:normal;font-weight:600;font-stretch:normal;font-size:35.9833px;line-height:1.25;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Semi-Bold Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;white-space:pre;shape-inside:url(#rect36-37-0);fill:#ccff00;fill-opacity:1;stroke:none;"
+       id="text34-3-6"
+       xml:space="preserve"><tspan
+         x="84.537109"
+         y="70.941562"><tspan
+           style="font-style:italic;font-variant:normal;font-weight:600;font-stretch:normal;font-size:35.9833px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans, Semi-Bold Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ccff00;fill-opacity:1">Spectacular</tspan></tspan></text>
+  </g>
+</svg>
