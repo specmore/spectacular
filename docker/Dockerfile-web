@@ -1,5 +1,8 @@
 FROM node:12.14.0 AS build
 
+# Set the node env max memory limit
+ENV NODE_OPTIONS --max-old-space-size=2048
+
 # Create app directory
 WORKDIR /usr/src/app
 
@@ -13,8 +16,9 @@ COPY web/babel.config.js web/webpack.config.js web/tsconfig.json web/.eslintrc.y
 # Copy api spec file
 COPY backend/specs/backend-api.yaml ../backend/specs/
 
-# Copy app source & test mocks
+# Copy app source, theme & test mocks
 COPY web/src src
+COPY web/my-custom-semantic-theme my-custom-semantic-theme
 COPY web/__mocks__ __mocks__
 
 # Generate code
