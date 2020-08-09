@@ -8,6 +8,7 @@ import NotFound from './components/not-found';
 import MenuBar from './components/menu-bar';
 import FooterBar from './components/footer-bar';
 import './index.css';
+import 'semantic-ui-less/semantic.less';
 import { CATALOGUE_LIST_ROUTE, CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE } from './routes';
 
 const Index = () => (

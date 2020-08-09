@@ -8,6 +8,7 @@ const webpack = require('webpack');
 const htmlPlugin = new HtmlWebPackPlugin({
   template: './src/index.html',
   filename: './index.html',
+  favicon: './src/assets/images/spectacular-icon.png',
 });
 
 const miniCssExtractPlugin = new MiniCssExtractPlugin({
@@ -46,16 +47,34 @@ module.exports = () => {
           test: /\.css$/,
           use: ['style-loader', MiniCssExtractPlugin.loader, 'css-loader'],
         },
+        { // Load fonts
+          test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)/,
+          use: 'url-loader',
+        },
+        { // Load other files, images etc
+          test: /\.(png|j?g|gif|ico)?$/,
+          use: 'url-loader',
+        },
         {
-          test: /\.(jpg|png)$/,
-          use: {
-            loader: 'url-loader',
-          },
+          test: /\.less$/,
+          use: [
+            {
+              loader: MiniCssExtractPlugin.loader,
+            },
+            'css-loader',
+            'less-loader',
+          ],
         },
       ],
     },
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+      alias: {
+        '../../theme.config$': path.join(
+          __dirname,
+          'my-custom-semantic-theme/theme.config',
+        ),
+      },
     },
     plugins: [definePlugin, htmlPlugin, miniCssExtractPlugin],
     output: {
