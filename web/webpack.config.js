@@ -8,6 +8,7 @@ const webpack = require('webpack');
 const htmlPlugin = new HtmlWebPackPlugin({
   template: './src/index.html',
   filename: './index.html',
+  favicon: './src/assets/images/spectacular-icon.png',
 });
 
 const miniCssExtractPlugin = new MiniCssExtractPlugin({
