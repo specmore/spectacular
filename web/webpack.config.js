@@ -46,11 +46,13 @@ module.exports = () => {
           test: /\.css$/,
           use: ['style-loader', MiniCssExtractPlugin.loader, 'css-loader'],
         },
-        {
-          test: /\.(jpg|png)|\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)$/,
-          use: {
-            loader: 'url-loader',
-          },
+        { // Load fonts
+          test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)/,
+          use: 'url-loader',
+        },
+        { // Load other files, images etc
+          test: /\.(png|j?g|gif|ico)?$/,
+          use: 'url-loader',
         },
         {
           test: /\.less$/,
@@ -69,8 +71,9 @@ module.exports = () => {
       alias: {
         '../../theme.config$': path.join(
           __dirname,
-          '../my-custom-semantic-theme/theme.config',
+          'my-custom-semantic-theme/theme.config',
         ),
+      },
     },
     plugins: [definePlugin, htmlPlugin, miniCssExtractPlugin],
     output: {
