@@ -5,3 +5,4 @@
 
 // @pageBackground     : @nord6;
 @textColor          : @nord0;
+@fontName           : 'Roboto';
