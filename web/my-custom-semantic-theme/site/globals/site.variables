@@ -3,6 +3,6 @@
 *******************************/
 @import "~nord/src/lesscss/nord.less";
 
-// @pageBackground     : @nord6;
+@pageBackground     : @nord6;
 @textColor          : @nord0;
 @fontName           : 'Roboto';
