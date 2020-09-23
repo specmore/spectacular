@@ -7,6 +7,7 @@ import CatalogueContainer from './components/catalogue-container';
 import NotFound from './components/not-found';
 import MenuBar from './components/menu-bar';
 import FooterBar from './components/footer-bar';
+import LocationBar from './components/location-bar';
 import './index.css';
 import 'semantic-ui-less/semantic.less';
 import { CATALOGUE_LIST_ROUTE, CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE } from './routes';
@@ -15,7 +16,8 @@ const Index = () => (
   <RestfulProvider base="/api">
     <Router>
       <MenuBar />
-      <div style={{ paddingTop: '4em' }}>
+      <LocationBar />
+      <div style={{ paddingTop: '2em' }}>
         <div style={{ position: 'relative' }}>
           <Switch>
             <Route exact path={CATALOGUE_LIST_ROUTE}>
