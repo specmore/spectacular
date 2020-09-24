@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import {
-  Dimmer, Loader, Item, Segment, Message, Header, Container,
+  Dimmer, Loader, Item, Segment, Message, Header, Container, Placeholder,
 } from 'semantic-ui-react';
 import EmptyCatalogueItemImage from '../assets/images/empty-catalogue-item.png';
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
@@ -9,15 +9,14 @@ import { useFindCataloguesForUser, Catalogue } from '../backend-api-client';
 
 const CatalogueListLoading = () => (
   <Segment vertical>
-    <Dimmer inverted active>
-      <Loader content="Loading" />
-    </Dimmer>
-    <Item.Group divided data-testid="catalogue-list-placeholder-item-group">
-      <Item>
-        <Item.Image size="tiny" src={ImagePlaceHolder} />
-        <img src={EmptyCatalogueItemImage} alt="placeholder" />
-      </Item>
-    </Item.Group>
+    <Container text>
+      <Placeholder>
+        <Placeholder.Header image>
+          <Placeholder.Line />
+          <Placeholder.Line />
+        </Placeholder.Header>
+      </Placeholder>
+    </Container>
   </Segment>
 );
 
