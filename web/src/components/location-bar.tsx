@@ -1,9 +1,15 @@
 import React, { FunctionComponent } from 'react';
 import './location-bar.less';
 
-const LocationBar = () => (
+interface LocationBarProps {
+  installationOwner: string;
+}
+
+const LocationBar: FunctionComponent<LocationBarProps> = ({ installationOwner }) => (
   <div className="location-bar">
-    Specmore Interface Specifications
+    {installationOwner}
+    {' '}
+    Interface Specifications
   </div>
 );
 
