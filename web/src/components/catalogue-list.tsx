@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import {
-  Dimmer, Loader, Item, Segment, Message, Header,
+  Dimmer, Loader, Item, Segment, Message, Header, Container,
 } from 'semantic-ui-react';
 import EmptyCatalogueItemImage from '../assets/images/empty-catalogue-item.png';
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
@@ -37,10 +37,12 @@ interface CatalogueListProps {
 
 const CatalogueList: FunctionComponent<CatalogueListProps> = ({ catalogues }) => (
   <Segment vertical>
-    <Header as="h4">The following specification catalogues are available to you:</Header>
-    <Item.Group divided data-testid="catalogue-list-item-group">
-      {catalogues.map((catalogue) => (<CatalogueListItem key={catalogue.encodedId} catalogue={catalogue} />))}
-    </Item.Group>
+    <Container text>
+      <Header as="h3">Available Interface Catalogues</Header>
+      <Item.Group divided data-testid="catalogue-list-item-group">
+        {catalogues.map((catalogue) => (<CatalogueListItem key={catalogue.encodedId} catalogue={catalogue} />))}
+      </Item.Group>
+    </Container>
   </Segment>
 );
 
