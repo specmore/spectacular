@@ -2,9 +2,14 @@ import React, { FunctionComponent, useState, useEffect } from 'react';
 import {
   Dimmer, Loader, Message, Container,
 } from 'semantic-ui-react';
+import { Switch, Route } from 'react-router-dom';
 import { fetchInstallation } from '../api-client';
 import EmptyWelcomeItemImage from '../assets/images/empty-catalogue-item.png';
 import LocationBar from './location-bar';
+import CatalogueContainer from './catalogue-container';
+import CatalogueList from './catalogue-list';
+import NotFound from './not-found';
+import { CATALOGUE_LIST_ROUTE, CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE } from '../routes';
 
 const InstallationContainer: FunctionComponent = () => {
   const [installation, setInstallation] = useState(null);
@@ -46,7 +51,20 @@ const InstallationContainer: FunctionComponent = () => {
   }
 
   return (
-    <LocationBar installationOwner={installation.owner} />
+    <>
+      <LocationBar installationOwner={installation.owner} />
+      <Switch>
+        <Route exact path={CATALOGUE_LIST_ROUTE}>
+          <CatalogueList org={installation.owner} />
+        </Route>
+        <Route exact path={[CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE]}>
+          <CatalogueContainer />
+        </Route>
+        <Route path="*">
+          <NotFound />
+        </Route>
+      </Switch>
+    </>
   );
 };
 
