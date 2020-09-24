@@ -2,8 +2,9 @@ import React, { FunctionComponent } from 'react';
 import {
   Label, Icon, Item, Message,
 } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
-import { CatalogueContainerLinkButton } from '../routes';
+import { CatalogueContainerLinkButton, CreateCatalogueContainerLocation } from '../routes';
 import { Catalogue } from '../backend-api-client';
 
 interface CatalogueErrorItemProps {
@@ -32,23 +33,17 @@ const CatalogueErrorItem: FunctionComponent<CatalogueErrorItemProps> = ({ catalo
 
 interface CatalogueItemDetailsProps {
   catalogue: Catalogue;
-  selectButton: JSX.Element;
+  catalogueLink: string;
 }
 
-const CatalogueItemDetails: FunctionComponent<CatalogueItemDetailsProps> = ({ catalogue, selectButton }) => (
+const CatalogueItemDetails: FunctionComponent<CatalogueItemDetailsProps> = ({ catalogue, catalogueLink }) => (
   <Item data-testid="catalogue-list-item-details-item">
-    <Item.Image size="tiny" src={ImagePlaceHolder} />
     <Item.Content>
-      <Item.Header>{catalogue.title}</Item.Header>
+      <Item.Header as={Link} to={catalogueLink}>{catalogue.title}</Item.Header>
       <Item.Description>
         {catalogue.description}
       </Item.Description>
       <Item.Extra>
-        {selectButton}
-        <Label as="a" href={catalogue.htmlUrl} target="_blank">
-          <Icon name="github" />
-          {catalogue.fullPath}
-        </Label>
         <Label color="teal">
           <Icon name="file alternate" />
           {catalogue.interfaceCount}
@@ -65,14 +60,14 @@ interface CatalogueListItemProps {
 }
 
 const CatalogueListItem: FunctionComponent<CatalogueListItemProps> = ({ catalogue }) => {
-  const selectButton = (<CatalogueContainerLinkButton encodedId={catalogue.encodedId} />);
+  const catalogueLink = CreateCatalogueContainerLocation(catalogue.encodedId);
 
   if (catalogue.parseError) return (<CatalogueErrorItem catalogue={catalogue} />);
 
   return (
     <CatalogueItemDetails
       catalogue={catalogue}
-      selectButton={selectButton}
+      catalogueLink={catalogueLink}
     />
   );
 };
