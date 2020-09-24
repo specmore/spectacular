@@ -8,8 +8,8 @@ interface LocationBarProps {
 const LocationBar: FunctionComponent<LocationBarProps> = ({ installationOwner }) => (
   <div className="location-bar">
     {installationOwner}
-    {' '}
-    Interface Specifications
+    {' > '}
+    Interface Catalogues
   </div>
 );
 
