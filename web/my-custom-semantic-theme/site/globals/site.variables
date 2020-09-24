@@ -6,3 +6,6 @@
 @pageBackground     : @nord6;
 @textColor          : @nord0;
 @fontName           : 'Roboto';
+
+@negativeHeaderColor: @nord11;
+@negativeBorderColor: @nord11;
