@@ -16,7 +16,7 @@ import spectacular.backend.github.domain.Installation;
 public class AppApiClient {
 
   private static final String APP_INSTALLATION_ACCESS_TOKEN_PATH =
-      "/installations/{installationId}/access_tokens";
+      "/app/installations/{installationId}/access_tokens";
   private static final String APP_INSTALLATION_PATH = "/app/installations/{installationId}";
 
   private final RestTemplate restTemplate;
