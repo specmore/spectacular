@@ -1,13 +1,13 @@
 {
   "id" : "a30e0294-3ed7-3695-a01d-4ffa943c69fe",
   "request" : {
-    "url" : "/installations/6436743/access_tokens",
+    "url" : "/app/installations/6436743/access_tokens",
     "method" : "POST"
   },
   "response" : {
     "transformers": ["response-template"],
     "status" : 201,
-    "bodyFileName" : "body-installations-6436743-access_tokens-EiduX.json",
+    "bodyFileName" : "body-app-installations-6436743-access_tokens-EiduX.json",
     "headers" : {
       "Date" : "Sun, 21 Jun 2020 09:30:21 GMT",
       "Content-Type" : "application/json; charset=utf-8",
