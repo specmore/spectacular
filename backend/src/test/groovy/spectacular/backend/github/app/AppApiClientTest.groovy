@@ -39,7 +39,7 @@ class AppApiClientTest extends Specification {
                 "    \"expires_at\": \"2019-12-03T00:11:08Z\"\n" +
                 "}"
         def String appInstallationId = 101
-        this.server.expect(requestTo("/installations/${appInstallationId}/access_tokens"))
+        this.server.expect(requestTo("/app/installations/${appInstallationId}/access_tokens"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(responseContent, MediaType.APPLICATION_JSON));
 
@@ -64,7 +64,7 @@ class AppApiClientTest extends Specification {
                 "    \"message\": \"bla bla bla\"\n" +
                 "}"
         def String appInstallationId = 101
-        this.server.expect(requestTo("/installations/${appInstallationId}/access_tokens"))
+        this.server.expect(requestTo("/app/installations/${appInstallationId}/access_tokens"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withUnauthorizedRequest().body(responseContent).contentType(MediaType.APPLICATION_JSON));
 
