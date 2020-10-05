@@ -8,16 +8,12 @@ import CatalogueListItem from './catalogue-list-item';
 import { useFindCataloguesForUser, Catalogue } from '../backend-api-client';
 
 const CatalogueListLoading = () => (
-  <Segment vertical>
-    <Container text>
-      <Placeholder>
-        <Placeholder.Header image>
-          <Placeholder.Line />
-          <Placeholder.Line />
-        </Placeholder.Header>
-      </Placeholder>
-    </Container>
-  </Segment>
+  <Placeholder>
+    <Placeholder.Header image>
+      <Placeholder.Line />
+      <Placeholder.Line />
+    </Placeholder.Header>
+  </Placeholder>
 );
 
 interface CatalogueListErrorProps {
@@ -35,14 +31,9 @@ interface CatalogueListProps {
 }
 
 const CatalogueList: FunctionComponent<CatalogueListProps> = ({ catalogues }) => (
-  <Segment vertical>
-    <Container text>
-      <Header as="h3">Available Interface Catalogues</Header>
-      <Item.Group divided data-testid="catalogue-list-item-group">
-        {catalogues.map((catalogue) => (<CatalogueListItem key={catalogue.encodedId} catalogue={catalogue} />))}
-      </Item.Group>
-    </Container>
-  </Segment>
+  <Item.Group divided data-testid="catalogue-list-item-group">
+    {catalogues.map((catalogue) => (<CatalogueListItem key={catalogue.encodedId} catalogue={catalogue} />))}
+  </Item.Group>
 );
 
 interface CatalogueListContainerProps {
@@ -53,11 +44,23 @@ const CatalogueListContainer: FunctionComponent<CatalogueListContainerProps> = (
   const findCataloguesForUser = useFindCataloguesForUser({ queryParams: { org } });
   const { data: findCataloguesResult, loading, error } = findCataloguesForUser;
 
-  if (loading) return (<CatalogueListLoading />);
+  let content = null;
+  if (loading) {
+    content = (<CatalogueListLoading />);
+  } else if (error) {
+    content = (<CatalogueListError errorMessage={error.message} />);
+  } else {
+    content = (<CatalogueList catalogues={findCataloguesResult.catalogues} />);
+  }
 
-  if (error) return (<CatalogueListError errorMessage={error.message} />);
-
-  return (<CatalogueList catalogues={findCataloguesResult.catalogues} />);
+  return (
+    <Segment vertical>
+      <Container text>
+        <Header as="h3">Available Interface Catalogues</Header>
+        {content}
+      </Container>
+    </Segment>
+  );
 };
 
 export default CatalogueListContainer;
