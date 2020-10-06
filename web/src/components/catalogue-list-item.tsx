@@ -3,8 +3,7 @@ import {
   Label, Icon, Item, Message,
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import ImagePlaceHolder from '../assets/images/image-placeholder.png';
-import { CatalogueContainerLinkButton, CreateCatalogueContainerLocation } from '../routes';
+import { CreateCatalogueContainerLocation } from '../routes';
 import { Catalogue } from '../backend-api-client';
 
 interface CatalogueErrorItemProps {

@@ -22,21 +22,6 @@ export const BackToCatalogueListLinkButton: FunctionComponent = () => (
   </Button>
 );
 
-interface CatalogueContainerLinkButtonProps {
-  encodedId: string;
-}
-
-export const CatalogueContainerLinkButton: FunctionComponent<CatalogueContainerLinkButtonProps> = ({ encodedId }) => {
-  const catalogueLink = CreateCatalogueContainerLocation(encodedId);
-  return (
-    <Button primary floated="right" icon labelPosition="right" as={Link} to={catalogueLink} data-testid="view-catalogue-button">
-      View Catalogue
-      {' '}
-      <Icon name="chevron right" />
-    </Button>
-  );
-};
-
 interface ViewSpecLinkButtonProps {
   interfaceName: string;
   refName: string;
