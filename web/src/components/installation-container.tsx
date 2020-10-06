@@ -5,11 +5,9 @@ import {
 import { Switch, Route } from 'react-router-dom';
 import { fetchInstallation } from '../api-client';
 import EmptyWelcomeItemImage from '../assets/images/empty-catalogue-item.png';
-import LocationBar from './location-bar';
 import CatalogueContainer from './catalogue-container';
 import CatalogueList from './catalogue-list';
 import NotFound from './not-found';
-import CatalogueListContainer from './catalogue-list-container';
 import { CATALOGUE_LIST_ROUTE, CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE } from '../routes';
 
 const InstallationContainer: FunctionComponent = () => {
@@ -54,8 +52,11 @@ const InstallationContainer: FunctionComponent = () => {
   return (
     <>
       <Switch>
-        <Route exact path={[CATALOGUE_LIST_ROUTE, CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE]}>
-          <CatalogueListContainer org={installation.owner} />
+        <Route exact path={CATALOGUE_LIST_ROUTE}>
+          <CatalogueList org={installation.owner} />
+        </Route>
+        <Route exact path={[CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE]}>
+          <CatalogueContainer />
         </Route>
         <Route path="*">
           <NotFound />

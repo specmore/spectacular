@@ -4,13 +4,12 @@ import {
 } from 'semantic-ui-react';
 import { useParams } from 'react-router-dom';
 import SwaggerUI from 'swagger-ui-react';
-import { GetDataError } from 'restful-react';
 import EmptyItemImage from '../assets/images/empty-catalogue-item.png';
 import CatalogueDetails from './catalogue-details';
 import 'swagger-ui-react/swagger-ui.css';
 import './catalogue-container.css';
 import { CloseSpecButton, BackToCatalogueListLinkButton, useQuery } from '../routes';
-import { useGetCatalogue, Catalogue, GetCatalogueResult } from '../backend-api-client';
+import { useGetCatalogue, Catalogue } from '../backend-api-client';
 
 const CatalogueContainerLoading = () => (
   <Segment vertical textAlign="center">
@@ -47,18 +46,11 @@ const createInterfaceFileContentsPath = (
   refName: string,
 ) => `/api/catalogues/${encodedId}/interfaces/${interfaceName}/file?ref=${refName}`;
 
-interface CatalogueContainerProps {
-  getCatalogueResult: GetCatalogueResult;
-  loading: boolean;
-  error: GetDataError<unknown>;
-}
-
-const CatalogueContainer: FunctionComponent<CatalogueContainerProps> = ({ getCatalogueResult, loading, error }) => {
-  console.log(`CatalogueContainer function result: ${getCatalogueResult}, loading: ${loading}, error: ${error}`);
+const CatalogueContainer: FunctionComponent = () => {
   const { encodedId, interfaceName } = useParams();
   const query = useQuery();
-  // const getCatalogue = useGetCatalogue({ encodedId });
-  // const { data: getCatalogueResult, loading, error } = getCatalogue;
+  const getCatalogue = useGetCatalogue({ encodedId });
+  const { data: getCatalogueResult, loading, error } = getCatalogue;
 
   const interfaceFileContentsPath = createInterfaceFileContentsPath(encodedId, interfaceName, query.get('ref'));
 

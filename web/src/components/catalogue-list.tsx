@@ -1,12 +1,10 @@
 import React, { FunctionComponent } from 'react';
 import {
-  Dimmer, Loader, Item, Segment, Message, Header, Container, Placeholder,
+  Item, Segment, Message, Header, Container, Placeholder,
 } from 'semantic-ui-react';
-import { GetDataError } from 'restful-react';
-import EmptyCatalogueItemImage from '../assets/images/empty-catalogue-item.png';
-import ImagePlaceHolder from '../assets/images/image-placeholder.png';
 import CatalogueListItem from './catalogue-list-item';
-import { useFindCataloguesForUser, Catalogue, FindCataloguesResult } from '../backend-api-client';
+import { useFindCataloguesForUser, Catalogue } from '../backend-api-client';
+import LocationBar from './location-bar';
 
 const CatalogueListLoading = () => (
   <Placeholder>
@@ -38,15 +36,13 @@ const CatalogueList: FunctionComponent<CatalogueListProps> = ({ catalogues }) =>
 );
 
 interface CatalogueListContainerProps {
-  findCataloguesResult: FindCataloguesResult;
-  loading: boolean;
-  error: GetDataError<unknown>;
+  org: string;
 }
 
-const CatalogueListContainer: FunctionComponent<CatalogueListContainerProps> = ({ findCataloguesResult, loading, error }) => {
-  console.log(`CatalogueList function result: ${findCataloguesResult}, loading: ${loading}, error: ${error}`);
-  // const findCataloguesForUser = useFindCataloguesForUser({ queryParams: { org } });
-  // const { data: findCataloguesResult, loading, error } = findCataloguesForUser;
+const CatalogueListContainer: FunctionComponent<CatalogueListContainerProps> = ({ org }) => {
+  console.log('CatalogueListContainer function');
+  const findCataloguesForUser = useFindCataloguesForUser({ queryParams: { org } });
+  const { data: findCataloguesResult, loading, error } = findCataloguesForUser;
 
   let content = null;
   if (loading) {
@@ -58,12 +54,15 @@ const CatalogueListContainer: FunctionComponent<CatalogueListContainerProps> = (
   }
 
   return (
-    <Segment vertical>
-      <Container text>
-        <Header as="h3">Available Interface Catalogues</Header>
-        {content}
-      </Container>
-    </Segment>
+    <>
+      <LocationBar installationOwner={org} />
+      <Segment vertical>
+        <Container text>
+          <Header as="h3">Available Interface Catalogues</Header>
+          {content}
+        </Container>
+      </Segment>
+    </>
   );
 };
 
