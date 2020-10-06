@@ -2,10 +2,11 @@ import React, { FunctionComponent } from 'react';
 import {
   Dimmer, Loader, Item, Segment, Message, Header, Container, Placeholder,
 } from 'semantic-ui-react';
+import { GetDataError } from 'restful-react';
 import EmptyCatalogueItemImage from '../assets/images/empty-catalogue-item.png';
 import ImagePlaceHolder from '../assets/images/image-placeholder.png';
 import CatalogueListItem from './catalogue-list-item';
-import { useFindCataloguesForUser, Catalogue } from '../backend-api-client';
+import { useFindCataloguesForUser, Catalogue, FindCataloguesResult } from '../backend-api-client';
 
 const CatalogueListLoading = () => (
   <Placeholder>
@@ -37,12 +38,15 @@ const CatalogueList: FunctionComponent<CatalogueListProps> = ({ catalogues }) =>
 );
 
 interface CatalogueListContainerProps {
-  org: string;
+  findCataloguesResult: FindCataloguesResult;
+  loading: boolean;
+  error: GetDataError<unknown>;
 }
 
-const CatalogueListContainer: FunctionComponent<CatalogueListContainerProps> = ({ org }) => {
-  const findCataloguesForUser = useFindCataloguesForUser({ queryParams: { org } });
-  const { data: findCataloguesResult, loading, error } = findCataloguesForUser;
+const CatalogueListContainer: FunctionComponent<CatalogueListContainerProps> = ({ findCataloguesResult, loading, error }) => {
+  console.log(`CatalogueList function result: ${findCataloguesResult}, loading: ${loading}, error: ${error}`);
+  // const findCataloguesForUser = useFindCataloguesForUser({ queryParams: { org } });
+  // const { data: findCataloguesResult, loading, error } = findCataloguesForUser;
 
   let content = null;
   if (loading) {
