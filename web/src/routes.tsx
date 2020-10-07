@@ -8,6 +8,10 @@ export const CATALOGUE_CONTAINER_ROUTE = '/catalogue/:encodedId';
 export const CreateCatalogueContainerLocation = (encodedId: string): string => `/catalogue/${encodedId}/`;
 
 export const CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE = '/catalogue/:encodedId/interface/:interfaceName';
+export const CreateInterfaceLocation = (encodedId: string, interfaceName: string): string => (
+  `/catalogue/${encodedId}/interface/${interfaceName}`
+);
+
 export const CreateViewSpecLocation = (encodedId: string, interfaceName: string, refName: string): string => (
   `/catalogue/${encodedId}/interface/${interfaceName}?ref=${refName}`
 );

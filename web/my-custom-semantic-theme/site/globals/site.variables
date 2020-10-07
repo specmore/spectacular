@@ -10,4 +10,6 @@
 @negativeHeaderColor: @nord11;
 @negativeBorderColor: @nord11;
 
-@teal               : @nord7;
+@green              : @nord7;
+@teal               : @nord8;
+@blue               : @nord10;

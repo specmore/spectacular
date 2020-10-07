@@ -3,4 +3,6 @@
 *******************************/
 @import "~nord/src/lesscss/nord.less";
 
-@tealTextColor          : @nord0;
+@blueTextColor          : @nord6;
+@greenTextColor          : @nord6;
+@tealTextColor          : @nord6;

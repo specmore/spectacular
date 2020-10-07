@@ -9,7 +9,7 @@ import LocationBar from './location-bar';
 
 const CatalogueContainerLoading = () => (
   <>
-    <Header as="h3">Loading Catalogue..</Header>
+    <Header as="h2">Loading Catalogue..</Header>
     <Placeholder>
       <Placeholder.Line />
       <Placeholder.Line />

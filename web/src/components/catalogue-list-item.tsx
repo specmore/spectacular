@@ -43,7 +43,7 @@ const CatalogueItemDetails: FunctionComponent<CatalogueItemDetailsProps> = ({ ca
         {catalogue.description}
       </Item.Description>
       <Item.Extra>
-        <Label color="teal">
+        <Label color="green">
           <Icon name="file alternate" />
           {catalogue.interfaceCount}
           {' '}
