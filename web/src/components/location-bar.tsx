@@ -9,22 +9,31 @@ interface LocationBarProps {
 }
 
 const LocationBar: FunctionComponent<LocationBarProps> = ({ installationOwner, catalogueTitle }) => {
-  const breadCrumbs = [];
+  const breadcrumbList = [];
   if (!catalogueTitle) {
-    breadCrumbs.push(<span>Interface Catalogues</span>);
+    breadcrumbList.push({
+      id: 'interface-catalogues-text',
+      element: (<span>Interface Catalogues</span>),
+    });
   } else {
-    breadCrumbs.push(<Link to={CATALOGUE_LIST_ROUTE}>Interface Catalogues</Link>);
-    breadCrumbs.push(<span>{catalogueTitle}</span>);
+    breadcrumbList.push({
+      id: 'interface-catalogues-link',
+      element: (<Link to={CATALOGUE_LIST_ROUTE}>Interface Catalogues</Link>),
+    });
+    breadcrumbList.push({
+      id: 'catalogue-title-text',
+      element: (<span>{catalogueTitle}</span>),
+    });
   }
 
   return (
     <div className="location-bar">
       {installationOwner}
-      { breadCrumbs.map((link) => (
-        <>
+      { breadcrumbList.map((breadcrumb) => (
+        <React.Fragment key={breadcrumb.id}>
           {' > '}
-          { link }
-        </>
+          { breadcrumb.element }
+        </React.Fragment>
       )) }
     </div>
   );
