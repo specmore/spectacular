@@ -56,7 +56,7 @@ const InstallationContainer: FunctionComponent = () => {
           <CatalogueList org={installation.owner} />
         </Route>
         <Route exact path={[CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE]}>
-          <CatalogueContainer />
+          <CatalogueContainer org={installation.owner} />
         </Route>
         <Route path="*">
           <NotFound />
