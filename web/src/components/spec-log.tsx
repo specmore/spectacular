@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import {
-  Label, List, Icon, Message, Item,
+  Label, List, Icon, Message, Item, Button,
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import SpecLogItem from './spec-log-item';
@@ -67,9 +67,15 @@ const SpecLogContainer: FunctionComponent<SpecLogProps> = ({ catalogue, specLog 
             <Icon name="code branch" />
             {proposedChangesCount}
           </Label>
-          <a href={latestAgreedSpecItem.htmlUrl} target="_blank" rel="noopener noreferrer">
-            <Icon name="file code" inverted circular size="small" color="grey" />
-          </a>
+          <Button
+            icon="file code"
+            circular
+            size="mini"
+            href={latestAgreedSpecItem.htmlUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            color="grey"
+          />
         </Item.Extra>
       </Item.Content>
     </Item>

@@ -13,3 +13,4 @@
 @green              : @nord7;
 @teal               : @nord8;
 @blue               : @nord10;
+@grey               : @nord3;
