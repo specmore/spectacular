@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import {
   Icon, Message, Header, Item,
 } from 'semantic-ui-react';
-import SpecLog from './spec-log';
+import InterfaceListItem from './interface-list-item';
 import { Catalogue } from '../backend-api-client';
 
 interface CatalogueErrorProps {
@@ -33,7 +33,8 @@ const CatalogueDetails: FunctionComponent<CatalogueDetailsProps> = ({ catalogue 
     <p>{catalogue.description}</p>
     <Header as="h3">Interface List</Header>
     <Item.Group divided data-testid="catalogue-details-interface-list">
-      {catalogue.specLogs.map((specLog) => (<SpecLog key={specLog.interfaceName} catalogue={catalogue} specLog={specLog} />))}
+      {catalogue.specLogs.map((specLog) => (
+        <InterfaceListItem key={specLog.interfaceName} catalogueEncodedId={catalogue.encodedId} specLog={specLog} />))}
     </Item.Group>
   </div>
 );
