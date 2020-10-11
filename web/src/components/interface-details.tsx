@@ -38,7 +38,7 @@ const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProp
 
   const specItem = specLog.latestAgreed;
   const isSelectedSpecItem = interfaceName === selectedInterfaceName && query.get('ref') === specItem.ref;
-  const viewSpecButton = (<ViewSpecLinkButton interfaceName={interfaceName} refName={specItem.ref} isSelected={isSelectedSpecItem} />);
+  const viewSpecButton = (<ViewSpecLinkButton refName={specItem.ref} isSelected={isSelectedSpecItem} />);
 
   if (specItem.parseResult.errors && specItem.parseResult.errors.length > 0) {
     return (<InterfaceDetailsError specItem={specItem} />);
