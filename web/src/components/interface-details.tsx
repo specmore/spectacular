@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  Icon, Message, Header, List, Label, Button,
+  Icon, Message, Header, List, Label, Button, Grid,
 } from 'semantic-ui-react';
 import { SpecLog, SpecItem } from '../backend-api-client';
 import { useQuery, ViewSpecLinkButton } from '../routes';
@@ -44,21 +44,38 @@ const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProp
     return (<InterfaceDetailsError specItem={specItem} />);
   }
 
+  const proposedChangesCount = specLog.proposedChanges.length;
+
   return (
     <div data-testid="interface-details-container">
       <Header as="h2">{specItem.parseResult.openApiSpec.title}</Header>
-      Latest agreed version
-      <Label color="blue">{specItem.parseResult.openApiSpec.version}</Label>
-      <Button
-        icon="file code"
-        circular
-        size="mini"
-        href={specItem.htmlUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        color="grey"
-      />
-      {viewSpecButton}
+      <Grid>
+        <Grid.Row>
+          <Grid.Column>
+            <span>Latest agreed version</span>
+            <Label color="blue">{specItem.parseResult.openApiSpec.version}</Label>
+            <Button
+              icon="file code"
+              circular
+              size="mini"
+              href={specItem.htmlUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              color="grey"
+            />
+            {viewSpecButton}
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column>
+            <span>Proposed Changes</span>
+            <Label color="green">
+              <Icon name="code branch" />
+              {proposedChangesCount}
+            </Label>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     </div>
   );
 };

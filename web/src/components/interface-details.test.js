@@ -9,8 +9,10 @@ import Generator from '../__tests__/test-data-generator';
 
 describe('InterfaceDetails component', () => {
   test('renders interface details when no error is given', async () => {
-    // given a interface spec log item
-    const specLog = Generator.SpecLog.generateSpecLog();
+    // given a spec log containing two proposed changes
+    const proposedChange1 = Generator.ProposedChange.generateChangeProposal({ number: 98 });
+    const proposedChange2 = Generator.ProposedChange.generateChangeProposal({ number: 99 });
+    const specLog = Generator.SpecLog.generateSpecLog({ proposedChanges: [proposedChange1, proposedChange2] });
 
     // when interface details component renders
     const { getByTestId, getByText } = renderWithRouter(<InterfaceDetails specLog={specLog} />);
@@ -23,8 +25,10 @@ describe('InterfaceDetails component', () => {
 
     // and the version of the latest agreed spec file is shown
     expect(getByText(specLog.latestAgreed.parseResult.openApiSpec.version)).toBeInTheDocument();
-  });
 
+    // and the number of proposed changes is shown
+    expect(getByText('2')).toBeInTheDocument();
+  });
 
   test('renders an interface details error message when openapi parse errors are given', async () => {
     // given a spec item with parse errors
