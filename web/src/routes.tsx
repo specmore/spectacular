@@ -12,7 +12,8 @@ export const CreateInterfaceLocation = (encodedId: string, interfaceName: string
   `/catalogue/${encodedId}/interface/${interfaceName}`
 );
 
-const VIEW_SPEC_QUERY_PARAM_NAME = 'ref';
+export const VIEW_SPEC_QUERY_PARAM_NAME = 'ref';
+export const SHOW_EVOLUTION_QUERY_PARAM_NAME = 'show-evolution';
 
 export const useQuery = (): URLSearchParams => new URLSearchParams(useLocation().search);
 
@@ -87,7 +88,9 @@ export const CloseSpecButton: FunctionComponent = () => {
 export const getCurrentSpecRefViewed = (): string => useQuery().get(VIEW_SPEC_QUERY_PARAM_NAME);
 
 export const ViewSpecEvolutionLinkButton: FunctionComponent = () => {
-  const expandSpecEvolutionLocation = addQueryParam('show-evolution', 'true');
+  const expandSpecEvolutionLocation = addQueryParam(SHOW_EVOLUTION_QUERY_PARAM_NAME, 'true');
+  const isSelected = useQuery().get(SHOW_EVOLUTION_QUERY_PARAM_NAME) === 'true';
+
   return (
     <Button
       icon
@@ -96,6 +99,7 @@ export const ViewSpecEvolutionLinkButton: FunctionComponent = () => {
       labelPosition="right"
       as={Link}
       to={expandSpecEvolutionLocation}
+      disabled={isSelected}
       data-testid="view-spec-evolution-button"
     >
       View Changes
@@ -103,3 +107,20 @@ export const ViewSpecEvolutionLinkButton: FunctionComponent = () => {
     </Button>
   );
 };
+
+export const CloseSpecEvolutionButton: FunctionComponent = () => {
+  const interfaceOnlyLink = removeQueryParam(SHOW_EVOLUTION_QUERY_PARAM_NAME);
+  return (
+    <Button
+      icon="close"
+      circular
+      size="mini"
+      floated="right"
+      as={Link}
+      to={interfaceOnlyLink}
+      data-testid="close-spec-evolution-button"
+    />
+  );
+};
+
+export const isShowSpecEvolution = (): boolean => useQuery().get(SHOW_EVOLUTION_QUERY_PARAM_NAME) === 'true';

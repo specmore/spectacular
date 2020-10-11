@@ -8,12 +8,13 @@ import 'swagger-ui-react/swagger-ui.css';
 import { useGetCatalogue } from '../backend-api-client';
 import LocationBar from './location-bar';
 import InterfaceDetails from './interface-details';
-import { CloseSpecButton, getCurrentSpecRefViewed } from '../routes';
+import { CloseSpecButton, getCurrentSpecRefViewed, isShowSpecEvolution } from '../routes';
+import SpecEvolutionContainer from './spec-evolution';
 
 const InterfaceContainerLoading = () => (
   <>
     <Header as="h2">Loading Interface..</Header>
-    <Placeholder>
+    <Placeholder data-testid="interface-container-placeholder">
       <Placeholder.Line />
       <Placeholder.Line />
     </Placeholder>
@@ -43,6 +44,7 @@ const createInterfaceFileContentsPath = (
 const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org }) => {
   const { encodedId, interfaceName } = useParams();
   const refName = getCurrentSpecRefViewed();
+  const showSpecEvolution = isShowSpecEvolution();
 
   console.log('InterfaceContainer rerender');
   console.log('refName', refName);
@@ -54,6 +56,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
   let interfaceTitle = null;
   let content = null;
   let specPreview = null;
+  let specEvolution = null;
   if (loading) {
     content = (<InterfaceContainerLoading />);
   } else if (error) {
@@ -73,17 +76,30 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
         </div>
       );
     }
+
+    if (showSpecEvolution) {
+      specEvolution = (
+        <Segment vertical>
+          <Container text>
+            <SpecEvolutionContainer specLog={specLog} />
+          </Container>
+        </Segment>
+      );
+    }
   }
 
   return (
     <>
       <LocationBar installationOwner={org} catalogueTitle={catalogueTitle} catalogueEncodedId={encodedId} interfaceTitle={interfaceTitle} />
-      <Segment vertical data-testid="interface-container-segment">
-        <Container text>
-          {content}
-        </Container>
+      <div data-testid="interface-container-segment">
+        <Segment vertical>
+          <Container text>
+            {content}
+          </Container>
+        </Segment>
+        {specEvolution}
         {specPreview}
-      </Segment>
+      </div>
     </>
   );
 };
