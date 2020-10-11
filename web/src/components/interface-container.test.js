@@ -4,7 +4,7 @@ import InterfaceContainer from './interface-container';
 import InterfaceDetailsMock from './interface-details';
 import { renderWithRouter } from '../__tests__/test-utils';
 import {
-  CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE, CreateInterfaceLocation,
+  CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE, CreateInterfaceLocation, CreateViewSpecLocation,
 } from '../routes';
 import Generator from '../__tests__/test-data-generator';
 import { useGetCatalogue as useGetCatalogueMock } from '../backend-api-client';
@@ -17,7 +17,8 @@ jest.mock('./interface-details', () => jest.fn(() => null));
 describe('InterfaceContainer component', () => {
   test('successful fetch displays interface', async () => {
     // given a repo for a catalogue
-    const specLog1 = Generator.SpecLog.generateSpecLog({ interfaceName: 'testInterface1' });
+    const interfaceName = 'someInterface1';
+    const specLog1 = Generator.SpecLog.generateSpecLog({ interfaceName });
     const catalogue = Generator.Catalogue.generateCatalogue({ specLogs: [specLog1] });
 
     // and a mocked successful catalogue response
@@ -29,11 +30,11 @@ describe('InterfaceContainer component', () => {
 
     // when interface container component renders
     const { findByTestId } = renderWithRouter(<InterfaceContainer org="test-org" />,
-      CreateInterfaceLocation(catalogue.encodedId, 'testInterface1'),
+      CreateInterfaceLocation(catalogue.encodedId, interfaceName),
       CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE);
 
-    // then a catalogue container should be found
-    expect(await findByTestId('catalogue-container-segment')).toBeInTheDocument();
+    // then a interface container should be found
+    expect(await findByTestId('interface-container-segment')).toBeInTheDocument();
 
     // and it fetched the catalogue details
     expect(useGetCatalogueMock).toHaveBeenCalledTimes(1);
@@ -79,42 +80,43 @@ describe('InterfaceContainer component', () => {
   //   expect(getByTestId('catalogue-container-placeholder-image')).toBeInTheDocument();
   // });
 
-  // test('swagger UI is shown when a spec file location is set', async () => {
-  //   // given a repo for a catalogue
-  //   const catalogue = Generator.Catalogue.generateCatalogue();
+  test('swagger UI is shown when a spec file ref is set', async () => {
+    // given a repo for a catalogue
+    const interfaceName = 'someInterface1';
+    const specLog1 = Generator.SpecLog.generateSpecLog({ interfaceName });
+    const catalogue = Generator.Catalogue.generateCatalogue({ specLogs: [specLog1] });
 
-  //   // and a mocked successful catalogue response
-  //   const catalogueResponse = {
-  //     data: catalogue,
-  //   };
+    // and a mocked successful catalogue response
+    const catalogueResponse = {
+      data: { catalogue },
+    };
 
-  //   useGetCatalogueMock.mockReturnValueOnce(catalogueResponse);
+    useGetCatalogueMock.mockReturnValue(catalogueResponse);
 
-  //   // and a selected interface and ref
-  //   const interfaceName = 'someInterface1';
-  //   const refName = 'some-branch';
+    // and ref
+    const refName = 'some-branch';
 
-  //   // and a mocked spec file fetch response
-  //   const responsePromise = Promise.resolve({ });
-  //   global.fetch = jest.fn().mockImplementation(() => responsePromise);
+    // and a mocked spec file fetch response
+    const responsePromise = Promise.resolve({ });
+    global.fetch = jest.fn().mockImplementation(() => responsePromise);
 
-  //   // when catalogue container component renders
-  //   const { findByTestId } = renderWithRouter(<CatalogueContainer />,
-  //     CreateViewSpecLocation(catalogue.encodedId, interfaceName, refName),
-  //     CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE);
+    // when interface container component renders
+    const { findByTestId } = renderWithRouter(<InterfaceContainer org="test-org" />,
+      CreateViewSpecLocation(catalogue.encodedId, interfaceName, refName),
+      CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE);
 
-  //   // then a catalogue container should be found
-  //   expect(await findByTestId('catalogue-container-segment')).toBeInTheDocument();
+    // then a catalogue container should be found
+    expect(await findByTestId('interface-container-segment')).toBeInTheDocument();
 
-  //   // and a swagger ui container should be found
-  //   expect(await findByTestId('catalogue-container-swagger-ui')).toBeInTheDocument();
+    // and a swagger ui container should be found
+    expect(await findByTestId('interface-container-swagger-ui')).toBeInTheDocument();
 
-  //   // and file contents should have been fetched
-  //   const url = `/api/catalogues/${catalogue.encodedId}/interfaces/${interfaceName}/file?ref=${refName}`;
-  //   expect(global.fetch).toHaveBeenCalledTimes(1);
-  //   expect(global.fetch).toHaveBeenCalledWith(url,
-  //     expect.objectContaining({ url }));
+    // and file contents should have been fetched
+    const url = `/api/catalogues/${catalogue.encodedId}/interfaces/${interfaceName}/file?ref=${refName}`;
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch).toHaveBeenCalledWith(url,
+      expect.objectContaining({ url }));
 
-  //   global.fetch.mockClear();
-  // });
+    global.fetch.mockClear();
+  });
 });

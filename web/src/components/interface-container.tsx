@@ -79,7 +79,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
   return (
     <>
       <LocationBar installationOwner={org} catalogueTitle={catalogueTitle} catalogueEncodedId={encodedId} interfaceTitle={interfaceTitle} />
-      <Segment vertical data-testid="catalogue-container-segment">
+      <Segment vertical data-testid="interface-container-segment">
         <Container text>
           {content}
         </Container>
