@@ -49,7 +49,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
     const specLog = getCatalogueResult.catalogue.specLogs.find((specLogItem) => specLogItem.interfaceName === interfaceName);
     catalogueTitle = getCatalogueResult.catalogue.title;
     interfaceTitle = specLog.latestAgreed.parseResult.openApiSpec.title;
-    content = (<InterfaceDetails specLog={specLog} />);
+    content = (<InterfaceDetails specLog={specLog} interfaceName={interfaceName} />);
   }
 
   return (

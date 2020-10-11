@@ -37,11 +37,9 @@ export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({
   const viewSpecLink = CreateViewSpecLocation(encodedId, interfaceName, refName);
   return (
     <Button
-      primary
-      compact
-      floated="right"
       icon
-      labelPosition="right"
+      circular
+      size="mini"
       as={Link}
       to={viewSpecLink}
       disabled={isSelected}
@@ -49,7 +47,7 @@ export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({
     >
       View Spec
       {' '}
-      <Icon name="chevron right" />
+      <Icon name="eye" />
     </Button>
   );
 };

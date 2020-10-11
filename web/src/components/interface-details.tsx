@@ -1,8 +1,10 @@
 import React, { FunctionComponent } from 'react';
+import { useParams } from 'react-router-dom';
 import {
   Icon, Message, Header, List, Label, Button,
 } from 'semantic-ui-react';
 import { SpecLog, SpecItem } from '../backend-api-client';
+import { useQuery, ViewSpecLinkButton } from '../routes';
 
 interface SpecItemProps {
   specItem: SpecItem;
@@ -27,32 +29,36 @@ const InterfaceDetailsError: FunctionComponent<SpecItemProps> = ({ specItem }) =
 
 interface InterfaceDetailsContainerProps {
   specLog: SpecLog;
+  interfaceName: string;
 }
 
-const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProps> = ({ specLog }) => {
-  if (specLog.latestAgreed.parseResult.errors && specLog.latestAgreed.parseResult.errors.length > 0) {
-    return (<InterfaceDetailsError specItem={specLog.latestAgreed} />);
+const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProps> = ({ specLog, interfaceName }) => {
+  const { interfaceName: selectedInterfaceName } = useParams();
+  const query = useQuery();
+
+  const specItem = specLog.latestAgreed;
+  const isSelectedSpecItem = interfaceName === selectedInterfaceName && query.get('ref') === specItem.ref;
+  const viewSpecButton = (<ViewSpecLinkButton interfaceName={interfaceName} refName={specItem.ref} isSelected={isSelectedSpecItem} />);
+
+  if (specItem.parseResult.errors && specItem.parseResult.errors.length > 0) {
+    return (<InterfaceDetailsError specItem={specItem} />);
   }
 
   return (
     <div data-testid="interface-details-container">
-      <Header as="h2">{specLog.latestAgreed.parseResult.openApiSpec.title}</Header>
+      <Header as="h2">{specItem.parseResult.openApiSpec.title}</Header>
       Latest agreed version
-      <Label color="blue">{specLog.latestAgreed.parseResult.openApiSpec.version}</Label>
+      <Label color="blue">{specItem.parseResult.openApiSpec.version}</Label>
       <Button
         icon="file code"
         circular
         size="mini"
-        href={specLog.latestAgreed.htmlUrl}
+        href={specItem.htmlUrl}
         target="_blank"
         rel="noopener noreferrer"
         color="grey"
       />
-      <Button
-        icon="eye"
-        circular
-        size="mini"
-      />
+      {viewSpecButton}
     </div>
   );
 };
