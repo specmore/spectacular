@@ -40,25 +40,33 @@ export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({
       icon
       circular
       size="mini"
+      labelPosition="right"
       as={Link}
       to={viewSpecLink}
       disabled={isSelected}
       data-testid="view-spec-button"
     >
       View Spec
-      {' '}
       <Icon name="eye" />
     </Button>
   );
 };
 
 export const CloseSpecButton: FunctionComponent = () => {
-  const { encodedId } = useParams();
-  const catalogueOnlyLink = CreateCatalogueContainerLocation(encodedId);
+  const { encodedId, interfaceName } = useParams();
+  const interfaceOnlyLink = CreateInterfaceLocation(encodedId, interfaceName);
   return (
-    <Button icon compact floated="right" labelPosition="right" as={Link} to={catalogueOnlyLink} data-testid="close-spec-button">
-      Close
-      {' '}
+    <Button
+      icon
+      circular
+      size="mini"
+      floated="right"
+      labelPosition="right"
+      as={Link}
+      to={interfaceOnlyLink}
+      data-testid="close-spec-button"
+    >
+      Close Preview
       <Icon name="close" />
     </Button>
   );

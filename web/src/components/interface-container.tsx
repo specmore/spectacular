@@ -3,9 +3,12 @@ import {
   Message, Segment, Container, Placeholder, Header,
 } from 'semantic-ui-react';
 import { useParams } from 'react-router-dom';
+import SwaggerUI from 'swagger-ui-react';
+import 'swagger-ui-react/swagger-ui.css';
 import { useGetCatalogue } from '../backend-api-client';
 import LocationBar from './location-bar';
 import InterfaceDetails from './interface-details';
+import { useQuery, CloseSpecButton } from '../routes';
 
 const InterfaceContainerLoading = () => (
   <>
@@ -31,9 +34,19 @@ interface InterfaceContainerProps {
   org: string;
 }
 
+const createInterfaceFileContentsPath = (
+  encodedId: string,
+  interfaceName: string,
+  refName: string,
+) => `/api/catalogues/${encodedId}/interfaces/${interfaceName}/file?ref=${refName}`;
+
 const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org }) => {
   const { encodedId, interfaceName } = useParams();
+  const query = useQuery();
+  const refName = query.get('ref');
+
   console.log('InterfaceContainer rerender');
+  console.log('refName', refName);
   const getCatalogue = useGetCatalogue({ encodedId });
   const { data: getCatalogueResult, loading, error } = getCatalogue;
   console.log('getCatalogueResult', getCatalogueResult);
@@ -41,6 +54,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
   let catalogueTitle = null;
   let interfaceTitle = null;
   let content = null;
+  let specPreview = null;
   if (loading) {
     content = (<InterfaceContainerLoading />);
   } else if (error) {
@@ -50,6 +64,16 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
     catalogueTitle = getCatalogueResult.catalogue.title;
     interfaceTitle = specLog.latestAgreed.parseResult.openApiSpec.title;
     content = (<InterfaceDetails specLog={specLog} interfaceName={interfaceName} />);
+
+    if (refName) {
+      const interfaceFileContentsPath = createInterfaceFileContentsPath(encodedId, interfaceName, query.get('ref'));
+      specPreview = (
+        <div data-testid="interface-container-swagger-ui">
+          <CloseSpecButton />
+          <SwaggerUI url={interfaceFileContentsPath} docExpansion="list" />
+        </div>
+      );
+    }
   }
 
   return (
@@ -59,6 +83,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
         <Container text>
           {content}
         </Container>
+        {specPreview}
       </Segment>
     </>
   );
