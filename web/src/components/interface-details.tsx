@@ -1,10 +1,9 @@
 import React, { FunctionComponent } from 'react';
-import { useParams } from 'react-router-dom';
 import {
   Icon, Message, Header, List, Label, Button, Grid,
 } from 'semantic-ui-react';
 import { SpecLog, SpecItem } from '../backend-api-client';
-import { useQuery, ViewSpecLinkButton } from '../routes';
+import { ViewSpecLinkButton, ViewSpecEvolutionLinkButton } from '../routes';
 
 interface SpecItemProps {
   specItem: SpecItem;
@@ -33,12 +32,7 @@ interface InterfaceDetailsContainerProps {
 }
 
 const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProps> = ({ specLog, interfaceName }) => {
-  const { interfaceName: selectedInterfaceName } = useParams();
-  const query = useQuery();
-
   const specItem = specLog.latestAgreed;
-  const isSelectedSpecItem = interfaceName === selectedInterfaceName && query.get('ref') === specItem.ref;
-  const viewSpecButton = (<ViewSpecLinkButton refName={specItem.ref} isSelected={isSelectedSpecItem} />);
 
   if (specItem.parseResult.errors && specItem.parseResult.errors.length > 0) {
     return (<InterfaceDetailsError specItem={specItem} />);
@@ -63,7 +57,7 @@ const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProp
               rel="noopener noreferrer"
               color="grey"
             />
-            {viewSpecButton}
+            <ViewSpecLinkButton refName={specItem.ref} interfaceName={interfaceName} />
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
@@ -73,6 +67,7 @@ const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProp
               <Icon name="code branch" />
               {proposedChangesCount}
             </Label>
+            <ViewSpecEvolutionLinkButton />
           </Grid.Column>
         </Grid.Row>
       </Grid>

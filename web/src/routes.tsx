@@ -12,6 +12,8 @@ export const CreateInterfaceLocation = (encodedId: string, interfaceName: string
   `/catalogue/${encodedId}/interface/${interfaceName}`
 );
 
+const VIEW_SPEC_QUERY_PARAM_NAME = 'ref';
+
 export const useQuery = (): URLSearchParams => new URLSearchParams(useLocation().search);
 
 const addQueryParam = (name: string, value: string): string => {
@@ -28,8 +30,6 @@ const removeQueryParam = (name: string): string => {
   return `${pathname}?${search.toString()}`;
 };
 
-export const CreateViewSpecLocation = (refName: string): string => addQueryParam('ref', refName);
-
 export const BackToCatalogueListLinkButton: FunctionComponent = () => (
   <Button icon compact labelPosition="left" as={Link} to={CATALOGUE_LIST_ROUTE} data-testid="back-to-catalogue-list-button">
     Catalogue List
@@ -40,11 +40,14 @@ export const BackToCatalogueListLinkButton: FunctionComponent = () => (
 
 interface ViewSpecLinkButtonProps {
   refName: string;
-  isSelected: boolean;
+  interfaceName: string;
 }
 
-export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({ refName, isSelected }) => {
-  const viewSpecLink = CreateViewSpecLocation(refName);
+export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({ refName, interfaceName }) => {
+  const { interfaceName: selectedInterfaceName } = useParams();
+  const isSelected = interfaceName === selectedInterfaceName && useQuery().get(VIEW_SPEC_QUERY_PARAM_NAME) === refName;
+
+  const viewSpecLink = addQueryParam(VIEW_SPEC_QUERY_PARAM_NAME, refName);
   return (
     <Button
       icon
@@ -63,7 +66,7 @@ export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({
 };
 
 export const CloseSpecButton: FunctionComponent = () => {
-  const interfaceOnlyLink = removeQueryParam('ref');
+  const interfaceOnlyLink = removeQueryParam(VIEW_SPEC_QUERY_PARAM_NAME);
   return (
     <Button
       icon
@@ -81,21 +84,22 @@ export const CloseSpecButton: FunctionComponent = () => {
   );
 };
 
-// export const ViewSpecEvolutionLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({ interfaceName }) => {
-//   const { encodedId } = useParams();
-//   const viewSpecLink = CreateViewSpecLocation(encodedId, interfaceName);
-//   return (
-//     <Button
-//       icon
-//       circular
-//       size="mini"
-//       labelPosition="right"
-//       as={Link}
-//       to={viewSpecLink}
-//       data-testid="view-spec-evolution-button"
-//     >
-//       View Changes
-//       <Icon name="eye" />
-//     </Button>
-//   );
-// };
+export const getCurrentSpecRefViewed = (): string => useQuery().get(VIEW_SPEC_QUERY_PARAM_NAME);
+
+export const ViewSpecEvolutionLinkButton: FunctionComponent = () => {
+  const expandSpecEvolutionLocation = addQueryParam('show-evolution', 'true');
+  return (
+    <Button
+      icon
+      circular
+      size="mini"
+      labelPosition="right"
+      as={Link}
+      to={expandSpecEvolutionLocation}
+      data-testid="view-spec-evolution-button"
+    >
+      View Changes
+      <Icon name="code branch" />
+    </Button>
+  );
+};

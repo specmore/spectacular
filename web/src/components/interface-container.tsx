@@ -8,7 +8,7 @@ import 'swagger-ui-react/swagger-ui.css';
 import { useGetCatalogue } from '../backend-api-client';
 import LocationBar from './location-bar';
 import InterfaceDetails from './interface-details';
-import { useQuery, CloseSpecButton } from '../routes';
+import { CloseSpecButton, getCurrentSpecRefViewed } from '../routes';
 
 const InterfaceContainerLoading = () => (
   <>
@@ -42,8 +42,7 @@ const createInterfaceFileContentsPath = (
 
 const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org }) => {
   const { encodedId, interfaceName } = useParams();
-  const query = useQuery();
-  const refName = query.get('ref');
+  const refName = getCurrentSpecRefViewed();
 
   console.log('InterfaceContainer rerender');
   console.log('refName', refName);
@@ -66,7 +65,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
     content = (<InterfaceDetails specLog={specLog} interfaceName={interfaceName} />);
 
     if (refName) {
-      const interfaceFileContentsPath = createInterfaceFileContentsPath(encodedId, interfaceName, query.get('ref'));
+      const interfaceFileContentsPath = createInterfaceFileContentsPath(encodedId, interfaceName, refName);
       specPreview = (
         <div data-testid="interface-container-swagger-ui">
           <CloseSpecButton />
