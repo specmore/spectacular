@@ -9,6 +9,7 @@ import CatalogueContainer from './catalogue-container';
 import CatalogueList from './catalogue-list';
 import NotFound from './not-found';
 import { CATALOGUE_LIST_ROUTE, CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE } from '../routes';
+import InterfaceContainer from './interface-container';
 
 const InstallationContainer: FunctionComponent = () => {
   const [installation, setInstallation] = useState(null);
@@ -55,8 +56,11 @@ const InstallationContainer: FunctionComponent = () => {
         <Route exact path={CATALOGUE_LIST_ROUTE}>
           <CatalogueList org={installation.owner} />
         </Route>
-        <Route exact path={[CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE]}>
+        <Route exact path={[CATALOGUE_CONTAINER_ROUTE]}>
           <CatalogueContainer org={installation.owner} />
+        </Route>
+        <Route exact path={[CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE]}>
+          <InterfaceContainer org={installation.owner} />
         </Route>
         <Route path="*">
           <NotFound />
