@@ -1,14 +1,21 @@
 import React, { FunctionComponent } from 'react';
 import './location-bar.less';
 import { Link } from 'react-router-dom';
-import { CATALOGUE_LIST_ROUTE } from '../routes';
+import { CATALOGUE_LIST_ROUTE, CreateCatalogueContainerLocation } from '../routes';
 
 interface LocationBarProps {
   installationOwner: string;
   catalogueTitle?: string;
+  catalogueEncodedId?: string;
+  interfaceTitle?: string;
 }
 
-const LocationBar: FunctionComponent<LocationBarProps> = ({ installationOwner, catalogueTitle }) => {
+const LocationBar: FunctionComponent<LocationBarProps> = ({
+  installationOwner,
+  catalogueTitle,
+  catalogueEncodedId,
+  interfaceTitle,
+}) => {
   const breadcrumbList = [];
   if (!catalogueTitle) {
     breadcrumbList.push({
@@ -20,10 +27,26 @@ const LocationBar: FunctionComponent<LocationBarProps> = ({ installationOwner, c
       id: 'interface-catalogues-link',
       element: (<Link to={CATALOGUE_LIST_ROUTE}>Interface Catalogues</Link>),
     });
-    breadcrumbList.push({
-      id: 'catalogue-title-text',
-      element: (<span>{catalogueTitle}</span>),
-    });
+
+    if (!catalogueEncodedId) {
+      breadcrumbList.push({
+        id: 'catalogue-title-text',
+        element: (<span>{catalogueTitle}</span>),
+      });
+    } else {
+      const catalogueLocation = CreateCatalogueContainerLocation(catalogueEncodedId);
+      breadcrumbList.push({
+        id: 'catalogue-title-text',
+        element: (<Link to={catalogueLocation}>{catalogueTitle}</Link>),
+      });
+
+      if (interfaceTitle) {
+        breadcrumbList.push({
+          id: 'interface-title-text',
+          element: (<span>{interfaceTitle}</span>),
+        });
+      }
+    }
   }
 
   return (

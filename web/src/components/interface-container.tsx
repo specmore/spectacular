@@ -39,6 +39,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
   console.log('getCatalogueResult', getCatalogueResult);
 
   let catalogueTitle = null;
+  let interfaceTitle = null;
   let content = null;
   if (loading) {
     content = (<InterfaceContainerLoading />);
@@ -47,12 +48,13 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
   } else {
     const specLog = getCatalogueResult.catalogue.specLogs.find((specLogItem) => specLogItem.interfaceName === interfaceName);
     catalogueTitle = getCatalogueResult.catalogue.title;
+    interfaceTitle = specLog.latestAgreed.parseResult.openApiSpec.title;
     content = (<InterfaceDetails specLog={specLog} />);
   }
 
   return (
     <>
-      <LocationBar installationOwner={org} catalogueTitle={catalogueTitle} />
+      <LocationBar installationOwner={org} catalogueTitle={catalogueTitle} catalogueEncodedId={encodedId} interfaceTitle={interfaceTitle} />
       <Segment vertical data-testid="catalogue-container-segment">
         <Container text>
           {content}
