@@ -1,22 +1,39 @@
 import React, { FunctionComponent } from 'react';
 import {
-  Header, Item,
+  Header, Item, Label,
 } from 'semantic-ui-react';
-import { SpecItem, SpecLog } from '../backend-api-client';
+import { ChangeProposal, SpecItem, SpecLog } from '../backend-api-client';
 import { CloseSpecEvolutionButton } from '../routes';
 
 const MASTER_BRANCH_COLOR = '#5E81AC';
 const PR_BRANCH_COLOR = '#8FBCBB';
 const MESSAGE_COLOR = '#2E3440';
 
+interface ChangeProposalProps {
+  proposedChange: ChangeProposal;
+}
+
+const ChangeProposalItem: FunctionComponent<ChangeProposalProps> = ({ proposedChange }) => (
+  <Item>
+    <Item.Content>
+      <Label color="green">
+        PR #
+        {proposedChange.pullRequest.number}
+      </Label>
+      <span>{proposedChange.pullRequest.title}</span>
+    </Item.Content>
+  </Item>
+);
+
 interface SpecLogItemProps {
   specItem: SpecItem;
 }
 
-const SpecLogItem: FunctionComponent<SpecLogItemProps> = ({ specItem }) => (
+const LatestAgreedLogItem: FunctionComponent<SpecLogItemProps> = ({ specItem }) => (
   <Item>
     <Item.Content>
-      <div>{specItem.ref}</div>
+      <Label color="blue">{specItem.ref}</Label>
+      <Label color="blue" tag>{specItem.parseResult.openApiSpec.version}</Label>
     </Item.Content>
   </Item>
 );
@@ -32,10 +49,10 @@ const SpecEvolutionContainer: FunctionComponent<SpecLogProps> = ({ specLog }) =>
     <Item.Group divided>
       {
         specLog.proposedChanges.map((proposedChange) => (
-          <SpecLogItem key={proposedChange.specItem.id} specItem={proposedChange.specItem} />
+          <ChangeProposalItem key={proposedChange.id} proposedChange={proposedChange} />
         ))
       }
-      <SpecLogItem specItem={specLog.latestAgreed} />
+      <LatestAgreedLogItem specItem={specLog.latestAgreed} />
     </Item.Group>
   </div>
 );
