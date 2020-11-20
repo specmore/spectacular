@@ -18,7 +18,10 @@ interface ChangeProposalProps {
 
 const ChangeProposalItem: FunctionComponent<ChangeProposalProps> = ({ proposedChange, interfaceName }) => (
   <div className="log-entry-container">
-    <div className="line-container" />
+    <div className="line-container">
+      <div className="latest-agreed line" />
+      <div className="change-proposal line" />
+    </div>
     <div className="details-container">
       <Label color="green">
         PR #
@@ -33,7 +36,9 @@ const ChangeProposalItem: FunctionComponent<ChangeProposalProps> = ({ proposedCh
 
 const LatestAgreedLogItem: FunctionComponent<SpecLogItemProps> = ({ specItem, interfaceName }) => (
   <div className="log-entry-container">
-    <div className="line-container" />
+    <div className="line-container">
+      <div className="latest-agreed line" />
+    </div>
     <div className="details-container">
       <Label color="blue">{specItem.ref}</Label>
       <Label color="blue" tag>{specItem.parseResult.openApiSpec.version}</Label>
