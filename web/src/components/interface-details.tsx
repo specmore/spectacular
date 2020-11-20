@@ -45,20 +45,24 @@ const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProp
       <Header as="h2">{specItem.parseResult.openApiSpec.title}</Header>
       <Grid>
         <Grid.Row>
-          <Grid.Column>
+          <Grid.Column width={12}>
             <span>Latest agreed version</span>
             <Label color="blue">{specItem.parseResult.openApiSpec.version}</Label>
-            <OpenSpecItemContentPageButton specItem={specItem} />
+          </Grid.Column>
+          <Grid.Column width={4}>
             <ViewSpecLinkButton refName={specItem.ref} interfaceName={interfaceName} />
+            <OpenSpecItemContentPageButton specItem={specItem} />
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
-          <Grid.Column>
+          <Grid.Column width={12}>
             <span>Proposed Changes</span>
             <Label color="green">
               <Icon name="code branch" />
               {proposedChangesCount}
             </Label>
+          </Grid.Column>
+          <Grid.Column width={4}>
             <ViewSpecEvolutionLinkButton />
           </Grid.Column>
         </Grid.Row>

@@ -60,6 +60,7 @@ export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({
       to={viewSpecLink}
       disabled={isSelected}
       data-testid="view-spec-button"
+      floated="right"
     >
       View Spec
       <Icon name="eye" />
@@ -102,6 +103,7 @@ export const ViewSpecEvolutionLinkButton: FunctionComponent = () => {
       to={expandSpecEvolutionLocation}
       disabled={isSelected}
       data-testid="view-spec-evolution-button"
+      floated="right"
     >
       View Changes
       <Icon name="code branch" />
@@ -139,5 +141,6 @@ export const OpenSpecItemContentPageButton: FunctionComponent<OpenSpecItemConten
     target="_blank"
     rel="noopener noreferrer"
     color="grey"
+    floated="right"
   />
 );
