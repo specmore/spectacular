@@ -4,7 +4,7 @@ import {
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import { SpecLog, SpecItem, Catalogue } from '../backend-api-client';
-import { CreateInterfaceLocation } from '../routes';
+import { CreateInterfaceLocation, OpenSpecItemContentPageButton } from '../routes';
 
 
 interface SpecItemProps {
@@ -64,15 +64,7 @@ const InterfaceListItemContainer: FunctionComponent<InterfaceListItemProps> = ({
             <Icon name="code branch" />
             {proposedChangesCount}
           </Label>
-          <Button
-            icon="file code"
-            circular
-            size="mini"
-            href={latestAgreedSpecItem.htmlUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            color="grey"
-          />
+          <OpenSpecItemContentPageButton specItem={latestAgreedSpecItem} />
         </Item.Extra>
       </Item.Content>
     </Item>

@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Button, Icon } from 'semantic-ui-react';
 import { Link, useParams, useLocation } from 'react-router-dom';
+import { SpecItem } from './backend-api-client';
 
 export const CATALOGUE_LIST_ROUTE = '/';
 
@@ -124,3 +125,19 @@ export const CloseSpecEvolutionButton: FunctionComponent = () => {
 };
 
 export const isShowSpecEvolution = (): boolean => useQuery().get(SHOW_EVOLUTION_QUERY_PARAM_NAME) === 'true';
+
+
+interface OpenSpecItemContentPageButtonProps {
+  specItem: SpecItem;
+}
+export const OpenSpecItemContentPageButton: FunctionComponent<OpenSpecItemContentPageButtonProps> = ({ specItem }) => (
+  <Button
+    icon="file code"
+    circular
+    size="mini"
+    href={specItem.htmlUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    color="grey"
+  />
+);

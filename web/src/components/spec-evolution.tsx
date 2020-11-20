@@ -4,7 +4,7 @@ import {
   Header, Label,
 } from 'semantic-ui-react';
 import { ChangeProposal, SpecItem, SpecLog } from '../backend-api-client';
-import { CloseSpecEvolutionButton, ViewSpecLinkButton } from '../routes';
+import { CloseSpecEvolutionButton, OpenSpecItemContentPageButton, ViewSpecLinkButton } from '../routes';
 
 interface SpecLogItemProps {
   specItem: SpecItem;
@@ -25,6 +25,7 @@ const ChangeProposalItem: FunctionComponent<ChangeProposalProps> = ({ proposedCh
         {proposedChange.pullRequest.number}
       </Label>
       <div className="centre">{proposedChange.pullRequest.title}</div>
+      <OpenSpecItemContentPageButton specItem={proposedChange.specItem} />
       <ViewSpecLinkButton refName={proposedChange.specItem.ref} interfaceName={interfaceName} />
     </div>
   </div>
@@ -37,6 +38,7 @@ const LatestAgreedLogItem: FunctionComponent<SpecLogItemProps> = ({ specItem, in
       <Label color="blue">{specItem.ref}</Label>
       <Label color="blue" tag>{specItem.parseResult.openApiSpec.version}</Label>
       <div className="centre" />
+      <OpenSpecItemContentPageButton specItem={specItem} />
       <ViewSpecLinkButton refName={specItem.ref} interfaceName={interfaceName} />
     </div>
   </div>

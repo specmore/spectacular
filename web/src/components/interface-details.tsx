@@ -3,7 +3,7 @@ import {
   Icon, Message, Header, List, Label, Button, Grid,
 } from 'semantic-ui-react';
 import { SpecLog, SpecItem } from '../backend-api-client';
-import { ViewSpecLinkButton, ViewSpecEvolutionLinkButton } from '../routes';
+import { ViewSpecLinkButton, ViewSpecEvolutionLinkButton, OpenSpecItemContentPageButton } from '../routes';
 
 interface SpecItemProps {
   specItem: SpecItem;
@@ -48,15 +48,7 @@ const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProp
           <Grid.Column>
             <span>Latest agreed version</span>
             <Label color="blue">{specItem.parseResult.openApiSpec.version}</Label>
-            <Button
-              icon="file code"
-              circular
-              size="mini"
-              href={specItem.htmlUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              color="grey"
-            />
+            <OpenSpecItemContentPageButton specItem={specItem} />
             <ViewSpecLinkButton refName={specItem.ref} interfaceName={interfaceName} />
           </Grid.Column>
         </Grid.Row>
