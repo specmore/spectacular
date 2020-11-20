@@ -1,41 +1,34 @@
 import React, { FunctionComponent } from 'react';
+import './spec-evolution.less';
 import {
   Header, Item, Label,
 } from 'semantic-ui-react';
 import { ChangeProposal, SpecItem, SpecLog } from '../backend-api-client';
 import { CloseSpecEvolutionButton } from '../routes';
 
-const MASTER_BRANCH_COLOR = '#5E81AC';
-const PR_BRANCH_COLOR = '#8FBCBB';
-const MESSAGE_COLOR = '#2E3440';
+interface SpecLogItemProps {
+  specItem: SpecItem;
+}
 
 interface ChangeProposalProps {
   proposedChange: ChangeProposal;
 }
 
 const ChangeProposalItem: FunctionComponent<ChangeProposalProps> = ({ proposedChange }) => (
-  <Item>
-    <Item.Content>
-      <Label color="green">
-        PR #
-        {proposedChange.pullRequest.number}
-      </Label>
-      <span>{proposedChange.pullRequest.title}</span>
-    </Item.Content>
-  </Item>
+  <div>
+    <Label color="green">
+      PR #
+      {proposedChange.pullRequest.number}
+    </Label>
+    <div>{proposedChange.pullRequest.title}</div>
+  </div>
 );
 
-interface SpecLogItemProps {
-  specItem: SpecItem;
-}
-
 const LatestAgreedLogItem: FunctionComponent<SpecLogItemProps> = ({ specItem }) => (
-  <Item>
-    <Item.Content>
-      <Label color="blue">{specItem.ref}</Label>
-      <Label color="blue" tag>{specItem.parseResult.openApiSpec.version}</Label>
-    </Item.Content>
-  </Item>
+  <div>
+    <Label color="blue">{specItem.ref}</Label>
+    <Label color="blue" tag>{specItem.parseResult.openApiSpec.version}</Label>
+  </div>
 );
 
 interface SpecLogProps {
@@ -46,14 +39,18 @@ const SpecEvolutionContainer: FunctionComponent<SpecLogProps> = ({ specLog }) =>
   <div data-testid="spec-evolution-container">
     <CloseSpecEvolutionButton />
     <Header as="h3">Spec Evolution</Header>
-    <Item.Group divided>
+    <div className="spec-evolution-container">
       {
         specLog.proposedChanges.map((proposedChange) => (
-          <ChangeProposalItem key={proposedChange.id} proposedChange={proposedChange} />
+          <div className="item">
+            <ChangeProposalItem key={proposedChange.id} proposedChange={proposedChange} />
+          </div>
         ))
       }
-      <LatestAgreedLogItem specItem={specLog.latestAgreed} />
-    </Item.Group>
+      <div className="item">
+        <LatestAgreedLogItem specItem={specLog.latestAgreed} />
+      </div>
+    </div>
   </div>
 );
 
