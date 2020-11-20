@@ -81,7 +81,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
       specEvolution = (
         <Segment vertical>
           <Container text>
-            <SpecEvolutionContainer specLog={specLog} />
+            <SpecEvolutionContainer specLog={specLog} interfaceName={interfaceName} />
           </Container>
         </Segment>
       );
