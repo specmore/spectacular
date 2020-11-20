@@ -15,7 +15,7 @@ interface ChangeProposalProps {
 }
 
 const ChangeProposalItem: FunctionComponent<ChangeProposalProps> = ({ proposedChange }) => (
-  <div>
+  <div className="log-item-container">
     <Label color="green">
       PR #
       {proposedChange.pullRequest.number}
