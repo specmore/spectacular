@@ -4,6 +4,7 @@
 @import "~nord/src/lesscss/nord.less";
 
 @pageBackground     : @nord6;
+@borderColor        : @nord3;
 @textColor          : @nord0;
 @fontName           : 'Roboto';
 
