@@ -1,7 +1,8 @@
 import React, { FunctionComponent } from 'react';
 import './spec-evolution.less';
 import {
-  Header, Label,
+  Button,
+  Header, Icon, Label,
 } from 'semantic-ui-react';
 import { ChangeProposal, SpecItem, SpecLog } from '../backend-api-client';
 import { CloseSpecEvolutionButton, OpenSpecItemContentPageButton, ViewSpecLinkButton } from '../routes';
@@ -23,10 +24,19 @@ const ChangeProposalItem: FunctionComponent<ChangeProposalProps> = ({ proposedCh
       <div className="change-proposal line" />
     </div>
     <div className="details-container">
-      <Label color="green">
+      <Button
+        icon
+        labelPosition="right"
+        size="mini"
+        color="green"
+        href={proposedChange.pullRequest.url}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         PR #
         {proposedChange.pullRequest.number}
-      </Label>
+        <Icon name="code branch" />
+      </Button>
       <div className="centre">{proposedChange.pullRequest.title}</div>
       <OpenSpecItemContentPageButton specItem={proposedChange.specItem} />
       <ViewSpecLinkButton refName={proposedChange.specItem.ref} interfaceName={interfaceName} />
