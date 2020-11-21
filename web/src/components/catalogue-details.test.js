@@ -1,12 +1,12 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import CatalogueDetails from './catalogue-details';
-import SpecLogMock from './spec-log';
+import InterfaceListItemMock from './interface-list-item';
 import { renderWithRouter } from '../__tests__/test-utils';
 import Generator from '../__tests__/test-data-generator';
 
 // mock out the actual spec-file-item
-jest.mock('./spec-log', () => jest.fn(() => null));
+jest.mock('./interface-list-item', () => jest.fn(() => null));
 
 describe('CatalogueDetails component', () => {
   test('renders catalogue details when no error is given', async () => {
@@ -24,11 +24,8 @@ describe('CatalogueDetails component', () => {
     // and the name of the catalogue is shown
     expect(getByText('Test Catalogue 1')).toBeInTheDocument();
 
-    // and the path of the catalogue is shown
-    expect(getByText('test-owner/specs-test/spectacular-config.yml')).toBeInTheDocument();
-
-    // and 2 spec file items were created
-    expect(SpecLogMock).toHaveBeenCalledTimes(2);
+    // and 2 interface items were created
+    expect(InterfaceListItemMock).toHaveBeenCalledTimes(2);
   });
 
 
