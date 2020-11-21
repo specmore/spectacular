@@ -17,12 +17,6 @@ describe('CatalogueListItem component', () => {
 
     // and the name of the catalogue is shown
     expect(getByText('Test Catalogue 1')).toBeInTheDocument();
-
-    // and the full path to the catalogue manifest is shown
-    expect(getByText('test-owner/specs-test/spectacular-config.yml')).toBeInTheDocument();
-
-    // and view catalogue button is found
-    expect(getByTestId('view-catalogue-button')).toBeInTheDocument();
   });
 
   test('renders catalogue list item error item when an error is given', async () => {
@@ -33,7 +27,7 @@ describe('CatalogueListItem component', () => {
     const catalogue = Generator.Catalogue.generateCatalogueWithError(errorMessage);
 
     // when catalogue list item component renders
-    const { getByTestId, getByText, queryByTestId } = renderWithRouter(<CatalogueListItem catalogue={catalogue} />);
+    const { getByTestId, getByText } = renderWithRouter(<CatalogueListItem catalogue={catalogue} />);
 
     // then a catalogue list item details item is found
     expect(getByTestId('catalogue-list-item-error-item')).toBeInTheDocument();
@@ -44,8 +38,5 @@ describe('CatalogueListItem component', () => {
     // and the error message is shown
     expect(getByText(errorMessage))
       .toBeInTheDocument();
-
-    // and view catalogue button is not found
-    expect(queryByTestId('view-catalogue-button')).not.toBeInTheDocument();
   });
 });

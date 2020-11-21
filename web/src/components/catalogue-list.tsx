@@ -7,7 +7,7 @@ import { useFindCataloguesForUser, Catalogue } from '../backend-api-client';
 import LocationBar from './location-bar';
 
 const CatalogueListLoading = () => (
-  <Placeholder>
+  <Placeholder data-testid="catalogue-list-placeholder">
     <Placeholder.Header image>
       <Placeholder.Line />
       <Placeholder.Line />
@@ -40,7 +40,6 @@ interface CatalogueListContainerProps {
 }
 
 const CatalogueListContainer: FunctionComponent<CatalogueListContainerProps> = ({ org }) => {
-  console.log('CatalogueListContainer function');
   const findCataloguesForUser = useFindCataloguesForUser({ queryParams: { org } });
   const { data: findCataloguesResult, loading, error } = findCataloguesForUser;
 

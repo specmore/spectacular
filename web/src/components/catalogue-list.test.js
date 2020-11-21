@@ -58,12 +58,9 @@ describe('CatalogueList component', () => {
     useFindCataloguesForUserMock.mockReturnValueOnce(cataloguesResponse);
 
     // when catalogue list component renders
-    const { getByText, getByTestId } = renderWithRouter(<CatalogueList />);
+    const { getByTestId } = renderWithRouter(<CatalogueList />);
 
-    // then it contains a loading message
-    expect(getByText('Loading')).toBeInTheDocument();
-
-    // and it contains a place holder item
-    expect(getByTestId('catalogue-list-placeholder-item-group')).toBeInTheDocument();
+    // then  it contains a place holder item
+    expect(getByTestId('catalogue-list-placeholder')).toBeInTheDocument();
   });
 });
