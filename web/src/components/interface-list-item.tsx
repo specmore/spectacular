@@ -51,7 +51,7 @@ const InterfaceListItemContainer: FunctionComponent<InterfaceListItemProps> = ({
   const proposedChangesCount = specLog.proposedChanges.length;
 
   return (
-    <Item data-testid="spec-log-container">
+    <Item data-testid="interface-list-item-container">
       <Item.Content>
         <Item.Header as={Link} to={interfaceLocation}>
           {latestAgreedSpecItem.parseResult.openApiSpec.title}
