@@ -68,15 +68,15 @@ const SpecEvolutionContainer: FunctionComponent<SpecLogProps> = ({ specLog, inte
   <div data-testid="spec-evolution-container">
     <CloseSpecEvolutionButton />
     <Header as="h3">Spec Evolution</Header>
-    <div className="spec-evolution-container">
+    <div className="spec-evolution-log-container">
       {
         specLog.proposedChanges.map((proposedChange) => (
-          <div className="item">
-            <ChangeProposalItem key={proposedChange.id} proposedChange={proposedChange} interfaceName={interfaceName} />
+          <div key={proposedChange.id} className="item">
+            <ChangeProposalItem proposedChange={proposedChange} interfaceName={interfaceName} />
           </div>
         ))
       }
-      <div className="item">
+      <div key={specLog.latestAgreed.ref} className="item">
         <LatestAgreedLogItem specItem={specLog.latestAgreed} interfaceName={interfaceName} />
       </div>
     </div>
