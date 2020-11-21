@@ -45,8 +45,10 @@ const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProp
       <Header as="h2">{specItem.parseResult.openApiSpec.title}</Header>
       <Grid>
         <Grid.Row>
-          <Grid.Column width={12}>
+          <Grid.Column width={4}>
             <span>Latest agreed version</span>
+          </Grid.Column>
+          <Grid.Column width={8}>
             <Label color="blue">{specItem.parseResult.openApiSpec.version}</Label>
           </Grid.Column>
           <Grid.Column width={4}>
@@ -55,8 +57,10 @@ const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProp
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
-          <Grid.Column width={12}>
+          <Grid.Column width={4}>
             <span>Proposed Changes</span>
+          </Grid.Column>
+          <Grid.Column width={8}>
             <Label color="green">
               <Icon name="code branch" />
               {proposedChangesCount}
