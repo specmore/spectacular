@@ -12,9 +12,13 @@ import 'semantic-ui-less/semantic.less';
 const Index = () => (
   <RestfulProvider base="/api">
     <Router>
-      <MenuBar />
-      <InstallationContainer />
-      <FooterBar />
+      <div className="content-container">
+        <MenuBar />
+        <div className="main-content">
+          <InstallationContainer />
+        </div>
+        <FooterBar />
+      </div>
     </Router>
   </RestfulProvider>
 );

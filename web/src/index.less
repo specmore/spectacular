@@ -3,3 +3,17 @@
 .ui.placeholder, .ui.placeholder > :before, .ui.placeholder .image.header:after, .ui.placeholder .line, .ui.placeholder .line:after {
   background-color: @nord6 !important;
 }
+
+#root {
+  height: 100%;
+}
+
+.content-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .main-content {
+    flex-grow: 1;
+  }
+}
