@@ -20,9 +20,9 @@ describe('End to End test without login', function() {
         cy.get('[data-testid=user-menu-bar-item] .item').first().should('have.text', 'Signed in as pburls')
     })
 
-    it('Shows the welcome message, loads catalogues list, selects a catalogue and views a latest agreed spec', function() {
-        // then the welcome message should be shown
-        cy.get('[data-testid=installation-welcome] > .center').should('be.visible')
+    it('Journey to view an interface and all 3 spec log items', function() {
+        // then Interface Catalogues location should be shown
+        cy.get('[data-testid=location-bar]').contains('specmore > Interface Catalogues')
 
         // then the catalogue list should be shown with 2 children catalogue items
         cy.get('[data-testid=catalogue-list-item-group]').children().should('have.length', 2)
@@ -34,43 +34,69 @@ describe('End to End test without login', function() {
         cy.get('[data-testid=catalogue-list-item-details-item]').should('be.visible')
 
         // when selecting a catalogue
-        cy.get('[data-testid=view-catalogue-button]').click()
+        cy.get('[data-testid=catalogue-list-item-details-item] > .content > .header').click()
+
+        // then Test Catalogue 1 location should be shown
+        cy.get('[data-testid=location-bar]').contains('specmore > Interface Catalogues > Test Catalogue 1')
 
         // then a catalogue page is shown with details block
         cy.get('[data-testid=catalogue-details-container]').should('be.visible')
-        cy.get('[data-testid=catalogue-details-segment]').should('be.visible')
 
         // and an interfaces list should be shown with 4 items
         cy.get('[data-testid=catalogue-details-interface-list]').should('be.visible')
 
-        // and 2 interface items are shown as spec log error messages for invalid spec files
-        cy.get('[data-testid=spec-log-error]').should('have.length', 2)
+        // and 1 interface items are shown as interface error messages for invalid spec files
+        cy.get('[data-testid=spec-log-error]').should('have.length', 1)
 
-        // and 2 interface items are shown as spec log items for valid spec files
-        cy.get('[data-testid=spec-log-container]').should('have.length', 2)
+        // and 3 interface items are shown as interface items for valid spec files
+        cy.get('[data-testid=interface-list-item-container]').should('have.length', 3)
 
-        // and the first spec log should have a latest agreed version and 2 proposed changes
-        cy.get('[data-testid=spec-log-container]').first().as('spec-log1')
-        cy.get('@spec-log1').find('[data-testid=spec-log-item-segment-latest-agreed-version]').should('have.length', 1)
-        cy.get('@spec-log1').find('[data-testid=spec-log-item-segment-proposed-change-item]').should('have.length', 2)
+        // when selecting the first interface item
+        cy.get('[data-testid=catalogue-details-interface-list] > :nth-child(1) > .content > .header').click()
 
-        // when selecting the first spec log's latest agreed version
-        cy.get('@spec-log1').find('[data-testid=spec-log-item-segment-latest-agreed-version] [data-testid=view-spec-button]').click()
+        // then Interface location should be shown
+        cy.get('[data-testid=location-bar]').contains('specmore > Interface Catalogues > Test Catalogue 1 > An empty API spec')
 
-        // then the swagger ui element is shown
-        cy.get('[data-testid=catalogue-container-swagger-ui]').should('be.visible')
+        // then Interface details should be shown
+        cy.get('[data-testid=interface-details-container]').should('be.visible')
+
+        // when the view spec button on the latest agreed version is click
+        cy.get('[data-testid=view-spec-button]').click()
+
+        // then latest agree version swagger ui preview is shown
+        cy.get('[data-testid=interface-container-swagger-ui]').should('be.visible')
 
         // when the swagger ui close button is clicked
         cy.get('[data-testid=close-spec-button]').click()
 
         // then the swagger ui element is removed
-        cy.get('[data-testid=catalogue-container-swagger-ui]').should('not.exist')
+        cy.get('[data-testid=interface-container-swagger-ui]').should('not.exist')
 
-        // when the back to catalogue list button is clicked
-        cy.get('[data-testid=back-to-catalogue-list-button]').click()
+        // when the view changed button is click
+        cy.get('[data-testid=view-spec-evolution-button]').click()
 
-        // then the catalogue page is removed and the catalogue list is shown again
-        cy.get('[data-testid=catalogue-details-container]').should('not.exist')
-        cy.get('[data-testid=catalogue-list-item-group]').should('be.visible')
+        // then spec evolution details are shown
+        cy.get('[data-testid=spec-evolution-container]').should('be.visible')
+
+        // and 3 spec log items are shown
+        cy.get('[data-testid=log-entry-container]').should('have.length', 3)
+
+        // when the view spec button on the first PR is click
+        cy.get(':nth-child(1) > [data-testid=log-entry-container] > .details-container > [data-testid=view-spec-button]').click()
+
+        // then latest agree version swagger ui preview is shown
+        cy.get('[data-testid=interface-container-swagger-ui]').should('be.visible')
+
+        // when the swagger ui close button is clicked
+        cy.get('[data-testid=close-spec-button]').click()
+
+        // then the swagger ui element is removed
+        cy.get('[data-testid=interface-container-swagger-ui]').should('not.exist')
+
+        // when the spec evolution close button is clicked
+        cy.get('[data-testid=close-spec-evolution-button]').click()
+
+        // then the spec evolution details are removed
+        cy.get('[data-testid=spec-evolution-container]').should('not.exist')
     })
 })

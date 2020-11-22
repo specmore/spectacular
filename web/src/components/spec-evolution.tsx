@@ -18,7 +18,7 @@ interface ChangeProposalProps {
 }
 
 const ChangeProposalItem: FunctionComponent<ChangeProposalProps> = ({ proposedChange, interfaceName }) => (
-  <div className="log-entry-container">
+  <div className="log-entry-container" data-testid="log-entry-container">
     <div className="line-container">
       <div className="latest-agreed line" />
       <div className="change-proposal line" />
@@ -45,7 +45,7 @@ const ChangeProposalItem: FunctionComponent<ChangeProposalProps> = ({ proposedCh
 );
 
 const LatestAgreedLogItem: FunctionComponent<SpecLogItemProps> = ({ specItem, interfaceName }) => (
-  <div className="log-entry-container">
+  <div className="log-entry-container" data-testid="log-entry-container">
     <div className="line-container">
       <div className="latest-agreed line" />
     </div>
