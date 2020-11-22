@@ -52,7 +52,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
   const { data: getCatalogueResult, loading, error } = getCatalogue;
   console.log('getCatalogueResult', getCatalogueResult);
 
-  let catalogueTitle = null;
+  let catalogue = null;
   let interfaceTitle = null;
   let content = null;
   let specPreview = null;
@@ -62,8 +62,8 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
   } else if (error) {
     content = (<InterfaceContainerError errorMessage={error.message} />);
   } else {
-    const specLog = getCatalogueResult.catalogue.specLogs.find((specLogItem) => specLogItem.interfaceName === interfaceName);
-    catalogueTitle = getCatalogueResult.catalogue.title;
+    catalogue = getCatalogueResult.catalogue;
+    const specLog = catalogue.specLogs.find((specLogItem) => specLogItem.interfaceName === interfaceName);
     interfaceTitle = specLog.latestAgreed.parseResult.openApiSpec.title;
     content = (<InterfaceDetails specLog={specLog} interfaceName={interfaceName} />);
 
@@ -90,7 +90,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
 
   return (
     <>
-      <LocationBar installationOwner={org} catalogueTitle={catalogueTitle} catalogueEncodedId={encodedId} interfaceTitle={interfaceTitle} />
+      <LocationBar installationOwner={org} catalogue={catalogue} interfaceTitle={interfaceTitle} />
       <div data-testid="interface-container-segment">
         <Segment vertical>
           <Container text>

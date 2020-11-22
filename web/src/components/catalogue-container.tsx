@@ -10,7 +10,7 @@ import LocationBar from './location-bar';
 const CatalogueContainerLoading = () => (
   <>
     <Header as="h2">Loading Catalogue..</Header>
-    <Placeholder>
+    <Placeholder data-testid="catalogue-container-placeholder">
       <Placeholder.Line />
       <Placeholder.Line />
     </Placeholder>
@@ -27,10 +27,6 @@ const CatalogueContainerError: FunctionComponent<CatalogueContainerErrorProps> =
   </Message>
 );
 
-interface CatalogueContainerSegmentProps {
-  catalogue: Catalogue;
-}
-
 interface CatalogueContainerProps {
   org: string;
 }
@@ -38,23 +34,24 @@ interface CatalogueContainerProps {
 const CatalogueContainer: FunctionComponent<CatalogueContainerProps> = ({ org }) => {
   const { encodedId } = useParams();
   const getCatalogue = useGetCatalogue({ encodedId });
+
   const { data: getCatalogueResult, loading, error } = getCatalogue;
 
   let content = null;
+  let catalogue = null;
   if (loading) {
     content = (<CatalogueContainerLoading />);
   } else if (error) {
     content = (<CatalogueContainerError errorMessage={error.message} />);
   } else {
-    content = (<CatalogueDetails catalogue={getCatalogueResult.catalogue} />);
+    catalogue = getCatalogueResult.catalogue;
+    content = (<CatalogueDetails catalogue={catalogue} />);
   }
-
-  const catalogueTitle = getCatalogueResult ? getCatalogueResult.catalogue.title : null;
 
   return (
     <>
-      <LocationBar installationOwner={org} catalogueTitle={catalogueTitle} />
-      <Segment vertical>
+      <LocationBar installationOwner={org} catalogue={catalogue} />
+      <Segment vertical data-testid="catalogue-container-segment">
         <Container text>
           {content}
         </Container>

@@ -2,22 +2,21 @@ import React, { FunctionComponent } from 'react';
 import './location-bar.less';
 import { Link } from 'react-router-dom';
 import { CATALOGUE_LIST_ROUTE, CreateCatalogueContainerLocation } from '../routes';
+import { Catalogue } from '../backend-api-client';
 
 interface LocationBarProps {
   installationOwner: string;
-  catalogueTitle?: string;
-  catalogueEncodedId?: string;
+  catalogue?: Catalogue;
   interfaceTitle?: string;
 }
 
 const LocationBar: FunctionComponent<LocationBarProps> = ({
   installationOwner,
-  catalogueTitle,
-  catalogueEncodedId,
+  catalogue,
   interfaceTitle,
 }) => {
   const breadcrumbList = [];
-  if (!catalogueTitle) {
+  if (!catalogue) {
     breadcrumbList.push({
       id: 'interface-catalogues-text',
       element: (<span>Interface Catalogues</span>),
@@ -28,29 +27,22 @@ const LocationBar: FunctionComponent<LocationBarProps> = ({
       element: (<Link to={CATALOGUE_LIST_ROUTE}>Interface Catalogues</Link>),
     });
 
-    if (!catalogueEncodedId) {
-      breadcrumbList.push({
-        id: 'catalogue-title-text',
-        element: (<span>{catalogueTitle}</span>),
-      });
-    } else {
-      const catalogueLocation = CreateCatalogueContainerLocation(catalogueEncodedId);
-      breadcrumbList.push({
-        id: 'catalogue-title-text',
-        element: (<Link to={catalogueLocation}>{catalogueTitle}</Link>),
-      });
+    const catalogueLocation = CreateCatalogueContainerLocation(catalogue.encodedId);
+    breadcrumbList.push({
+      id: 'catalogue-title-text',
+      element: (<Link to={catalogueLocation}>{catalogue.title}</Link>),
+    });
 
-      if (interfaceTitle) {
-        breadcrumbList.push({
-          id: 'interface-title-text',
-          element: (<span>{interfaceTitle}</span>),
-        });
-      }
+    if (interfaceTitle) {
+      breadcrumbList.push({
+        id: 'interface-title-text',
+        element: (<span>{interfaceTitle}</span>),
+      });
     }
   }
 
   return (
-    <div className="location-bar">
+    <div className="location-bar" data-testid="location-bar">
       {installationOwner}
       { breadcrumbList.map((breadcrumb) => (
         <React.Fragment key={breadcrumb.id}>

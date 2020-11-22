@@ -39,6 +39,9 @@ describe('CatalogueContainer component', () => {
 
     // and CatalogueDetails should have been shown
     expect(CatalogueDetailsMock).toHaveBeenCalledTimes(1);
+
+    // and the location bar should be shown
+    expect(await findByTestId('location-bar')).toBeInTheDocument();
   });
 
   test('unsuccessful fetch displays error message', async () => {
@@ -72,48 +75,9 @@ describe('CatalogueContainer component', () => {
       CATALOGUE_CONTAINER_ROUTE);
 
     // then it contains a loading message
-    expect(getByText('Loading catalogue..')).toBeInTheDocument();
+    expect(getByText('Loading Catalogue..')).toBeInTheDocument();
 
     // and it contains a placeholder image
-    expect(getByTestId('catalogue-container-placeholder-image')).toBeInTheDocument();
-  });
-
-  test('swagger UI is shown when a spec file location is set', async () => {
-    // given a repo for a catalogue
-    const catalogue = Generator.Catalogue.generateCatalogue();
-
-    // and a mocked successful catalogue response
-    const catalogueResponse = {
-      data: catalogue,
-    };
-
-    useGetCatalogueMock.mockReturnValueOnce(catalogueResponse);
-
-    // and a selected interface and ref
-    const interfaceName = 'someInterface1';
-    const refName = 'some-branch';
-
-    // and a mocked spec file fetch response
-    const responsePromise = Promise.resolve({ });
-    global.fetch = jest.fn().mockImplementation(() => responsePromise);
-
-    // when catalogue container component renders
-    const { findByTestId } = renderWithRouter(<CatalogueContainer />,
-      CreateViewSpecLocation(catalogue.encodedId, interfaceName, refName),
-      CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE);
-
-    // then a catalogue container should be found
-    expect(await findByTestId('catalogue-container-segment')).toBeInTheDocument();
-
-    // and a swagger ui container should be found
-    expect(await findByTestId('catalogue-container-swagger-ui')).toBeInTheDocument();
-
-    // and file contents should have been fetched
-    const url = `/api/catalogues/${catalogue.encodedId}/interfaces/${interfaceName}/file?ref=${refName}`;
-    expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(global.fetch).toHaveBeenCalledWith(url,
-      expect.objectContaining({ url }));
-
-    global.fetch.mockClear();
+    expect(getByTestId('catalogue-container-placeholder')).toBeInTheDocument();
   });
 });
