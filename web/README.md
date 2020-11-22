@@ -24,6 +24,13 @@ npm install
 ### Tasks
 The following standard set of [NPM run scripts](https://docs.npmjs.com/cli/run-script) have been provided to perform the different key application development life cycle tasks:
 
+#### Starting the Backend Services
+You can start all the backend services that the UI calls using the following npm script.
+It uses the docker-compose and requires a `.env` file to be present in the repository root as per the [Setup Instructions](../README.md#setup-guide).
+```
+npm run start-deps
+```
+
 #### Running the Application
 First ensuring the environment variables in the [Config](#config) section above are set appropriately, then run the following command:
 ```
