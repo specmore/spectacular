@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import {
-  Icon, Message, Header, List, Label, Button, Grid,
+  Icon, Message, Header, List, Label, Grid,
 } from 'semantic-ui-react';
 import { SpecLog, SpecItem } from '../backend-api-client';
 import { ViewSpecLinkButton, ViewSpecEvolutionLinkButton, OpenSpecItemContentPageButton } from '../routes';

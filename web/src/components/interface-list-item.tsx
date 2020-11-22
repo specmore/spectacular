@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from 'react';
 import {
-  Label, List, Icon, Message, Item, Button,
+  Label, List, Icon, Message, Item,
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import { SpecLog, SpecItem, Catalogue } from '../backend-api-client';
+import { SpecLog, SpecItem } from '../backend-api-client';
 import { CreateInterfaceLocation, OpenSpecItemContentPageButton } from '../routes';
 
 

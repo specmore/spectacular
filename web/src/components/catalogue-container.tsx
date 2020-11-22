@@ -4,7 +4,7 @@ import {
 } from 'semantic-ui-react';
 import { useParams } from 'react-router-dom';
 import CatalogueDetails from './catalogue-details';
-import { useGetCatalogue, Catalogue } from '../backend-api-client';
+import { useGetCatalogue } from '../backend-api-client';
 import LocationBar from './location-bar';
 
 const CatalogueContainerLoading = () => (

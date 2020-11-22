@@ -4,7 +4,7 @@ import CatalogueContainer from './catalogue-container';
 import CatalogueDetailsMock from './catalogue-details';
 import { renderWithRouter } from '../__tests__/test-utils';
 import {
-  CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE, CreateCatalogueContainerLocation, CreateViewSpecLocation,
+  CATALOGUE_CONTAINER_ROUTE, CreateCatalogueContainerLocation,
 } from '../routes';
 import Generator from '../__tests__/test-data-generator';
 import { useGetCatalogue as useGetCatalogueMock } from '../backend-api-client';

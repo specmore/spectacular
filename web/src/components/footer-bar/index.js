@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Icon, Label } from 'semantic-ui-react';
+import { Icon } from 'semantic-ui-react';
 import './footer.less';
 
 const FooterBar = () => (
