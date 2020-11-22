@@ -46,11 +46,8 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
   const refName = getCurrentSpecRefViewed();
   const showSpecEvolution = isShowSpecEvolution();
 
-  console.log('InterfaceContainer rerender');
-  console.log('refName', refName);
   const getCatalogue = useGetCatalogue({ encodedId });
   const { data: getCatalogueResult, loading, error } = getCatalogue;
-  console.log('getCatalogueResult', getCatalogueResult);
 
   let catalogue = null;
   let interfaceTitle = null;
