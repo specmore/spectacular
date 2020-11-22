@@ -1,0 +1,30 @@
+{
+  "id" : "15c85570-cec8-3f91-8817-105f74d2e0de",
+  "request" : {
+    "url" : "/repos/specmore/specs-test-manifest-error/collaborators/pburls",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 204,
+    "bodyFileName" : "body-repos-specmore-specs-test-manifest-error-collaborators-pburls-voqUE.txt",
+    "headers" : {
+      "Date" : "Sun, 22 Nov 2020 22:57:06 GMT",
+      "Server" : "GitHub.com",
+      "Status" : "204 No Content",
+      "X-GitHub-Media-Type" : "github.v3",
+      "X-RateLimit-Limit" : "5000",
+      "X-RateLimit-Remaining" : "4949",
+      "X-RateLimit-Reset" : "1606087837",
+      "X-RateLimit-Used" : "51",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "1; mode=block",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "Vary" : [ "Accept-Encoding, Accept, X-Requested-With", "Accept-Encoding" ],
+      "X-GitHub-Request-Id" : "CF3C:7DE8:5A1975F:67E4782:5FBAECC1"
+    }
+  },
+  "uuid" : "15c85570-cec8-3f91-8817-105f74d2e0de"
+}
