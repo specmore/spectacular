@@ -1,3 +1,8 @@
 /*******************************
     User Variable Overrides
 *******************************/
+@import "~nord/src/lesscss/nord.less";
+
+@blueTextColor          : @nord6;
+@greenTextColor          : @nord6;
+@tealTextColor          : @nord6;

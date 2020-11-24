@@ -1,0 +1,31 @@
+{
+  "id" : "0f375d0d-4b4f-3a49-b7d7-1d9f16f4257a",
+  "request" : {
+    "url" : "/repos/specmore/specs-test-tags/collaborators/pburls",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 403,
+    "bodyFileName" : "body-repos-specmore-specs-test-tags-collaborators-pburls-aIwrG.json",
+    "headers" : {
+      "Date" : "Sun, 22 Nov 2020 22:57:05 GMT",
+      "Content-Type" : "application/json; charset=utf-8",
+      "Server" : "GitHub.com",
+      "Status" : "403 Forbidden",
+      "X-GitHub-Media-Type" : "github.v3",
+      "X-RateLimit-Limit" : "5000",
+      "X-RateLimit-Remaining" : "4950",
+      "X-RateLimit-Reset" : "1606087837",
+      "X-RateLimit-Used" : "50",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "1; mode=block",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "Vary" : "Accept-Encoding, Accept, X-Requested-With",
+      "X-GitHub-Request-Id" : "CF3C:7DE8:5A196F0:67E46FF:5FBAECC1"
+    }
+  },
+  "uuid" : "0f375d0d-4b4f-3a49-b7d7-1d9f16f4257a"
+}

@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Button, Icon } from 'semantic-ui-react';
 import { Link, useParams, useLocation } from 'react-router-dom';
+import { SpecItem } from './backend-api-client';
 
 export const CATALOGUE_LIST_ROUTE = '/';
 
@@ -8,11 +9,28 @@ export const CATALOGUE_CONTAINER_ROUTE = '/catalogue/:encodedId';
 export const CreateCatalogueContainerLocation = (encodedId: string): string => `/catalogue/${encodedId}/`;
 
 export const CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE = '/catalogue/:encodedId/interface/:interfaceName';
-export const CreateViewSpecLocation = (encodedId: string, interfaceName: string, refName: string): string => (
-  `/catalogue/${encodedId}/interface/${interfaceName}?ref=${refName}`
+export const CreateInterfaceLocation = (encodedId: string, interfaceName: string): string => (
+  `/catalogue/${encodedId}/interface/${interfaceName}`
 );
 
+export const VIEW_SPEC_QUERY_PARAM_NAME = 'ref';
+export const SHOW_EVOLUTION_QUERY_PARAM_NAME = 'show-evolution';
+
 export const useQuery = (): URLSearchParams => new URLSearchParams(useLocation().search);
+
+const addQueryParam = (name: string, value: string): string => {
+  const { pathname } = useLocation();
+  const search = new URLSearchParams(useLocation().search);
+  search.set(name, value);
+  return `${pathname}?${search.toString()}`;
+};
+
+const removeQueryParam = (name: string): string => {
+  const { pathname } = useLocation();
+  const search = new URLSearchParams(useLocation().search);
+  search.delete(name);
+  return `${pathname}?${search.toString()}`;
+};
 
 export const BackToCatalogueListLinkButton: FunctionComponent = () => (
   <Button icon compact labelPosition="left" as={Link} to={CATALOGUE_LIST_ROUTE} data-testid="back-to-catalogue-list-button">
@@ -22,57 +40,107 @@ export const BackToCatalogueListLinkButton: FunctionComponent = () => (
   </Button>
 );
 
-interface CatalogueContainerLinkButtonProps {
-  encodedId: string;
-}
-
-export const CatalogueContainerLinkButton: FunctionComponent<CatalogueContainerLinkButtonProps> = ({ encodedId }) => {
-  const catalogueLink = CreateCatalogueContainerLocation(encodedId);
-  return (
-    <Button primary floated="right" icon labelPosition="right" as={Link} to={catalogueLink} data-testid="view-catalogue-button">
-      View Catalogue
-      {' '}
-      <Icon name="chevron right" />
-    </Button>
-  );
-};
-
 interface ViewSpecLinkButtonProps {
-  interfaceName: string;
   refName: string;
-  isSelected: boolean;
+  interfaceName: string;
 }
 
-export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({ interfaceName, refName, isSelected }) => {
-  const { encodedId } = useParams();
-  const viewSpecLink = CreateViewSpecLocation(encodedId, interfaceName, refName);
+export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({ refName, interfaceName }) => {
+  const { interfaceName: selectedInterfaceName } = useParams();
+  const isSelected = interfaceName === selectedInterfaceName && useQuery().get(VIEW_SPEC_QUERY_PARAM_NAME) === refName;
+
+  const viewSpecLink = addQueryParam(VIEW_SPEC_QUERY_PARAM_NAME, refName);
   return (
     <Button
-      primary
-      compact
-      floated="right"
       icon
+      circular
+      size="mini"
       labelPosition="right"
       as={Link}
       to={viewSpecLink}
       disabled={isSelected}
       data-testid="view-spec-button"
+      floated="right"
     >
       View Spec
-      {' '}
-      <Icon name="chevron right" />
+      <Icon name="eye" />
     </Button>
   );
 };
 
 export const CloseSpecButton: FunctionComponent = () => {
-  const { encodedId } = useParams();
-  const catalogueOnlyLink = CreateCatalogueContainerLocation(encodedId);
+  const interfaceOnlyLink = removeQueryParam(VIEW_SPEC_QUERY_PARAM_NAME);
   return (
-    <Button icon compact floated="right" labelPosition="right" as={Link} to={catalogueOnlyLink} data-testid="close-spec-button">
-      Close
-      {' '}
+    <Button
+      icon
+      circular
+      size="mini"
+      floated="right"
+      labelPosition="right"
+      as={Link}
+      to={interfaceOnlyLink}
+      data-testid="close-spec-button"
+    >
+      Close Preview
       <Icon name="close" />
     </Button>
   );
 };
+
+export const getCurrentSpecRefViewed = (): string => useQuery().get(VIEW_SPEC_QUERY_PARAM_NAME);
+
+export const ViewSpecEvolutionLinkButton: FunctionComponent = () => {
+  const expandSpecEvolutionLocation = addQueryParam(SHOW_EVOLUTION_QUERY_PARAM_NAME, 'true');
+  const isSelected = useQuery().get(SHOW_EVOLUTION_QUERY_PARAM_NAME) === 'true';
+
+  return (
+    <Button
+      icon
+      circular
+      size="mini"
+      labelPosition="right"
+      as={Link}
+      to={expandSpecEvolutionLocation}
+      disabled={isSelected}
+      data-testid="view-spec-evolution-button"
+      floated="right"
+    >
+      View Changes
+      <Icon name="code branch" />
+    </Button>
+  );
+};
+
+export const CloseSpecEvolutionButton: FunctionComponent = () => {
+  const interfaceOnlyLink = removeQueryParam(SHOW_EVOLUTION_QUERY_PARAM_NAME);
+  return (
+    <Button
+      icon="close"
+      circular
+      size="mini"
+      floated="right"
+      as={Link}
+      to={interfaceOnlyLink}
+      data-testid="close-spec-evolution-button"
+    />
+  );
+};
+
+export const isShowSpecEvolution = (): boolean => useQuery().get(SHOW_EVOLUTION_QUERY_PARAM_NAME) === 'true';
+
+
+interface OpenSpecItemContentPageButtonProps {
+  specItem: SpecItem;
+}
+export const OpenSpecItemContentPageButton: FunctionComponent<OpenSpecItemContentPageButtonProps> = ({ specItem }) => (
+  <Button
+    icon="file code"
+    circular
+    size="mini"
+    href={specItem.htmlUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    color="grey"
+    floated="right"
+  />
+);

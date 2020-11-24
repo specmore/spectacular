@@ -3,6 +3,15 @@
 *******************************/
 @import "~nord/src/lesscss/nord.less";
 
-// @pageBackground     : @nord6;
+@pageBackground     : @nord6;
+@borderColor        : @nord3;
 @textColor          : @nord0;
 @fontName           : 'Roboto';
+
+@negativeHeaderColor: @nord11;
+@negativeBorderColor: @nord11;
+
+@green              : @nord7;
+@teal               : @nord8;
+@blue               : @nord10;
+@grey               : @nord3;

@@ -1,0 +1,37 @@
+{
+  "id" : "36c1ff70-f596-3e32-94aa-d51e8a7b6bb4",
+  "request" : {
+    "url" : "/graphql",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "equalToJson" : "{\"query\":\"query {\\n    repository(owner: \\\"specmore\\\", name:\\\"specs-test\\\") {\\n        nameWithOwner\\n        url\\n        pullRequests(first: 100, baseRefName: \\\"master\\\", states: [OPEN]) {\\n            totalCount\\n            nodes {\\n                number\\n                url\\n                updatedAt\\n                headRef { name repository { nameWithOwner url } }\\n                labels(first: 100) {\\n                    totalCount\\n                    nodes { name }\\n                }\\n                files(first:100) {\\n                    totalCount\\n                    nodes { path }\\n                }\\n                title\\n            }\\n        }\\n    }\\n}\"}",
+      "ignoreArrayOrder" : true,
+      "ignoreExtraElements" : true
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-graphql-AfXdQ.json",
+    "headers" : {
+      "Date" : "Sun, 22 Nov 2020 22:57:09 GMT",
+      "Content-Type" : "application/json; charset=utf-8",
+      "Server" : "GitHub.com",
+      "Status" : "200 OK",
+      "Cache-Control" : "no-cache",
+      "X-GitHub-Media-Type" : "github.v4",
+      "X-RateLimit-Limit" : "5000",
+      "X-RateLimit-Remaining" : "4992",
+      "X-RateLimit-Reset" : "1606089263",
+      "X-RateLimit-Used" : "8",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "1; mode=block",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "Vary" : [ "Accept-Encoding, Accept, X-Requested-With", "Accept-Encoding" ],
+      "X-GitHub-Request-Id" : "CF3C:7DE8:5A19DBB:67E4E92:5FBAECC5"
+    }
+  },
+  "uuid" : "36c1ff70-f596-3e32-94aa-d51e8a7b6bb4"
+}

@@ -1,25 +1,20 @@
 import React from 'react';
-import { Segment, Icon, Label } from 'semantic-ui-react';
+import { Icon } from 'semantic-ui-react';
+import './footer.less';
 
 const FooterBar = () => (
-  <Segment textAlign="center">
-    <p>
-      Contribute to the
-      {' '}
+  <footer className="footer-container">
+    <div>Spectacular</div>
+    <div>
+      v
+      {VERSION}
+    </div>
+    <div>
       <a href="https://github.com/specmore/spectacular" target="_blank" rel="noopener noreferrer">
-        <Icon name="github" />
-        GitHub project
+        <Icon name="github" link />
       </a>
-    </p>
-    <Label size="tiny">
-      Version
-      <Label.Detail>{VERSION}</Label.Detail>
-    </Label>
-    <Label size="tiny">
-      SHA
-      <Label.Detail>{SHORTSHA}</Label.Detail>
-    </Label>
-  </Segment>
+    </div>
+  </footer>
 );
 
 export default FooterBar;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, Icon } from 'semantic-ui-react';
+import { Menu } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import UserMenuBarItem from '../user-menu-bar-item';
 import SpectacularLogo from '../../assets/images/spectacular-logo.svg';

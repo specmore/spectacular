@@ -1,9 +1,8 @@
 import React, { FunctionComponent } from 'react';
 import {
-  Icon, Image, Message, Segment, Header, Grid, Label,
+  Icon, Message, Header, Item,
 } from 'semantic-ui-react';
-import ImagePlaceHolder from '../assets/images/image-placeholder.png';
-import SpecLog from './spec-log';
+import InterfaceListItem from './interface-list-item';
 import { Catalogue } from '../backend-api-client';
 
 interface CatalogueErrorProps {
@@ -30,34 +29,13 @@ interface CatalogueDetailsProps {
 
 const CatalogueDetails: FunctionComponent<CatalogueDetailsProps> = ({ catalogue }) => (
   <div data-testid="catalogue-details-container">
-    <Header as="h1" textAlign="center">{catalogue.title}</Header>
-    <Header as="h3" attached="top">
-      <Icon name="info" />
-      Catalogue Details
-    </Header>
-    <Segment attached data-testid="catalogue-details-segment">
-      <Grid divided>
-        <Grid.Row>
-          <Grid.Column width={13}>
-            <p>{catalogue.description}</p>
-          </Grid.Column>
-          <Grid.Column width={3}>
-            <Image src={ImagePlaceHolder} />
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
-      <Label as="a" href={catalogue.htmlUrl} target="_blank">
-        <Icon name="github" />
-        {catalogue.fullPath}
-      </Label>
-    </Segment>
-    <Header as="h3" attached="top">
-      <Icon name="list" />
-      Interfaces
-    </Header>
-    <Segment attached data-testid="catalogue-details-interface-list">
-      {catalogue.specLogs.map((specLog) => (<SpecLog key={specLog.interfaceName} specLog={specLog} />))}
-    </Segment>
+    <Header as="h2">{catalogue.title}</Header>
+    <p>{catalogue.description}</p>
+    <Header as="h3">Interface List</Header>
+    <Item.Group divided data-testid="catalogue-details-interface-list">
+      {catalogue.specLogs.map((specLog) => (
+        <InterfaceListItem key={specLog.interfaceName} catalogueEncodedId={catalogue.encodedId} specLog={specLog} />))}
+    </Item.Group>
   </div>
 );
 

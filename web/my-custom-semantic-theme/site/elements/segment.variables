@@ -1,3 +1,6 @@
 /*******************************
     User Variable Overrides
 *******************************/
+@import "~nord/src/lesscss/nord.less";
+
+@background     : @nord6;

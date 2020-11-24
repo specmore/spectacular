@@ -1,0 +1,29 @@
+{
+  "id" : "be75a34a-b625-32ec-9e8f-61455cbca4b4",
+  "request" : {
+    "url" : "/app/installations/10351020",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-app-installations-10351020-3zzrN.json",
+    "headers" : {
+      "Date" : "Sun, 22 Nov 2020 23:00:17 GMT",
+      "Content-Type" : "application/json; charset=utf-8",
+      "Server" : "GitHub.com",
+      "Status" : "200 OK",
+      "Cache-Control" : "public, max-age=60, s-maxage=60",
+      "Vary" : [ "Accept", "Accept-Encoding, Accept, X-Requested-With", "Accept-Encoding" ],
+      "ETag" : "W/\"4efa7bd2f13c25dd6425db51b689e8e3b53fc9f442074a27f8585eee19d0f303\"",
+      "X-GitHub-Media-Type" : "github.v3; param=machine-man-preview; format=json",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "1; mode=block",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "X-GitHub-Request-Id" : "D00C:3D3B:304AF24:3781355:5FBAED81"
+    }
+  },
+  "uuid" : "be75a34a-b625-32ec-9e8f-61455cbca4b4"
+}

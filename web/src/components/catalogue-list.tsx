@@ -1,24 +1,18 @@
 import React, { FunctionComponent } from 'react';
 import {
-  Dimmer, Loader, Item, Segment, Message, Header,
+  Item, Segment, Message, Header, Container, Placeholder,
 } from 'semantic-ui-react';
-import EmptyCatalogueItemImage from '../assets/images/empty-catalogue-item.png';
-import ImagePlaceHolder from '../assets/images/image-placeholder.png';
 import CatalogueListItem from './catalogue-list-item';
 import { useFindCataloguesForUser, Catalogue } from '../backend-api-client';
+import LocationBar from './location-bar';
 
 const CatalogueListLoading = () => (
-  <Segment vertical>
-    <Dimmer inverted active>
-      <Loader content="Loading" />
-    </Dimmer>
-    <Item.Group divided data-testid="catalogue-list-placeholder-item-group">
-      <Item>
-        <Item.Image size="tiny" src={ImagePlaceHolder} />
-        <img src={EmptyCatalogueItemImage} alt="placeholder" />
-      </Item>
-    </Item.Group>
-  </Segment>
+  <Placeholder data-testid="catalogue-list-placeholder">
+    <Placeholder.Header image>
+      <Placeholder.Line />
+      <Placeholder.Line />
+    </Placeholder.Header>
+  </Placeholder>
 );
 
 interface CatalogueListErrorProps {
@@ -36,12 +30,9 @@ interface CatalogueListProps {
 }
 
 const CatalogueList: FunctionComponent<CatalogueListProps> = ({ catalogues }) => (
-  <Segment vertical>
-    <Header as="h4">The following specification catalogues are available to you:</Header>
-    <Item.Group divided data-testid="catalogue-list-item-group">
-      {catalogues.map((catalogue) => (<CatalogueListItem key={catalogue.encodedId} catalogue={catalogue} />))}
-    </Item.Group>
-  </Segment>
+  <Item.Group divided data-testid="catalogue-list-item-group">
+    {catalogues.map((catalogue) => (<CatalogueListItem key={catalogue.encodedId} catalogue={catalogue} />))}
+  </Item.Group>
 );
 
 interface CatalogueListContainerProps {
@@ -52,11 +43,26 @@ const CatalogueListContainer: FunctionComponent<CatalogueListContainerProps> = (
   const findCataloguesForUser = useFindCataloguesForUser({ queryParams: { org } });
   const { data: findCataloguesResult, loading, error } = findCataloguesForUser;
 
-  if (loading) return (<CatalogueListLoading />);
+  let content = null;
+  if (loading) {
+    content = (<CatalogueListLoading />);
+  } else if (error) {
+    content = (<CatalogueListError errorMessage={error.message} />);
+  } else {
+    content = (<CatalogueList catalogues={findCataloguesResult.catalogues} />);
+  }
 
-  if (error) return (<CatalogueListError errorMessage={error.message} />);
-
-  return (<CatalogueList catalogues={findCataloguesResult.catalogues} />);
+  return (
+    <>
+      <LocationBar installationOwner={org} />
+      <Segment vertical>
+        <Container text>
+          <Header as="h3">Available Interface Catalogues</Header>
+          {content}
+        </Container>
+      </Segment>
+    </>
+  );
 };
 
 export default CatalogueListContainer;
