@@ -4,6 +4,19 @@ info:
   description: The RESTful API for the Spectacular tool's Backend Service.
   version: 0.1.0
 paths:
+  /installation:
+    get:
+      tags:
+        - Installation
+      description: Gets the details of this installation of the Spectacular app
+      operationId: getInstallation
+      responses:
+        '200':
+          description: Successful operation
+          content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Installation'
   /catalogues:
     get:
       tags:
@@ -83,6 +96,13 @@ paths:
                 type: object
 components:
   schemas:
+    Installation:
+      type: object
+      properties:
+        id:
+          type: integer
+        owner:
+          type: string
     FindCataloguesResult:
       type: object
       properties:
