@@ -1,5 +1,7 @@
 package spectacular.backend.installation;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,14 +16,9 @@ public class InstallationController implements InstallationApi {
     this.installationService = installationService;
   }
 
-  @GetMapping("installation")
-  public InstallationResponse getCurrentInstallation() {
-    var installation = this.installationService.getCurrentInstallation();
-    return new InstallationResponse(installation);
-  }
-
   @Override
   public ResponseEntity<Installation> getInstallation() {
-    return null;
+    var installation = installationService.getCurrentInstallation();
+    return ok(installation);
   }
 }
