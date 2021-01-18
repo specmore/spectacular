@@ -103,6 +103,8 @@ components:
           type: integer
         owner:
           type: string
+      required:
+        - id
     FindCataloguesResult:
       type: object
       properties:
