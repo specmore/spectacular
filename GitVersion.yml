@@ -1,4 +1,4 @@
-mode: Mainline
+mode: ContinuousDelivery # requires a tag on the commit that actually got released. Mainline just keeps bumping the version after each PR merge, which is too frequent.
 branches: {}
 ignore:
   sha: []
