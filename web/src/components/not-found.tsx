@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import {
   Message, Header, Segment, Icon, Container,
 } from 'semantic-ui-react';
 import { useLocation } from 'react-router-dom';
 
-const NotFound = () => {
+const NotFound: FunctionComponent = () => {
   const location = useLocation();
   return (
     <Container text>

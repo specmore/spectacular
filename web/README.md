@@ -50,6 +50,12 @@ This project uses [ESLint](https://eslint.org/) to ensure code quality and style
 npm run lint
 ```
 
+#### Regenerating the backend API models and fetch methods
+This project uses the [restful-react](https://github.com/contiamo/restful-react) library to generate the backend API fetch client and model ts classes from the Backend service OpenAPI spec. To regenerate the code after changes to the spec file, use the following command:
+```
+npm run generate-fetcher
+```
+
 ## Design Decisions
 
 ### Architecture Decisions

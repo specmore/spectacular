@@ -32,6 +32,13 @@ First ensuring the environment variables in the [Config](#config) section above 
 ./gradlew check
 ```
 
+#### Regenerating the API Controllers and Models
+This API and its models are described by the [backend-api.yaml](/specs/backend-api.yaml) OpenAPI file.
+To regenerate the API interface and model classes from this spec file after making changes to it, use the following gradle command:
+```
+./gradlew openApiGenerate
+```
+
 ## Design Decisions
 ### Architecture Pattern
 The objects in this project could be organised horizontally using the following conceptual layers:

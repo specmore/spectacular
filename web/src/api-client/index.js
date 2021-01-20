@@ -15,11 +15,6 @@ axios.interceptors.response.use((response) => response, (error) => {
   return Promise.reject(error);
 });
 
-export const fetchInstallation = async () => {
-  const response = await axios.get('/api/installation');
-  return response.data;
-};
-
 export const fetchUserInfo = async () => {
   const response = await axios.get('/login/');
   return response.data;

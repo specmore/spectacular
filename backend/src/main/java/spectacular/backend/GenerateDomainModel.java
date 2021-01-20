@@ -2,7 +2,6 @@ package spectacular.backend;
 
 import ch.ifocusit.plantuml.classdiagram.ClassDiagramBuilder;
 import spectacular.backend.github.pullrequests.PullRequest;
-import spectacular.backend.installation.InstallationResponse;
 
 public class GenerateDomainModel {
   /**
@@ -13,7 +12,6 @@ public class GenerateDomainModel {
   public static void main(String[] args) {
     String diagram = new ClassDiagramBuilder()
         .addClasse(
-            InstallationResponse.class,
             PullRequest.class
         )
         .build();
