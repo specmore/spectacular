@@ -14,9 +14,9 @@ paths:
         '200':
           description: Successful operation
           content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Installation'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Installation'
   /catalogues:
     get:
       tags:
@@ -34,9 +34,9 @@ paths:
         '200':
           description: Successful operation
           content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/FindCataloguesResult'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FindCataloguesResult'
   /catalogues/{encodedId}:
     get:
       tags:
@@ -55,9 +55,36 @@ paths:
         '200':
           description: Successful operation
           content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/GetCatalogueResult'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCatalogueResult'
+  /catalogues/{encodedId}/interfaces/{interfaceName}/spec-evolution:
+    get:
+      tags:
+        - Interfaces
+      description: Gets the evolution for the specification file of an interface
+      operationId: getInterfaceSpecEvolution
+      parameters:
+        - name: encodedId
+          in: path
+          description: The base64 encoded id of the Catalogue being referenced
+          required: true
+          schema:
+            type: string
+            format: byte
+        - name: interfaceName
+          in: path
+          description: The name of the Interface in the Catalogue being referenced
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSpecEvolutionResult'
   /catalogues/{encodedId}/interfaces/{interfaceName}/file:
     get:
       tags:
@@ -180,6 +207,73 @@ components:
         - id
         - pullRequest
         - specItem
+    GetSpecEvolutionResult:
+      type: object
+      properties:
+        specEvolution:
+            $ref: '#/components/schemas/SpecEvolution'
+      required:
+        - specEvolution
+    SpecEvolution:
+      type: object
+      properties:
+        interfaceName:
+          type: string
+        main:
+          $ref: '#/components/schemas/EvolutionBranch'
+        releases:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvolutionBranch'
+      required:
+        - interfaceName
+        - main
+        - releases
+    EvolutionBranch:
+      type: object
+      properties:
+        branchName:
+          type: string
+        evolutionItems:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/TagEvolutionItem'
+              - $ref: '#/components/schemas/PullRequestEvolutionItem'
+            discriminator:
+              propertyName: evolutionItemType
+      required:
+        - branchName
+        - evolutionItems
+    TagEvolutionItem:
+      type: object
+      properties:
+        evolutionItemType:
+          type: string
+        tag:
+          type: string
+        htmlUrl:
+          type: string
+          format: uri
+      required:
+        - evolutionItemType
+        - tag
+    PullRequestEvolutionItem:
+      type: object
+      properties:
+        evolutionItemType:
+          type: string
+        branch:
+          type: string
+        pullRequest:
+          $ref: '#/components/schemas/PullRequest'
+        htmlUrl:
+          type: string
+          format: uri
+      required:
+        - evolutionItemType
+        - branch
+        - pullRequest
     SpecItem:
       type: object
       properties:
