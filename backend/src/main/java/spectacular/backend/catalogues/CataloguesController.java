@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import spectacular.backend.api.CataloguesApi;
 import spectacular.backend.api.model.FindCataloguesResult;
 import spectacular.backend.api.model.GetCatalogueResult;
+import spectacular.backend.api.model.GetSpecEvolutionResult;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.interfaces.InterfaceService;
 
@@ -72,5 +73,15 @@ public class CataloguesController implements CataloguesApi {
           .status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("An unexpected error occurred while decoding the file contents.");
     }
+  }
+
+  @Override
+  public ResponseEntity<GetSpecEvolutionResult> getInterfaceSpecEvolution(byte[] encodedId, String interfaceName) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    var decodedBytes = Base64.getDecoder().decode(encodedId);
+    var combinedId = new String(decodedBytes);
+    var catalogueId = CatalogueId.createFrom(combinedId);
+
+    return null;
   }
 }
