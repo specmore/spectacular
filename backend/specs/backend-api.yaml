@@ -237,43 +237,43 @@ components:
         evolutionItems:
           type: array
           items:
-            oneOf:
-              - $ref: '#/components/schemas/TagEvolutionItem'
-              - $ref: '#/components/schemas/PullRequestEvolutionItem'
-            discriminator:
-              propertyName: evolutionItemType
+            $ref: '#/components/schemas/EvolutionItem'
       required:
         - branchName
         - evolutionItems
+    EvolutionItem:
+      type: object
+      discriminator:
+        propertyName: evolutionItemType
+      properties:
+        evolutionItemType:
+          type: string
+        htmlUrl:
+          type: string
+          format: uri
+      required:
+        - evolutionItemType
     TagEvolutionItem:
-      type: object
-      properties:
-        evolutionItemType:
-          type: string
-        tag:
-          type: string
-        htmlUrl:
-          type: string
-          format: uri
-      required:
-        - evolutionItemType
-        - tag
+      allOf:
+        - $ref: '#/components/schemas/EvolutionItem'
+        - type: object
+          properties:
+            tag:
+              type: string
+          required:
+            - tag
     PullRequestEvolutionItem:
-      type: object
-      properties:
-        evolutionItemType:
-          type: string
-        branch:
-          type: string
-        pullRequest:
-          $ref: '#/components/schemas/PullRequest'
-        htmlUrl:
-          type: string
-          format: uri
-      required:
-        - evolutionItemType
-        - branch
-        - pullRequest
+      allOf:
+        - $ref: '#/components/schemas/EvolutionItem'
+        - type: object
+          properties:
+            branch:
+              type: string
+            pullRequest:
+              $ref: '#/components/schemas/PullRequest'
+          required:
+            - branch
+            - pullRequest
     SpecItem:
       type: object
       properties:
