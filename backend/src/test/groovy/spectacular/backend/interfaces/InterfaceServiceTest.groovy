@@ -8,6 +8,7 @@ import spectacular.backend.catalogues.CatalogueService
 import spectacular.backend.common.CatalogueId
 import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.RestApiClient
+import spectacular.backend.github.domain.Comparison
 import spectacular.backend.github.domain.ContentItem
 import spectacular.backend.github.domain.Tag
 import spock.lang.Specification
@@ -146,7 +147,7 @@ class InterfaceServiceTest extends Specification {
         !result
     }
 
-    def "GetSpecEvolution returns a Spec Evolution based on the tags and branches"() {
+    def "GetSpecEvolution returns only tags behind the main branch for the main evolution"() {
         given: "a catalogue with an interface entry"
         def catalogueId = aCatalogue()
         def interfaceEntryName = "testInterface"
@@ -160,8 +161,13 @@ class InterfaceServiceTest extends Specification {
                 .withFilePath(specFilePath)
         interfaceEntry.setSpecFile(specFileLocation)
 
-        and: "the repository has tags"
-        def repositoryTags = [ new Tag("testTag1") ]
+        and: "a tag behind the main branch"
+        def behindTag = new Tag("behindTag")
+        def behindTagComparison = new Comparison(null, "behind", 0, 1, 1)
+
+        and: "a tag ahead of the main"
+        def aheadTag = new Tag("aheadTag")
+        def aheadTagComparison = new Comparison(null, "ahead", 1, 0, 1)
 
         when: "getting the spec evolution for the interface entry name"
         def specEvolution = interfaceService.getSpecEvolution(catalogueId, interfaceEntryName, aUsername)
@@ -170,9 +176,14 @@ class InterfaceServiceTest extends Specification {
         1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> interfaceEntry
 
         and: "the tags are retrieved from the repository the spec file is in"
-        1 * restApiClient.getRepositoryTags(specFileRepoId) >> repositoryTags
+        1 * restApiClient.getRepositoryTags(specFileRepoId) >> [behindTag, aheadTag]
 
-        and: "the spec evolution's main branch has an item for the tag"
+        and: "both tags are compared to the main branch"
+        1 * restApiClient.getComparison(specFileRepoId, "master", "behindTag") >> behindTagComparison
+        1 * restApiClient.getComparison(specFileRepoId, "master", "aheadTag") >> aheadTagComparison
+
+        and: "the spec evolution's main branch has an item for the behind tag"
         specEvolution.getMain().getEvolutionItems().size() == 1
+        specEvolution.getMain().getEvolutionItems().first().tag == "behindTag"
     }
 }

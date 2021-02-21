@@ -1,9 +1,8 @@
 package spectacular.backend.interfaces;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLConnection;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +17,8 @@ import spectacular.backend.catalogues.CatalogueService;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
+import spectacular.backend.github.domain.Comparison;
+import spectacular.backend.github.domain.Tag;
 
 @Service
 public class InterfaceService {
@@ -96,12 +97,19 @@ public class InterfaceService {
 
     var tags = this.restApiClient.getRepositoryTags(fileRepo);
 
+    var mainBranchName = "master";
+    var mainBranchTagComparisons = tags.stream()
+        .map(tag -> new BranchTagComparision(tag, mainBranchName, this.restApiClient.getComparison(fileRepo, mainBranchName, tag.getName())))
+        .filter(branchTagComparision -> branchTagComparision.getAheadBy() == 0)
+        .sorted(Comparator.comparingInt(BranchTagComparision::getBehindBy))
+        .collect(Collectors.toList());
+
     // what is the html url for the tag? Do we try get the contents item just to get the Url or do we guess it?
     // what is the main branch?
-    // filter the tags?
-    // order by semver
-    List<EvolutionItem> mainBranchTagEvolutionItems = tags.stream()
-        .map(tag -> new TagEvolutionItem().tag(tag.getName()))
+    // filter the tags by pattern
+    // order by semver or commits behind?
+    List<EvolutionItem> mainBranchTagEvolutionItems = mainBranchTagComparisons.stream()
+        .map(branchTagComparision -> new TagEvolutionItem().tag(branchTagComparision.getTag().getName()))
         .collect(Collectors.toList());
 
     var mainBranch = new EvolutionBranch().branchName("master").evolutionItems(mainBranchTagEvolutionItems);
@@ -109,5 +117,37 @@ public class InterfaceService {
     var specEvolution = new SpecEvolution().main(mainBranch);
 
     return specEvolution;
+  }
+
+  private class BranchTagComparision {
+    private final Tag tag;
+    private final String branchName;
+    private final Comparison comparison;
+
+    private BranchTagComparision(Tag tag, String branchName, Comparison comparison) {
+      this.tag = tag;
+      this.branchName = branchName;
+      this.comparison = comparison;
+    }
+
+    public Tag getTag() {
+      return tag;
+    }
+
+    public String getBranchName() {
+      return branchName;
+    }
+
+    public Comparison getComparison() {
+      return comparison;
+    }
+
+    public int getBehindBy() {
+      return comparison.getBehind_by();
+    }
+
+    public int getAheadBy() {
+      return comparison.getAhead_by();
+    }
   }
 }

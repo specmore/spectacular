@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.app.AppInstallationAuthenticationHeaderRequestInterceptor;
+import spectacular.backend.github.domain.Comparison;
 import spectacular.backend.github.domain.ContentItem;
 import spectacular.backend.github.domain.SearchCodeResults;
 import spectacular.backend.github.graphql.GraphQlRequest;
@@ -32,6 +33,7 @@ public class RestApiClient {
   private static final String REPO_PATH = "/repos/{repo}";
   private static final String REPO_TAGS_PATH = "/repos/{repo}/tags";
   private static final String REPO_CONTENT_PATH = "/repos/{repo}/contents/{path}";
+  private static final String REPO_COMPARE_PATH = "/repos/{repo}/compare/{base}...{head}";
   private static final String REPO_COLLABORATORS_PATH = "/repos/{repo}/collaborators/{username}";
 
   private final RestTemplate restTemplate;
@@ -179,6 +181,26 @@ public class RestApiClient {
     ResponseEntity<spectacular.backend.github.domain.Tag[]> response = restTemplate
         .exchange(contentUri, HttpMethod.GET, entity, spectacular.backend.github.domain.Tag[].class);
     return Arrays.asList(response.getBody());
+  }
+
+  /**
+   * Get a comparision between two commits on a repository
+   *
+   * @param repoId the repository identifier
+   * @param base commit of the comparision
+   * @param head commit of the comparision
+   * @return a comparision of the two commits
+   */
+  public Comparison getComparison(RepositoryId repoId, String base, String head) {
+    UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(REPO_COMPARE_PATH);
+
+    HttpHeaders headers = new HttpHeaders();
+    HttpEntity entity = new HttpEntity(headers);
+
+    String contentUri = uriComponentsBuilder.buildAndExpand(repoId.getNameWithOwner(), base, head).toUriString();
+    ResponseEntity<Comparison> response = restTemplate
+        .exchange(contentUri, HttpMethod.GET, entity, Comparison.class);
+    return response.getBody();
   }
 
   /**
