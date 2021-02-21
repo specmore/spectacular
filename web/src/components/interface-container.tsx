@@ -78,7 +78,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
       specEvolution = (
         <Segment vertical>
           <Container text>
-            <SpecEvolutionContainer specLog={specLog} interfaceName={interfaceName} />
+            <SpecEvolutionContainer specLog={specLog} interfaceName={interfaceName} encodedId={encodedId} />
           </Container>
         </Segment>
       );
@@ -87,7 +87,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
 
   return (
     <>
-      <LocationBar installationOwner={org} catalogue={catalogue} interfaceTitle={interfaceTitle} />
+      <LocationBar installationOwner={org} catalogue={catalogue} />
       <div data-testid="interface-container-segment">
         <Segment vertical>
           <Container text>

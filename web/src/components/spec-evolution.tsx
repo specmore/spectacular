@@ -4,7 +4,7 @@ import {
   Button,
   Header, Icon, Label,
 } from 'semantic-ui-react';
-import { ChangeProposal, SpecItem, SpecLog } from '../backend-api-client';
+import { ChangeProposal, SpecItem, SpecLog, useGetInterfaceSpecEvolution } from '../backend-api-client';
 import { CloseSpecEvolutionButton, OpenSpecItemContentPageButton, ViewSpecLinkButton } from '../routes';
 
 interface SpecLogItemProps {
@@ -62,25 +62,32 @@ const LatestAgreedLogItem: FunctionComponent<SpecLogItemProps> = ({ specItem, in
 interface SpecLogProps {
   specLog: SpecLog;
   interfaceName: string;
+  encodedId: string;
 }
 
-const SpecEvolutionContainer: FunctionComponent<SpecLogProps> = ({ specLog, interfaceName }) => (
-  <div data-testid="spec-evolution-container">
-    <CloseSpecEvolutionButton />
-    <Header as="h3">Spec Evolution</Header>
-    <div className="spec-evolution-log-container">
-      {
-        specLog.proposedChanges.map((proposedChange) => (
-          <div key={proposedChange.id} className="item">
-            <ChangeProposalItem proposedChange={proposedChange} interfaceName={interfaceName} />
-          </div>
-        ))
-      }
-      <div key={specLog.latestAgreed.ref} className="item">
-        <LatestAgreedLogItem specItem={specLog.latestAgreed} interfaceName={interfaceName} />
+const SpecEvolutionContainer: FunctionComponent<SpecLogProps> = ({ specLog, interfaceName, encodedId }) => {
+  const getInterfaceSpecEvolution = useGetInterfaceSpecEvolution({ encodedId, interfaceName });
+
+  const { data: interfaceSpecEvolutionResult, loading, error } = getInterfaceSpecEvolution;
+
+  return (
+    <div data-testid="spec-evolution-container">
+      <CloseSpecEvolutionButton />
+      <Header as="h3">Spec Evolution</Header>
+      <div className="spec-evolution-log-container">
+        {
+          specLog.proposedChanges.map((proposedChange) => (
+            <div key={proposedChange.id} className="item">
+              <ChangeProposalItem proposedChange={proposedChange} interfaceName={interfaceName} />
+            </div>
+          ))
+        }
+        <div key={specLog.latestAgreed.ref} className="item">
+          <LatestAgreedLogItem specItem={specLog.latestAgreed} interfaceName={interfaceName} />
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default SpecEvolutionContainer;
