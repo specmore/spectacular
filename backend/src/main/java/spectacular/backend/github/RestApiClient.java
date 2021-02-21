@@ -3,6 +3,7 @@ package spectacular.backend.github;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +30,7 @@ public class RestApiClient {
   private static final String RATE_LIMIT = "/rate_limit";
   private static final String SEARCH_CODE_PATH = "/search/code";
   private static final String REPO_PATH = "/repos/{repo}";
+  private static final String REPO_TAGS_PATH = "/repos/{repo}/tags";
   private static final String REPO_CONTENT_PATH = "/repos/{repo}/contents/{path}";
   private static final String REPO_COLLABORATORS_PATH = "/repos/{repo}/collaborators/{username}";
 
@@ -159,6 +161,24 @@ public class RestApiClient {
     ResponseEntity<spectacular.backend.github.domain.Repository> response = restTemplate
         .exchange(contentUri, HttpMethod.GET, entity, spectacular.backend.github.domain.Repository.class);
     return response.getBody();
+  }
+
+  /**
+   * Get tags for a repository.
+   *
+   * @param repoId the repository identifier to get tags for
+   * @return a list of Tags on the repository
+   */
+  public List<spectacular.backend.github.domain.Tag> getRepositoryTags(RepositoryId repoId) {
+    UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(REPO_TAGS_PATH);
+
+    HttpHeaders headers = new HttpHeaders();
+    HttpEntity entity = new HttpEntity(headers);
+
+    String contentUri = uriComponentsBuilder.buildAndExpand(repoId.getNameWithOwner()).toUriString();
+    ResponseEntity<spectacular.backend.github.domain.Tag[]> response = restTemplate
+        .exchange(contentUri, HttpMethod.GET, entity, spectacular.backend.github.domain.Tag[].class);
+    return Arrays.asList(response.getBody());
   }
 
   /**

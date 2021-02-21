@@ -9,6 +9,7 @@ import spectacular.backend.common.CatalogueId
 import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.domain.ContentItem
+import spectacular.backend.github.domain.Tag
 import spock.lang.Specification
 
 class InterfaceServiceTest extends Specification {
@@ -143,5 +144,35 @@ class InterfaceServiceTest extends Specification {
 
         and: "a null interface file contents is returned"
         !result
+    }
+
+    def "GetSpecEvolution returns a Spec Evolution based on the tags and branches"() {
+        given: "a catalogue with an interface entry"
+        def catalogueId = aCatalogue()
+        def interfaceEntryName = "testInterface"
+        def interfaceEntry = new Interface()
+
+        and: "a spec file location for the interface for a .yaml file"
+        def specFileRepoId = RepositoryId.createForNameWithOwner("test-owner/test-repo")
+        def specFilePath = "spec-file.yaml"
+        def specFileLocation = new SpecFileLocation()
+                .withRepo(specFileRepoId.nameWithOwner)
+                .withFilePath(specFilePath)
+        interfaceEntry.setSpecFile(specFileLocation)
+
+        and: "the repository has tags"
+        def repositoryTags = [ new Tag("testTag1") ]
+
+        when: "getting the spec evolution for the interface entry name"
+        def specEvolution = interfaceService.getSpecEvolution(catalogueId, interfaceEntryName, aUsername)
+
+        then: "the interface entry is retrieved from the catalogue service"
+        1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> interfaceEntry
+
+        and: "the tags are retrieved from the repository the spec file is in"
+        1 * restApiClient.getRepositoryTags(specFileRepoId) >> repositoryTags
+
+        and: "the spec evolution's main branch has an item for the tag"
+        specEvolution.getMain().getEvolutionItems().size() == 1
     }
 }

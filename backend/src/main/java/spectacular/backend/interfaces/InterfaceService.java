@@ -2,12 +2,18 @@ package spectacular.backend.interfaces;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLConnection;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import spectacular.backend.api.model.EvolutionBranch;
+import spectacular.backend.api.model.EvolutionItem;
+import spectacular.backend.api.model.SpecEvolution;
+import spectacular.backend.api.model.TagEvolutionItem;
 import spectacular.backend.catalogues.CatalogueService;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.common.RepositoryId;
@@ -65,5 +71,41 @@ public class InterfaceService {
         throw e;
       }
     }
+  }
+
+  /**
+   * Get an evolutionary view of the spec file for an interface
+   *
+   * @param catalogueId the catalogue the interface belongs to
+   * @param interfaceName the name of the interface
+   * @param username the name of the user requesting the spec evolution
+   */
+  public SpecEvolution getSpecEvolution(CatalogueId catalogueId, String interfaceName, String username) throws UnsupportedEncodingException {
+    var catalogueInterfaceEntry = this.catalogueService.getInterfaceEntry(catalogueId, interfaceName,username);
+
+    if (catalogueInterfaceEntry == null || catalogueInterfaceEntry.getSpecFile() == null) {
+      return null;
+    }
+
+    RepositoryId fileRepo;
+    if (catalogueInterfaceEntry.getSpecFile().getRepo() != null) {
+      fileRepo = RepositoryId.createForNameWithOwner(catalogueInterfaceEntry.getSpecFile().getRepo());
+    } else {
+      fileRepo = catalogueId.getRepositoryId();
+    }
+
+    var tags = this.restApiClient.getRepositoryTags(fileRepo);
+
+    // what is the html url for the tag? Do we try get the contents item just to get the Url or do we guess it?
+    // what is the main branch?
+    // filter the tags?
+    // order by semver
+    List<EvolutionItem> mainBranchTagEvolutionItems = tags.stream().map(tag -> new TagEvolutionItem().tag(tag.getName())).collect(Collectors.toList());
+
+    var mainBranch = new EvolutionBranch().branchName("master").evolutionItems(mainBranchTagEvolutionItems);
+
+    var specEvolution = new SpecEvolution().main(mainBranch);
+
+    return specEvolution;
   }
 }
