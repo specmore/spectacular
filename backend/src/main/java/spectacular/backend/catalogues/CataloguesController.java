@@ -82,6 +82,14 @@ public class CataloguesController implements CataloguesApi {
     var combinedId = new String(decodedBytes);
     var catalogueId = CatalogueId.createFrom(combinedId);
 
-    return null;
+    var specEvolution = this.interfaceService.getSpecEvolution(catalogueId, interfaceName, authentication.getName());
+
+    if (specEvolution == null) {
+      return ResponseEntity.notFound().build();
+    }
+
+    var result = new GetSpecEvolutionResult().specEvolution(specEvolution);
+
+    return ResponseEntity.ok(result);
   }
 }

@@ -74,13 +74,13 @@ public class InterfaceService {
   }
 
   /**
-   * Get an evolutionary view of the spec file for an interface
+   * Get an evolutionary view of the spec file for an interface.
    *
    * @param catalogueId the catalogue the interface belongs to
    * @param interfaceName the name of the interface
    * @param username the name of the user requesting the spec evolution
    */
-  public SpecEvolution getSpecEvolution(CatalogueId catalogueId, String interfaceName, String username) throws UnsupportedEncodingException {
+  public SpecEvolution getSpecEvolution(CatalogueId catalogueId, String interfaceName, String username) {
     var catalogueInterfaceEntry = this.catalogueService.getInterfaceEntry(catalogueId, interfaceName,username);
 
     if (catalogueInterfaceEntry == null || catalogueInterfaceEntry.getSpecFile() == null) {
@@ -100,7 +100,9 @@ public class InterfaceService {
     // what is the main branch?
     // filter the tags?
     // order by semver
-    List<EvolutionItem> mainBranchTagEvolutionItems = tags.stream().map(tag -> new TagEvolutionItem().tag(tag.getName())).collect(Collectors.toList());
+    List<EvolutionItem> mainBranchTagEvolutionItems = tags.stream()
+        .map(tag -> new TagEvolutionItem().tag(tag.getName()))
+        .collect(Collectors.toList());
 
     var mainBranch = new EvolutionBranch().branchName("master").evolutionItems(mainBranchTagEvolutionItems);
 

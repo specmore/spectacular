@@ -95,12 +95,12 @@ public class CatalogueService {
    * @return an interface object representing the interface entry in the specified catalogue manifest
    *     or null if the Catalogue or Interface could not be found or the user does not have access to the catalogue
    */
-  public Interface getInterfaceEntry(CatalogueId catalogueId, String interfaceName, String username) throws UnsupportedEncodingException {
+  public Interface getInterfaceEntry(CatalogueId catalogueId, String interfaceName, String username) {
     if (!isRepositoryAccessible(catalogueId.getRepositoryId(), username)) {
       return null;
     }
 
-    var getAndParseCatalogueResult = getAndParseCatalogueInManifest(catalogueId);
+    GetAndParseCatalogueResult getAndParseCatalogueResult = getAndParseCatalogueInManifest(catalogueId);
 
     if (getAndParseCatalogueResult.getCatalogueManifestFileContentItem() == null) {
       return null;
@@ -193,14 +193,7 @@ public class CatalogueService {
   }
 
   private spectacular.backend.api.model.Catalogue getFullCatalogueDetails(CatalogueId catalogueId) {
-    GetAndParseCatalogueResult getAndParseCatalogueResult = null;
-    try {
-      getAndParseCatalogueResult = getAndParseCatalogueInManifest(catalogueId);
-    } catch (UnsupportedEncodingException e) {
-      logger.error("An error occurred while decoding the catalogue manifest yml file: " + ((CatalogueManifestId)catalogueId).toString(), e);
-      var error = "An error occurred while decoding the catalogue manifest yml file: " + e.getMessage();
-      return catalogueMapper.createForParseError(error, catalogueId);
-    }
+    GetAndParseCatalogueResult getAndParseCatalogueResult = getAndParseCatalogueInManifest(catalogueId);
 
     if (getAndParseCatalogueResult.getCatalogueManifestFileContentItem() == null) {
       return null;
@@ -224,7 +217,7 @@ public class CatalogueService {
     return catalogueDetails.specLogs(specLogs);
   }
 
-  private GetAndParseCatalogueResult getAndParseCatalogueInManifest(CatalogueId catalogueId) throws UnsupportedEncodingException {
+  private GetAndParseCatalogueResult getAndParseCatalogueInManifest(CatalogueId catalogueId) {
     ContentItem fileContentItem = null;
 
     try {
@@ -238,9 +231,17 @@ public class CatalogueService {
       }
     }
 
-    String fileContents = fileContentItem.getDecodedContent();
-    var catalogueParseResult = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(fileContents,
-        catalogueId.getCatalogueName());
+    String fileContents = null;
+    FindAndParseCatalogueResult catalogueParseResult = null;
+    try {
+      fileContents = fileContentItem.getDecodedContent();
+      catalogueParseResult = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(fileContents,
+          catalogueId.getCatalogueName());
+    } catch (UnsupportedEncodingException e) {
+      logger.error("An error occurred while decoding the catalogue manifest yml file: " + ((CatalogueManifestId)catalogueId).toString(), e);
+      var error = "An error occurred while decoding the catalogue manifest yml file: " + e.getMessage();
+      catalogueParseResult =  new FindAndParseCatalogueResult(null, error);
+    }
 
     return new GetAndParseCatalogueResult(fileContentItem, catalogueParseResult);
   }
