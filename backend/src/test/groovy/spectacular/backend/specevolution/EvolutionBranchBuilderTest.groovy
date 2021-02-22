@@ -1,16 +1,15 @@
 package spectacular.backend.specevolution
 
-import spectacular.backend.cataloguemanifest.model.Interface
-import spectacular.backend.cataloguemanifest.model.SpecFileLocation
+
 import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.domain.Comparison
 import spectacular.backend.github.domain.Tag
 import spock.lang.Specification
 
-class BranchEvolutionBuilderTest extends Specification {
+class EvolutionBranchBuilderTest extends Specification {
     def restApiClient = Mock(RestApiClient)
-    def evolutionBranchBuilder = new BranchEvolutionBuilder(restApiClient)
+    def evolutionBranchBuilder = new EvolutionBranchBuilder(restApiClient)
 
     def "GenerateEvolutionItems only returns evolution items for tags behind the branch"() {
         given: "a spec file repository and branch"

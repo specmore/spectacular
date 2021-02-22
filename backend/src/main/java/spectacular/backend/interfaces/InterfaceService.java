@@ -1,25 +1,18 @@
 package spectacular.backend.interfaces;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import spectacular.backend.api.model.EvolutionBranch;
-import spectacular.backend.api.model.EvolutionItem;
 import spectacular.backend.api.model.SpecEvolution;
-import spectacular.backend.api.model.TagEvolutionItem;
 import spectacular.backend.catalogues.CatalogueService;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
-import spectacular.backend.github.domain.Comparison;
-import spectacular.backend.github.domain.Tag;
-import spectacular.backend.specevolution.BranchEvolutionBuilder;
+import spectacular.backend.specevolution.EvolutionBranchBuilder;
 
 @Service
 public class InterfaceService {
@@ -27,13 +20,18 @@ public class InterfaceService {
 
   private final CatalogueService catalogueService;
   private final RestApiClient restApiClient;
-  private final BranchEvolutionBuilder branchEvolutionBuilder;
+  private final EvolutionBranchBuilder evolutionBranchBuilder;
 
-  public InterfaceService(CatalogueService catalogueService, RestApiClient restApiClient,
-                          BranchEvolutionBuilder branchEvolutionBuilder) {
+  /**
+   * A service for returning information about an interface and its specification file.
+   * @param catalogueService the catalogue service used to get information about where the spec file is located
+   * @param restApiClient the rest client for retrieving information from the git service
+   * @param evolutionBranchBuilder a helper service for building the evolutionary view of a specification file
+   */
+  public InterfaceService(CatalogueService catalogueService, RestApiClient restApiClient, EvolutionBranchBuilder evolutionBranchBuilder) {
     this.catalogueService = catalogueService;
     this.restApiClient = restApiClient;
-    this.branchEvolutionBuilder = branchEvolutionBuilder;
+    this.evolutionBranchBuilder = evolutionBranchBuilder;
   }
 
   /**
@@ -103,7 +101,7 @@ public class InterfaceService {
 
     var mainBranchName = "master";
 
-    var mainBranchTagEvolutionItems = branchEvolutionBuilder.generateEvolutionItems(fileRepo, mainBranchName, tags);
+    var mainBranchTagEvolutionItems = evolutionBranchBuilder.generateEvolutionItems(fileRepo, mainBranchName, tags);
 
     var mainBranch = new EvolutionBranch().branchName("master").evolutionItems(mainBranchTagEvolutionItems);
 

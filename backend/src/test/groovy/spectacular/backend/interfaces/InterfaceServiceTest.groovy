@@ -9,17 +9,16 @@ import spectacular.backend.catalogues.CatalogueService
 import spectacular.backend.common.CatalogueId
 import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.RestApiClient
-import spectacular.backend.github.domain.Comparison
 import spectacular.backend.github.domain.ContentItem
 import spectacular.backend.github.domain.Tag
-import spectacular.backend.specevolution.BranchEvolutionBuilder
+import spectacular.backend.specevolution.EvolutionBranchBuilder
 import spock.lang.Specification
 
 class InterfaceServiceTest extends Specification {
     def catalogueService = Mock(CatalogueService)
     def restApiClient = Mock(RestApiClient)
-    def branchEvolutionBuilder = Mock(BranchEvolutionBuilder)
-    def interfaceService = new InterfaceService(catalogueService, restApiClient, branchEvolutionBuilder)
+    def evolutionBranchBuilder = Mock(EvolutionBranchBuilder)
+    def interfaceService = new InterfaceService(catalogueService, restApiClient, evolutionBranchBuilder)
 
     def aUsername = "test-user"
 
@@ -177,7 +176,7 @@ class InterfaceServiceTest extends Specification {
         1 * restApiClient.getRepositoryTags(specFileRepoId) >> mainTags
 
         and: "the main branch evolution items are generated from the tags"
-        1 * branchEvolutionBuilder.generateEvolutionItems(specFileRepoId, "master", mainTags) >> [new TagEvolutionItem().tag("mainTag1")]
+        1 * evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, "master", mainTags) >> [new TagEvolutionItem().tag("mainTag1")]
 
         and: "the spec evolution returned has the main branch evolution items"
         specEvolution.getMain().getEvolutionItems().size() == 1

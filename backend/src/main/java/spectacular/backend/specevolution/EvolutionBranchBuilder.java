@@ -14,13 +14,21 @@ import spectacular.backend.github.domain.Tag;
 import spectacular.backend.interfaces.InterfaceService;
 
 @Service
-public class BranchEvolutionBuilder {
+public class EvolutionBranchBuilder {
   private final RestApiClient restApiClient;
 
-  public BranchEvolutionBuilder(RestApiClient restApiClient) {
+  public EvolutionBranchBuilder(RestApiClient restApiClient) {
     this.restApiClient = restApiClient;
   }
 
+  /**
+   * Generates evolution items for a given branch on the specification file's repository from the tags on the repository.
+   *
+   * @param fileRepo the identifier of the repository the specification file is located in
+   * @param branchName the branch on the repository the evolution items are being calculated against
+   * @param tags the list of tags in the repository
+   * @return a list of evolution items for the branch
+   */
   public List<EvolutionItem> generateEvolutionItems(RepositoryId fileRepo, String branchName, Collection<Tag> tags) {
     var mainBranchTagComparisons = tags.stream()
         .map(tag -> new BranchTagComparision(tag, branchName, this.restApiClient.getComparison(fileRepo, branchName, tag.getName())))

@@ -184,7 +184,7 @@ public class RestApiClient {
   }
 
   /**
-   * Get a comparision between two commits on a repository
+   * Get a comparision between two commits on a repository.
    *
    * @param repoId the repository identifier
    * @param base commit of the comparision
