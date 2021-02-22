@@ -2,6 +2,7 @@ package spectacular.backend.interfaces
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
+import spectacular.backend.api.model.TagEvolutionItem
 import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.cataloguemanifest.model.SpecFileLocation
 import spectacular.backend.catalogues.CatalogueService
@@ -11,12 +12,14 @@ import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.domain.Comparison
 import spectacular.backend.github.domain.ContentItem
 import spectacular.backend.github.domain.Tag
+import spectacular.backend.specevolution.BranchEvolutionBuilder
 import spock.lang.Specification
 
 class InterfaceServiceTest extends Specification {
     def catalogueService = Mock(CatalogueService)
     def restApiClient = Mock(RestApiClient)
-    def interfaceService = new InterfaceService(catalogueService, restApiClient)
+    def branchEvolutionBuilder = Mock(BranchEvolutionBuilder)
+    def interfaceService = new InterfaceService(catalogueService, restApiClient, branchEvolutionBuilder)
 
     def aUsername = "test-user"
 
@@ -147,7 +150,7 @@ class InterfaceServiceTest extends Specification {
         !result
     }
 
-    def "GetSpecEvolution returns only tags behind the main branch for the main evolution"() {
+    def "GetSpecEvolution is built from tags"() {
         given: "a catalogue with an interface entry"
         def catalogueId = aCatalogue()
         def interfaceEntryName = "testInterface"
@@ -161,13 +164,8 @@ class InterfaceServiceTest extends Specification {
                 .withFilePath(specFilePath)
         interfaceEntry.setSpecFile(specFileLocation)
 
-        and: "a tag behind the main branch"
-        def behindTag = new Tag("behindTag")
-        def behindTagComparison = new Comparison(null, "behind", 0, 1, 1)
-
-        and: "a tag ahead of the main"
-        def aheadTag = new Tag("aheadTag")
-        def aheadTagComparison = new Comparison(null, "ahead", 1, 0, 1)
+        and: "tags on the spec file's repository main branch"
+        def mainTags = [new Tag("mainTag1")]
 
         when: "getting the spec evolution for the interface entry name"
         def specEvolution = interfaceService.getSpecEvolution(catalogueId, interfaceEntryName, aUsername)
@@ -176,14 +174,12 @@ class InterfaceServiceTest extends Specification {
         1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> interfaceEntry
 
         and: "the tags are retrieved from the repository the spec file is in"
-        1 * restApiClient.getRepositoryTags(specFileRepoId) >> [behindTag, aheadTag]
+        1 * restApiClient.getRepositoryTags(specFileRepoId) >> mainTags
 
-        and: "both tags are compared to the main branch"
-        1 * restApiClient.getComparison(specFileRepoId, "master", "behindTag") >> behindTagComparison
-        1 * restApiClient.getComparison(specFileRepoId, "master", "aheadTag") >> aheadTagComparison
+        and: "the main branch evolution items are generated from the tags"
+        1 * branchEvolutionBuilder.generateEvolutionItems(specFileRepoId, "master", mainTags) >> [new TagEvolutionItem().tag("mainTag1")]
 
-        and: "the spec evolution's main branch has an item for the behind tag"
+        and: "the spec evolution returned has the main branch evolution items"
         specEvolution.getMain().getEvolutionItems().size() == 1
-        specEvolution.getMain().getEvolutionItems().first().tag == "behindTag"
     }
 }

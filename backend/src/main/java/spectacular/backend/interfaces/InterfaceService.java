@@ -19,6 +19,7 @@ import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.github.domain.Comparison;
 import spectacular.backend.github.domain.Tag;
+import spectacular.backend.specevolution.BranchEvolutionBuilder;
 
 @Service
 public class InterfaceService {
@@ -26,10 +27,13 @@ public class InterfaceService {
 
   private final CatalogueService catalogueService;
   private final RestApiClient restApiClient;
+  private final BranchEvolutionBuilder branchEvolutionBuilder;
 
-  public InterfaceService(CatalogueService catalogueService, RestApiClient restApiClient) {
+  public InterfaceService(CatalogueService catalogueService, RestApiClient restApiClient,
+                          BranchEvolutionBuilder branchEvolutionBuilder) {
     this.catalogueService = catalogueService;
     this.restApiClient = restApiClient;
+    this.branchEvolutionBuilder = branchEvolutionBuilder;
   }
 
   /**
@@ -98,56 +102,13 @@ public class InterfaceService {
     var tags = this.restApiClient.getRepositoryTags(fileRepo);
 
     var mainBranchName = "master";
-    var mainBranchTagComparisons = tags.stream()
-        .map(tag -> new BranchTagComparision(tag, mainBranchName, this.restApiClient.getComparison(fileRepo, mainBranchName, tag.getName())))
-        .filter(branchTagComparision -> branchTagComparision.getAheadBy() == 0)
-        .sorted(Comparator.comparingInt(BranchTagComparision::getBehindBy))
-        .collect(Collectors.toList());
 
-    // what is the html url for the tag? Do we try get the contents item just to get the Url or do we guess it?
-    // what is the main branch?
-    // filter the tags by pattern
-    // order by semver or commits behind?
-    List<EvolutionItem> mainBranchTagEvolutionItems = mainBranchTagComparisons.stream()
-        .map(branchTagComparision -> new TagEvolutionItem().tag(branchTagComparision.getTag().getName()))
-        .collect(Collectors.toList());
+    var mainBranchTagEvolutionItems = branchEvolutionBuilder.generateEvolutionItems(fileRepo, mainBranchName, tags);
 
     var mainBranch = new EvolutionBranch().branchName("master").evolutionItems(mainBranchTagEvolutionItems);
 
     var specEvolution = new SpecEvolution().main(mainBranch);
 
     return specEvolution;
-  }
-
-  private class BranchTagComparision {
-    private final Tag tag;
-    private final String branchName;
-    private final Comparison comparison;
-
-    private BranchTagComparision(Tag tag, String branchName, Comparison comparison) {
-      this.tag = tag;
-      this.branchName = branchName;
-      this.comparison = comparison;
-    }
-
-    public Tag getTag() {
-      return tag;
-    }
-
-    public String getBranchName() {
-      return branchName;
-    }
-
-    public Comparison getComparison() {
-      return comparison;
-    }
-
-    public int getBehindBy() {
-      return comparison.getBehind_by();
-    }
-
-    public int getAheadBy() {
-      return comparison.getAhead_by();
-    }
   }
 }
