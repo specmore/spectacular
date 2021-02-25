@@ -1,6 +1,6 @@
 id: https://spectacular/0.1/catalogue-manifest
 $schema: http://json-schema.org/draft-04/schema#
-description: Validation schema for Catalogue Manifest File v0.1.
+description: Validation schema for Catalogue Manifest File v0.2.
 type: object
 properties:
   spectacular:
@@ -31,6 +31,8 @@ definitions:
     properties:
       specFile:
         $ref: '#/definitions/SpecFileLocation'
+      specEvolutionConfig:
+        $ref: '#/definitions/SpecEvolutionConfig'
     required:
       - specFile
   SpecFileLocation:
@@ -43,4 +45,31 @@ definitions:
         pattern: ^[^\/]+\/[^\/]+$
     required:
       - filePath
-
+  SpecEvolutionConfig:
+    type: object
+    description: Config for determining what git data can be used to generate an evolutionary view of the interface's spec file.
+    properties:
+      releaseTagConfig:
+        description: Configuration capturing the tagging convention used to tag the finalised releases of the specification file.
+        type: object
+        properties:
+          tagPrefix:
+            description: The prefix used to select which tags should be included as version milestones for the spec file. The rest of the branch name should conform to the versioning convention used.
+            type: string
+          versioningConvention:
+            type: string
+            description: Defaults to `semver`.
+            enum:
+              - semver
+      releaseBranchConfig:
+        description: Configuration capturing the branching conventions used to prepare new releases of the specification file.
+        type: object
+        properties:
+          branchPrefix:
+            description: The prefix used to select which branches should be included as draft release branches for the spec file. The rest of the branch name should conform to the versioning convention used.
+            type: string
+          versioningConvention:
+            type: string
+            description: Defaults to `majorMinorVersioned`.
+            enum:
+              - majorMinorVersioned
