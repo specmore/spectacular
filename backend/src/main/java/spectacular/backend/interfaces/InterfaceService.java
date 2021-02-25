@@ -1,6 +1,7 @@
 package spectacular.backend.interfaces;
 
 import java.io.UnsupportedEncodingException;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -8,11 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import spectacular.backend.api.model.EvolutionBranch;
 import spectacular.backend.api.model.SpecEvolution;
+import spectacular.backend.cataloguemanifest.SpecFileRepositoryResolver;
 import spectacular.backend.catalogues.CatalogueService;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.specevolution.EvolutionBranchBuilder;
+import spectacular.backend.specevolution.SpecEvolutionBuilder;
 
 @Service
 public class InterfaceService {
@@ -20,18 +23,19 @@ public class InterfaceService {
 
   private final CatalogueService catalogueService;
   private final RestApiClient restApiClient;
-  private final EvolutionBranchBuilder evolutionBranchBuilder;
+  private final SpecEvolutionBuilder specEvolutionBuilder;
 
   /**
    * A service for returning information about an interface and its specification file.
    * @param catalogueService the catalogue service used to get information about where the spec file is located
    * @param restApiClient the rest client for retrieving information from the git service
-   * @param evolutionBranchBuilder a helper service for building the evolutionary view of a specification file
+   * @param specEvolutionBuilder a helper service for building the evolutionary view of a specification file
    */
-  public InterfaceService(CatalogueService catalogueService, RestApiClient restApiClient, EvolutionBranchBuilder evolutionBranchBuilder) {
+  public InterfaceService(CatalogueService catalogueService, RestApiClient restApiClient,
+                          SpecEvolutionBuilder specEvolutionBuilder) {
     this.catalogueService = catalogueService;
     this.restApiClient = restApiClient;
-    this.evolutionBranchBuilder = evolutionBranchBuilder;
+    this.specEvolutionBuilder = specEvolutionBuilder;
   }
 
   /**
@@ -52,12 +56,7 @@ public class InterfaceService {
       return null;
     }
 
-    RepositoryId fileRepo;
-    if (catalogueInterfaceEntry.getSpecFile().getRepo() != null) {
-      fileRepo = RepositoryId.createForNameWithOwner(catalogueInterfaceEntry.getSpecFile().getRepo());
-    } else {
-      fileRepo = catalogueId.getRepositoryId();
-    }
+    var fileRepo = SpecFileRepositoryResolver.resolveSpecFileRepository(catalogueInterfaceEntry, catalogueId);
     var filePath = catalogueInterfaceEntry.getSpecFile().getFilePath();
 
     try {
@@ -84,29 +83,20 @@ public class InterfaceService {
    * @param username the name of the user requesting the spec evolution
    */
   public SpecEvolution getSpecEvolution(CatalogueId catalogueId, String interfaceName, String username) {
-    var catalogueInterfaceEntry = this.catalogueService.getInterfaceEntry(catalogueId, interfaceName,username);
+    var catalogueInterfaceEntry = this.catalogueService.getInterfaceEntry(catalogueId, interfaceName, username);
 
     if (catalogueInterfaceEntry == null || catalogueInterfaceEntry.getSpecFile() == null) {
       return null;
     }
 
-    RepositoryId fileRepo;
-    if (catalogueInterfaceEntry.getSpecFile().getRepo() != null) {
-      fileRepo = RepositoryId.createForNameWithOwner(catalogueInterfaceEntry.getSpecFile().getRepo());
-    } else {
-      fileRepo = catalogueId.getRepositoryId();
+    var specEvolutionConfig = catalogueInterfaceEntry.getSpecEvolutionConfig();
+    if (specEvolutionConfig == null) {
+      return new SpecEvolution().interfaceName(interfaceName);
     }
 
-    var tags = this.restApiClient.getRepositoryTags(fileRepo);
-
+    var specFileRepo = SpecFileRepositoryResolver.resolveSpecFileRepository(catalogueInterfaceEntry, catalogueId);
     var mainBranchName = "master";
 
-    var mainBranchTagEvolutionItems = evolutionBranchBuilder.generateEvolutionItems(fileRepo, mainBranchName, tags);
-
-    var mainBranch = new EvolutionBranch().branchName("master").evolutionItems(mainBranchTagEvolutionItems);
-
-    var specEvolution = new SpecEvolution().main(mainBranch);
-
-    return specEvolution;
+    return specEvolutionBuilder.generateSpecEvolution(interfaceName, specEvolutionConfig, specFileRepo, mainBranchName);
   }
 }

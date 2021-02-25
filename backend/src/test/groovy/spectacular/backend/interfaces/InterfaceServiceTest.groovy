@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 import spectacular.backend.api.model.TagEvolutionItem
 import spectacular.backend.cataloguemanifest.model.Interface
+import spectacular.backend.cataloguemanifest.model.SpecEvolutionConfig
 import spectacular.backend.cataloguemanifest.model.SpecFileLocation
 import spectacular.backend.catalogues.CatalogueService
 import spectacular.backend.common.CatalogueId
@@ -11,14 +12,14 @@ import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.domain.ContentItem
 import spectacular.backend.github.domain.Tag
-import spectacular.backend.specevolution.EvolutionBranchBuilder
+import spectacular.backend.specevolution.SpecEvolutionBuilder
 import spock.lang.Specification
 
 class InterfaceServiceTest extends Specification {
     def catalogueService = Mock(CatalogueService)
     def restApiClient = Mock(RestApiClient)
-    def evolutionBranchBuilder = Mock(EvolutionBranchBuilder)
-    def interfaceService = new InterfaceService(catalogueService, restApiClient, evolutionBranchBuilder)
+    def specEvolutionBuilder = Mock(SpecEvolutionBuilder)
+    def interfaceService = new InterfaceService(catalogueService, restApiClient, specEvolutionBuilder)
 
     def aUsername = "test-user"
 
@@ -149,7 +150,7 @@ class InterfaceServiceTest extends Specification {
         !result
     }
 
-    def "GetSpecEvolution is built from tags"() {
+    def "GetSpecEvolution is built for spec evolution config"() {
         given: "a catalogue with an interface entry"
         def catalogueId = aCatalogue()
         def interfaceEntryName = "testInterface"
@@ -163,8 +164,12 @@ class InterfaceServiceTest extends Specification {
                 .withFilePath(specFilePath)
         interfaceEntry.setSpecFile(specFileLocation)
 
-        and: "tags on the spec file's repository main branch"
-        def mainTags = [new Tag("mainTag1")]
+        and: "a spec evolution config"
+        def specEvolutionConfig = new SpecEvolutionConfig()
+        interfaceEntry.setSpecEvolutionConfig(specEvolutionConfig)
+
+//        and: "tags on the spec file's repository main branch"
+//        def mainTags = [new Tag("mainTag1")]
 
         when: "getting the spec evolution for the interface entry name"
         def specEvolution = interfaceService.getSpecEvolution(catalogueId, interfaceEntryName, aUsername)
@@ -172,13 +177,16 @@ class InterfaceServiceTest extends Specification {
         then: "the interface entry is retrieved from the catalogue service"
         1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> interfaceEntry
 
-        and: "the tags are retrieved from the repository the spec file is in"
-        1 * restApiClient.getRepositoryTags(specFileRepoId) >> mainTags
+        and: "the spec evolution is built"
+        1 * specEvolutionBuilder.generateSpecEvolution(interfaceEntryName, specEvolutionConfig, specFileRepoId, "master")
 
-        and: "the main branch evolution items are generated from the tags"
-        1 * evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, "master", mainTags) >> [new TagEvolutionItem().tag("mainTag1")]
-
-        and: "the spec evolution returned has the main branch evolution items"
-        specEvolution.getMain().getEvolutionItems().size() == 1
+//        and: "the tags are retrieved from the repository the spec file is in"
+//        1 * restApiClient.getRepositoryTags(specFileRepoId) >> mainTags
+//
+//        and: "the main branch evolution items are generated from the tags"
+//        1 * evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, "master", mainTags) >> [new TagEvolutionItem().tag("mainTag1")]
+//
+//        and: "the spec evolution returned has the main branch evolution items"
+//        specEvolution.getMain().getEvolutionItems().size() == 1
     }
 }

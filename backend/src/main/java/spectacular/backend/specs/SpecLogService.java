@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import spectacular.backend.api.mapper.PullRequestMapper;
 import spectacular.backend.api.model.ChangeProposal;
+import spectacular.backend.cataloguemanifest.SpecFileRepositoryResolver;
 import spectacular.backend.cataloguemanifest.model.Catalogue;
 import spectacular.backend.cataloguemanifest.model.Interface;
 import spectacular.backend.common.CatalogueId;
@@ -39,9 +40,7 @@ public class SpecLogService {
   }
 
   private spectacular.backend.api.model.SpecLog createSpecLog(Map.Entry<String, Interface> interfaceEntry, CatalogueId catalogueId) {
-    var specRepo = interfaceEntry.getValue().getSpecFile().getRepo() != null ?
-        RepositoryId.createForNameWithOwner(interfaceEntry.getValue().getSpecFile().getRepo()) :
-        catalogueId.getRepositoryId();
+    var specRepo = SpecFileRepositoryResolver.resolveSpecFileRepository(interfaceEntry.getValue(), catalogueId);
     var specFilePath = interfaceEntry.getValue().getSpecFile().getFilePath();
     var latestAgreedSpecItem = specService.getSpecItem(specRepo, specFilePath, LATEST_AGREED_BRANCH);
     var pullRequestsWithSpecFile = pullRequestRepository.getPullRequestsForRepoAndFile(specRepo, specFilePath);

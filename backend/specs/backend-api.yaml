@@ -219,6 +219,8 @@ components:
       properties:
         interfaceName:
           type: string
+        configUsed:
+          type: object
         main:
           $ref: '#/components/schemas/EvolutionBranch'
         releases:
