@@ -6,7 +6,8 @@ import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.graphql.ChangedFile
 import spectacular.backend.github.graphql.Connection
 import spectacular.backend.github.graphql.GraphQlResponse
-import spectacular.backend.github.graphql.Ref
+import spectacular.backend.github.graphql.Repository
+import spectacular.backend.github.graphql.RepositoryRef
 import spectacular.backend.github.graphql.RepositoryWithPullRequests
 import spectacular.backend.github.graphql.ResponseData
 import spock.lang.Specification
@@ -19,11 +20,11 @@ class PullRequestRepositoryTest extends Specification {
 
     def "GetPullRequestsForRepo ignores pull requests from unknown branches"() {
         given: "A repository"
-        def graphQlRepo = new spectacular.backend.github.graphql.Repository("test-owner/test-repo", new URI("some-url"))
+        def graphQlRepo = new Repository("test-owner/test-repo", new URI("some-url"))
         def repo = RepositoryId.createRepositoryFrom(graphQlRepo)
 
         and: "a Pull Request from a valid branch"
-        def validRef = new Ref("a-valid-branch-name", graphQlRepo)
+        def validRef = new RepositoryRef("a-valid-branch-name", graphQlRepo, null, null)
         def labels = new Connection(0, [])
         def changedFiles = new Connection(1, [new ChangedFile("test-changed-file")])
         def validPullRequest = new spectacular.backend.github.graphql.PullRequest(99, new URI("test-url"), labels, changedFiles, "valid PR title", OffsetDateTime.now(), validRef)
@@ -34,7 +35,7 @@ class PullRequestRepositoryTest extends Specification {
 
         and: "the Pull Requests belong to the repository"
         def pullRequestsConnection = new Connection(2, [validPullRequest, unknownPullRequest])
-        def repositoryWithPullRequests = new RepositoryWithPullRequests(graphQlRepo.getNameWithOwner(), graphQlRepo.getUrl(), pullRequestsConnection)
+        def repositoryWithPullRequests = new RepositoryWithPullRequests(graphQlRepo.getNameWithOwner(), graphQlRepo.getUrl(), pullRequestsConnection, null)
         def graphQlResponseData = new ResponseData(repositoryWithPullRequests)
         def graphQlReponse = new GraphQlResponse(graphQlResponseData, JsonNodeFactory.instance.arrayNode())
 

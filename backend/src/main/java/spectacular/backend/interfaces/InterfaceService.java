@@ -16,6 +16,7 @@ import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.specevolution.EvolutionBranchBuilder;
 import spectacular.backend.specevolution.SpecEvolutionBuilder;
+import spectacular.backend.specevolution.SpecEvolutionService;
 
 @Service
 public class InterfaceService {
@@ -23,19 +24,19 @@ public class InterfaceService {
 
   private final CatalogueService catalogueService;
   private final RestApiClient restApiClient;
-  private final SpecEvolutionBuilder specEvolutionBuilder;
+  private final SpecEvolutionService specEvolutionService;
 
   /**
    * A service for returning information about an interface and its specification file.
    * @param catalogueService the catalogue service used to get information about where the spec file is located
    * @param restApiClient the rest client for retrieving information from the git service
-   * @param specEvolutionBuilder a helper service for building the evolutionary view of a specification file
+   * @param specEvolutionService a helper service for building the evolutionary view of a specification file
    */
   public InterfaceService(CatalogueService catalogueService, RestApiClient restApiClient,
-                          SpecEvolutionBuilder specEvolutionBuilder) {
+                          SpecEvolutionService specEvolutionService) {
     this.catalogueService = catalogueService;
     this.restApiClient = restApiClient;
-    this.specEvolutionBuilder = specEvolutionBuilder;
+    this.specEvolutionService = specEvolutionService;
   }
 
   /**
@@ -90,13 +91,10 @@ public class InterfaceService {
     }
 
     var specEvolutionConfig = catalogueInterfaceEntry.getSpecEvolutionConfig();
-    if (specEvolutionConfig == null) {
-      return new SpecEvolution().interfaceName(interfaceName);
-    }
 
     var specFileRepo = SpecFileRepositoryResolver.resolveSpecFileRepository(catalogueInterfaceEntry, catalogueId);
-    var mainBranchName = "master";
+    var specFilePath = catalogueInterfaceEntry.getSpecFile().getFilePath();
 
-    return specEvolutionBuilder.generateSpecEvolution(interfaceName, specEvolutionConfig, specFileRepo, mainBranchName);
+    return specEvolutionService.getSpecEvolution(interfaceName, specEvolutionConfig, specFileRepo, specFilePath);
   }
 }

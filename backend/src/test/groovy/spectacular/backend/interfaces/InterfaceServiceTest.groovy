@@ -12,14 +12,14 @@ import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.domain.ContentItem
 import spectacular.backend.github.domain.Tag
-import spectacular.backend.specevolution.SpecEvolutionBuilder
+import spectacular.backend.specevolution.SpecEvolutionService
 import spock.lang.Specification
 
 class InterfaceServiceTest extends Specification {
     def catalogueService = Mock(CatalogueService)
     def restApiClient = Mock(RestApiClient)
-    def specEvolutionBuilder = Mock(SpecEvolutionBuilder)
-    def interfaceService = new InterfaceService(catalogueService, restApiClient, specEvolutionBuilder)
+    def specEvolutionService = Mock(SpecEvolutionService)
+    def interfaceService = new InterfaceService(catalogueService, restApiClient, specEvolutionService)
 
     def aUsername = "test-user"
 
@@ -178,7 +178,7 @@ class InterfaceServiceTest extends Specification {
         1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> interfaceEntry
 
         and: "the spec evolution is built"
-        1 * specEvolutionBuilder.generateSpecEvolution(interfaceEntryName, specEvolutionConfig, specFileRepoId, "master")
+        1 * specEvolutionService.getSpecEvolution(interfaceEntryName, specEvolutionConfig, specFileRepoId, specFilePath)
 
 //        and: "the tags are retrieved from the repository the spec file is in"
 //        1 * restApiClient.getRepositoryTags(specFileRepoId) >> mainTags
