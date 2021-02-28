@@ -15,10 +15,8 @@ class SpecEvolutionBuilderTest extends Specification {
     def specRepoId = RepositoryId.createForNameWithOwner("test/repo")
 
     def evolutionBranchBuilder = Mock(EvolutionBranchBuilder)
-    def restApiClient = Mock(RestApiClient)
-    def refRepository = Mock(RefRepository)
 
-    def specEvolutionBuilder = new SpecEvolutionBuilder(restApiClient, evolutionBranchBuilder, refRepository)
+    def specEvolutionBuilder = new SpecEvolutionBuilder(evolutionBranchBuilder)
 
     def "GenerateSpecEvolution returns a SpecEvolution item with the interface name and config used"() {
         given: "spec evolution data with config"

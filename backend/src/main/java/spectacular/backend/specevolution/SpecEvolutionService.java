@@ -9,11 +9,20 @@ import spectacular.backend.common.RepositoryId;
 public class SpecEvolutionService {
   private final SpecEvolutionDataExtractor specEvolutionDataExtractor;
   private final SpecEvolutionBuilder specEvolutionBuilder;
+  private final SpecEvolutionConfigResolver specEvolutionConfigResolver;
 
+  /**
+   * A service for generating Spec Evolutions.
+   * @param specEvolutionDataExtractor a data provider for the raw git data
+   * @param specEvolutionBuilder a builder to convert the raw git data
+   * @param specEvolutionConfigResolver a helper for defaulting missing config
+   */
   public SpecEvolutionService(SpecEvolutionDataExtractor specEvolutionDataExtractor,
-                              SpecEvolutionBuilder specEvolutionBuilder) {
+                              SpecEvolutionBuilder specEvolutionBuilder,
+                              SpecEvolutionConfigResolver specEvolutionConfigResolver) {
     this.specEvolutionDataExtractor = specEvolutionDataExtractor;
     this.specEvolutionBuilder = specEvolutionBuilder;
+    this.specEvolutionConfigResolver = specEvolutionConfigResolver;
   }
 
   /**
@@ -28,7 +37,15 @@ public class SpecEvolutionService {
                                         SpecEvolutionConfig specEvolutionConfig,
                                         RepositoryId specFileRepo,
                                         String specFilePath) {
-    var specEvolutionDataResult = specEvolutionDataExtractor.getEvolutionDataForSpecFile(specFileRepo, specFilePath, specEvolutionConfig);
+    var resolvedConfig = specEvolutionConfigResolver.resolveConfig(specEvolutionConfig, specFileRepo);
+
+    var mainBranch = specEvolutionDataExtractor.getMainBranchAccordingToConfig(resolvedConfig, specFileRepo, specFilePath);
+
+    var tags = specEvolutionDataExtractor.getRepoTagsAccordingToConfig(resolvedConfig, specFileRepo);
+
+    var branches = specEvolutionDataExtractor.getReleaseBranchesAccordingToConfig(resolvedConfig, specFileRepo, specFilePath);
+
+    var specEvolutionDataResult = new SpecEvolutionData(mainBranch, tags, branches, resolvedConfig);
 
     return specEvolutionBuilder.generateSpecEvolution(interfaceName, specFileRepo, specFilePath, specEvolutionDataResult);
   }

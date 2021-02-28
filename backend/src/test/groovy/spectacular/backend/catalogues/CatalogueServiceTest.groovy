@@ -30,6 +30,7 @@ class CatalogueServiceTest extends Specification {
 
     def aUsername = "test-user"
     def anOrg = "test-org"
+    def default_branch = null
 
     def aCatalogue() {
         def catalogueRepo = new RepositoryId("test-owner","test-repo987")
@@ -41,12 +42,12 @@ class CatalogueServiceTest extends Specification {
     def searchCodeResultsForInstallation(RepositoryId catalogueRepository, boolean isBothFilesPresent = false) {
         def searchCodeResultItems = [];
 
-        def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, catalogueRepository.getNameWithOwner(), new URI("https://test-url"))
+        def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, catalogueRepository.getNameWithOwner(), new URI("https://test-url"), default_branch)
         def searchCodeResultItem = new SearchCodeResultItem(catalogueManifestYmlFilename, catalogueManifestYmlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
         searchCodeResultItems.add(searchCodeResultItem)
 
         if (isBothFilesPresent) {
-            def searchCodeResultRepo2 = new spectacular.backend.github.domain.Repository(1234, catalogueRepository.getNameWithOwner(), new URI("https://test-url"))
+            def searchCodeResultRepo2 = new spectacular.backend.github.domain.Repository(1234, catalogueRepository.getNameWithOwner(), new URI("https://test-url"), default_branch)
             def searchCodeResultItem2 = new SearchCodeResultItem(catalogueManifestYamlFilename, catalogueManifestYamlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo2)
             searchCodeResultItems.add(searchCodeResultItem2)
         }
@@ -286,7 +287,7 @@ class CatalogueServiceTest extends Specification {
 
         and: "an app installation with access to 1 repository with a catalogue config manifest file"
         def repo = new RepositoryId("test-owner","test-repo987")
-        def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), new URI("https://test-url"))
+        def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), new URI("https://test-url"), default_branch)
         def searchCodeResultItem = new SearchCodeResultItem(searchResultFilename, searchResultFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
         def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
 

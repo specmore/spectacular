@@ -14,50 +14,34 @@ import spectacular.backend.github.refs.RefRepository;
 public class SpecEvolutionDataExtractor {
   private final RefRepository refRepository;
 
-  private static final String DEFAULT_MAIN_BRANCH_NAME = "main";
-
   public SpecEvolutionDataExtractor(RefRepository refRepository) {
     this.refRepository = refRepository;
   }
 
   /**
-   * Gets the data needed build a Spec Evolution view of a Spec File from the data stored in a git service.
-   * @param specFileRepo the git repo the Spec File is located in
-   * @param specFilePath the path to the Spec File in the repo
-   * @param specEvolutionConfig the config supplied to pull the correct git data
-   * @return the extracted SpecEvolutionData
+   * Gets the Tag data needed build a Spec Evolution view of a Spec File from the data stored in a git service.
+   * @param specEvolutionConfig the config about what tag data pull
+   * @param specFileRepo the git repo of the file that the spec evolution is about
+   * @return the tag data
    */
-  public SpecEvolutionData getEvolutionDataForSpecFile(RepositoryId specFileRepo,
-                                                       String specFilePath,
-                                                       SpecEvolutionConfig specEvolutionConfig) {
-    var mainBranch = getMainBranchAccordingToConfig(specEvolutionConfig, specFileRepo, specFilePath);
-
-    var tags = getRepoTagsAccordingToConfig(specEvolutionConfig, specFileRepo);
-
-    var branches = getBranchesAccordingToConfig(specEvolutionConfig, specFileRepo, specFilePath);
-
-    return new SpecEvolutionData(mainBranch, tags, branches, specEvolutionConfig);
-  }
-
-  private List<Tag> getRepoTagsAccordingToConfig(SpecEvolutionConfig specEvolutionConfig, RepositoryId specFileRepo) {
-    String tagPrefix = null;
-
-    if (specEvolutionConfig != null &&
-        specEvolutionConfig.getReleaseTagConfig() != null &&
-        specEvolutionConfig.getReleaseTagConfig().getTagPrefix() != null) {
-      tagPrefix = specEvolutionConfig.getReleaseTagConfig().getTagPrefix();
-    }
+  public List<Tag> getRepoTagsAccordingToConfig(SpecEvolutionConfig specEvolutionConfig, RepositoryId specFileRepo) {
+    final String tagPrefix = specEvolutionConfig.getReleaseTagConfig().getTagPrefix();
 
     return this.refRepository.getTagsForRepo(specFileRepo, tagPrefix);
   }
 
-  private List<BranchRef> getBranchesAccordingToConfig(SpecEvolutionConfig specEvolutionConfig,
-                                                       RepositoryId specFileRepo,
-                                                       String specFilePath) {
+  /**
+   * Gets the Release Branch data needed build a Spec Evolution view of a Spec File from the data stored in a git service.
+   * @param specEvolutionConfig the config about what branch data pull
+   * @param specFileRepo the git repo of the file that the spec evolution is about
+   * @param specFilePath the path to the file that the spec evolution is about
+   * @return the release branch data
+   */
+  public List<BranchRef> getReleaseBranchesAccordingToConfig(SpecEvolutionConfig specEvolutionConfig,
+                                                             RepositoryId specFileRepo,
+                                                             String specFilePath) {
 
-    if (specEvolutionConfig != null &&
-        specEvolutionConfig.getReleaseBranchConfig() != null &&
-        specEvolutionConfig.getReleaseBranchConfig().getBranchPrefix() != null) {
+    if (specEvolutionConfig.getReleaseBranchConfig().getBranchPrefix() != null) {
       var branchPrefix = specEvolutionConfig.getReleaseBranchConfig().getBranchPrefix();
       return this.refRepository.getBranchesForRepo(specFileRepo, branchPrefix, specFilePath);
     }
@@ -65,18 +49,17 @@ public class SpecEvolutionDataExtractor {
     return Collections.emptyList();
   }
 
-  private Optional<BranchRef> getMainBranchAccordingToConfig(SpecEvolutionConfig specEvolutionConfig,
+  /**
+   * Gets the Main Branch data needed build a Spec Evolution view of a Spec File from the data stored in a git service.
+   * @param specEvolutionConfig the config about what branch data pull
+   * @param specFileRepo the git repo of the file that the spec evolution is about
+   * @param specFilePath the path to the file that the spec evolution is about
+   * @return the main branch data
+   */
+  public Optional<BranchRef> getMainBranchAccordingToConfig(SpecEvolutionConfig specEvolutionConfig,
                                                              RepositoryId specFileRepo,
                                                              String specFilePath) {
-    String configMainBranchName = null;
-
-    if (specEvolutionConfig != null &&
-        specEvolutionConfig.getMainBranchConfig() != null &&
-        specEvolutionConfig.getMainBranchConfig().getBranchName() != null) {
-      configMainBranchName = specEvolutionConfig.getMainBranchConfig().getBranchName();
-    }
-
-    final String mainBranchName = configMainBranchName != null ? configMainBranchName : DEFAULT_MAIN_BRANCH_NAME;
+    final String mainBranchName = specEvolutionConfig.getMainBranchConfig().getBranchName();
 
     var branches = this.refRepository.getBranchesForRepo(specFileRepo, mainBranchName, specFilePath);
 
