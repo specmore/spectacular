@@ -12,7 +12,6 @@ properties:
       $ref: '#/definitions/Catalogue'
 required:
   - spectacular
-additionalProperties: false
 definitions:
   Catalogue:
     type: object
@@ -27,7 +26,6 @@ definitions:
           $ref: '#/definitions/Interface'
     required:
       - title
-    additionalProperties: false
   Interface:
     type: object
     properties:
@@ -35,7 +33,6 @@ definitions:
         $ref: '#/definitions/SpecFileLocation'
     required:
       - specFile
-    additionalProperties: false
   SpecFileLocation:
     type: object
     properties:
@@ -46,5 +43,4 @@ definitions:
         pattern: ^[^\/]+\/[^\/]+$
     required:
       - filePath
-    additionalProperties: false
 

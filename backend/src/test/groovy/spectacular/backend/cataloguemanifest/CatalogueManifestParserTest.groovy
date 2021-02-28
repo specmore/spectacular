@@ -35,6 +35,7 @@ class CatalogueManifestParserTest extends Specification {
     def aCatalogueManifestWithInvalidFields = "spectacular: '0.1'\n" +
             "catalogues:\n" +
             "  testCatalogue1:\n" +
+            "    title: \"Test Catalogue 1\"\n" +
             "    randomField: 12345"
 
     def aCatalogueManifestWithMissingCatalogueTitle = "spectacular: '0.1'\n" +
@@ -79,7 +80,7 @@ class CatalogueManifestParserTest extends Specification {
         !result.error
     }
 
-    def "FindAndParseCatalogueInManifestFileContents returns parse error for unknown fields in catalogue manifest"() {
+    def "FindAndParseCatalogueInManifestFileContents accepts unknown fields in catalogue manifest to support backwards compatibility"() {
         given: "an invalid catalogue manifest YAML content"
         def yamlManifest = aCatalogueManifestWithInvalidFields
 
@@ -87,10 +88,10 @@ class CatalogueManifestParserTest extends Specification {
         def result = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(yamlManifest, "testCatalogue1");
 
         then: "the catalogue is not found"
-        !result.catalogue
+        result.catalogue
 
-        and: "there is a parse error"
-        result.error == "A mapping error occurred while parsing the catalogue manifest yaml file. The following field is invalid: spectacular.backend.cataloguemanifest.model.Catalogue[\"randomField\"]"
+        and: "there is no error"
+        !result.error
     }
 
     def "FindAndParseCatalogueInManifestFileContents returns parse error for missing required fields in catalogue manifest"() {
