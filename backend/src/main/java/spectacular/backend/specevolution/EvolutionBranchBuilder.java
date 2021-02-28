@@ -39,8 +39,14 @@ public class EvolutionBranchBuilder {
     // what is the html url for the tag? Do we try get the contents item just to get the Url or do we guess it?
     // what is the main branch?
     List<EvolutionItem> mainBranchTagEvolutionItems = mainBranchTagComparisons.stream()
-        .map(branchTagComparision -> new TagEvolutionItem().tag(branchTagComparision.getTag().getName()))
+        .map(branchTagComparision -> new TagEvolutionItem().tag(branchTagComparision.getTag().getName()).evolutionItemType("tag"))
         .collect(Collectors.toList());
+
+    var usedTags = mainBranchTagComparisons.stream()
+        .map(branchTagComparision -> branchTagComparision.getTag())
+        .collect(Collectors.toList());
+
+    tags.removeAll(usedTags);
 
     return mainBranchTagEvolutionItems;
   }

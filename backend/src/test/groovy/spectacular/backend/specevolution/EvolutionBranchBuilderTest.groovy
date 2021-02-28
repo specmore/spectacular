@@ -16,16 +16,19 @@ class EvolutionBranchBuilderTest extends Specification {
         def specFileRepoId = RepositoryId.createForNameWithOwner("test-owner/test-repo")
         def branchName = "test-branch"
 
-        and: "a tag behind the branch head"
+        and: "a tag behind the branch head on the repository"
         def behindTag = new Tag("behindTag")
         def behindTagComparison = new Comparison(null, "behind", 0, 1, 1)
 
-        and: "a tag ahead of the branch head"
+        and: "a tag ahead of the branch head on the repository"
         def aheadTag = new Tag("aheadTag")
         def aheadTagComparison = new Comparison(null, "ahead", 1, 0, 1)
 
+        and: "a list of the tags extracted"
+        def tagList = [behindTag, aheadTag]
+
         when: "generating the evolution items for the branch"
-        def evolutionItems = evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, branchName, [behindTag, aheadTag])
+        def evolutionItems = evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, branchName, tagList)
 
         then: "both tags are compared to the main branch"
         1 * restApiClient.getComparison(specFileRepoId, branchName, "behindTag") >> behindTagComparison
@@ -34,5 +37,8 @@ class EvolutionBranchBuilderTest extends Specification {
         and: "the spec evolution's main branch has an item for the behind tag"
         evolutionItems.size() == 1
         evolutionItems.first().tag == "behindTag"
+
+        and: "the tag list has the behind tag removed"
+        !tagList.contains(behindTag)
     }
 }
