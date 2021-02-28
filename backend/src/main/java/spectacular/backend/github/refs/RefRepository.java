@@ -59,6 +59,17 @@ public class RefRepository {
       "    }\n" +
       "  }\n" +
       "}";
+  private final static String tagsQuery = "query { \n" +
+      "  repository(owner: \"%s\", name:\"%s\") {\n" +
+      "    nameWithOwner url\n" +
+      "    refs(refPrefix:\"refs/tags/\", first:10, query:\"%s\") {\n" +
+      "      totalCount\n" +
+      "      nodes {\n" +
+      "        name\n" +
+      "      }\n" +
+      "    }\n" +
+      "  }\n" +
+      "}";
 
   private final RestApiClient restApiClient;
 
@@ -98,6 +109,19 @@ public class RefRepository {
    * @return a list of Tag objects
    */
   public List<Tag> getTagsForRepo(RepositoryId repoId, String query) {
+    String formattedQuery = String.format(tagsQuery, repoId.getOwner(), repoId.getName(), query);
+
+    var response = restApiClient.graphQlQuery(new GraphQlRequest(formattedQuery));
+
+    if (!response.getErrors().isEmpty()) {
+      logger.error("The following error occurred while fetching pull requests for repo '" +
+          repoId.getNameWithOwner() + "': " + response.getErrors().toString());
+    } else {
+      return response.getData().getRepository().getRefs().getNodes().stream()
+          .map(ref -> new Tag(ref.getName()))
+          .collect(Collectors.toList());
+    }
+
     return Collections.emptyList();
   }
 }
