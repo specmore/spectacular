@@ -9,6 +9,7 @@ import spectacular.backend.cataloguemanifest.model.SpecEvolutionConfig;
 import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.github.domain.Tag;
+import spectacular.backend.github.refs.BranchRef;
 import spectacular.backend.github.refs.RefRepository;
 
 @Service
@@ -40,16 +41,25 @@ public class SpecEvolutionBuilder {
         .configUsed(specEvolutionData.getSpecEvolutionConfig());
 
     if (specEvolutionData.getMainBranch().isPresent()) {
-      var mainBranchName = specEvolutionData.getMainBranch().get().getName();
-      var mainBranchTagEvolutionItems = this.evolutionBranchBuilder.generateEvolutionItems(specFileRepo,
-          mainBranchName,
-          specEvolutionData.getTags());
-      var mainBranch = new EvolutionBranch().branchName(mainBranchName).evolutionItems(mainBranchTagEvolutionItems);
+      var mainBranch = generateEvolutionBranch(specEvolutionData.getMainBranch().get(), specEvolutionData.getTags(), specFileRepo);
       specEvolution.setMain(mainBranch);
     }
 
+    var releaseBranches = specEvolutionData.getReleaseBranches().stream()
+        .map(branchRef -> this.generateEvolutionBranch(branchRef, specEvolutionData.getTags(), specFileRepo))
+        .collect(Collectors.toList());
 
+    specEvolution.setReleases(releaseBranches);
 
     return specEvolution;
+  }
+
+  private EvolutionBranch generateEvolutionBranch(BranchRef branchRef, List<Tag> tags, RepositoryId specFileRepo) {
+    var branchName = branchRef.getName();
+    var tagEvolutionItems = this.evolutionBranchBuilder.generateEvolutionItems(specFileRepo,
+        branchName,
+        tags);
+
+    return new EvolutionBranch().branchName(branchName).evolutionItems(tagEvolutionItems);
   }
 }

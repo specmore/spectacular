@@ -50,11 +50,11 @@ class SpecEvolutionBuilderTest extends Specification {
         def releaseBranch2 = new BranchRef("release2", null, null)
 
         when: "the spec evolution is built"
-        def specEvolutionData = new SpecEvolutionData(Optional.empty(), [ releaseBranch1, releaseBranch2 ], Collections.emptyList(), specEvolutionConfig)
+        def specEvolutionData = new SpecEvolutionData(Optional.empty(), Collections.emptyList(), [ releaseBranch1, releaseBranch2 ], specEvolutionConfig)
         def specEvolution = specEvolutionBuilder.generateSpecEvolution(interfaceName, specRepoId, specFilePath, specEvolutionData)
 
         then: "the evolutionBranchBuilder is called for each release branch"
-        1 * evolutionBranchBuilder.generateEvolutionItems(specRepoId, releaseBranch1, _)
-        1 * evolutionBranchBuilder.generateEvolutionItems(specRepoId, releaseBranch2, _)
+        1 * evolutionBranchBuilder.generateEvolutionItems(specRepoId, releaseBranch1.getName(), _)
+        1 * evolutionBranchBuilder.generateEvolutionItems(specRepoId, releaseBranch2.getName(), _)
     }
 }
