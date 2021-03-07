@@ -43,7 +43,7 @@ public class SpecLogService {
     var specRepo = SpecFileRepositoryResolver.resolveSpecFileRepository(interfaceEntry.getValue(), catalogueId);
     var specFilePath = interfaceEntry.getValue().getSpecFile().getFilePath();
     var latestAgreedSpecItem = specService.getSpecItem(specRepo, specFilePath, LATEST_AGREED_BRANCH);
-    var pullRequestsWithSpecFile = pullRequestRepository.getPullRequestsForRepoAndFile(specRepo, specFilePath);
+    var pullRequestsWithSpecFile = pullRequestRepository.getPullRequestsForRepoAndFile(specRepo, specFilePath, LATEST_AGREED_BRANCH);
     var proposedChanges = pullRequestsWithSpecFile.stream()
         .map(pullRequest -> createChangeProposalFor(pullRequest, specFilePath))
         .collect(Collectors.toList());

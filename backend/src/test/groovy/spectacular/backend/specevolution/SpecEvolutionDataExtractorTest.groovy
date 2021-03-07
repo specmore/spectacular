@@ -6,15 +6,18 @@ import spectacular.backend.cataloguemanifest.model.ReleaseTagConfig
 import spectacular.backend.cataloguemanifest.model.SpecEvolutionConfig
 import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.domain.Tag
+import spectacular.backend.github.pullrequests.PullRequestRepository
 import spectacular.backend.github.refs.BranchRef
 import spectacular.backend.github.refs.RefRepository
 import spock.lang.Specification
 
 class SpecEvolutionDataExtractorTest extends Specification {
     def refRepository = Mock(RefRepository)
-    def specEvolutionDataExtractor = new SpecEvolutionDataExtractor(refRepository)
+    def pullRequestRepository = Mock(PullRequestRepository)
+    def specEvolutionDataExtractor = new SpecEvolutionDataExtractor(refRepository, pullRequestRepository)
 
     def specFilePath = "some/path/spec.yaml"
+    def specRepoId = RepositoryId.createForNameWithOwner("test/repo")
 
     def "GetMainBranchAccordingToConfig selects the first exact matching branch to the main branch name"() {
         given: "a spec evolution config with a main branch name config set"
@@ -22,11 +25,10 @@ class SpecEvolutionDataExtractorTest extends Specification {
         def mainBranchConfig = new MainBranchConfig().withBranchName(mainBranchName)
         def specEvolutionConfig = new SpecEvolutionConfig().withMainBranchConfig(mainBranchConfig)
 
-        and: "a spec repository with branches"
-        def specRepoId = RepositoryId.createForNameWithOwner("test/repo")
+        and: "different branches matching the main branch name on the repository"
         def branches = [
-                new BranchRef("a-main-branch", null, null),
-                new BranchRef("a-main-branch-2", null, null),
+                new BranchRef("a-main-branch", null),
+                new BranchRef("a-main-branch-2", null),
         ]
 
         when: "the main branch data is extracted"
@@ -35,8 +37,30 @@ class SpecEvolutionDataExtractorTest extends Specification {
         then: "branches for the repository are retrieved with the main branch name as the query filter"
         1 * refRepository.getBranchesForRepo(specRepoId, mainBranchName, specFilePath) >> branches
 
+        and: "the pull requests for only one branch is retrieved"
+        1 * pullRequestRepository.getPullRequestsForRepoAndFile(specRepoId, specFilePath, _)
+
         and: "the main branch returned is an exact match"
-        result.get().getName() == mainBranchName
+        result.get().getBranch().getName() == mainBranchName
+    }
+
+    def "GetMainBranchAccordingToConfig returns an empty result if no main branch match is found"() {
+        given: "a spec evolution config with a main branch name config set that matches no branches"
+        def mainBranchName = "a-main-branch"
+        def mainBranchConfig = new MainBranchConfig().withBranchName(mainBranchName)
+        def specEvolutionConfig = new SpecEvolutionConfig().withMainBranchConfig(mainBranchConfig)
+
+        when: "the main branch data is extracted"
+        def result = specEvolutionDataExtractor.getMainBranchAccordingToConfig(specEvolutionConfig, specRepoId, specFilePath)
+
+        then: "branches for the repository are retrieved with the main branch name as the query filter"
+        1 * refRepository.getBranchesForRepo(specRepoId, mainBranchName, specFilePath) >> []
+
+        and: "no pull requests for are retrieved"
+        0 * pullRequestRepository.getPullRequestsForRepoAndFile(specRepoId, specFilePath, _)
+
+        and: "the main branch returned is empty"
+        result.isEmpty()
     }
 
     def "GetRepoTagsAccordingToConfig gets all tags without a query filter if tag config is set without a prefix"() {
@@ -44,8 +68,7 @@ class SpecEvolutionDataExtractorTest extends Specification {
         def tagConfig = new ReleaseTagConfig()
         def specEvolutionConfig = new SpecEvolutionConfig().withReleaseTagConfig(tagConfig)
 
-        and: "a spec repository with tags"
-        def specRepoId = RepositoryId.createForNameWithOwner("test/repo")
+        and: "tags on the repository"
         def tags = [ new Tag("tag-123"), new Tag("x-tag-456") ]
 
         when: "the tag data is extracted"
@@ -64,8 +87,7 @@ class SpecEvolutionDataExtractorTest extends Specification {
         def tagConfig = new ReleaseTagConfig().withTagPrefix(tagPrefix)
         def specEvolutionConfig = new SpecEvolutionConfig().withReleaseTagConfig(tagConfig)
 
-        and: "a spec repository with tags"
-        def specRepoId = RepositoryId.createForNameWithOwner("test/repo")
+        and: "tags on the repository"
         def tags = [ new Tag("tag-123"), new Tag("x-tag-456") ]
 
         when: "the tag data is extracted"
@@ -79,9 +101,6 @@ class SpecEvolutionDataExtractorTest extends Specification {
         given: "a spec evolution config with no release branch prefix config set"
         def releaseBranchConfig = new ReleaseBranchConfig()
         def specEvolutionConfig = new SpecEvolutionConfig().withReleaseBranchConfig(releaseBranchConfig)
-
-        and: "a spec repository"
-        def specRepoId = RepositoryId.createForNameWithOwner("test/repo")
 
         when: "the release branch data is extracted"
         def result = specEvolutionDataExtractor.getReleaseBranchesAccordingToConfig(specEvolutionConfig, specRepoId, specFilePath)
@@ -99,9 +118,11 @@ class SpecEvolutionDataExtractorTest extends Specification {
         def releaseBranchConfig = new ReleaseBranchConfig().withBranchPrefix(branchPrefix)
         def specEvolutionConfig = new SpecEvolutionConfig().withReleaseBranchConfig(releaseBranchConfig)
 
-        and: "a spec repository with branches"
-        def specRepoId = RepositoryId.createForNameWithOwner("test/repo")
-        def branches = [ new BranchRef("release/x-branch-123", null, null) ]
+        and: "branches on the repository"
+        def branches = [
+                new BranchRef("release/x-branch-123", null),
+                new BranchRef("release/x-branch-456", null)
+        ]
 
         when: "the release branch data is extracted"
         def result = specEvolutionDataExtractor.getReleaseBranchesAccordingToConfig(specEvolutionConfig, specRepoId, specFilePath)
@@ -109,7 +130,10 @@ class SpecEvolutionDataExtractorTest extends Specification {
         then: "branches for the repository are retrieved with the branchPrefix query filter"
         1 * refRepository.getBranchesForRepo(specRepoId, branchPrefix, specFilePath) >> branches
 
+        and: "the pull requests for each matching branch is retrieved"
+        2 * pullRequestRepository.getPullRequestsForRepoAndFile(specRepoId, specFilePath, _)
+
         and: "the result has the extracted release branches"
-        result == branches
+        result.size() == 2
     }
 }

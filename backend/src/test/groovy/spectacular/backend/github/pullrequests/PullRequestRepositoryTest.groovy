@@ -18,15 +18,14 @@ class PullRequestRepositoryTest extends Specification {
     def restApiClient = Mock(RestApiClient)
     def pullRequestRepository = new PullRequestRepository(restApiClient)
 
-    def baseRefName = "base-branch"
-
     def "GetPullRequestsForRepo ignores pull requests from unknown branches"() {
-        given: "A repository"
+        given: "A repository and target branch"
         def graphQlRepo = new Repository("test-owner/test-repo", new URI("some-url"))
         def repo = RepositoryId.createRepositoryFrom(graphQlRepo)
+        def baseRefName = "base-branch"
 
         and: "a Pull Request from a valid branch"
-        def validRef = new RepositoryRef("a-valid-branch-name", graphQlRepo, null, null)
+        def validRef = new RepositoryRef("a-valid-branch-name", graphQlRepo, null)
         def labels = new Connection(0, [])
         def changedFiles = new Connection(1, [new ChangedFile("test-changed-file")])
         def validPullRequest = new spectacular.backend.github.graphql.PullRequest(99, new URI("test-url"), labels, changedFiles, "valid PR title", OffsetDateTime.now(), validRef, baseRefName)
@@ -42,7 +41,7 @@ class PullRequestRepositoryTest extends Specification {
         def graphQlReponse = new GraphQlResponse(graphQlResponseData, JsonNodeFactory.instance.arrayNode())
 
         when: "the Pull Requests are retrieved for changed file"
-        def pullRequestsResult = pullRequestRepository.getPullRequestsForRepoAndFile(repo, "test-changed-file")
+        def pullRequestsResult = pullRequestRepository.getPullRequestsForRepoAndFile(repo, "test-changed-file", baseRefName)
 
         then: "the Pull Requests should have been queried from the GitHub GraphQL API for the repository"
         1 * restApiClient.graphQlQuery(_) >> graphQlReponse

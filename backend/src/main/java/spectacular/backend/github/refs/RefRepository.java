@@ -37,25 +37,6 @@ public class RefRepository {
       "              }\n" +
       "            }\n" +
       "        }\n" +
-      "        associatedPullRequests(first:100, states: [OPEN]) {\n" +
-      "          totalCount\n" +
-      "          nodes {\n" +
-      "            number\n" +
-      "            title\n" +
-      "            url\n" +
-      "            updatedAt\n" +
-      "            headRef { name repository { nameWithOwner url } }\n" +
-      "            baseRefName\n" +
-      "            labels(first: 10) {\n" +
-      "              totalCount\n" +
-      "              nodes { name }\n" +
-      "            }\n" +
-      "            files(first: 100) {\n" +
-      "              totalCount\n" +
-      "              nodes { path }\n" +
-      "            }\n" +
-      "          }\n" +
-      "        }\n" +
       "      }\n" +
       "    }\n" +
       "  }\n" +

@@ -71,7 +71,7 @@ class SpecLogServiceTest extends Specification {
         specLog.getLatestAgreed() == masterBranchSpecItem
 
         and: "the open pull request is retrieved for changing the spec file in the catalogue's repo"
-        1 * pullRequestRepository.getPullRequestsForRepoAndFile(catalogueId.getRepositoryId(), "test-spec-file-path") >> [openPullRequest]
+        1 * pullRequestRepository.getPullRequestsForRepoAndFile(catalogueId.getRepositoryId(), "test-spec-file-path", baseBranchName) >> [openPullRequest]
 
         and: "a single proposed change is returned on the specLog item for the open pull request"
         specLog.getProposedChanges()
@@ -124,7 +124,7 @@ class SpecLogServiceTest extends Specification {
         specLog.getLatestAgreed() == masterBranchSpecItem
 
         and: "the open pull request is retrieved for changing the spec file in the spec file location's repo"
-        1 * pullRequestRepository.getPullRequestsForRepoAndFile(specFileRepository, "test-spec-file-path") >> [openPullRequest]
+        1 * pullRequestRepository.getPullRequestsForRepoAndFile(specFileRepository, "test-spec-file-path", baseBranchName) >> [openPullRequest]
 
         and: "a single proposed change is returned on the specLog item for the open pull request"
         specLog.getProposedChanges()

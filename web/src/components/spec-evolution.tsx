@@ -1,10 +1,11 @@
 import React, { FunctionComponent } from 'react';
 import './spec-evolution.less';
 import {
-  Button,
-  Header, Icon, Label,
+  Button, Header, Icon, Label,
 } from 'semantic-ui-react';
-import { ChangeProposal, SpecItem, SpecLog, useGetInterfaceSpecEvolution } from '../backend-api-client';
+import {
+  ChangeProposal, SpecItem, SpecLog, useGetInterfaceSpecEvolution,
+} from '../backend-api-client';
 import { CloseSpecEvolutionButton, OpenSpecItemContentPageButton, ViewSpecLinkButton } from '../routes';
 
 interface SpecLogItemProps {

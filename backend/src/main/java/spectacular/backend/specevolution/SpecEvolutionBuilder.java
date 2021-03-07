@@ -8,6 +8,7 @@ import spectacular.backend.api.model.EvolutionItem;
 import spectacular.backend.api.model.SpecEvolution;
 import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.domain.Tag;
+import spectacular.backend.github.pullrequests.PullRequest;
 import spectacular.backend.github.refs.BranchRef;
 
 @Service
@@ -38,13 +39,17 @@ public class SpecEvolutionBuilder {
         .interfaceName(interfaceName)
         .configUsed(specEvolutionData.getSpecEvolutionConfig());
 
+    var tags = specEvolutionData.getTags();
+
     if (specEvolutionData.getMainBranch().isPresent()) {
-      var mainBranch = generateEvolutionBranch(specEvolutionData.getMainBranch().get(), specEvolutionData.getTags(), specFileRepo);
-      specEvolution.setMain(mainBranch);
+      var mainBranch = specEvolutionData.getMainBranch().get().getBranch();
+      var mainBranchPRs = specEvolutionData.getMainBranch().get().getAssociatedPullRequest();
+      var mainEvolutionBranch = generateEvolutionBranch(mainBranch, tags, mainBranchPRs, specFileRepo);
+      specEvolution.setMain(mainEvolutionBranch);
     }
 
     var releaseBranches = specEvolutionData.getReleaseBranches().stream()
-        .map(branchRef -> this.generateEvolutionBranch(branchRef, specEvolutionData.getTags(), specFileRepo))
+        .map(branchData -> this.generateEvolutionBranch(branchData.getBranch(), tags, branchData.getAssociatedPullRequest(), specFileRepo))
         .collect(Collectors.toList());
 
     specEvolution.setReleases(releaseBranches);
@@ -52,13 +57,16 @@ public class SpecEvolutionBuilder {
     return specEvolution;
   }
 
-  private EvolutionBranch generateEvolutionBranch(BranchRef branchRef, Collection<Tag> tags,RepositoryId specFileRepo) {
+  private EvolutionBranch generateEvolutionBranch(BranchRef branchRef,
+                                                  Collection<Tag> tags,
+                                                  Collection<PullRequest> pullRequests,
+                                                  RepositoryId specFileRepo) {
     var branchName = branchRef.getName();
     var evolutionItems = this.evolutionBranchBuilder.generateEvolutionItems(
         specFileRepo,
         branchName,
         tags,
-        branchRef.getAssociatedPullRequests());
+        pullRequests);
 
     var usedTags = evolutionItems.stream()
         .map(EvolutionItem::getTag)
