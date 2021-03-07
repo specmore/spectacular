@@ -27,6 +27,7 @@ public class PullRequestRepository {
       "                url\n" +
       "                updatedAt\n" +
       "                headRef { name repository { nameWithOwner url } }\n" +
+      "                baseRefName\n" +
       "                labels(first: 100) {\n" +
       "                    totalCount\n" +
       "                    nodes { name }\n" +

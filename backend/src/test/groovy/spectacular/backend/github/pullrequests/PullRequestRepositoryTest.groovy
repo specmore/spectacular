@@ -18,6 +18,8 @@ class PullRequestRepositoryTest extends Specification {
     def restApiClient = Mock(RestApiClient)
     def pullRequestRepository = new PullRequestRepository(restApiClient)
 
+    def baseRefName = "base-branch"
+
     def "GetPullRequestsForRepo ignores pull requests from unknown branches"() {
         given: "A repository"
         def graphQlRepo = new Repository("test-owner/test-repo", new URI("some-url"))
@@ -27,11 +29,11 @@ class PullRequestRepositoryTest extends Specification {
         def validRef = new RepositoryRef("a-valid-branch-name", graphQlRepo, null, null)
         def labels = new Connection(0, [])
         def changedFiles = new Connection(1, [new ChangedFile("test-changed-file")])
-        def validPullRequest = new spectacular.backend.github.graphql.PullRequest(99, new URI("test-url"), labels, changedFiles, "valid PR title", OffsetDateTime.now(), validRef)
+        def validPullRequest = new spectacular.backend.github.graphql.PullRequest(99, new URI("test-url"), labels, changedFiles, "valid PR title", OffsetDateTime.now(), validRef, baseRefName)
 
         and: "a Pull Request from an unknown branch"
         def unknownRef = null
-        def unknownPullRequest = new spectacular.backend.github.graphql.PullRequest(101, new URI("test-url2"), labels, changedFiles, "unknown branch PR title", OffsetDateTime.now(), unknownRef)
+        def unknownPullRequest = new spectacular.backend.github.graphql.PullRequest(101, new URI("test-url2"), labels, changedFiles, "unknown branch PR title", OffsetDateTime.now(), unknownRef, baseRefName)
 
         and: "the Pull Requests belong to the repository"
         def pullRequestsConnection = new Connection(2, [validPullRequest, unknownPullRequest])

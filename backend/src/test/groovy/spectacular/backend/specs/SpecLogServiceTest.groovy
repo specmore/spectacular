@@ -13,6 +13,8 @@ import spock.lang.Specification
 import java.time.OffsetDateTime
 
 class SpecLogServiceTest extends Specification {
+    def baseBranchName = "master"
+
     def specService = Mock(SpecService)
     def pullRequestRepository = Mock(PullRequestRepository)
     def specLogService = new SpecLogService(specService, pullRequestRepository)
@@ -48,7 +50,7 @@ class SpecLogServiceTest extends Specification {
 
         and: "a single open pull request changing the spec file"
         def prBranch = "test-branch"
-        def openPullRequest = new PullRequest(catalogueId.getRepositoryId(), prBranch, 99, new URI("https://test-url"), [], [specFilePath], "test-pr", OffsetDateTime.now())
+        def openPullRequest = new PullRequest(catalogueId.getRepositoryId(), prBranch, baseBranchName, 99, new URI("https://test-url"), [], [specFilePath], "test-pr", OffsetDateTime.now())
 
         and: "a spec item at the file path on the open pull request's source branch"
         def prBranchSpecItem = Mock(spectacular.backend.api.model.SpecItem)
@@ -101,7 +103,7 @@ class SpecLogServiceTest extends Specification {
 
         and: "a single open pull request changing the spec file"
         def prBranch = "test-branch"
-        def openPullRequest = new PullRequest(specFileRepository, prBranch, 99, new URI("https://test-url"), [], [specFilePath], "test-pr", OffsetDateTime.now())
+        def openPullRequest = new PullRequest(specFileRepository, prBranch, baseBranchName, 99, new URI("https://test-url"), [], [specFilePath], "test-pr", OffsetDateTime.now())
 
         and: "a spec item at the file path on the open pull request's source branch"
         def prBranchSpecItem = Mock(spectacular.backend.api.model.SpecItem)

@@ -13,17 +13,18 @@ public class PullRequest {
   private final String title;
   private final OffsetDateTime updatedAt;
   private final Ref headRef;
+  private final String baseRefName;
 
   /**
    * Constructs a PullRequest from the response of a GitHub GraphQL PullRequest object result.
-   *
-   * @param number the PR number
+   *  @param number the PR number
    * @param url the URL to the PR
    * @param labels a list of labels associated to the PR
    * @param changedFiles a list of files changed in the PR
    * @param title the title of the PR
    * @param updatedAt when the PR was last updated
    * @param headRef the branch the PR has been opened from
+   * @param baseRefName the branch name the PR is targeting to merge into
    */
   @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
   public PullRequest(@JsonProperty("number") int number,
@@ -32,7 +33,8 @@ public class PullRequest {
                      @JsonProperty("files") Connection<ChangedFile> changedFiles,
                      @JsonProperty("title") String title,
                      @JsonProperty("updatedAt") OffsetDateTime updatedAt,
-                     @JsonProperty("headRef") Ref headRef) {
+                     @JsonProperty("headRef") Ref headRef,
+                     @JsonProperty("baseRefName") String baseRefName) {
     this.number = number;
     this.url = url;
     this.labels = labels;
@@ -40,6 +42,7 @@ public class PullRequest {
     this.title = title;
     this.updatedAt = updatedAt;
     this.headRef = headRef;
+    this.baseRefName = baseRefName;
   }
 
   public int getNumber() {
@@ -64,6 +67,10 @@ public class PullRequest {
 
   public Ref getHeadRef() {
     return headRef;
+  }
+
+  public String getBaseRefName() {
+    return baseRefName;
   }
 
   public OffsetDateTime getUpdatedAt() {

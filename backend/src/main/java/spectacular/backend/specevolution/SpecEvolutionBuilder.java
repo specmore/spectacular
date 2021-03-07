@@ -1,16 +1,14 @@
 package spectacular.backend.specevolution;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import spectacular.backend.api.model.EvolutionBranch;
+import spectacular.backend.api.model.EvolutionItem;
 import spectacular.backend.api.model.SpecEvolution;
-import spectacular.backend.cataloguemanifest.model.SpecEvolutionConfig;
 import spectacular.backend.common.RepositoryId;
-import spectacular.backend.github.RestApiClient;
 import spectacular.backend.github.domain.Tag;
 import spectacular.backend.github.refs.BranchRef;
-import spectacular.backend.github.refs.RefRepository;
 
 @Service
 public class SpecEvolutionBuilder {
@@ -54,12 +52,20 @@ public class SpecEvolutionBuilder {
     return specEvolution;
   }
 
-  private EvolutionBranch generateEvolutionBranch(BranchRef branchRef, List<Tag> tags, RepositoryId specFileRepo) {
+  private EvolutionBranch generateEvolutionBranch(BranchRef branchRef, Collection<Tag> tags,RepositoryId specFileRepo) {
     var branchName = branchRef.getName();
-    var tagEvolutionItems = this.evolutionBranchBuilder.generateEvolutionItems(specFileRepo,
+    var evolutionItems = this.evolutionBranchBuilder.generateEvolutionItems(
+        specFileRepo,
         branchName,
-        tags);
+        tags,
+        branchRef.getAssociatedPullRequests());
 
-    return new EvolutionBranch().branchName(branchName).evolutionItems(tagEvolutionItems);
+    var usedTags = evolutionItems.stream()
+        .map(EvolutionItem::getTag)
+        .collect(Collectors.toList());
+
+    tags.removeIf(tag -> usedTags.contains(tag.getName()));
+
+    return new EvolutionBranch().branchName(branchName).evolutionItems(evolutionItems);
   }
 }

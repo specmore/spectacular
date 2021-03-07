@@ -45,6 +45,7 @@ public class RefRepository {
       "            url\n" +
       "            updatedAt\n" +
       "            headRef { name repository { nameWithOwner url } }\n" +
+      "            baseRefName\n" +
       "            labels(first: 10) {\n" +
       "              totalCount\n" +
       "              nodes { name }\n" +
@@ -59,7 +60,8 @@ public class RefRepository {
       "    }\n" +
       "  }\n" +
       "}";
-  private final static String tagsQuery = "query { \n" +
+
+  private static final String tagsQuery = "query { \n" +
       "  repository(owner: \"%s\", name:\"%s\") {\n" +
       "    nameWithOwner url\n" +
       "    refs(refPrefix:\"refs/tags/\", first:10, query:\"%s\") {\n" +
