@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import './spec-evolution.less';
 import {
-  Button, Header, Icon, Label,
+  Button, Header, Icon, Label, Placeholder,
 } from 'semantic-ui-react';
 import {
   ChangeProposal, SpecItem, SpecLog, useGetInterfaceSpecEvolution,
@@ -17,6 +17,25 @@ interface ChangeProposalProps {
   proposedChange: ChangeProposal;
   interfaceName: string;
 }
+
+const LatestAgreedPlaceholderItem: FunctionComponent<SpecLogItemProps> = ({ specItem, interfaceName }) => (
+  <>
+    <div className="item" data-testid="spec-evolution-placeholder">
+      <div className="log-entry-container" data-testid="log-entry-container">
+        <div className="line-container" />
+        <div className="placeholder-container">
+          <Placeholder>
+            <Placeholder.Line />
+            <Placeholder.Line />
+          </Placeholder>
+        </div>
+      </div>
+    </div>
+    <div key={specItem.ref} className="item">
+      <LatestAgreedLogItem specItem={specItem} interfaceName={interfaceName} />
+    </div>
+  </>
+);
 
 const ChangeProposalItem: FunctionComponent<ChangeProposalProps> = ({ proposedChange, interfaceName }) => (
   <div className="log-entry-container" data-testid="log-entry-container">
@@ -71,21 +90,27 @@ const SpecEvolutionContainer: FunctionComponent<SpecLogProps> = ({ specLog, inte
 
   const { data: interfaceSpecEvolutionResult, loading, error } = getInterfaceSpecEvolution;
 
+  let specEvolutionItems = null;
+  if (loading) {
+    specEvolutionItems = (<LatestAgreedPlaceholderItem specItem={specLog.latestAgreed} interfaceName={interfaceName} />);
+  }
+
   return (
     <div data-testid="spec-evolution-container">
       <CloseSpecEvolutionButton />
       <Header as="h3">Spec Evolution</Header>
       <div className="spec-evolution-log-container">
-        {
+        {specEvolutionItems}
+        {/* {
           specLog.proposedChanges.map((proposedChange) => (
             <div key={proposedChange.id} className="item">
               <ChangeProposalItem proposedChange={proposedChange} interfaceName={interfaceName} />
             </div>
           ))
-        }
-        <div key={specLog.latestAgreed.ref} className="item">
+        } */}
+        {/* <div key={specLog.latestAgreed.ref} className="item">
           <LatestAgreedLogItem specItem={specLog.latestAgreed} interfaceName={interfaceName} />
-        </div>
+        </div> */}
       </div>
     </div>
   );

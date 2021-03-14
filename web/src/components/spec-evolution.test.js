@@ -3,6 +3,9 @@ import '@testing-library/jest-dom/extend-expect';
 import SpecEvolution from './spec-evolution';
 import { renderWithRouter } from '../__tests__/test-utils';
 import Generator from '../__tests__/test-data-generator';
+import { useGetInterfaceSpecEvolution as useGetInterfaceSpecEvolutionMock } from '../backend-api-client';
+
+jest.mock('../backend-api-client');
 
 // // mock out the actual spec-file-item
 // jest.mock('./spec-log', () => jest.fn(() => null));
@@ -29,5 +32,23 @@ describe('SpecEvolution component', () => {
     // and the number of each proposed change PR is shown
     expect(getByText(`PR #${proposedChange1.pullRequest.number}`)).toBeInTheDocument();
     expect(getByText(`PR #${proposedChange2.pullRequest.number}`)).toBeInTheDocument();
+  });
+
+
+  test('renders loading placeholder when spec evolution data is loading', async () => {
+    // given a spec log
+    const specLog = Generator.SpecLog.generateSpecLog();
+
+    // and a mocked spec evolution response that is not yet resolved
+    const specEvolutionResult = {
+      loading: true,
+    };
+    useGetInterfaceSpecEvolutionMock.mockReturnValueOnce(specEvolutionResult);
+
+    // when spec evolution component renders
+    const { getByTestId } = renderWithRouter(<SpecEvolution specLog={specLog} />);
+
+    // then  it contains a place holder item
+    expect(getByTestId('spec-evolution-placeholder')).toBeInTheDocument();
   });
 });
