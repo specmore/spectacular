@@ -320,6 +320,8 @@ components:
           format: uri
         title:
           type: string
+        branchName:
+          type: string
         updatedAt:
           type: string
           format: date-time
@@ -329,3 +331,4 @@ components:
             type: string
       required:
         - number
+        - branchName

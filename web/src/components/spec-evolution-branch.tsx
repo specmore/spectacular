@@ -54,6 +54,7 @@ const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolution
       </Button>
     );
     centreDiv = (<div className="centre">{pullRequest.title}</div>);
+    viewSpecRef = pullRequest.branchName;
   }
 
   const viewSpecLinkButton = viewSpecRef ? (<ViewSpecLinkButton refName={viewSpecRef} />) : null;
