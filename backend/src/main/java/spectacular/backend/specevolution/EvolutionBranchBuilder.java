@@ -44,13 +44,22 @@ public class EvolutionBranchBuilder {
         .collect(Collectors.toList());
 
     // what is the html url for the tag? Do we try get the contents item just to get the Url or do we guess it?
-    var tagEvolutionItemsStream = branchTagComparisons.stream()
-        .map(branchTagComparision -> new EvolutionItem().tag(branchTagComparision.getTag().getName()));
-
-    var pullRequestEvolutionItemsStream = pullRequests.stream()
-        .map(pr -> new EvolutionItem().pullRequest(PullRequestMapper.mapGitHubPullRequest(pr)));
+    var tagEvolutionItemsStream = branchTagComparisons.stream().map(this::createTagEvolutionItem);
+    var pullRequestEvolutionItemsStream = pullRequests.stream().map(this::createPullRequestEvolutionItem);
 
     return Stream.concat(pullRequestEvolutionItemsStream, tagEvolutionItemsStream).collect(Collectors.toList());
+  }
+
+  private EvolutionItem createTagEvolutionItem(BranchTagComparision branchTagComparision) {
+    return new EvolutionItem()
+        .ref(branchTagComparision.getTag().getName())
+        .tag(branchTagComparision.getTag().getName());
+  }
+
+  private EvolutionItem createPullRequestEvolutionItem(PullRequest pullRequest) {
+    return new EvolutionItem()
+        .ref(pullRequest.getBranchName())
+        .pullRequest(PullRequestMapper.mapGitHubPullRequest(pullRequest));
   }
 
   private class BranchTagComparision {

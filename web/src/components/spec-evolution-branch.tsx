@@ -77,7 +77,7 @@ interface EvolutionBranchProps {
 const SpecEvolutionBranchContainer: FunctionComponent<EvolutionBranchProps> = ({ evolutionBranch, isMain }) => {
   const { evolutionItems } = evolutionBranch;
   const logItems = evolutionItems.map((evolutionItem) => (
-    <div className="item">
+    <div key={evolutionItem.ref} className="item">
       <div className="log-entry-container" data-testid="log-entry-container">
         <EvolutionItemLines evolutionItem={evolutionItem} isMain={isMain} />
         <EvolutionItemDetails evolutionItem={evolutionItem} isMain={isMain} />

@@ -56,12 +56,14 @@ const SpecEvolutionContainer: FunctionComponent<SpecLogProps> = ({ specLog, inte
 
   let evolutionBranches = null;
   if (loading) {
-    evolutionBranches = [(<PlaceholderEvolutionBranch specItem={specLog.latestAgreed} />)];
+    evolutionBranches = [(<PlaceholderEvolutionBranch key="placeholder" specItem={specLog.latestAgreed} />)];
   } else {
     const { main, releases } = interfaceSpecEvolutionResult.specEvolution;
-    const mainEvolutionBranch = (<SpecEvolutionBranchContainer evolutionBranch={main} isMain />);
-    const releaseEvolutionBranches = releases.map((releaseBranch) => (<SpecEvolutionBranchContainer evolutionBranch={releaseBranch} />));
-    evolutionBranches = [...releaseEvolutionBranches, mainEvolutionBranch];
+    const mainBranch = (<SpecEvolutionBranchContainer key={main.branchName} evolutionBranch={main} isMain />);
+    const releaseBranches = releases.map((releaseBranch) => (
+      <SpecEvolutionBranchContainer key={releaseBranch.branchName} evolutionBranch={releaseBranch} />
+    ));
+    evolutionBranches = [...releaseBranches, mainBranch];
   }
 
   return (

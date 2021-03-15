@@ -246,10 +246,14 @@ components:
     EvolutionItem:
       type: object
       properties:
+        ref:
+          type: string
         tag:
           type: string
         pullRequest:
           $ref: '#/components/schemas/PullRequest'
+      required:
+        - ref
     SpecItem:
       type: object
       properties:
