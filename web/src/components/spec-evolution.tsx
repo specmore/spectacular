@@ -18,8 +18,8 @@ interface ChangeProposalProps {
   interfaceName: string;
 }
 
-const PlaceholderLogItem: FunctionComponent<SpecLogItemProps> = ({ specItem, interfaceName }) => (
-  <>
+const PlaceholderEvolutionBranch: FunctionComponent<SpecLogItemProps> = ({ specItem, interfaceName }) => (
+  <div className="evolution-branch-container">
     <div className="item" data-testid="spec-evolution-placeholder">
       <div className="log-entry-container" data-testid="log-entry-container">
         <div className="line-container" />
@@ -34,7 +34,7 @@ const PlaceholderLogItem: FunctionComponent<SpecLogItemProps> = ({ specItem, int
     <div key={specItem.ref} className="item">
       <LatestAgreedLogItem specItem={specItem} interfaceName={interfaceName} />
     </div>
-  </>
+  </div>
 );
 
 const ChangeProposalItem: FunctionComponent<ChangeProposalProps> = ({ proposedChange, interfaceName }) => (
@@ -137,9 +137,9 @@ const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolution
   );
 };
 
-const buildLogItemsForEvolutionBranch = (evolutionBranch: EvolutionBranch, isMain: boolean) => {
+const buildEvolutionBranch = (evolutionBranch: EvolutionBranch, isMain: boolean) => {
   const { evolutionItems } = evolutionBranch;
-  return evolutionItems.map((evolutionItem) => (
+  const logItems = evolutionItems.map((evolutionItem) => (
     <div className="item">
       <div className="log-entry-container" data-testid="log-entry-container">
         <EvolutionItemLines evolutionItem={evolutionItem} isMain={isMain} />
@@ -154,6 +154,11 @@ const buildLogItemsForEvolutionBranch = (evolutionBranch: EvolutionBranch, isMai
       </div>
     </div>
   ));
+  return (
+    <div className="evolution-branch-container">
+      {logItems}
+    </div>
+  );
 };
 
 interface SpecLogProps {
@@ -167,14 +172,14 @@ const SpecEvolutionContainer: FunctionComponent<SpecLogProps> = ({ specLog, inte
 
   const { data: interfaceSpecEvolutionResult, loading, error } = getInterfaceSpecEvolution;
 
-  let logItems = null;
+  let evolutionBranches = null;
   if (loading) {
-    logItems = (<PlaceholderLogItem specItem={specLog.latestAgreed} interfaceName={interfaceName} />);
+    evolutionBranches = [(<PlaceholderEvolutionBranch specItem={specLog.latestAgreed} interfaceName={interfaceName} />)];
   } else {
     const { main, releases } = interfaceSpecEvolutionResult.specEvolution;
-    const mainBranchLogItems = buildLogItemsForEvolutionBranch(main, true);
-    const releaseBranchLogItems = [].concat(...releases.map((releaseBranch) => buildLogItemsForEvolutionBranch(releaseBranch, false)));
-    logItems = [...releaseBranchLogItems, ...mainBranchLogItems];
+    const mainEvolutionBranch = buildEvolutionBranch(main, true);
+    const releaseEvolutionBranches = releases.map((releaseBranch) => buildEvolutionBranch(releaseBranch, false));
+    evolutionBranches = [...releaseEvolutionBranches, mainEvolutionBranch];
   }
 
   return (
@@ -182,17 +187,7 @@ const SpecEvolutionContainer: FunctionComponent<SpecLogProps> = ({ specLog, inte
       <CloseSpecEvolutionButton />
       <Header as="h3">Spec Evolution</Header>
       <div className="spec-evolution-log-container">
-        {logItems}
-        {/* {
-          specLog.proposedChanges.map((proposedChange) => (
-            <div key={proposedChange.id} className="item">
-              <ChangeProposalItem proposedChange={proposedChange} interfaceName={interfaceName} />
-            </div>
-          ))
-        } */}
-        {/* <div key={specLog.latestAgreed.ref} className="item">
-          <LatestAgreedLogItem specItem={specLog.latestAgreed} interfaceName={interfaceName} />
-        </div> */}
+        {evolutionBranches}
       </div>
     </div>
   );

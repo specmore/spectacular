@@ -1,62 +1,78 @@
 @import "~nord/src/lesscss/nord.less";
 
 .spec-evolution-log-container {
-  .item {
-    border-top-style: solid;
-    border-top-width: 1px;
-    border-top-color: @nord3;
-
-    .log-entry-container {
-      display: flex;
-
-      .line-container {
-        width: 2em;
+  .evolution-branch-container {
+    .item {
+      border-top-style: solid;
+      border-top-width: 1px;
+      border-top-color: @nord3;
+  
+      .log-entry-container {
         display: flex;
-        align-items: flex-end;
-
-        .line {
-          width: 0.5em;
+  
+        .line-container {
+          width: 2em;
+          display: flex;
+          align-items: flex-end;
+  
+          .line {
+            width: 0.5em;
+          }
+  
+          .latest-agreed {
+            background: @nord10;
+            height: 100%;
+          }
+  
+          .upcoming-release {
+            background: @nord12;
+            height: 100%;
+          }
+  
+          // .upcoming-release:first-child {
+          //   height: 50%;
+          // }
+  
+          .change-proposal {
+            background: @nord7;
+            height: 50%;
+          }
         }
-
-        .latest-agreed {
-          background: @nord10;
-          height: 100%;
+  
+        .details-container {
+          padding-top: 0.5em;
+          padding-bottom: 0.5em;
+          flex-grow: 1;
+          display: flex;
+          align-items: flex-start;
         }
-
+  
+        .centre {
+          flex-grow: 1;
+          padding-left: 0.5em;
+          padding-right: 0.5em;
+        }
+  
+        .placeholder-container {
+          padding-top: 0.5em;
+          padding-bottom: 0.5em;
+          width: 100%;
+        }
+      }
+    }
+    
+    .item:first-child {
+      .log-entry-container {
         .upcoming-release {
-          background: @nord12;
-          height: 100%;
+          height: 75%;
         }
-
-        .change-proposal {
-          background: @nord7;
-          height: 50%;
-        }
-      }
-
-      .details-container {
-        padding-top: 0.5em;
-        padding-bottom: 0.5em;
-        flex-grow: 1;
-        display: flex;
-        align-items: flex-start;
-      }
-
-      .centre {
-        flex-grow: 1;
-        padding-left: 0.5em;
-        padding-right: 0.5em;
-      }
-
-      .placeholder-container {
-        padding-top: 0.5em;
-        padding-bottom: 0.5em;
-        width: 100%;
       }
     }
   }
   
-  .item:first-child {
-    border-top-style: none;
+  .evolution-branch-container:first-child {
+    .item:first-child {
+      border-top-style: none;
+    }
   }
 }
