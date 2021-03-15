@@ -51,4 +51,26 @@ describe('SpecEvolution component', () => {
     // then  it contains a place holder item
     expect(getByTestId('spec-evolution-placeholder')).toBeInTheDocument();
   });
+
+
+  // test('renders tag name for evolution items with a tag', async () => {
+  //   // given a spec log
+  //   const specLog = Generator.SpecLog.generateSpecLog();
+
+  //   // and a spec evolution with tags
+
+  //   // and a mocked spec evolution response that is not yet resolved
+  //   const specEvolutionResult = {
+  //     data: {
+
+  //     },
+  //   };
+  //   useGetInterfaceSpecEvolutionMock.mockReturnValueOnce(specEvolutionResult);
+
+  //   // when spec evolution component renders
+  //   const { getByTestId } = renderWithRouter(<SpecEvolution specLog={specLog} />);
+
+  //   // then  it contains a place holder item
+  //   expect(getByTestId('spec-evolution-placeholder')).toBeInTheDocument();
+  // });
 });
