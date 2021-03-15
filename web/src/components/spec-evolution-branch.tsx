@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Button, Icon, Label } from 'semantic-ui-react';
 import { EvolutionBranch, EvolutionItem } from '../backend-api-client';
+import { ViewSpecLinkButton } from '../routes';
 
 interface EvolutionItemProps {
   evolutionItem: EvolutionItem;
@@ -26,13 +27,17 @@ const EvolutionItemLines: FunctionComponent<EvolutionItemProps> = ({ evolutionIt
 const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolutionItem }) => {
   const { pullRequest, tag } = evolutionItem;
 
-  const tagLabel = tag
-    ? (<Label color="blue" tag>{tag}</Label>)
-    : null;
+  let viewSpecRef = null;
+  let centreDiv = (<div className="centre" />);
+
+  let tagLabel = null;
+  if (tag) {
+    viewSpecRef = tag;
+    tagLabel = (<Label color="blue" tag>{tag}</Label>);
+  }
 
   let prLabel = null;
-  let prTitle = null;
-  if (evolutionItem.pullRequest) {
+  if (pullRequest) {
     prLabel = (
       <Button
         icon
@@ -48,14 +53,17 @@ const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolution
         <Icon name="code branch" />
       </Button>
     );
-    prTitle = (<div className="centre">{pullRequest.title}</div>);
+    centreDiv = (<div className="centre">{pullRequest.title}</div>);
   }
+
+  const viewSpecLinkButton = viewSpecRef ? (<ViewSpecLinkButton refName={viewSpecRef} />) : null;
 
   return (
     <div className="details-container">
       {tagLabel}
       {prLabel}
-      {prTitle}
+      {centreDiv}
+      {viewSpecLinkButton}
     </div>
   );
 };

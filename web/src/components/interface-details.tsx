@@ -28,10 +28,9 @@ const InterfaceDetailsError: FunctionComponent<SpecItemProps> = ({ specItem }) =
 
 interface InterfaceDetailsContainerProps {
   specLog: SpecLog;
-  interfaceName: string;
 }
 
-const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProps> = ({ specLog, interfaceName }) => {
+const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProps> = ({ specLog }) => {
   const specItem = specLog.latestAgreed;
 
   if (specItem.parseResult.errors && specItem.parseResult.errors.length > 0) {
@@ -52,7 +51,7 @@ const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProp
             <Label color="blue">{specItem.parseResult.openApiSpec.version}</Label>
           </Grid.Column>
           <Grid.Column width={4}>
-            <ViewSpecLinkButton refName={specItem.ref} interfaceName={interfaceName} />
+            <ViewSpecLinkButton refName={specItem.ref} />
             <OpenSpecItemContentPageButton specItem={specItem} />
           </Grid.Column>
         </Grid.Row>

@@ -11,10 +11,9 @@ import SpecEvolutionBranchContainer from './spec-evolution-branch';
 
 interface SpecLogItemProps {
   specItem: SpecItem;
-  interfaceName: string;
 }
 
-const PlaceholderEvolutionBranch: FunctionComponent<SpecLogItemProps> = ({ specItem, interfaceName }) => (
+const PlaceholderEvolutionBranch: FunctionComponent<SpecLogItemProps> = ({ specItem }) => (
   <div className="evolution-branch-container">
     <div className="item" data-testid="spec-evolution-placeholder">
       <div className="log-entry-container" data-testid="log-entry-container">
@@ -37,7 +36,7 @@ const PlaceholderEvolutionBranch: FunctionComponent<SpecLogItemProps> = ({ specI
           <Label color="blue" tag>{specItem.parseResult.openApiSpec.version}</Label>
           <div className="centre" />
           <OpenSpecItemContentPageButton specItem={specItem} />
-          <ViewSpecLinkButton refName={specItem.ref} interfaceName={interfaceName} />
+          <ViewSpecLinkButton refName={specItem.ref} />
         </div>
       </div>
     </div>
@@ -57,7 +56,7 @@ const SpecEvolutionContainer: FunctionComponent<SpecLogProps> = ({ specLog, inte
 
   let evolutionBranches = null;
   if (loading) {
-    evolutionBranches = [(<PlaceholderEvolutionBranch specItem={specLog.latestAgreed} interfaceName={interfaceName} />)];
+    evolutionBranches = [(<PlaceholderEvolutionBranch specItem={specLog.latestAgreed} />)];
   } else {
     const { main, releases } = interfaceSpecEvolutionResult.specEvolution;
     const mainEvolutionBranch = (<SpecEvolutionBranchContainer evolutionBranch={main} isMain />);

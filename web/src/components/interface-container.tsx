@@ -50,7 +50,6 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
   const { data: getCatalogueResult, loading, error } = getCatalogue;
 
   let catalogue = null;
-  let interfaceTitle = null;
   let content = null;
   let specPreview = null;
   let specEvolution = null;
@@ -61,8 +60,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
   } else {
     catalogue = getCatalogueResult.catalogue;
     const specLog = catalogue.specLogs.find((specLogItem) => specLogItem.interfaceName === interfaceName);
-    interfaceTitle = specLog.latestAgreed.parseResult.openApiSpec.title;
-    content = (<InterfaceDetails specLog={specLog} interfaceName={interfaceName} />);
+    content = (<InterfaceDetails specLog={specLog} />);
 
     if (refName) {
       const interfaceFileContentsPath = createInterfaceFileContentsPath(encodedId, interfaceName, refName);

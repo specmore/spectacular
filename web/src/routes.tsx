@@ -42,12 +42,10 @@ export const BackToCatalogueListLinkButton: FunctionComponent = () => (
 
 interface ViewSpecLinkButtonProps {
   refName: string;
-  interfaceName: string;
 }
 
-export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({ refName, interfaceName }) => {
-  const { interfaceName: selectedInterfaceName } = useParams();
-  const isSelected = interfaceName === selectedInterfaceName && useQuery().get(VIEW_SPEC_QUERY_PARAM_NAME) === refName;
+export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({ refName }) => {
+  const isSelected = useQuery().get(VIEW_SPEC_QUERY_PARAM_NAME) === refName;
 
   const viewSpecLink = addQueryParam(VIEW_SPEC_QUERY_PARAM_NAME, refName);
   return (
