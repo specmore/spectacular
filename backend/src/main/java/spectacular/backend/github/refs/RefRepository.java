@@ -49,6 +49,9 @@ public class RefRepository {
       "      totalCount\n" +
       "      nodes {\n" +
       "        name\n" +
+      "        target {\n" +
+      "            oid\n" +
+      "        }\n" +
       "      }\n" +
       "    }\n" +
       "  }\n" +
@@ -91,7 +94,7 @@ public class RefRepository {
    * @param query the tag name query
    * @return a list of Tag objects
    */
-  public List<Tag> getTagsForRepo(RepositoryId repoId, String query) {
+  public List<TagRef> getTagsForRepo(RepositoryId repoId, String query) {
     String formattedQuery = String.format(tagsQuery, repoId.getOwner(), repoId.getName(), query);
 
     var response = restApiClient.graphQlQuery(new GraphQlRequest(formattedQuery));
@@ -101,7 +104,7 @@ public class RefRepository {
           repoId.getNameWithOwner() + "': " + response.getErrors().toString());
     } else {
       return response.getData().getRepository().getRefs().getNodes().stream()
-          .map(ref -> new Tag(ref.getName()))
+          .map(TagRef::createTagRefFrom)
           .collect(Collectors.toList());
     }
 

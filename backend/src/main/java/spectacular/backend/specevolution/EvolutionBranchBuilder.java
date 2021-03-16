@@ -1,7 +1,6 @@
 package spectacular.backend.specevolution;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,9 +11,8 @@ import spectacular.backend.api.model.EvolutionItem;
 import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.github.domain.Comparison;
-import spectacular.backend.github.domain.Tag;
 import spectacular.backend.github.pullrequests.PullRequest;
-import spectacular.backend.interfaces.InterfaceService;
+import spectacular.backend.github.refs.TagRef;
 
 @Service
 public class EvolutionBranchBuilder {
@@ -35,7 +33,7 @@ public class EvolutionBranchBuilder {
    */
   public List<EvolutionItem> generateEvolutionItems(RepositoryId fileRepo,
                                                     String branchName,
-                                                    Collection<Tag> tags,
+                                                    Collection<TagRef> tags,
                                                     Collection<PullRequest> pullRequests) {
     var branchTagComparisons = tags.stream()
         .map(tag -> new BranchTagComparision(tag, branchName, this.restApiClient.getComparison(fileRepo, branchName, tag.getName())))
@@ -63,17 +61,17 @@ public class EvolutionBranchBuilder {
   }
 
   private class BranchTagComparision {
-    private final Tag tag;
+    private final TagRef tag;
     private final String branchName;
     private final Comparison comparison;
 
-    private BranchTagComparision(Tag tag, String branchName, Comparison comparison) {
+    private BranchTagComparision(TagRef tag, String branchName, Comparison comparison) {
       this.tag = tag;
       this.branchName = branchName;
       this.comparison = comparison;
     }
 
-    public Tag getTag() {
+    public TagRef getTag() {
       return tag;
     }
 

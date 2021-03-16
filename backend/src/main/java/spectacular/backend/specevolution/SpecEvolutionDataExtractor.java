@@ -10,6 +10,7 @@ import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.domain.Tag;
 import spectacular.backend.github.pullrequests.PullRequestRepository;
 import spectacular.backend.github.refs.RefRepository;
+import spectacular.backend.github.refs.TagRef;
 
 @Component
 public class SpecEvolutionDataExtractor {
@@ -28,7 +29,7 @@ public class SpecEvolutionDataExtractor {
    * @param specFileRepo the git repo of the file that the spec evolution is about
    * @return the tag data
    */
-  public List<Tag> getRepoTagsAccordingToConfig(SpecEvolutionConfig specEvolutionConfig, RepositoryId specFileRepo) {
+  public List<TagRef> getRepoTagsAccordingToConfig(SpecEvolutionConfig specEvolutionConfig, RepositoryId specFileRepo) {
     final String tagPrefix = specEvolutionConfig.getReleaseTagConfig().getTagPrefix();
 
     return this.refRepository.getTagsForRepo(specFileRepo, tagPrefix);

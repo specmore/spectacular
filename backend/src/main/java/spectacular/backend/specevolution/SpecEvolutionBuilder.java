@@ -10,6 +10,7 @@ import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.domain.Tag;
 import spectacular.backend.github.pullrequests.PullRequest;
 import spectacular.backend.github.refs.BranchRef;
+import spectacular.backend.github.refs.TagRef;
 
 @Service
 public class SpecEvolutionBuilder {
@@ -58,7 +59,7 @@ public class SpecEvolutionBuilder {
   }
 
   private EvolutionBranch generateEvolutionBranch(BranchRef branchRef,
-                                                  Collection<Tag> tags,
+                                                  Collection<TagRef> tags,
                                                   Collection<PullRequest> pullRequests,
                                                   RepositoryId specFileRepo) {
     var branchName = branchRef.getName();

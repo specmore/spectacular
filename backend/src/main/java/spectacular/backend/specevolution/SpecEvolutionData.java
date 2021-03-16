@@ -4,10 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import spectacular.backend.cataloguemanifest.model.SpecEvolutionConfig;
 import spectacular.backend.github.domain.Tag;
+import spectacular.backend.github.refs.TagRef;
 
 public class SpecEvolutionData {
   private final Optional<BranchData> mainBranch;
-  private final List<Tag> tags;
+  private final List<TagRef> tags;
   private final List<BranchData> releaseBranches;
   private final SpecEvolutionConfig specEvolutionConfig;
 
@@ -19,7 +20,7 @@ public class SpecEvolutionData {
    * @param specEvolutionConfig the original config used to pull the correct git data
    */
   public SpecEvolutionData(Optional<BranchData> mainBranch,
-                           List<Tag> tags,
+                           List<TagRef> tags,
                            List<BranchData> releaseBranches,
                            SpecEvolutionConfig specEvolutionConfig) {
     this.mainBranch = mainBranch;
@@ -28,7 +29,7 @@ public class SpecEvolutionData {
     this.specEvolutionConfig = specEvolutionConfig;
   }
 
-  public List<Tag> getTags() {
+  public List<TagRef> getTags() {
     return tags;
   }
 

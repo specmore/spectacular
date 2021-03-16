@@ -4,8 +4,9 @@ package spectacular.backend.specevolution
 import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.domain.Comparison
-import spectacular.backend.github.domain.Tag
+import spectacular.backend.github.graphql.Commit
 import spectacular.backend.github.pullrequests.PullRequest
+import spectacular.backend.github.refs.TagRef
 import spock.lang.Specification
 
 import java.time.OffsetDateTime
@@ -20,11 +21,11 @@ class EvolutionBranchBuilderTest extends Specification {
         def branchName = "test-branch"
 
         and: "a tag behind the branch head on the repository"
-        def behindTag = new Tag("behindTag")
+        def behindTag = new TagRef("behindTag", "behindCommit")
         def behindTagComparison = new Comparison(null, "behind", 0, 1, 1)
 
         and: "a tag ahead of the branch head on the repository"
-        def aheadTag = new Tag("aheadTag")
+        def aheadTag = new TagRef("aheadTag", "aheadCommit")
         def aheadTagComparison = new Comparison(null, "ahead", 1, 0, 1)
 
         and: "a list of the tags extracted"
@@ -52,7 +53,7 @@ class EvolutionBranchBuilderTest extends Specification {
         def pullRequest = new PullRequest(specFileRepoId, prBranch, releaseBranchName, 99, new URI("https://test-url"), [], [], "test-pr", OffsetDateTime.now())
 
         and: "a tag behind the branch head on the repository"
-        def tag = new Tag("behindTag")
+        def tag = new TagRef("behindTag", "behindCommit")
         def tagComparison = new Comparison(null, "behind", 0, 1, 1)
 
         when: "generating the evolution items for the branch"
