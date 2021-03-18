@@ -30,7 +30,7 @@ const EvolutionItemLines: FunctionComponent<EvolutionItemProps> = ({ evolutionIt
   );
 };
 
-const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolutionItem }) => {
+const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolutionItem, isMain }) => {
   const {
     pullRequest, tag, branchName, ref,
   } = evolutionItem;
@@ -39,11 +39,19 @@ const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolution
 
   let tagLabel = null;
   if (tag) {
-    tagLabel = (<Label color="blue" tag>{tag}</Label>);
+    let colourClassName;
+    if (isMain) {
+      colourClassName = branchName ? 'latest-agreed' : 'old-version';
+    } else {
+      colourClassName = 'upcoming-release';
+    }
+    tagLabel = (<Label className={colourClassName} tag>{tag}</Label>);
   }
 
+  let branchNameLabel = null;
   if (branchName) {
-    tagLabel = (<Label color="blue">{branchName}</Label>);
+    const colourClassName = isMain ? 'latest-agreed' : 'upcoming-release';
+    branchNameLabel = (<Label className={colourClassName}>{branchName}</Label>);
   }
 
   let prLabel = null;
@@ -70,6 +78,7 @@ const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolution
 
   return (
     <div className="details-container">
+      {branchNameLabel}
       {tagLabel}
       {prLabel}
       {centreDiv}
