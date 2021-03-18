@@ -4,34 +4,38 @@ import SpecEvolution from './spec-evolution';
 import { renderWithRouter } from '../__tests__/test-utils';
 import Generator from '../__tests__/test-data-generator';
 import { useGetInterfaceSpecEvolution as useGetInterfaceSpecEvolutionMock } from '../backend-api-client';
+import SpecEvolutionBranchContainerMock from './spec-evolution-branch';
 
 jest.mock('../backend-api-client');
 
-// // mock out the actual spec-file-item
-// jest.mock('./spec-log', () => jest.fn(() => null));
+// mock out the actual spec evolution branch items
+jest.mock('./spec-evolution-branch', () => jest.fn(() => null));
 
 describe('SpecEvolution component', () => {
-  test('renders spec log items', async () => {
-    // given a spec log containing two proposed changes
-    const proposedChange1 = Generator.ProposedChange.generateChangeProposal({ number: 98 });
-    const proposedChange2 = Generator.ProposedChange.generateChangeProposal({ number: 99 });
-    const specLog = Generator.SpecLog.generateSpecLog({ proposedChanges: [proposedChange1, proposedChange2] });
+  test('renders the release spec evolution branches before the main branch', async () => {
+    // given a mocked successful spec evolution response with 2 release branches and a main branch
+    const specEvolution = Generator.SpecEvolution.generateSpecEvolution({ numberReleaseBranches: 2 });
+    const getInterfaceSpecEvolutionResult = {
+      data: {
+        specEvolution,
+      },
+    };
+    useGetInterfaceSpecEvolutionMock.mockReturnValueOnce(getInterfaceSpecEvolutionResult);
 
     // when spec evolution component renders
-    const { getByTestId, getByText } = renderWithRouter(<SpecEvolution specLog={specLog} />);
+    const { getByTestId } = renderWithRouter(<SpecEvolution />);
 
     // then an spec evolution container is found
     expect(getByTestId('spec-evolution-container')).toBeInTheDocument();
 
-    // and the ref of the latest agreed spec file is shown
-    expect(getByText(specLog.latestAgreed.ref)).toBeInTheDocument();
+    // and the 3 SpecEvolutionBranch items should have been created
+    expect(SpecEvolutionBranchContainerMock).toHaveBeenCalledTimes(3);
 
-    // and the version of the latest agreed spec file is shown
-    expect(getByText(specLog.latestAgreed.parseResult.openApiSpec.version)).toBeInTheDocument();
-
-    // and the number of each proposed change PR is shown
-    expect(getByText(`PR #${proposedChange1.pullRequest.number}`)).toBeInTheDocument();
-    expect(getByText(`PR #${proposedChange2.pullRequest.number}`)).toBeInTheDocument();
+    // and the SpecEvolutionBranch main branch should have been rendered last
+    expect(SpecEvolutionBranchContainerMock).toHaveBeenLastCalledWith(
+      { evolutionBranch: { branchName: 'mainBranch', evolutionItems: [] }, isMain: true },
+      {},
+    );
   });
 
 
@@ -51,26 +55,4 @@ describe('SpecEvolution component', () => {
     // then  it contains a place holder item
     expect(getByTestId('spec-evolution-placeholder')).toBeInTheDocument();
   });
-
-
-  // test('renders tag name for evolution items with a tag', async () => {
-  //   // given a spec log
-  //   const specLog = Generator.SpecLog.generateSpecLog();
-
-  //   // and a spec evolution with tags
-
-  //   // and a mocked spec evolution response that is not yet resolved
-  //   const specEvolutionResult = {
-  //     data: {
-
-  //     },
-  //   };
-  //   useGetInterfaceSpecEvolutionMock.mockReturnValueOnce(specEvolutionResult);
-
-  //   // when spec evolution component renders
-  //   const { getByTestId } = renderWithRouter(<SpecEvolution specLog={specLog} />);
-
-  //   // then  it contains a place holder item
-  //   expect(getByTestId('spec-evolution-placeholder')).toBeInTheDocument();
-  // });
 });

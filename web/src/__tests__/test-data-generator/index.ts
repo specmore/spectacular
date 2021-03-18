@@ -3,6 +3,7 @@ import PullRequest from './pull-request';
 import ProposedChange from './change-proposal';
 import SpecLog from './spec-log';
 import Catalogue from './catalogue';
+import SpecEvolution from './spec-evolution';
 
 export default {
   SpecItem,
@@ -10,4 +11,5 @@ export default {
   ProposedChange,
   SpecLog,
   Catalogue,
+  SpecEvolution,
 };
