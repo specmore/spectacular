@@ -65,7 +65,7 @@ public class SpecEvolutionBuilder {
     var branchName = branchRef.getName();
     var evolutionItems = this.evolutionBranchBuilder.generateEvolutionItems(
         specFileRepo,
-        branchName,
+        branchRef,
         tags,
         pullRequests);
 

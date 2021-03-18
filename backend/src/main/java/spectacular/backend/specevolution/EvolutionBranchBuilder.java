@@ -12,6 +12,7 @@ import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.github.domain.Comparison;
 import spectacular.backend.github.pullrequests.PullRequest;
+import spectacular.backend.github.refs.BranchRef;
 import spectacular.backend.github.refs.TagRef;
 
 @Service
@@ -26,26 +27,32 @@ public class EvolutionBranchBuilder {
    * Generates evolution items for a given branch on the specification file's repository from the tags on the repository.
    *
    * @param fileRepo the identifier of the repository the specification file is located in
-   * @param branchName the branch on the repository the evolution items are being calculated against
+   * @param branch the branch on the repository the evolution items are being calculated against
    * @param tags the collection of tags in the repository
    * @param pullRequests the collection of pull requests associated to this branch
    * @return a list of evolution items for the branch
    */
   public List<EvolutionItem> generateEvolutionItems(RepositoryId fileRepo,
-                                                    String branchName,
+                                                    BranchRef branch,
                                                     Collection<TagRef> tags,
                                                     Collection<PullRequest> pullRequests) {
     var branchTagComparisons = tags.stream()
-        .map(tag -> new BranchTagComparision(tag, branchName, this.restApiClient.getComparison(fileRepo, branchName, tag.getName())))
+        .map(tag -> {
+          var comparison = this.restApiClient.getComparison(fileRepo, branch.getName(), tag.getName());
+          return new BranchTagComparision(tag, branch.getName(), comparison);
+        })
         .filter(branchTagComparision -> branchTagComparision.getAheadBy() == 0)
         .sorted(Comparator.comparingInt(BranchTagComparision::getBehindBy))
         .collect(Collectors.toList());
 
     // what is the html url for the tag? Do we try get the contents item just to get the Url or do we guess it?
+    var branchHeadEvolutionItem = new EvolutionItem().ref(branch.getName()).branchName(branch.getName());
     var tagEvolutionItemsStream = branchTagComparisons.stream().map(this::createTagEvolutionItem);
     var pullRequestEvolutionItemsStream = pullRequests.stream().map(this::createPullRequestEvolutionItem);
 
-    return Stream.concat(pullRequestEvolutionItemsStream, tagEvolutionItemsStream).collect(Collectors.toList());
+    var concat = Stream.of(pullRequestEvolutionItemsStream, Stream.of(branchHeadEvolutionItem), tagEvolutionItemsStream).flatMap(s -> s);
+
+    return concat.collect(Collectors.toList());
   }
 
   private EvolutionItem createTagEvolutionItem(BranchTagComparision branchTagComparision) {

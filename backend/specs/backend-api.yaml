@@ -250,6 +250,9 @@ components:
           type: string
         tag:
           type: string
+        branchName:
+          type: string
+          description: If the evolution item represents the head of a branch, the name of the branch is returned.
         pullRequest:
           $ref: '#/components/schemas/PullRequest'
       required:

@@ -9,15 +9,21 @@ interface EvolutionItemProps {
 }
 
 const EvolutionItemLines: FunctionComponent<EvolutionItemProps> = ({ evolutionItem, isMain }) => {
-  const { pullRequest } = evolutionItem;
+  const { pullRequest, branchName } = evolutionItem;
 
-  const latestAgreedLine = isMain ? (<div className="latest-agreed line" />) : (<div className="line" />);
-  const upcomingReleaseLine = !isMain ? (<div className="upcoming-release line" />) : null;
+
+  let mainLine = null;
+  let upcomingReleaseLine = null;
+  if (isMain) {
+    mainLine = branchName || pullRequest ? (<div className="latest-agreed line" />) : (<div className="old-version line" />);
+  } else {
+    upcomingReleaseLine = (<div className="upcoming-release line" />);
+  }
   const pullRequestLine = pullRequest ? (<div className="change-proposal line" />) : null;
 
   return (
     <div className="line-container">
-      {latestAgreedLine}
+      {mainLine}
       {upcomingReleaseLine}
       {pullRequestLine}
     </div>
@@ -25,15 +31,19 @@ const EvolutionItemLines: FunctionComponent<EvolutionItemProps> = ({ evolutionIt
 };
 
 const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolutionItem }) => {
-  const { pullRequest, tag } = evolutionItem;
+  const {
+    pullRequest, tag, branchName, ref,
+  } = evolutionItem;
 
-  let viewSpecRef = null;
   let centreDiv = (<div className="centre" />);
 
   let tagLabel = null;
   if (tag) {
-    viewSpecRef = tag;
     tagLabel = (<Label color="blue" tag>{tag}</Label>);
+  }
+
+  if (branchName) {
+    tagLabel = (<Label color="blue">{branchName}</Label>);
   }
 
   let prLabel = null;
@@ -54,10 +64,9 @@ const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolution
       </Button>
     );
     centreDiv = (<div className="centre">{pullRequest.title}</div>);
-    viewSpecRef = pullRequest.branchName;
   }
 
-  const viewSpecLinkButton = viewSpecRef ? (<ViewSpecLinkButton refName={viewSpecRef} />) : null;
+  const viewSpecLinkButton = (<ViewSpecLinkButton refName={ref} />);
 
   return (
     <div className="details-container">
