@@ -2,33 +2,12 @@ import React, { FunctionComponent } from 'react';
 import { Button, Icon, Label } from 'semantic-ui-react';
 import { EvolutionBranch, EvolutionItem } from '../../backend-api-client';
 import { ViewSpecLinkButton } from '../../routes';
+import EvolutionLinesItem from './evolution-lines-item';
 
 interface EvolutionItemProps {
   evolutionItem: EvolutionItem;
   isMain?: boolean;
 }
-
-const EvolutionItemLines: FunctionComponent<EvolutionItemProps> = ({ evolutionItem, isMain }) => {
-  const { pullRequest, branchName } = evolutionItem;
-
-
-  let mainLine = null;
-  let upcomingReleaseLine = null;
-  if (isMain) {
-    mainLine = branchName || pullRequest ? (<div className="latest-agreed line" />) : (<div className="old-version line" />);
-  } else {
-    upcomingReleaseLine = (<div className="upcoming-release line" />);
-  }
-  const pullRequestLine = pullRequest ? (<div className="change-proposal line" />) : null;
-
-  return (
-    <div className="line-container">
-      {mainLine}
-      {upcomingReleaseLine}
-      {pullRequestLine}
-    </div>
-  );
-};
 
 const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolutionItem, isMain }) => {
   const {
@@ -97,7 +76,7 @@ const SpecEvolutionBranchContainer: FunctionComponent<EvolutionBranchProps> = ({
   const logItems = evolutionItems.map((evolutionItem) => (
     <div key={evolutionItem.ref} className="item">
       <div className="log-entry-container" data-testid="log-entry-container">
-        <EvolutionItemLines evolutionItem={evolutionItem} isMain={isMain} />
+        <EvolutionLinesItem evolutionItem={evolutionItem} isMain={isMain} />
         <EvolutionItemDetails evolutionItem={evolutionItem} isMain={isMain} />
         {/* <div className="details-container">
           <Label color="blue">{evolutionItem}</Label>
