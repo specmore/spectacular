@@ -1,12 +1,12 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
-import SpecEvolution from './spec-evolution';
-import { renderWithRouter } from '../__tests__/test-utils';
-import Generator from '../__tests__/test-data-generator';
-import { useGetInterfaceSpecEvolution as useGetInterfaceSpecEvolutionMock } from '../backend-api-client';
+import SpecEvolution from './spec-evolution-container';
+import { renderWithRouter } from '../../__tests__/test-utils';
+import Generator from '../../__tests__/test-data-generator';
+import { useGetInterfaceSpecEvolution as useGetInterfaceSpecEvolutionMock } from '../../backend-api-client';
 import SpecEvolutionBranchContainerMock from './spec-evolution-branch';
 
-jest.mock('../backend-api-client');
+jest.mock('../../backend-api-client');
 
 // mock out the actual spec evolution branch items
 jest.mock('./spec-evolution-branch', () => jest.fn(() => null));

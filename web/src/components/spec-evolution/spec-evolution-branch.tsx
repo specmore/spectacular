@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Button, Icon, Label } from 'semantic-ui-react';
-import { EvolutionBranch, EvolutionItem } from '../backend-api-client';
-import { ViewSpecLinkButton } from '../routes';
+import { EvolutionBranch, EvolutionItem } from '../../backend-api-client';
+import { ViewSpecLinkButton } from '../../routes';
 
 interface EvolutionItemProps {
   evolutionItem: EvolutionItem;

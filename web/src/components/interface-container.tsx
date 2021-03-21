@@ -9,7 +9,7 @@ import { useGetCatalogue } from '../backend-api-client';
 import LocationBar from './location-bar';
 import InterfaceDetails from './interface-details';
 import { CloseSpecButton, getCurrentSpecRefViewed, isShowSpecEvolution } from '../routes';
-import SpecEvolutionContainer from './spec-evolution';
+import SpecEvolutionContainer from './spec-evolution/spec-evolution-container';
 
 const InterfaceContainerLoading = () => (
   <>

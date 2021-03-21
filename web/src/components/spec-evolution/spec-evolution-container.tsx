@@ -5,8 +5,8 @@ import {
 } from 'semantic-ui-react';
 import {
   SpecItem, SpecLog, useGetInterfaceSpecEvolution,
-} from '../backend-api-client';
-import { CloseSpecEvolutionButton, OpenSpecItemContentPageButton, ViewSpecLinkButton } from '../routes';
+} from '../../backend-api-client';
+import { CloseSpecEvolutionButton, OpenSpecItemContentPageButton, ViewSpecLinkButton } from '../../routes';
 import SpecEvolutionBranchContainer from './spec-evolution-branch';
 
 interface SpecLogItemProps {
