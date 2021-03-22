@@ -62,6 +62,31 @@ class EvolutionBranchBuilderTest extends Specification {
         evolutionItems[1].getRef() == behindTag.getName()
     }
 
+    def "GenerateEvolutionItems only returns only one evolution items for tags on the branch head"() {
+        given: "a spec file repository and branch"
+        def specFileRepoId = RepositoryId.createForNameWithOwner("test-owner/test-repo")
+        def branch = new BranchRef("test-branch", "", "headCommit")
+
+        and: "a tag on the branch head"
+        def onHeadTag = new TagRef("onHeadTag", "headCommit")
+
+        and: "a list of the tags extracted"
+        def tagList = [onHeadTag]
+
+        when: "generating the evolution items for the branch"
+        def evolutionItems = evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, branch, tagList, [])
+
+        then: "only a spec evolution item for the head commit is returned"
+        evolutionItems.size() == 1
+
+        and: "it has the branch name"
+        evolutionItems.first().getRef() == branch.getName()
+        evolutionItems.first().getBranchName() == branch.getName()
+
+        and: "it has the branch name"
+        evolutionItems.first().getTag() == onHeadTag.getName()
+    }
+
     def "GenerateEvolutionItems returns evolution items for PRs before the branch head"() {
         given: "a spec file repository and release branch"
         def specFileRepoId = RepositoryId.createForNameWithOwner("test-owner/test-repo")

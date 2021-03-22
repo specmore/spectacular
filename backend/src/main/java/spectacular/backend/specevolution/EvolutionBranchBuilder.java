@@ -36,7 +36,12 @@ public class EvolutionBranchBuilder {
                                                     BranchRef branch,
                                                     Collection<TagRef> tags,
                                                     Collection<PullRequest> pullRequests) {
-    var branchTagComparisons = tags.stream()
+    var tagsOnBranchHead = tags.stream()
+        .collect(Collectors.partitioningBy(tag -> tag.getCommit().equals(branch.getCommit())));
+
+    var branchHeadEvolutionItem = createBranchHeadEvolutionItem(branch, tagsOnBranchHead.get(true));
+
+    var branchTagComparisons = tagsOnBranchHead.get(false).stream()
         .map(tag -> {
           var comparison = this.restApiClient.getComparison(fileRepo, branch.getName(), tag.getName());
           return new BranchTagComparision(tag, branch.getName(), comparison);
@@ -46,13 +51,23 @@ public class EvolutionBranchBuilder {
         .collect(Collectors.toList());
 
     // what is the html url for the tag? Do we try get the contents item just to get the Url or do we guess it?
-    var branchHeadEvolutionItem = new EvolutionItem().ref(branch.getName()).branchName(branch.getName());
     var tagEvolutionItemsStream = branchTagComparisons.stream().map(this::createTagEvolutionItem);
     var pullRequestEvolutionItemsStream = pullRequests.stream().map(this::createPullRequestEvolutionItem);
 
     var concat = Stream.of(pullRequestEvolutionItemsStream, Stream.of(branchHeadEvolutionItem), tagEvolutionItemsStream).flatMap(s -> s);
 
     return concat.collect(Collectors.toList());
+  }
+
+  private EvolutionItem createBranchHeadEvolutionItem(BranchRef branch, Collection<TagRef> tagsOnBranchHead) {
+    var firstMatchingTag = tagsOnBranchHead.stream().findFirst();
+
+    var tag = firstMatchingTag.map(TagRef::getName).orElse(null);
+
+    return new EvolutionItem()
+        .ref(branch.getName())
+        .branchName(branch.getName())
+        .tag(tag);
   }
 
   private EvolutionItem createTagEvolutionItem(BranchTagComparision branchTagComparision) {
