@@ -21,6 +21,7 @@ describe('EvolutionItemDetails component', () => {
     expect(ViewSpecLinkButtonMock).toHaveBeenCalledTimes(1);
   });
 
+
   test('evolution item with tags behind the branch head renders an old version tag', async () => {
     // given a spec evolution item on with a tag without a branch name on a main branch
     const evolutionItem = { tags: ['a-tag'] };
@@ -74,8 +75,26 @@ describe('EvolutionItemDetails component', () => {
     // when the EvolutionItemDetails component renders
     const { getByTestId } = render(<EvolutionItemDetails evolutionItem={evolutionItem} isMain={isMain} />);
 
-    // then an 'old version' styled tag is shown
+    // then an 'latest-agreed' styled tag is shown
     const branchNameLabel = getByTestId('branch-name-label');
+    expect(branchNameLabel).toBeInTheDocument();
+    expect(branchNameLabel).toHaveClass('latest-agreed');
+  });
+
+
+  test('evolution item on a branch head with a successful file parse result render a file version label', async () => {
+    // given a successful openapi file parse result
+    const parseResult = { openApiSpec: { title: 'An empty API spec', version: '0.1.0', operations: [] }, errors: [] };
+
+    // and a spec evolution item on with a branch name on a main branch with the parse result
+    const evolutionItem = { branchName: 'a-branch', parseResult };
+    const isMain = true;
+
+    // when the EvolutionItemDetails component renders
+    const { getByTestId } = render(<EvolutionItemDetails evolutionItem={evolutionItem} isMain={isMain} />);
+
+    // then an 'latest-agreed' file version label is shown
+    const branchNameLabel = getByTestId('file-version-label');
     expect(branchNameLabel).toBeInTheDocument();
     expect(branchNameLabel).toHaveClass('latest-agreed');
   });

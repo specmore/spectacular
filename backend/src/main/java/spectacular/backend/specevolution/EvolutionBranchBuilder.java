@@ -16,6 +16,7 @@ import spectacular.backend.github.domain.Comparison;
 import spectacular.backend.github.pullrequests.PullRequest;
 import spectacular.backend.github.refs.BranchRef;
 import spectacular.backend.github.refs.TagRef;
+import spectacular.backend.specs.openapi.OpenApiParser;
 
 @Service
 public class EvolutionBranchBuilder {
@@ -66,10 +67,13 @@ public class EvolutionBranchBuilder {
   private EvolutionItem createBranchHeadEvolutionItem(BranchRef branch, List<TagRef> tagsOnBranchHead) {
     var tags = tagsOnBranchHead.stream().map(TagRef::getName).collect(Collectors.toList());
 
+    var openApiSpecParseResult = OpenApiParser.parseYaml(branch.getSpecFileContents());
+
     return new EvolutionItem()
         .ref(branch.getName())
         .branchName(branch.getName())
-        .tags(tags);
+        .tags(tags)
+        .parseResult(openApiSpecParseResult);
   }
 
   private EvolutionItem createTagEvolutionItem(Map.Entry<Integer, List<BranchTagComparison>> branchTagComparisons) {

@@ -10,7 +10,7 @@ interface EvolutionItemProps {
 
 const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolutionItem, isMain }) => {
   const {
-    pullRequest, tags, branchName, ref,
+    pullRequest, tags, branchName, ref, parseResult,
   } = evolutionItem;
 
   let centreDiv = (<div className="centre" />);
@@ -30,6 +30,18 @@ const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolution
   if (branchName) {
     const colourClassName = isMain ? 'latest-agreed' : 'upcoming-release';
     branchNameLabel = (<Label data-testid="branch-name-label" className={colourClassName}>{branchName}</Label>);
+  }
+
+  let fileVersionLabel = null;
+  if (parseResult) {
+    if (parseResult.openApiSpec) {
+      const colourClassName = isMain ? 'latest-agreed' : 'upcoming-release';
+      fileVersionLabel = (
+        <Label data-testid="file-version-label" className={colourClassName} pointing="left">
+          {parseResult.openApiSpec.version}
+        </Label>
+      );
+    }
   }
 
   let prLabel = null;
@@ -58,6 +70,7 @@ const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolution
   return (
     <div className="details-container">
       {branchNameLabel}
+      {fileVersionLabel}
       {tagLabels}
       {prLabel}
       {centreDiv}

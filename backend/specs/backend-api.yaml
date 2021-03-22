@@ -256,6 +256,9 @@ components:
         branchName:
           type: string
           description: If the evolution item represents the head of a branch, the name of the branch is returned.
+        parseResult:
+          description: Parsed spec file contents at this commit.
+          $ref: '#/components/schemas/OpenApiSpecParseResult'
         pullRequest:
           $ref: '#/components/schemas/PullRequest'
       required:
