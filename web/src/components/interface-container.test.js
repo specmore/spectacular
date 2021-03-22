@@ -2,7 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import InterfaceContainer from './interface-container';
 import InterfaceDetailsMock from './interface-details';
-import SpecEvolutionMock from './spec-evolution';
+import SpecEvolutionMock from './spec-evolution/spec-evolution-container';
 import { renderWithRouter } from '../__tests__/test-utils';
 import {
   CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE, VIEW_SPEC_QUERY_PARAM_NAME, SHOW_EVOLUTION_QUERY_PARAM_NAME, CreateInterfaceLocation,
@@ -15,8 +15,8 @@ jest.mock('../backend-api-client');
 // mock out the actual interface-details
 jest.mock('./interface-details', () => jest.fn(() => null));
 
-// mock out the actual spec-evolution
-jest.mock('./spec-evolution', () => jest.fn(() => null));
+// mock out the actual spec-evolution-container
+jest.mock('./spec-evolution/spec-evolution-container', () => jest.fn(() => null));
 
 describe('InterfaceContainer component', () => {
   test('successful fetch displays interface', async () => {
