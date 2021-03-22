@@ -70,7 +70,7 @@ public class SpecEvolutionBuilder {
         pullRequests);
 
     var usedTags = evolutionItems.stream()
-        .map(EvolutionItem::getTag)
+        .flatMap(evolutionItem -> evolutionItem.getTags().stream())
         .collect(Collectors.toList());
 
     tags.removeIf(tag -> usedTags.contains(tag.getName()));

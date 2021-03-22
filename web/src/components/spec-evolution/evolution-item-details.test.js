@@ -21,9 +21,9 @@ describe('EvolutionItemDetails component', () => {
     expect(ViewSpecLinkButtonMock).toHaveBeenCalledTimes(1);
   });
 
-  test('evolution item with tag behind the branch head renders an old version tag', async () => {
+  test('evolution item with tags behind the branch head renders an old version tag', async () => {
     // given a spec evolution item on with a tag without a branch name on a main branch
-    const evolutionItem = { tag: 'a-tag' };
+    const evolutionItem = { tags: ['a-tag'] };
     const isMain = true;
 
     // when the EvolutionItemDetails component renders
@@ -38,7 +38,7 @@ describe('EvolutionItemDetails component', () => {
 
   test('evolution item with tag on the branch head renders a latest agreed style tag', async () => {
     // given a spec evolution item on with a tag with a branch name on a main branch
-    const evolutionItem = { tag: 'a-tag', branchName: 'a-branch' };
+    const evolutionItem = { tags: ['a-tag'], branchName: 'a-branch' };
     const isMain = true;
 
     // when the EvolutionItemDetails component renders
@@ -53,7 +53,7 @@ describe('EvolutionItemDetails component', () => {
 
   test('evolution item with tag a release branch renders an upcoming release style tag', async () => {
     // given a spec evolution item on with a tag on a non-main branch
-    const evolutionItem = { tag: 'a-tag' };
+    const evolutionItem = { tags: ['a-tag'] };
     const isMain = false;
 
     // when the EvolutionItemDetails component renders

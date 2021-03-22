@@ -10,20 +10,20 @@ interface EvolutionItemProps {
 
 const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolutionItem, isMain }) => {
   const {
-    pullRequest, tag, branchName, ref,
+    pullRequest, tags, branchName, ref,
   } = evolutionItem;
 
   let centreDiv = (<div className="centre" />);
 
-  let tagLabel = null;
-  if (tag) {
-    let colourClassName;
+  let tagLabels = null;
+  if (tags) {
+    let colourClassName = 'upcoming-release';
     if (isMain) {
       colourClassName = branchName ? 'latest-agreed' : 'old-version';
-    } else {
-      colourClassName = 'upcoming-release';
     }
-    tagLabel = (<Label data-testid="tag-label" className={colourClassName} tag>{tag}</Label>);
+    tagLabels = tags.map((tag) => (
+      <Label key={tag} data-testid="tag-label" className={colourClassName} tag>{tag}</Label>
+    ));
   }
 
   let branchNameLabel = null;
@@ -58,7 +58,7 @@ const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolution
   return (
     <div className="details-container">
       {branchNameLabel}
-      {tagLabel}
+      {tagLabels}
       {prLabel}
       {centreDiv}
       {viewSpecLinkButton}

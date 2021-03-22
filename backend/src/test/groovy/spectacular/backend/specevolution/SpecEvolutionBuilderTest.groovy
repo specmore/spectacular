@@ -73,7 +73,7 @@ class SpecEvolutionBuilderTest extends Specification {
         def tagRef2 = new TagRef("tag2", "commit2")
 
         and: "only the first tag is on the first release branch"
-        def tag1EvolutionItem = new EvolutionItem().tag(tagRef1.getName());
+        def tag1EvolutionItem = new EvolutionItem().tags([tagRef1.getName()]);
         def releaseBranch1EvolutionItems = [tag1EvolutionItem]
 
         when: "the spec evolution is built"

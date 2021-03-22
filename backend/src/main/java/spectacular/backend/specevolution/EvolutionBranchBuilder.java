@@ -1,8 +1,10 @@
 package spectacular.backend.specevolution;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
@@ -41,17 +43,19 @@ public class EvolutionBranchBuilder {
 
     var branchHeadEvolutionItem = createBranchHeadEvolutionItem(branch, tagsOnBranchHead.get(true));
 
-    var branchTagComparisons = tagsOnBranchHead.get(false).stream()
+    var branchTagComparisonsGroupedByCommitsBehind = tagsOnBranchHead.get(false).stream()
         .map(tag -> {
           var comparison = this.restApiClient.getComparison(fileRepo, branch.getName(), tag.getName());
-          return new BranchTagComparision(tag, branch.getName(), comparison);
+          return new BranchTagComparison(tag, branch.getName(), comparison);
         })
-        .filter(branchTagComparision -> branchTagComparision.getAheadBy() == 0)
-        .sorted(Comparator.comparingInt(BranchTagComparision::getBehindBy))
+        .filter(branchTagComparison -> branchTagComparison.getAheadBy() == 0)
+        .collect(Collectors.groupingBy(BranchTagComparison::getBehindBy))
+        .entrySet().stream()
+        .sorted(Comparator.comparingInt(Map.Entry::getKey))
         .collect(Collectors.toList());
 
     // what is the html url for the tag? Do we try get the contents item just to get the Url or do we guess it?
-    var tagEvolutionItemsStream = branchTagComparisons.stream().map(this::createTagEvolutionItem);
+    var tagEvolutionItemsStream = branchTagComparisonsGroupedByCommitsBehind.stream().map(this::createTagEvolutionItem);
     var pullRequestEvolutionItemsStream = pullRequests.stream().map(this::createPullRequestEvolutionItem);
 
     var concat = Stream.of(pullRequestEvolutionItemsStream, Stream.of(branchHeadEvolutionItem), tagEvolutionItemsStream).flatMap(s -> s);
@@ -59,35 +63,41 @@ public class EvolutionBranchBuilder {
     return concat.collect(Collectors.toList());
   }
 
-  private EvolutionItem createBranchHeadEvolutionItem(BranchRef branch, Collection<TagRef> tagsOnBranchHead) {
-    var firstMatchingTag = tagsOnBranchHead.stream().findFirst();
-
-    var tag = firstMatchingTag.map(TagRef::getName).orElse(null);
+  private EvolutionItem createBranchHeadEvolutionItem(BranchRef branch, List<TagRef> tagsOnBranchHead) {
+    var tags = tagsOnBranchHead.stream().map(TagRef::getName).collect(Collectors.toList());
 
     return new EvolutionItem()
         .ref(branch.getName())
         .branchName(branch.getName())
-        .tag(tag);
+        .tags(tags);
   }
 
-  private EvolutionItem createTagEvolutionItem(BranchTagComparision branchTagComparision) {
+  private EvolutionItem createTagEvolutionItem(Map.Entry<Integer, List<BranchTagComparison>> branchTagComparisons) {
+    var numberOfTags = branchTagComparisons.getValue().size();
+    var firstTag = branchTagComparisons.getValue().get(0);
+    var ref = numberOfTags == 1 ? firstTag.getTag().getName() : firstTag.getTag().getCommit();
+    var tags = branchTagComparisons.getValue().stream()
+        .map(branchTagComparison -> branchTagComparison.getTag().getName())
+        .collect(Collectors.toList());
+
     return new EvolutionItem()
-        .ref(branchTagComparision.getTag().getName())
-        .tag(branchTagComparision.getTag().getName());
+        .ref(ref)
+        .tags(tags);
   }
 
   private EvolutionItem createPullRequestEvolutionItem(PullRequest pullRequest) {
     return new EvolutionItem()
         .ref(pullRequest.getBranchName())
-        .pullRequest(PullRequestMapper.mapGitHubPullRequest(pullRequest));
+        .pullRequest(PullRequestMapper.mapGitHubPullRequest(pullRequest))
+        .tags(Collections.emptyList());
   }
 
-  private class BranchTagComparision {
+  private class BranchTagComparison {
     private final TagRef tag;
     private final String branchName;
     private final Comparison comparison;
 
-    private BranchTagComparision(TagRef tag, String branchName, Comparison comparison) {
+    private BranchTagComparison(TagRef tag, String branchName, Comparison comparison) {
       this.tag = tag;
       this.branchName = branchName;
       this.comparison = comparison;

@@ -58,8 +58,37 @@ class EvolutionBranchBuilderTest extends Specification {
 
         and: "a only another spec evolution item for the behind tag"
         evolutionItems.size() == 2
-        evolutionItems[1].getTag() == "behindTag"
+        evolutionItems[1].getTags() == ["behindTag"]
         evolutionItems[1].getRef() == behindTag.getName()
+    }
+
+    def "GenerateEvolutionItems returns one evolution item for tags behind the same number of commits"() {
+        given: "a spec file repository and branch"
+        def specFileRepoId = RepositoryId.createForNameWithOwner("test-owner/test-repo")
+        def branch = new BranchRef("test-branch", "", "1234asdf5678")
+
+        and: "a tag behind the branch head on the repository by 2 commits"
+        def behindTag = new TagRef("behindTag", "behind2Commits")
+        def behindTagComparison = new Comparison(null, "behind", 0, 2, 2)
+
+        and: "another tag behind the branch head on the repository also by 2 commits"
+        def behindTag2 = new TagRef("behindTag2", "behind2Commits")
+        def behindTag2Comparison = new Comparison(null, "behind", 0, 2, 2)
+
+        and: "a list of the tags extracted"
+        def tagList = [behindTag, behindTag2]
+
+        when: "generating the evolution items for the branch"
+        def evolutionItems = evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, branch, tagList, [])
+
+        then: "both tags are compared to the branch"
+        1 * restApiClient.getComparison(specFileRepoId, branch.getName(), behindTag.getName()) >> behindTagComparison
+        1 * restApiClient.getComparison(specFileRepoId, branch.getName(), behindTag2.getName()) >> behindTag2Comparison
+
+        and: "beside the branch head item, only another spec evolution item for the behind tag"
+        evolutionItems.size() == 2
+        evolutionItems[1].getRef() == behindTag.getCommit()
+        evolutionItems[1].getTags() == [behindTag.getName(), behindTag2.getName()]
     }
 
     def "GenerateEvolutionItems only returns only one evolution items for tags on the branch head"() {
@@ -84,7 +113,7 @@ class EvolutionBranchBuilderTest extends Specification {
         evolutionItems.first().getBranchName() == branch.getName()
 
         and: "it has the branch name"
-        evolutionItems.first().getTag() == onHeadTag.getName()
+        evolutionItems.first().getTags() == [onHeadTag.getName()]
     }
 
     def "GenerateEvolutionItems returns evolution items for PRs before the branch head"() {
@@ -105,6 +134,9 @@ class EvolutionBranchBuilderTest extends Specification {
         and: "the first item is the for the PR"
         evolutionItems[0].getPullRequest()
         evolutionItems[0].getRef() == prBranch
+
+        and: "has an empty tags list"
+        evolutionItems[0].getTags().isEmpty()
 
         and: "the second item is the for the branch head"
         evolutionItems[1].getRef() == releaseBranch.getName()

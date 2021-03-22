@@ -248,8 +248,11 @@ components:
       properties:
         ref:
           type: string
-        tag:
-          type: string
+        tags:
+          description: The associated to this commit.
+          type: array
+          items:
+            type: string
         branchName:
           type: string
           description: If the evolution item represents the head of a branch, the name of the branch is returned.
