@@ -42,25 +42,30 @@ export const BackToCatalogueListLinkButton: FunctionComponent = () => (
 
 interface ViewSpecLinkButtonProps {
   refName: string;
+  withoutLabel? : boolean;
 }
 
-export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({ refName }) => {
+export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({ refName, withoutLabel = false }) => {
   const isSelected = useQuery().get(VIEW_SPEC_QUERY_PARAM_NAME) === refName;
 
   const viewSpecLink = addQueryParam(VIEW_SPEC_QUERY_PARAM_NAME, refName);
+
+  const labelPosition = withoutLabel ? null : 'right';
+  const labelText = withoutLabel ? null : 'View Spec';
+
   return (
     <Button
       icon
       circular
       size="mini"
-      labelPosition="right"
+      labelPosition={labelPosition}
       as={Link}
       to={viewSpecLink}
       disabled={isSelected}
       data-testid="view-spec-button"
       floated="right"
     >
-      View Spec
+      { labelText }
       <Icon name="eye" />
     </Button>
   );

@@ -53,7 +53,7 @@ const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolution
     centreDiv = (<div data-testid="pull-request-title" className="centre">{pullRequest.title}</div>);
   }
 
-  const viewSpecLinkButton = (<ViewSpecLinkButton refName={ref} />);
+  const viewSpecLinkButton = (<ViewSpecLinkButton refName={ref} withoutLabel />);
 
   return (
     <div className="details-container">
