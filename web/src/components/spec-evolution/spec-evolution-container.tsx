@@ -33,10 +33,21 @@ const PlaceholderEvolutionBranch: FunctionComponent<SpecLogItemProps> = ({ specI
         </div>
         <div className="details-container">
           <Label color="blue">{specItem.ref}</Label>
-          <Label color="blue" tag>{specItem.parseResult.openApiSpec.version}</Label>
+          <Label color="blue" pointing="left">{specItem.parseResult.openApiSpec.version}</Label>
           <div className="centre" />
           <OpenSpecItemContentPageButton specItem={specItem} />
-          <ViewSpecLinkButton refName={specItem.ref} />
+          <ViewSpecLinkButton refName={specItem.ref} withoutLabel />
+        </div>
+      </div>
+    </div>
+    <div className="item" data-testid="spec-evolution-placeholder">
+      <div className="log-entry-container" data-testid="log-entry-container">
+        <div className="line-container" />
+        <div className="placeholder-container">
+          <Placeholder>
+            <Placeholder.Line />
+            <Placeholder.Line />
+          </Placeholder>
         </div>
       </div>
     </div>
