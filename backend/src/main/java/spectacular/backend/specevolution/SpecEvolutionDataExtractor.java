@@ -9,6 +9,7 @@ import spectacular.backend.cataloguemanifest.model.SpecEvolutionConfig;
 import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.domain.Tag;
 import spectacular.backend.github.pullrequests.PullRequestRepository;
+import spectacular.backend.github.refs.BranchRef;
 import spectacular.backend.github.refs.RefRepository;
 import spectacular.backend.github.refs.TagRef;
 
@@ -49,11 +50,9 @@ public class SpecEvolutionDataExtractor {
     if (specEvolutionConfig.getReleaseBranchConfig().getBranchPrefix() != null) {
       var branchPrefix = specEvolutionConfig.getReleaseBranchConfig().getBranchPrefix();
       var matchingBranches = this.refRepository.getBranchesForRepo(specFileRepo, branchPrefix, specFilePath);
-      var branchDataStream = matchingBranches.stream().map(branchRef -> {
-        var pullRequests = this.pullRequestRepository.getPullRequestsForRepoAndFile(specFileRepo, specFilePath, branchRef.getName());
-        return new BranchData(branchRef, pullRequests);
-      });
-      return branchDataStream.collect(Collectors.toList());
+      return matchingBranches.stream()
+          .map(branchRef -> getAllBranchDataFor(branchRef, specFileRepo, specFilePath))
+          .collect(Collectors.toList());
     }
 
     return Collections.emptyList();
@@ -72,14 +71,15 @@ public class SpecEvolutionDataExtractor {
     final String mainBranchName = specEvolutionConfig.getMainBranchConfig().getBranchName();
 
     var branches = this.refRepository.getBranchesForRepo(specFileRepo, mainBranchName, specFilePath);
-    var matchingBranch = branches.stream().filter(branchRef -> branchRef.getName().equalsIgnoreCase(mainBranchName)).findFirst();
 
-    if (matchingBranch.isPresent()) {
-      var associatedPullRequests = this.pullRequestRepository.getPullRequestsForRepoAndFile(specFileRepo, specFilePath, mainBranchName);
+    return branches.stream()
+        .filter(branchRef -> branchRef.getName().equalsIgnoreCase(mainBranchName))
+        .map(branchRef -> getAllBranchDataFor(branchRef, specFileRepo, specFilePath))
+        .findFirst();
+  }
 
-      return Optional.of(new BranchData(matchingBranch.get(), associatedPullRequests));
-    }
-
-    return Optional.empty();
+  private BranchData getAllBranchDataFor(BranchRef branchRef, RepositoryId specFileRepo, String specFilePath) {
+    var pullRequests = this.pullRequestRepository.getPullRequestsForRepoAndFile(specFileRepo, specFilePath, branchRef.getName());
+    return new BranchData(branchRef, pullRequests);
   }
 }

@@ -5,11 +5,10 @@ import spectacular.backend.cataloguemanifest.model.ReleaseBranchConfig
 import spectacular.backend.cataloguemanifest.model.ReleaseTagConfig
 import spectacular.backend.cataloguemanifest.model.SpecEvolutionConfig
 import spectacular.backend.common.RepositoryId
-import spectacular.backend.github.domain.Tag
-import spectacular.backend.github.graphql.Commit
 import spectacular.backend.github.pullrequests.PullRequestRepository
 import spectacular.backend.github.refs.BranchRef
 import spectacular.backend.github.refs.RefRepository
+import spectacular.backend.github.refs.TagRef
 import spock.lang.Specification
 
 class SpecEvolutionDataExtractorTest extends Specification {
@@ -70,7 +69,7 @@ class SpecEvolutionDataExtractorTest extends Specification {
         def specEvolutionConfig = new SpecEvolutionConfig().withReleaseTagConfig(tagConfig)
 
         and: "tags on the repository"
-        def tags = [ new Tag("tag-123"), new Tag("x-tag-456") ]
+        def tags = [ new TagRef("tag-123", "commit1"), new TagRef("x-tag-456", "commit2") ]
 
         when: "the tag data is extracted"
         def result = specEvolutionDataExtractor.getRepoTagsAccordingToConfig(specEvolutionConfig, specRepoId)
@@ -89,7 +88,7 @@ class SpecEvolutionDataExtractorTest extends Specification {
         def specEvolutionConfig = new SpecEvolutionConfig().withReleaseTagConfig(tagConfig)
 
         and: "tags on the repository"
-        def tags = [ new Tag("tag-123"), new Tag("x-tag-456") ]
+        def tags = [ new TagRef("tag-123", "commit1"), new TagRef("x-tag-456", "commit2") ]
 
         when: "the tag data is extracted"
         def result = specEvolutionDataExtractor.getRepoTagsAccordingToConfig(specEvolutionConfig, specRepoId)
