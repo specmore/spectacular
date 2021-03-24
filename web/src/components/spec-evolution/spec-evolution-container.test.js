@@ -55,4 +55,24 @@ describe('SpecEvolution component', () => {
     // then  it contains a place holder item
     expect(getByTestId('spec-evolution-placeholder')).toBeInTheDocument();
   });
+
+
+  test('renders error message when an error is received while loading spec evolution', async () => {
+    // given a spec log
+    const specLog = Generator.SpecLog.generateSpecLog();
+
+    // and a mocked spec evolution response that has an error
+    const specEvolutionResult = {
+      error: {
+        message: 'An error message.',
+      },
+    };
+    useGetInterfaceSpecEvolutionMock.mockReturnValueOnce(specEvolutionResult);
+
+    // when spec evolution component renders
+    const { findByText } = renderWithRouter(<SpecEvolution specLog={specLog} />);
+
+    // then  it contains a place holder item
+    expect(await findByText('An error message.')).toBeInTheDocument();
+  });
 });

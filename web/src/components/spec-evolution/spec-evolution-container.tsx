@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import './spec-evolution.less';
 import {
-  Header, Label, Placeholder,
+  Header, Label, Message, Placeholder,
 } from 'semantic-ui-react';
 import {
   SpecItem, SpecLog, useGetInterfaceSpecEvolution,
@@ -14,8 +14,8 @@ interface SpecLogItemProps {
 }
 
 const PlaceholderEvolutionBranch: FunctionComponent<SpecLogItemProps> = ({ specItem }) => (
-  <div className="evolution-branch-container">
-    <div className="item" data-testid="spec-evolution-placeholder">
+  <div className="evolution-branch-container" data-testid="spec-evolution-placeholder">
+    <div className="item">
       <div className="log-entry-container" data-testid="log-entry-container">
         <div className="line-container" />
         <div className="placeholder-container">
@@ -40,7 +40,7 @@ const PlaceholderEvolutionBranch: FunctionComponent<SpecLogItemProps> = ({ specI
         </div>
       </div>
     </div>
-    <div className="item" data-testid="spec-evolution-placeholder">
+    <div className="item">
       <div className="log-entry-container" data-testid="log-entry-container">
         <div className="line-container" />
         <div className="placeholder-container">
@@ -54,6 +54,17 @@ const PlaceholderEvolutionBranch: FunctionComponent<SpecLogItemProps> = ({ specI
   </div>
 );
 
+interface ErrorProps {
+  errorMessage: string;
+}
+
+const SpecEvolutionError: FunctionComponent<ErrorProps> = ({ errorMessage }) => (
+  <Message negative>
+    <Message.Header>{errorMessage}</Message.Header>
+  </Message>
+);
+
+
 interface SpecLogProps {
   specLog: SpecLog;
   interfaceName: string;
@@ -63,11 +74,13 @@ interface SpecLogProps {
 const SpecEvolutionContainer: FunctionComponent<SpecLogProps> = ({ specLog, interfaceName, encodedId }) => {
   const getInterfaceSpecEvolution = useGetInterfaceSpecEvolution({ encodedId, interfaceName });
 
-  const { data: interfaceSpecEvolutionResult, loading } = getInterfaceSpecEvolution;
+  const { data: interfaceSpecEvolutionResult, loading, error } = getInterfaceSpecEvolution;
 
   let evolutionBranches = null;
   if (loading) {
     evolutionBranches = [(<PlaceholderEvolutionBranch key="placeholder" specItem={specLog.latestAgreed} />)];
+  } else if (error) {
+    evolutionBranches = (<SpecEvolutionError errorMessage={error.message} />);
   } else {
     const { main, releases } = interfaceSpecEvolutionResult.specEvolution;
     const mainBranch = (<SpecEvolutionBranchContainer key={main.branchName} evolutionBranch={main} isMain />);
