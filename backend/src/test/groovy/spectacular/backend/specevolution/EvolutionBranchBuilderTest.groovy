@@ -7,21 +7,25 @@ import spectacular.backend.github.domain.Comparison
 import spectacular.backend.github.pullrequests.PullRequest
 import spectacular.backend.github.refs.BranchRef
 import spectacular.backend.github.refs.TagRef
+import spectacular.backend.specs.SpecService
 import spock.lang.Specification
 
 import java.time.OffsetDateTime
 
 class EvolutionBranchBuilderTest extends Specification {
     def restApiClient = Mock(RestApiClient)
-    def evolutionBranchBuilder = new EvolutionBranchBuilder(restApiClient)
+    def specService = Mock(SpecService)
+    def evolutionBranchBuilder = new EvolutionBranchBuilder(restApiClient, specService)
+
+    def specFileRepoId = RepositoryId.createForNameWithOwner("test-owner/test-repo")
+    def specFilePath = "spec-file.yaml"
 
     def "GenerateEvolutionItems an evolution item for the head commit of the branch"() {
         given: "a spec file repository and branch"
-        def specFileRepoId = RepositoryId.createForNameWithOwner("test-owner/test-repo")
         def branch = new BranchRef("test-branch", "some file contents", "1234asdf5678")
 
         when: "generating the evolution items for the branch"
-        def evolutionItems = evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, branch, [], [])
+        def evolutionItems = evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, specFilePath, branch, [], [])
 
         then: "a spec evolution item for the head commit is returned"
         evolutionItems.size() == 1
@@ -31,7 +35,6 @@ class EvolutionBranchBuilderTest extends Specification {
 
     def "GenerateEvolutionItems only returns evolution items for tags behind or on the branch head"() {
         given: "a spec file repository and branch"
-        def specFileRepoId = RepositoryId.createForNameWithOwner("test-owner/test-repo")
         def branch = new BranchRef("test-branch", "", "1234asdf5678")
 
         and: "a tag behind the branch head on the repository"
@@ -46,7 +49,7 @@ class EvolutionBranchBuilderTest extends Specification {
         def tagList = [behindTag, aheadTag]
 
         when: "generating the evolution items for the branch"
-        def evolutionItems = evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, branch, tagList, [])
+        def evolutionItems = evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, specFilePath, branch, tagList, [])
 
         then: "both tags are compared to the branch"
         1 * restApiClient.getComparison(specFileRepoId, branch.getName(), behindTag.getName()) >> behindTagComparison
@@ -64,7 +67,6 @@ class EvolutionBranchBuilderTest extends Specification {
 
     def "GenerateEvolutionItems returns one evolution item for tags behind the same number of commits"() {
         given: "a spec file repository and branch"
-        def specFileRepoId = RepositoryId.createForNameWithOwner("test-owner/test-repo")
         def branch = new BranchRef("test-branch", "", "1234asdf5678")
 
         and: "a tag behind the branch head on the repository by 2 commits"
@@ -79,7 +81,7 @@ class EvolutionBranchBuilderTest extends Specification {
         def tagList = [behindTag, behindTag2]
 
         when: "generating the evolution items for the branch"
-        def evolutionItems = evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, branch, tagList, [])
+        def evolutionItems = evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, specFilePath, branch, tagList, [])
 
         then: "both tags are compared to the branch"
         1 * restApiClient.getComparison(specFileRepoId, branch.getName(), behindTag.getName()) >> behindTagComparison
@@ -93,7 +95,6 @@ class EvolutionBranchBuilderTest extends Specification {
 
     def "GenerateEvolutionItems only returns only one evolution items for tags on the branch head"() {
         given: "a spec file repository and branch"
-        def specFileRepoId = RepositoryId.createForNameWithOwner("test-owner/test-repo")
         def branch = new BranchRef("test-branch", "", "headCommit")
 
         and: "a tag on the branch head"
@@ -103,7 +104,7 @@ class EvolutionBranchBuilderTest extends Specification {
         def tagList = [onHeadTag]
 
         when: "generating the evolution items for the branch"
-        def evolutionItems = evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, branch, tagList, [])
+        def evolutionItems = evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, specFilePath, branch, tagList, [])
 
         then: "only a spec evolution item for the head commit is returned"
         evolutionItems.size() == 1
@@ -118,7 +119,6 @@ class EvolutionBranchBuilderTest extends Specification {
 
     def "GenerateEvolutionItems returns evolution items for PRs before the branch head"() {
         given: "a spec file repository and release branch"
-        def specFileRepoId = RepositoryId.createForNameWithOwner("test-owner/test-repo")
         def releaseBranch = new BranchRef("release-branch-1", "", "branchHead")
 
         and: "an open pull request on the repository"
@@ -126,7 +126,7 @@ class EvolutionBranchBuilderTest extends Specification {
         def pullRequest = new PullRequest(specFileRepoId, prBranch, releaseBranch.getName(), 99, new URI("https://test-url"), [], [], "test-pr", OffsetDateTime.now())
 
         when: "generating the evolution items for the branch"
-        def evolutionItems = evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, releaseBranch, [], [pullRequest])
+        def evolutionItems = evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, specFilePath, releaseBranch, [], [pullRequest])
 
         then: "2 spec evolution items are returned"
         evolutionItems.size() == 2
@@ -141,5 +141,33 @@ class EvolutionBranchBuilderTest extends Specification {
         and: "the second item is the for the branch head"
         evolutionItems[1].getRef() == releaseBranch.getName()
         evolutionItems[1].getBranchName() == releaseBranch.getName()
+    }
+
+    def "GenerateEvolutionItems gets spec item information for each evolution item"() {
+        given: "a spec file repository and branch"
+        def branchName = "test-branch"
+        def branch = new BranchRef(branchName, "", "1234asdf5678")
+
+        and: "a tag behind the branch head on the repository"
+        def tagName = "behindTag"
+        def behindTag = new TagRef(tagName, "behindCommit")
+        def behindTagComparison = new Comparison(null, "behind", 0, 1, 1)
+        restApiClient.getComparison(specFileRepoId, branch.getName(), behindTag.getName()) >> behindTagComparison
+
+        and: "an open pull request on the repository"
+        def prBranch = "feature-branch-1"
+        def pullRequest = new PullRequest(specFileRepoId, prBranch, branch.getName(), 99, new URI("https://test-url"), [], [], "test-pr", OffsetDateTime.now())
+
+        when: "generating the evolution items for the branch"
+        evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, specFilePath, branch, [behindTag], [pullRequest])
+
+        then: "the spec item for the branch is retrieved"
+        1 * specService.getSpecItem(specFileRepoId, specFilePath, branchName)
+
+        and: "the spec item for the tag is retrieved"
+        1 * specService.getSpecItem(specFileRepoId, specFilePath, tagName)
+
+        and: "the spec item for the pr is retrieved"
+        1 * specService.getSpecItem(specFileRepoId, specFilePath, prBranch)
     }
 }

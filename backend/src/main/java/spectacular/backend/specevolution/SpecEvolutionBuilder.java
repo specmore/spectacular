@@ -45,12 +45,13 @@ public class SpecEvolutionBuilder {
     if (specEvolutionData.getMainBranch().isPresent()) {
       var mainBranch = specEvolutionData.getMainBranch().get().getBranch();
       var mainBranchPRs = specEvolutionData.getMainBranch().get().getAssociatedPullRequest();
-      var mainEvolutionBranch = generateEvolutionBranch(mainBranch, tags, mainBranchPRs, specFileRepo);
+      var mainEvolutionBranch = generateEvolutionBranch(mainBranch, tags, mainBranchPRs, specFileRepo, specFilePath);
       specEvolution.setMain(mainEvolutionBranch);
     }
 
     var releaseBranches = specEvolutionData.getReleaseBranches().stream()
-        .map(branchData -> this.generateEvolutionBranch(branchData.getBranch(), tags, branchData.getAssociatedPullRequest(), specFileRepo))
+        .map(branchData ->
+            this.generateEvolutionBranch(branchData.getBranch(), tags, branchData.getAssociatedPullRequest(), specFileRepo, specFilePath))
         .collect(Collectors.toList());
 
     specEvolution.setReleases(releaseBranches);
@@ -61,10 +62,12 @@ public class SpecEvolutionBuilder {
   private EvolutionBranch generateEvolutionBranch(BranchRef branchRef,
                                                   Collection<TagRef> tags,
                                                   Collection<PullRequest> pullRequests,
-                                                  RepositoryId specFileRepo) {
+                                                  RepositoryId specFileRepo,
+                                                  String specFilePath) {
     var branchName = branchRef.getName();
     var evolutionItems = this.evolutionBranchBuilder.generateEvolutionItems(
         specFileRepo,
+        specFilePath,
         branchRef,
         tags,
         pullRequests);
