@@ -3,6 +3,7 @@ package spectacular.backend.specevolution
 
 import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.RestApiClient
+import spectacular.backend.github.WebPageUrlGenerator
 import spectacular.backend.github.domain.Comparison
 import spectacular.backend.github.pullrequests.PullRequest
 import spectacular.backend.github.refs.BranchRef
@@ -15,14 +16,16 @@ import java.time.OffsetDateTime
 class EvolutionBranchBuilderTest extends Specification {
     def restApiClient = Mock(RestApiClient)
     def specService = Mock(SpecService)
-    def evolutionBranchBuilder = new EvolutionBranchBuilder(restApiClient, specService)
+    def webPageURLGenerator = Mock(WebPageUrlGenerator)
+    def evolutionBranchBuilder = new EvolutionBranchBuilder(restApiClient, specService, webPageURLGenerator)
 
     def specFileRepoId = RepositoryId.createForNameWithOwner("test-owner/test-repo")
     def specFilePath = "spec-file.yaml"
 
     def "GenerateEvolutionItems an evolution item for the head commit of the branch"() {
         given: "a spec file repository and branch"
-        def branch = new BranchRef("test-branch", "some file contents", "1234asdf5678")
+        def branchName = "test-branch"
+        def branch = new BranchRef(branchName, "some file contents", "1234asdf5678")
 
         when: "generating the evolution items for the branch"
         def evolutionItems = evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, specFilePath, branch, [], [])
@@ -31,6 +34,9 @@ class EvolutionBranchBuilderTest extends Specification {
         evolutionItems.size() == 1
         evolutionItems.first().getRef() == branch.getName()
         evolutionItems.first().getBranchName() == branch.getName()
+
+        and: "the spec item for the branch is retrieved"
+        1 * specService.getSpecItem(specFileRepoId, specFilePath, branchName)
     }
 
     def "GenerateEvolutionItems only returns evolution items for tags behind or on the branch head"() {
@@ -164,10 +170,10 @@ class EvolutionBranchBuilderTest extends Specification {
         then: "the spec item for the branch is retrieved"
         1 * specService.getSpecItem(specFileRepoId, specFilePath, branchName)
 
-        and: "the spec item for the tag is retrieved"
-        1 * specService.getSpecItem(specFileRepoId, specFilePath, tagName)
+        and: "the spec item htmlUrl for the tag is generated"
+        1 * webPageURLGenerator.generateContentPageUrl(specFileRepoId, tagName, specFilePath)
 
-        and: "the spec item for the pr is retrieved"
-        1 * specService.getSpecItem(specFileRepoId, specFilePath, prBranch)
+        and: "the spec item htmlUrl for the pr is generated"
+        1 * webPageURLGenerator.generateContentPageUrl(specFileRepoId, prBranch, specFilePath)
     }
 }

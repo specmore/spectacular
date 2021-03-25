@@ -37,12 +37,11 @@ class SpecEvolutionBuilderTest extends Specification {
         def mainBranchData = new BranchData(mainBranchRef, Collections.emptyList())
         def specEvolutionData = new SpecEvolutionData(Optional.of(mainBranchData), Collections.emptyList(), Collections.emptyList(), specEvolutionConfig)
 
-
         when: "the spec evolution is built"
         def specEvolution = specEvolutionBuilder.generateSpecEvolution(interfaceName, specRepoId, specFilePath, specEvolutionData)
 
         then: "the evolutionBranchBuilder is called for the main branch"
-        1 * evolutionBranchBuilder.generateEvolutionItems(specRepoId, mainBranchRef, _, _) >> []
+        1 * evolutionBranchBuilder.generateEvolutionItems(specRepoId, specFilePath, mainBranchRef, _, _) >> []
     }
 
     def "GenerateSpecEvolution returns release branches if release branches were found"() {
@@ -57,8 +56,8 @@ class SpecEvolutionBuilderTest extends Specification {
         def specEvolution = specEvolutionBuilder.generateSpecEvolution(interfaceName, specRepoId, specFilePath, specEvolutionData)
 
         then: "the evolutionBranchBuilder is called for each release branch"
-        1 * evolutionBranchBuilder.generateEvolutionItems(specRepoId, releaseBranchRef1, _, _) >> []
-        1 * evolutionBranchBuilder.generateEvolutionItems(specRepoId, releaseBranchRef2, _, _) >> []
+        1 * evolutionBranchBuilder.generateEvolutionItems(specRepoId, specFilePath, releaseBranchRef1, _, _) >> []
+        1 * evolutionBranchBuilder.generateEvolutionItems(specRepoId, specFilePath, releaseBranchRef2, _, _) >> []
     }
 
     def "GenerateSpecEvolution uses a tag only once per branch"() {
@@ -81,9 +80,9 @@ class SpecEvolutionBuilderTest extends Specification {
         def specEvolution = specEvolutionBuilder.generateSpecEvolution(interfaceName, specRepoId, specFilePath, specEvolutionData)
 
         then: "the evolutionBranchBuilder is called for the first release branch with both tags"
-        1 * evolutionBranchBuilder.generateEvolutionItems(specRepoId, releaseBranchRef1, [tagRef1, tagRef2], _) >> releaseBranch1EvolutionItems
+        1 * evolutionBranchBuilder.generateEvolutionItems(specRepoId, specFilePath, releaseBranchRef1, [tagRef1, tagRef2], _) >> releaseBranch1EvolutionItems
 
         and: "the evolutionBranchBuilder is called for the second release branch with the unused tag"
-        1 * evolutionBranchBuilder.generateEvolutionItems(specRepoId, releaseBranchRef2, [tagRef2], _) >> []
+        1 * evolutionBranchBuilder.generateEvolutionItems(specRepoId, specFilePath, releaseBranchRef2, [tagRef2], _) >> []
     }
 }

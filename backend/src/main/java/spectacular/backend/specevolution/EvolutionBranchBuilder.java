@@ -1,5 +1,7 @@
 package spectacular.backend.specevolution;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -7,26 +9,42 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import spectacular.backend.api.mapper.PullRequestMapper;
 import spectacular.backend.api.model.EvolutionItem;
+import spectacular.backend.api.model.OpenApiSpecParseResult;
+import spectacular.backend.api.model.SpecItem;
 import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
+import spectacular.backend.github.WebPageUrlGenerator;
 import spectacular.backend.github.domain.Comparison;
 import spectacular.backend.github.pullrequests.PullRequest;
 import spectacular.backend.github.refs.BranchRef;
 import spectacular.backend.github.refs.TagRef;
 import spectacular.backend.specs.SpecService;
-import spectacular.backend.specs.openapi.OpenApiParser;
 
 @Service
 public class EvolutionBranchBuilder {
+  private static final Logger logger = LoggerFactory.getLogger(EvolutionBranchBuilder.class);
   private final RestApiClient restApiClient;
   private final SpecService specService;
+  private final WebPageUrlGenerator webPageUrlGenerator;
 
-  public EvolutionBranchBuilder(RestApiClient restApiClient, SpecService specService) {
+  /**
+   * A helper class for building spec evolution items for a given branch.
+   *
+   * @param restApiClient a github rest api client
+   * @param specService a spec service for generating spec items
+   * @param webPageUrlGenerator a service for generating github web page urls
+   */
+  public EvolutionBranchBuilder(RestApiClient restApiClient,
+                                SpecService specService,
+                                WebPageUrlGenerator webPageUrlGenerator) {
     this.restApiClient = restApiClient;
     this.specService = specService;
+    this.webPageUrlGenerator = webPageUrlGenerator;
   }
 
   /**
@@ -96,23 +114,39 @@ public class EvolutionBranchBuilder {
         .map(branchTagComparison -> branchTagComparison.getTag().getName())
         .collect(Collectors.toList());
 
-    var specItem = this.specService.getSpecItem(fileRepo, specFilePath, ref);
+    var urlOnlySpecItem = this.generateHtmlUrlOnlySpecItem(fileRepo, specFilePath, ref);
 
     return new EvolutionItem()
         .ref(ref)
         .tags(tags)
-        .specItem(specItem);
+        .specItem(urlOnlySpecItem);
   }
 
   private EvolutionItem createPullRequestEvolutionItem(RepositoryId fileRepo,
                                                        String specFilePath,
                                                        PullRequest pullRequest) {
-    var specItem = this.specService.getSpecItem(fileRepo, specFilePath, pullRequest.getBranchName());
+    var urlOnlySpecItem = this.generateHtmlUrlOnlySpecItem(fileRepo, specFilePath, pullRequest.getBranchName());
+
     return new EvolutionItem()
         .ref(pullRequest.getBranchName())
         .pullRequest(PullRequestMapper.mapGitHubPullRequest(pullRequest))
         .tags(Collections.emptyList())
-        .specItem(specItem);
+        .specItem(urlOnlySpecItem);
+  }
+
+  private SpecItem generateHtmlUrlOnlySpecItem(RepositoryId fileRepo, String specFilePath, String ref) {
+    URI specItemHtmlUrl = null;
+    OpenApiSpecParseResult parseResult = null;
+    try {
+      specItemHtmlUrl = this.webPageUrlGenerator.generateContentPageUrl(fileRepo, ref, specFilePath);
+    } catch (URISyntaxException e) {
+      parseResult = new OpenApiSpecParseResult().addErrorsItem(e.getMessage());
+      logger.error("An error occurred while generating an HTML URL for a spec item in an evolution branch", e);
+    }
+
+    return new SpecItem()
+        .htmlUrl(specItemHtmlUrl)
+        .parseResult(parseResult);
   }
 
   private class BranchTagComparison {

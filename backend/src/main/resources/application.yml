@@ -7,6 +7,8 @@ github:
       jwt-signing-key-file-path: ${GITHUB_APP_PRIVATE_KEY_FILE_PATH:testPath}
       jwt-duration: PT9S
     root-url: ${GITHUB_API_ROOT_URL:https://api.github.com}
+  web:
+    root-url: ${GITHUB_WEB_ROOT_URL:https://github.com}
 security:
   authentication:
     jwt:
