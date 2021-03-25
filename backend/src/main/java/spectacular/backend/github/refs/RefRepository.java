@@ -19,23 +19,12 @@ public class RefRepository {
   private static final String branchQuery = "query { \n" +
       "  repository(owner: \"%s\", name:\"%s\") {\n" +
       "    nameWithOwner url\n" +
-      "    refs(refPrefix:\"refs/heads/\", first:10, query:\"%s\") {\n" +
+      "    refs(refPrefix:\"refs/heads/\", first:100, query:\"%s\") {\n" +
       "      totalCount\n" +
       "      nodes {\n" +
       "        name\n" +
       "        target {\n" +
       "            oid\n" +
-      "            ... on Commit {\n" +
-      "              message\n" +
-      "              file(path:\"%s\") {\n" +
-      "                name\n" +
-      "                object {\n" +
-      "                  ... on Blob {\n" +
-      "                    text\n" +
-      "                  }\n" +
-      "                }\n" +
-      "              }\n" +
-      "            }\n" +
       "        }\n" +
       "      }\n" +
       "    }\n" +
@@ -45,7 +34,7 @@ public class RefRepository {
   private static final String tagsQuery = "query { \n" +
       "  repository(owner: \"%s\", name:\"%s\") {\n" +
       "    nameWithOwner url\n" +
-      "    refs(refPrefix:\"refs/tags/\", first:10, query:\"%s\") {\n" +
+      "    refs(refPrefix:\"refs/tags/\", first:100, query:\"%s\") {\n" +
       "      totalCount\n" +
       "      nodes {\n" +
       "        name\n" +
