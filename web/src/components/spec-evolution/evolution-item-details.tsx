@@ -10,35 +10,39 @@ interface EvolutionItemProps {
 
 const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolutionItem, isMain }) => {
   const {
-    pullRequest, tags, branchName, ref, parseResult,
+    pullRequest, tags, branchName, ref, specItem,
   } = evolutionItem;
 
   let centreDiv = (<div className="centre" />);
 
+  let itemColourClassName: string;
+  if (pullRequest) {
+    itemColourClassName = 'change-proposal';
+  } else {
+    itemColourClassName = 'upcoming-release';
+    if (isMain) {
+      itemColourClassName = branchName ? 'latest-agreed' : 'old-version';
+    }
+  }
+
   let tagLabels = null;
   if (tags) {
-    let colourClassName = 'upcoming-release';
-    if (isMain) {
-      colourClassName = branchName ? 'latest-agreed' : 'old-version';
-    }
     tagLabels = tags.map((tag) => (
-      <Label key={tag} data-testid="tag-label" className={colourClassName} tag>{tag}</Label>
+      <Label key={tag} data-testid="tag-label" className={itemColourClassName} tag>{tag}</Label>
     ));
   }
 
   let branchNameLabel = null;
   if (branchName) {
-    const colourClassName = isMain ? 'latest-agreed' : 'upcoming-release';
-    branchNameLabel = (<Label data-testid="branch-name-label" className={colourClassName}>{branchName}</Label>);
+    branchNameLabel = (<Label data-testid="branch-name-label" className={itemColourClassName}>{branchName}</Label>);
   }
 
   let fileVersionLabel = null;
-  if (parseResult) {
-    if (parseResult.openApiSpec) {
-      const colourClassName = isMain ? 'latest-agreed' : 'upcoming-release';
+  if (specItem) {
+    if (specItem.parseResult && specItem.parseResult.openApiSpec) {
       fileVersionLabel = (
-        <Label data-testid="file-version-label" className={colourClassName} pointing="left">
-          {parseResult.openApiSpec.version}
+        <Label data-testid="file-version-label" className={itemColourClassName} pointing="left">
+          {specItem.parseResult.openApiSpec.version}
         </Label>
       );
     }
@@ -69,10 +73,10 @@ const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolution
 
   return (
     <div className="details-container">
+      {prLabel}
       {branchNameLabel}
       {fileVersionLabel}
       {tagLabels}
-      {prLabel}
       {centreDiv}
       {viewSpecLinkButton}
     </div>
