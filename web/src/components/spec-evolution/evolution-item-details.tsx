@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Button, Icon, Label } from 'semantic-ui-react';
 import { EvolutionItem } from '../../backend-api-client';
-import { ViewSpecLinkButton } from '../../routes';
+import { OpenSpecItemContentPageButton, ViewSpecLinkButton } from '../../routes';
 
 interface EvolutionItemProps {
   evolutionItem: EvolutionItem;
@@ -38,7 +38,12 @@ const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolution
   }
 
   let fileVersionLabel = null;
+  let openSpecItemContentPageButton = null;
   if (specItem) {
+    if (specItem.htmlUrl) {
+      openSpecItemContentPageButton = (<OpenSpecItemContentPageButton specItem={specItem} />);
+    }
+
     if (specItem.parseResult && specItem.parseResult.openApiSpec) {
       fileVersionLabel = (
         <Label data-testid="file-version-label" className={itemColourClassName} pointing="left">
@@ -78,6 +83,7 @@ const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolution
       {fileVersionLabel}
       {tagLabels}
       {centreDiv}
+      {openSpecItemContentPageButton}
       {viewSpecLinkButton}
     </div>
   );

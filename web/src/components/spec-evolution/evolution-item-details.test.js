@@ -1,12 +1,16 @@
 import React from 'react';
 import { render, within } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import { ViewSpecLinkButton as ViewSpecLinkButtonMock } from '../../routes';
+import {
+  OpenSpecItemContentPageButton as OpenSpecItemContentPageButtonMock,
+  ViewSpecLinkButton as ViewSpecLinkButtonMock,
+} from '../../routes';
 import EvolutionItemDetails from './evolution-item-details';
 import testDataGenerator from '../../__tests__/test-data-generator';
 
 jest.mock('../../routes', () => ({
   ViewSpecLinkButton: jest.fn(() => null),
+  OpenSpecItemContentPageButton: jest.fn(() => null),
 }));
 
 describe('EvolutionItemDetails component', () => {
@@ -20,6 +24,19 @@ describe('EvolutionItemDetails component', () => {
 
     // then a ViewSpecLinkButton is shown
     expect(ViewSpecLinkButtonMock).toHaveBeenCalledTimes(1);
+  });
+
+
+  test('evolution item with specItem htmlUrl renders a OpenSpecItemContentPageButton', async () => {
+    const specItem = testDataGenerator.SpecItem.generateSpecItem();
+    const evolutionItem = { specItem };
+    const isMain = true;
+
+    // when the EvolutionItemDetails component renders
+    render(<EvolutionItemDetails evolutionItem={evolutionItem} isMain={isMain} />);
+
+    // then a OpenSpecItemContentPageButtonMock is shown
+    expect(OpenSpecItemContentPageButtonMock).toHaveBeenCalledTimes(1);
   });
 
 
@@ -86,7 +103,6 @@ describe('EvolutionItemDetails component', () => {
   test('evolution item on a branch head with a successful file parse result render a file version label', async () => {
     // given a successful openapi file parse result
     const specItem = testDataGenerator.SpecItem.generateSpecItem();
-    // const parseResult = { openApiSpec: { title: 'An empty API spec', version: '0.1.0', operations: [] }, errors: [] };
 
     // and a spec evolution item on with a branch name on a main branch with the parse result
     const evolutionItem = { branchName: 'a-branch', specItem };
