@@ -27,8 +27,8 @@ class SpecEvolutionDataExtractorTest extends Specification {
 
         and: "different branches matching the main branch name on the repository"
         def branches = [
-                new BranchRef("a-main-branch", null, "commit1"),
-                new BranchRef("a-main-branch-2", null, "commit2"),
+                new BranchRef("a-main-branch", "commit1"),
+                new BranchRef("a-main-branch-2", "commit2"),
         ]
 
         when: "the main branch data is extracted"
@@ -120,8 +120,8 @@ class SpecEvolutionDataExtractorTest extends Specification {
 
         and: "branches on the repository"
         def branches = [
-                new BranchRef("release/x-branch-123", null, "commit1"),
-                new BranchRef("release/x-branch-456", null, "commit2")
+                new BranchRef("release/x-branch-123", "commit1"),
+                new BranchRef("release/x-branch-456", "commit2")
         ]
 
         when: "the release branch data is extracted"

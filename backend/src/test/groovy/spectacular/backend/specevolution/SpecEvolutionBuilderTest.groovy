@@ -33,7 +33,7 @@ class SpecEvolutionBuilderTest extends Specification {
 
     def "GenerateSpecEvolution returns a main branch if a main branch was found"() {
         given: "branch data for a main branch is found"
-        def mainBranchRef = new BranchRef("main", null, null)
+        def mainBranchRef = new BranchRef("main", null)
         def mainBranchData = new BranchData(mainBranchRef, Collections.emptyList())
         def specEvolutionData = new SpecEvolutionData(Optional.of(mainBranchData), Collections.emptyList(), Collections.emptyList(), specEvolutionConfig)
 
@@ -46,9 +46,9 @@ class SpecEvolutionBuilderTest extends Specification {
 
     def "GenerateSpecEvolution returns release branches if release branches were found"() {
         given: "branch data for release branches were found"
-        def releaseBranchRef1 = new BranchRef("release1", null, null)
+        def releaseBranchRef1 = new BranchRef("release1", null)
         def releaseBranchData1 = new BranchData(releaseBranchRef1, Collections.emptyList())
-        def releaseBranchRef2 = new BranchRef("release2", null, null)
+        def releaseBranchRef2 = new BranchRef("release2", null)
         def releaseBranchData2 = new BranchData(releaseBranchRef2, Collections.emptyList())
         def specEvolutionData = new SpecEvolutionData(Optional.empty(), Collections.emptyList(), [ releaseBranchData1, releaseBranchData2 ], specEvolutionConfig)
 
@@ -62,9 +62,9 @@ class SpecEvolutionBuilderTest extends Specification {
 
     def "GenerateSpecEvolution uses a tag only once per branch"() {
         given: "branch data for release branches were found"
-        def releaseBranchRef1 = new BranchRef("release1", null, null)
+        def releaseBranchRef1 = new BranchRef("release1", null)
         def releaseBranchData1 = new BranchData(releaseBranchRef1, Collections.emptyList())
-        def releaseBranchRef2 = new BranchRef("release2", null, null)
+        def releaseBranchRef2 = new BranchRef("release2", null)
         def releaseBranchData2 = new BranchData(releaseBranchRef2, Collections.emptyList())
 
         and: "two tags were found"

@@ -3,7 +3,7 @@ import {
   Label, List, Icon, Message, Item,
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import { SpecItem, SpecEvolution } from '../backend-api-client';
+import { SpecItem, SpecEvolutionSummary } from '../backend-api-client';
 import { CreateInterfaceLocation, OpenSpecItemContentPageButton } from '../routes';
 
 
@@ -36,21 +36,17 @@ const InterfaceListItemError: FunctionComponent<SpecItemProps> = ({ specItem }) 
 
 interface InterfaceListItemProps {
   catalogueEncodedId: string;
-  specEvolution: SpecEvolution;
+  specEvolutionSummary: SpecEvolutionSummary;
 }
 
-const InterfaceListItemContainer: FunctionComponent<InterfaceListItemProps> = ({ catalogueEncodedId, specEvolution }) => {
-  const interfaceLocation = CreateInterfaceLocation(catalogueEncodedId, specEvolution.interfaceName);
-  const latestAgreedSpecItem = specEvolution.main.evolutionItems.find((evolutionItem) => evolutionItem.branchName).specItem;
+const InterfaceListItemContainer: FunctionComponent<InterfaceListItemProps> = ({ catalogueEncodedId, specEvolutionSummary }) => {
+  const interfaceLocation = CreateInterfaceLocation(catalogueEncodedId, specEvolutionSummary.interfaceName);
+  const latestAgreedSpecItem = specEvolutionSummary.latestAgreed;
   if (latestAgreedSpecItem.parseResult.errors.length > 0) {
     return (
       <InterfaceListItemError specItem={latestAgreedSpecItem} />
     );
   }
-
-  const evolutionBranches = [specEvolution.main, ...specEvolution.releases];
-  const allEvolutionItems = evolutionBranches.reduce((acc, x) => acc.concat(x.evolutionItems), []);
-  const proposedChangesCount = allEvolutionItems.filter((evolutionItem) => evolutionItem.pullRequest).length;
 
   return (
     <Item data-testid="interface-list-item-container">
@@ -64,7 +60,7 @@ const InterfaceListItemContainer: FunctionComponent<InterfaceListItemProps> = ({
           </Label>
           <Label color="green">
             <Icon name="code branch" />
-            {proposedChangesCount}
+            {specEvolutionSummary.proposedChangesCount}
           </Label>
           <OpenSpecItemContentPageButton specItem={latestAgreedSpecItem} />
         </Item.Extra>

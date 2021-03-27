@@ -169,10 +169,10 @@ components:
           type: string
         interfaceCount:
           type: integer
-        specEvolutions:
+        specEvolutionSummaries:
           type: array
           items:
-            $ref: '#/components/schemas/SpecEvolution'
+            $ref: '#/components/schemas/SpecEvolutionSummary'
         specLogs:
           type: array
           items:
@@ -183,6 +183,24 @@ components:
       x-keys:
         - fullPath
         - name
+    SpecEvolutionSummary:
+      type: object
+      properties:
+        interfaceName:
+          type: string
+        latestAgreed:
+          $ref: '#/components/schemas/SpecItem'
+        upcomingReleaseCount:
+          type: integer
+        proposedChangesCount:
+          type: integer
+        agreedVersionTagCount:
+          type: integer
+      required:
+        - interfaceName
+        - upcomingReleaseCount
+        - proposedChangesCount
+        - agreedVersionTagCount
     SpecLog:
       type: object
       properties:
@@ -267,6 +285,7 @@ components:
           $ref: '#/components/schemas/PullRequest'
       required:
         - ref
+        - tags
     SpecItem:
       type: object
       properties:

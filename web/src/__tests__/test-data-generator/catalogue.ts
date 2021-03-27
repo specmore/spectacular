@@ -1,15 +1,17 @@
-import { Catalogue, SpecLog } from '../../backend-api-client';
+import { Catalogue, SpecEvolutionSummary, SpecLog } from '../../backend-api-client';
 
 interface GenerateCatalogueParameters {
   fullPath?: string;
   name?: string;
   specLogs?: SpecLog[];
+  specEvolutionSummaries?: SpecEvolutionSummary[];
 }
 
 const generateCatalogue = ({
   fullPath = 'test-owner/specs-test/spectacular-config.yml',
   name = 'testCatalogue1',
   specLogs,
+  specEvolutionSummaries,
 }: GenerateCatalogueParameters = {}): Catalogue => {
   const catalogue = {
     fullPath,
@@ -19,6 +21,7 @@ const generateCatalogue = ({
     description: 'Specifications for all the interfaces in the across the system X.',
     interfaceCount: 2,
     specLogs,
+    specEvolutionSummaries,
   };
 
   return catalogue;

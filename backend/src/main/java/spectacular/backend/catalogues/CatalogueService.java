@@ -215,9 +215,9 @@ public class CatalogueService {
 
     var catalogueManifestFileContentItem = getAndParseCatalogueResult.getCatalogueManifestFileContentItem();
     var catalogueDetails = catalogueMapper.mapCatalogue(catalogue, catalogueId, catalogueManifestFileContentItem.getHtml_url());
-    var specEvolutions = specEvolutionService.getSpecEvolutionsFor(catalogue, catalogueId);
+    var specEvolutionSummaries = specEvolutionService.getSpecEvolutionSummariesFor(catalogue, catalogueId);
     var specLogs = specLogService.getSpecLogsFor(catalogue, catalogueId);
-    return catalogueDetails.specLogs(specLogs).specEvolutions(specEvolutions);
+    return catalogueDetails.specLogs(specLogs).specEvolutionSummaries(specEvolutionSummaries);
   }
 
   private GetAndParseCatalogueResult getAndParseCatalogueInManifest(CatalogueId catalogueId) {

@@ -33,7 +33,7 @@ describe('SpecEvolution component', () => {
 
     // and the SpecEvolutionBranch main branch should have been rendered last
     expect(SpecEvolutionBranchContainerMock).toHaveBeenLastCalledWith(
-      { evolutionBranch: { branchName: 'mainBranch', evolutionItems: [] }, isMain: true },
+      { evolutionBranch: specEvolution.main, isMain: true },
       {},
     );
   });

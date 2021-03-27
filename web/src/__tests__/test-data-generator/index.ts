@@ -4,6 +4,7 @@ import ProposedChange from './change-proposal';
 import SpecLog from './spec-log';
 import Catalogue from './catalogue';
 import SpecEvolution from './spec-evolution';
+import SpecEvolutionSummary from './spec-evolution-summary';
 
 export default {
   SpecItem,
@@ -12,4 +13,5 @@ export default {
   SpecLog,
   Catalogue,
   SpecEvolution,
+  SpecEvolutionSummary,
 };

@@ -11,9 +11,9 @@ jest.mock('./interface-list-item', () => jest.fn(() => null));
 describe('CatalogueDetails component', () => {
   test('renders catalogue details when no error is given', async () => {
     // given a catalogue data item with 2 spec files
-    const specLog1 = Generator.SpecLog.generateSpecLog({ interfaceName: 'testInterface1' });
-    const specLog2 = Generator.SpecLog.generateSpecLog({ interfaceName: 'testInterface2' });
-    const catalogue = Generator.Catalogue.generateCatalogue({ specLogs: [specLog1, specLog2] });
+    const specEvolutionSummary1 = Generator.SpecEvolutionSummary.generateSpecEvolutionSummary({ interfaceName: 'testInterface1' });
+    const specEvolutionSummary2 = Generator.SpecEvolutionSummary.generateSpecEvolutionSummary({ interfaceName: 'testInterface2' });
+    const catalogue = Generator.Catalogue.generateCatalogue({ specEvolutionSummaries: [specEvolutionSummary1, specEvolutionSummary2] });
 
     // when catalogue details component renders
     const { getByTestId, getByText } = renderWithRouter(<CatalogueDetails catalogue={catalogue} />);

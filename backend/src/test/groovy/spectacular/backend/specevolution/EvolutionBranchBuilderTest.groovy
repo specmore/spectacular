@@ -25,7 +25,7 @@ class EvolutionBranchBuilderTest extends Specification {
     def "GenerateEvolutionItems an evolution item for the head commit of the branch"() {
         given: "a spec file repository and branch"
         def branchName = "test-branch"
-        def branch = new BranchRef(branchName, "some file contents", "1234asdf5678")
+        def branch = new BranchRef(branchName, "1234asdf5678")
 
         when: "generating the evolution items for the branch"
         def evolutionItems = evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, specFilePath, branch, [], [])
@@ -41,7 +41,7 @@ class EvolutionBranchBuilderTest extends Specification {
 
     def "GenerateEvolutionItems only returns evolution items for tags behind or on the branch head"() {
         given: "a spec file repository and branch"
-        def branch = new BranchRef("test-branch", "", "1234asdf5678")
+        def branch = new BranchRef("test-branch", "1234asdf5678")
 
         and: "a tag behind the branch head on the repository"
         def behindTag = new TagRef("behindTag", "behindCommit")
@@ -73,7 +73,7 @@ class EvolutionBranchBuilderTest extends Specification {
 
     def "GenerateEvolutionItems returns one evolution item for tags behind the same number of commits"() {
         given: "a spec file repository and branch"
-        def branch = new BranchRef("test-branch", "", "1234asdf5678")
+        def branch = new BranchRef("test-branch", "1234asdf5678")
 
         and: "a tag behind the branch head on the repository by 2 commits"
         def behindTag = new TagRef("behindTag", "behind2Commits")
@@ -101,7 +101,7 @@ class EvolutionBranchBuilderTest extends Specification {
 
     def "GenerateEvolutionItems only returns only one evolution items for tags on the branch head"() {
         given: "a spec file repository and branch"
-        def branch = new BranchRef("test-branch", "", "headCommit")
+        def branch = new BranchRef("test-branch", "headCommit")
 
         and: "a tag on the branch head"
         def onHeadTag = new TagRef("onHeadTag", "headCommit")
@@ -125,7 +125,7 @@ class EvolutionBranchBuilderTest extends Specification {
 
     def "GenerateEvolutionItems returns evolution items for PRs before the branch head"() {
         given: "a spec file repository and release branch"
-        def releaseBranch = new BranchRef("release-branch-1", "", "branchHead")
+        def releaseBranch = new BranchRef("release-branch-1", "branchHead")
 
         and: "an open pull request on the repository"
         def prBranch = "feature-branch-1"
@@ -152,7 +152,7 @@ class EvolutionBranchBuilderTest extends Specification {
     def "GenerateEvolutionItems gets spec item information for each evolution item"() {
         given: "a spec file repository and branch"
         def branchName = "test-branch"
-        def branch = new BranchRef(branchName, "", "1234asdf5678")
+        def branch = new BranchRef(branchName, "1234asdf5678")
 
         and: "a tag behind the branch head on the repository"
         def tagName = "behindTag"
