@@ -3,7 +3,7 @@ import {
   Label, List, Icon, Message, Item,
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import { SpecLog, SpecItem } from '../backend-api-client';
+import { SpecItem, SpecEvolution } from '../backend-api-client';
 import { CreateInterfaceLocation, OpenSpecItemContentPageButton } from '../routes';
 
 
@@ -36,19 +36,21 @@ const InterfaceListItemError: FunctionComponent<SpecItemProps> = ({ specItem }) 
 
 interface InterfaceListItemProps {
   catalogueEncodedId: string;
-  specLog: SpecLog;
+  specEvolution: SpecEvolution;
 }
 
-const InterfaceListItemContainer: FunctionComponent<InterfaceListItemProps> = ({ catalogueEncodedId, specLog }) => {
-  const interfaceLocation = CreateInterfaceLocation(catalogueEncodedId, specLog.interfaceName);
-  const latestAgreedSpecItem = specLog.latestAgreed;
-  if (specLog.latestAgreed.parseResult.errors.length > 0) {
+const InterfaceListItemContainer: FunctionComponent<InterfaceListItemProps> = ({ catalogueEncodedId, specEvolution }) => {
+  const interfaceLocation = CreateInterfaceLocation(catalogueEncodedId, specEvolution.interfaceName);
+  const latestAgreedSpecItem = specEvolution.main.evolutionItems.find((evolutionItem) => evolutionItem.branchName).specItem;
+  if (latestAgreedSpecItem.parseResult.errors.length > 0) {
     return (
-      <InterfaceListItemError specItem={specLog.latestAgreed} />
+      <InterfaceListItemError specItem={latestAgreedSpecItem} />
     );
   }
 
-  const proposedChangesCount = specLog.proposedChanges.length;
+  const evolutionBranches = [specEvolution.main, ...specEvolution.releases];
+  const allEvolutionItems = evolutionBranches.reduce((acc, x) => acc.concat(x.evolutionItems), []);
+  const proposedChangesCount = allEvolutionItems.filter((evolutionItem) => evolutionItem.pullRequest).length;
 
   return (
     <Item data-testid="interface-list-item-container">

@@ -1,6 +1,7 @@
 package spectacular.backend.catalogues;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +19,7 @@ import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.github.domain.ContentItem;
 import spectacular.backend.github.domain.SearchCodeResultItem;
+import spectacular.backend.specevolution.SpecEvolutionService;
 import spectacular.backend.specs.SpecLogService;
 
 @Service
@@ -37,6 +39,7 @@ public class CatalogueService {
   private final SpecLogService specLogService;
   private final CatalogueManifestParser catalogueManifestParser;
   private final CatalogueMapper catalogueMapper;
+  private final SpecEvolutionService specEvolutionService;
 
   /**
    * A service component that encapsulates all the logic required to build Catalogue objects from the information stored in git repositories
@@ -45,14 +48,17 @@ public class CatalogueService {
    * @param specLogService a service component providing the functionality to retrieve Spec Log items referenced within the catalogue
    * @param catalogueManifestParser a helper service to parse catalogue manifest file content into concrete objects
    * @param catalogueMapper a helper service for mapping catalogue manifest objects to API model objects
+   * @param specEvolutionService a service for retrieving spec evolution information about an interface file
    */
   public CatalogueService(RestApiClient restApiClient,
                           SpecLogService specLogService,
-                          CatalogueManifestParser catalogueManifestParser, CatalogueMapper catalogueMapper) {
+                          CatalogueManifestParser catalogueManifestParser, CatalogueMapper catalogueMapper,
+                          SpecEvolutionService specEvolutionService) {
     this.restApiClient = restApiClient;
     this.specLogService = specLogService;
     this.catalogueManifestParser = catalogueManifestParser;
     this.catalogueMapper = catalogueMapper;
+    this.specEvolutionService = specEvolutionService;
   }
 
   /**
@@ -63,12 +69,11 @@ public class CatalogueService {
    * @return a list of all the accessible catalogues
    */
   public List<spectacular.backend.api.model.Catalogue> findCataloguesForOrgAndUser(String orgName, String username) {
-    var catalogues = findCataloguesForOrg(orgName).stream()
+    return findCataloguesForOrg(orgName).stream()
         .filter(catalogueManifestId -> isRepositoryAccessible(catalogueManifestId.getRepositoryId(), username))
         .map(this::getCataloguesFromManifest)
-        .flatMap(cataloguesList -> cataloguesList.stream())
+        .flatMap(Collection::stream)
         .collect(Collectors.toList());
-    return catalogues;
   }
 
   /**
@@ -135,11 +140,8 @@ public class CatalogueService {
         .filter(resultItem -> isExactFileNameMatch(resultItem, CATALOGUE_MANIFEST_FULL_YAML_FILE_NAME))
         .findFirst();
 
-    if (manifestFileResult.isPresent()) {
-      return CatalogueManifestId.createFrom(manifestFileResult.get());
-    }
+    return manifestFileResult.map(CatalogueManifestId::createFrom).orElse(null);
 
-    return null;
   }
 
   private List<CatalogueManifestId> findCataloguesForOrg(String orgName) {
@@ -213,8 +215,9 @@ public class CatalogueService {
 
     var catalogueManifestFileContentItem = getAndParseCatalogueResult.getCatalogueManifestFileContentItem();
     var catalogueDetails = catalogueMapper.mapCatalogue(catalogue, catalogueId, catalogueManifestFileContentItem.getHtml_url());
+    var specEvolutions = specEvolutionService.getSpecEvolutionsFor(catalogue, catalogueId);
     var specLogs = specLogService.getSpecLogsFor(catalogue, catalogueId);
-    return catalogueDetails.specLogs(specLogs);
+    return catalogueDetails.specLogs(specLogs).specEvolutions(specEvolutions);
   }
 
   private GetAndParseCatalogueResult getAndParseCatalogueInManifest(CatalogueId catalogueId) {

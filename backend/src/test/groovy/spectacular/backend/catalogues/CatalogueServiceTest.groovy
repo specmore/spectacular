@@ -3,6 +3,7 @@ package spectacular.backend.catalogues
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 import spectacular.backend.api.model.Catalogue
+import spectacular.backend.api.model.SpecEvolution
 import spectacular.backend.api.model.SpecLog
 import spectacular.backend.cataloguemanifest.CatalogueManifestParseResult
 import spectacular.backend.cataloguemanifest.CatalogueManifestParser
@@ -16,6 +17,7 @@ import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.domain.ContentItem
 import spectacular.backend.github.domain.SearchCodeResultItem
 import spectacular.backend.github.domain.SearchCodeResults
+import spectacular.backend.specevolution.SpecEvolutionService
 import spectacular.backend.specs.SpecLogService
 import spock.lang.Specification
 
@@ -26,7 +28,8 @@ class CatalogueServiceTest extends Specification {
     def specLogService = Mock(SpecLogService)
     def catalogueManifestParser = Mock(CatalogueManifestParser)
     def catalogueMapper = Mock(CatalogueMapper)
-    def catalogueService = new CatalogueService(restApiClient, specLogService, catalogueManifestParser, catalogueMapper)
+    def specEvolutionService = Mock(SpecEvolutionService)
+    def catalogueService = new CatalogueService(restApiClient, specLogService, catalogueManifestParser, catalogueMapper, specEvolutionService)
 
     def aUsername = "test-user"
     def anOrg = "test-org"
@@ -73,6 +76,9 @@ class CatalogueServiceTest extends Specification {
         and: "spec logs for each file in the manifest"
         def specLogs = [Mock(SpecLog), Mock(SpecLog)]
 
+        and: "spec evolutions for each interface file in the manifest"
+        def specEvolutions = [Mock(SpecEvolution), Mock(SpecEvolution)]
+
         when: "the get catalogue for user is called"
         def result = catalogueService.getCatalogueForUser(catalogueId, aUsername)
 
@@ -91,8 +97,14 @@ class CatalogueServiceTest extends Specification {
         and: "spec logs are retrieved for the catalogue"
         1 * specLogService.getSpecLogsFor(_, catalogueId) >> specLogs
 
+        and: "the spec evolutions are retrieved for the catalogue"
+        1 * specEvolutionService.getSpecEvolutionsFor(_, catalogueId) >> specEvolutions
+
         and: "the spec logs are added to the catalogue API model object"
         1 * catalogueModel.specLogs(specLogs) >> catalogueModel
+
+        and: "the spec evolutions are added to the catalogue API model object"
+        1 * catalogueModel.specEvolutions(specEvolutions) >> catalogueModel
 
         and: "the mapped catalogue API model object is returned"
         result == catalogueModel

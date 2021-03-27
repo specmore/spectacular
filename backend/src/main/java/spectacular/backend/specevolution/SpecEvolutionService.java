@@ -1,8 +1,15 @@
 package spectacular.backend.specevolution;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import spectacular.backend.api.model.SpecEvolution;
+import spectacular.backend.cataloguemanifest.SpecFileRepositoryResolver;
+import spectacular.backend.cataloguemanifest.model.Catalogue;
+import spectacular.backend.cataloguemanifest.model.Interface;
 import spectacular.backend.cataloguemanifest.model.SpecEvolutionConfig;
+import spectacular.backend.common.CatalogueId;
 import spectacular.backend.common.RepositoryId;
 
 @Service
@@ -23,6 +30,18 @@ public class SpecEvolutionService {
     this.specEvolutionDataExtractor = specEvolutionDataExtractor;
     this.specEvolutionBuilder = specEvolutionBuilder;
     this.specEvolutionConfigResolver = specEvolutionConfigResolver;
+  }
+
+  /**
+   * Gets a list of SpecEvolutions for all the interfaces in a given interface catalogue.
+   * @param catalogue the catalogue manifest with a list of interfaces
+   * @param catalogueId the unique identifier of the catalogue
+   * @return a list of SpecEvolutions
+   */
+  public List<SpecEvolution> getSpecEvolutionsFor(Catalogue catalogue, CatalogueId catalogueId) {
+    return catalogue.getInterfaces().getAdditionalProperties().entrySet().stream()
+        .map(interfaceEntry -> getSpecEvolutionFor(interfaceEntry, catalogueId))
+        .collect(Collectors.toList());
   }
 
   /**
@@ -48,5 +67,15 @@ public class SpecEvolutionService {
     var specEvolutionDataResult = new SpecEvolutionData(mainBranch, tags, branches, resolvedConfig);
 
     return specEvolutionBuilder.generateSpecEvolution(interfaceName, specFileRepo, specFilePath, specEvolutionDataResult);
+  }
+
+  private SpecEvolution getSpecEvolutionFor(Map.Entry<String, Interface> interfaceEntry, CatalogueId catalogueId) {
+    var catalogueInterfaceEntry = interfaceEntry.getValue();
+    var specEvolutionConfig = catalogueInterfaceEntry.getSpecEvolutionConfig();
+
+    var specFileRepo = SpecFileRepositoryResolver.resolveSpecFileRepository(catalogueInterfaceEntry, catalogueId);
+    var specFilePath = catalogueInterfaceEntry.getSpecFile().getFilePath();
+
+    return this.getSpecEvolution(interfaceEntry.getKey(), specEvolutionConfig, specFileRepo, specFilePath);
   }
 }

@@ -169,6 +169,10 @@ components:
           type: string
         interfaceCount:
           type: integer
+        specEvolutions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpecEvolution'
         specLogs:
           type: array
           items:

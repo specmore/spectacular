@@ -33,8 +33,8 @@ const CatalogueDetails: FunctionComponent<CatalogueDetailsProps> = ({ catalogue 
     <p>{catalogue.description}</p>
     <Header as="h3">Interface List</Header>
     <Item.Group divided data-testid="catalogue-details-interface-list">
-      {catalogue.specLogs.map((specLog) => (
-        <InterfaceListItem key={specLog.interfaceName} catalogueEncodedId={catalogue.encodedId} specLog={specLog} />))}
+      {catalogue.specEvolutions.map((specEvolution) => (
+        <InterfaceListItem key={specEvolution.interfaceName} catalogueEncodedId={catalogue.encodedId} specEvolution={specEvolution} />))}
     </Item.Group>
   </div>
 );
