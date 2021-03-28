@@ -19,6 +19,7 @@ import spectacular.backend.github.domain.ContentItem
 import spectacular.backend.github.domain.SearchCodeResultItem
 import spectacular.backend.github.domain.SearchCodeResults
 import spectacular.backend.specevolution.SpecEvolutionService
+import spectacular.backend.specevolution.SpecEvolutionSummaryMapper
 import spectacular.backend.specs.SpecLogService
 import spock.lang.Specification
 
@@ -30,7 +31,8 @@ class CatalogueServiceTest extends Specification {
     def catalogueManifestParser = Mock(CatalogueManifestParser)
     def catalogueMapper = Mock(CatalogueMapper)
     def specEvolutionService = Mock(SpecEvolutionService)
-    def catalogueService = new CatalogueService(restApiClient, specLogService, catalogueManifestParser, catalogueMapper, specEvolutionService)
+    def specEvolutionSummaryMapper = Mock(SpecEvolutionSummaryMapper)
+    def catalogueService = new CatalogueService(restApiClient, specLogService, catalogueManifestParser, catalogueMapper, specEvolutionService, specEvolutionSummaryMapper)
 
     def aUsername = "test-user"
     def anOrg = "test-org"
@@ -59,7 +61,7 @@ class CatalogueServiceTest extends Specification {
         return new SearchCodeResults(searchCodeResultItems.size(), searchCodeResultItems, false)
     }
 
-    def "get catalogue for repository and valid user"() {
+    def "get catalogue for repository and valid user returns evolution summaries for each interface in catalogue manifest"() {
         given: "a specific catalogue the user has access to"
         def catalogueId = aCatalogue()
         def userAndInstallationAccessToCatalogueRepository = true
@@ -67,8 +69,18 @@ class CatalogueServiceTest extends Specification {
         and: "a catalogue config manifest containing the catalogue"
         def manifestFileContentItem = Mock(ContentItem)
 
+        and: "a catalogue manifest interface entry"
+        def specFileLocation = new spectacular.backend.cataloguemanifest.model.SpecFileLocation().withFilePath("test/file/path")
+        def interfaceEntry = new spectacular.backend.cataloguemanifest.model.Interface().withSpecFile(specFileLocation)
+        def interfaceEntryName = "testInterface1"
+
+        and: "spec evolution for the interface"
+        def interfaceSpecEvolution = Mock(SpecEvolution)
+        def interfaceSpecEvolutionSummary = Mock(SpecEvolutionSummary)
+
         and: "a catalogue config parse result for catalogue in the manifest file contents with catalogue entry"
-        def catalogue = Mock(spectacular.backend.cataloguemanifest.model.Catalogue)
+        def interfaces = new spectacular.backend.cataloguemanifest.model.Interfaces().withAdditionalProperty(interfaceEntryName, interfaceEntry)
+        def catalogue = new spectacular.backend.cataloguemanifest.model.Catalogue().withInterfaces(interfaces)
         def catalogueParseResult = new FindAndParseCatalogueResult(catalogue, null)
 
         and: "a catalogue API model representation of the catalogue manifest object without spec log items"
@@ -76,9 +88,6 @@ class CatalogueServiceTest extends Specification {
 
         and: "spec logs for each file in the manifest"
         def specLogs = [Mock(SpecLog), Mock(SpecLog)]
-
-        and: "spec evolution summaries for each interface file in the manifest"
-        def specEvolutionSummaries = [Mock(SpecEvolutionSummary), Mock(SpecEvolutionSummary)]
 
         when: "the get catalogue for user is called"
         def result = catalogueService.getCatalogueForUser(catalogueId, aUsername)
@@ -98,14 +107,17 @@ class CatalogueServiceTest extends Specification {
         and: "spec logs are retrieved for the catalogue"
         1 * specLogService.getSpecLogsFor(_, catalogueId) >> specLogs
 
-        and: "the spec evolution summaries are retrieved for the catalogue"
-        1 * specEvolutionService.getSpecEvolutionSummariesFor(_, catalogueId) >> specEvolutionSummaries
+        and: "the spec evolutions are retrieved for each interface entry in the catalogue"
+        1 * specEvolutionService.getSpecEvolution(interfaceEntryName, _, _, _) >> interfaceSpecEvolution
+
+        and: "the spec evolutions are converted into a summary"
+        1 * specEvolutionSummaryMapper.mapSpecEvolutionToSummary(interfaceSpecEvolution) >> interfaceSpecEvolutionSummary
 
         and: "the spec logs are added to the catalogue API model object"
         1 * catalogueModel.specLogs(specLogs) >> catalogueModel
 
         and: "the spec evolutions are added to the catalogue API model object"
-        1 * catalogueModel.specEvolutionSummaries(specEvolutionSummaries) >> catalogueModel
+        1 * catalogueModel.specEvolutionSummaries([interfaceSpecEvolutionSummary]) >> catalogueModel
 
         and: "the mapped catalogue API model object is returned"
         result == catalogueModel

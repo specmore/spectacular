@@ -1,16 +1,8 @@
 package spectacular.backend.specevolution;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import spectacular.backend.api.model.SpecEvolution;
-import spectacular.backend.api.model.SpecEvolutionSummary;
-import spectacular.backend.cataloguemanifest.SpecFileRepositoryResolver;
-import spectacular.backend.cataloguemanifest.model.Catalogue;
-import spectacular.backend.cataloguemanifest.model.Interface;
 import spectacular.backend.cataloguemanifest.model.SpecEvolutionConfig;
-import spectacular.backend.common.CatalogueId;
 import spectacular.backend.common.RepositoryId;
 
 @Service
@@ -34,18 +26,6 @@ public class SpecEvolutionService {
   }
 
   /**
-   * Gets a list of SpecEvolutions for all the interfaces in a given interface catalogue.
-   * @param catalogue the catalogue manifest with a list of interfaces
-   * @param catalogueId the unique identifier of the catalogue
-   * @return a list of SpecEvolutions
-   */
-  public List<SpecEvolutionSummary> getSpecEvolutionSummariesFor(Catalogue catalogue, CatalogueId catalogueId) {
-    return catalogue.getInterfaces().getAdditionalProperties().entrySet().stream()
-        .map(interfaceEntry -> getSpecEvolutionSummaryFor(interfaceEntry, catalogueId))
-        .collect(Collectors.toList());
-  }
-
-  /**
    * Gets the Spec Evolution view of an interface's spec file.
    * @param interfaceName the name of the interface in a catalogue
    * @param specEvolutionConfig the config to use when building the view
@@ -60,24 +40,6 @@ public class SpecEvolutionService {
     var specEvolutionDataResult = getSpecEvolutionDataForInterface(specEvolutionConfig, specFileRepo, specFilePath);
 
     return specEvolutionBuilder.generateSpecEvolution(interfaceName, specFileRepo, specFilePath, specEvolutionDataResult);
-  }
-
-  private SpecEvolutionSummary getSpecEvolutionSummaryFor(Map.Entry<String, Interface> interfaceEntry, CatalogueId catalogueId) {
-    var catalogueInterfaceEntry = interfaceEntry.getValue();
-    var specEvolutionConfig = catalogueInterfaceEntry.getSpecEvolutionConfig();
-
-    var specFileRepo = SpecFileRepositoryResolver.resolveSpecFileRepository(catalogueInterfaceEntry, catalogueId);
-    var specFilePath = catalogueInterfaceEntry.getSpecFile().getFilePath();
-
-    return this.getSpecEvolutionSummary(interfaceEntry.getKey(), specEvolutionConfig, specFileRepo, specFilePath);
-  }
-
-  private SpecEvolutionSummary getSpecEvolutionSummary(String interfaceName,
-                                                       SpecEvolutionConfig specEvolutionConfig,
-                                                       RepositoryId specFileRepo,
-                                                       String specFilePath) {
-    var specEvolution = getSpecEvolution(interfaceName, specEvolutionConfig, specFileRepo, specFilePath);
-    return SpecEvolutionSummaryMapper.mapSpecEvolutionToSummary(specEvolution);
   }
 
   private SpecEvolutionData getSpecEvolutionDataForInterface(SpecEvolutionConfig specEvolutionConfig,

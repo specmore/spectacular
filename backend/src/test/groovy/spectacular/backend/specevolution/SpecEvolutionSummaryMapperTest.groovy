@@ -8,6 +8,8 @@ import spectacular.backend.api.model.SpecItem
 import spock.lang.Specification
 
 class SpecEvolutionSummaryMapperTest extends Specification {
+    def specEvolutionSummaryMapper = new SpecEvolutionSummaryMapper()
+
     def aBranchWithPullRequestEvolutionItems(String branchName, int numberPrItems) {
         def prEvolutionItems = (1..numberPrItems).collect{
             def prBranchName = "prBranch-$it"
@@ -22,7 +24,7 @@ class SpecEvolutionSummaryMapperTest extends Specification {
         def specEvolution = new SpecEvolution().interfaceName('testInterface1')
 
         when: "the SpecEvolution object is mapped to a SpecEvolutionSummary object"
-        def summary = SpecEvolutionSummaryMapper.mapSpecEvolutionToSummary(specEvolution)
+        def summary = specEvolutionSummaryMapper.mapSpecEvolutionToSummary(specEvolution)
 
         then: "the SpecEvolutionSummary has the same interfaceName"
         summary.getInterfaceName() == specEvolution.getInterfaceName()
@@ -41,7 +43,7 @@ class SpecEvolutionSummaryMapperTest extends Specification {
         def specEvolution = new SpecEvolution().main(mainEvolutionBranch)
 
         when: "the SpecEvolution object is mapped to a SpecEvolutionSummary object"
-        def summary = SpecEvolutionSummaryMapper.mapSpecEvolutionToSummary(specEvolution)
+        def summary = specEvolutionSummaryMapper.mapSpecEvolutionToSummary(specEvolution)
 
         then: "the SpecEvolutionSummary has the SpecItem set as the latestAgreed SpecItem"
         summary.getLatestAgreed() == specItem
@@ -54,7 +56,7 @@ class SpecEvolutionSummaryMapperTest extends Specification {
         def specEvolution = new SpecEvolution().releases([releaseEvolutionBranch1, releaseEvolutionBranch2])
 
         when: "the SpecEvolution object is mapped to a SpecEvolutionSummary object"
-        def summary = SpecEvolutionSummaryMapper.mapSpecEvolutionToSummary(specEvolution)
+        def summary = specEvolutionSummaryMapper.mapSpecEvolutionToSummary(specEvolution)
 
         then: "the SpecEvolutionSummary has a upcomingReleaseCount of 2"
         summary.getUpcomingReleaseCount() == 2
@@ -74,7 +76,7 @@ class SpecEvolutionSummaryMapperTest extends Specification {
         def specEvolution = new SpecEvolution().main(mainEvolutionBranch).releases(releaseEvolutionBranches)
 
         when: "the SpecEvolution object is mapped to a SpecEvolutionSummary object"
-        def summary = SpecEvolutionSummaryMapper.mapSpecEvolutionToSummary(specEvolution)
+        def summary = specEvolutionSummaryMapper.mapSpecEvolutionToSummary(specEvolution)
 
         then: "the SpecEvolutionSummary has a proposedChangesCount of 5"
         summary.getProposedChangesCount() == 5
@@ -94,7 +96,7 @@ class SpecEvolutionSummaryMapperTest extends Specification {
         def specEvolution = new SpecEvolution().main(mainEvolutionBranch)
 
         when: "the SpecEvolution object is mapped to a SpecEvolutionSummary object"
-        def summary = SpecEvolutionSummaryMapper.mapSpecEvolutionToSummary(specEvolution)
+        def summary = specEvolutionSummaryMapper.mapSpecEvolutionToSummary(specEvolution)
 
         then: "the SpecEvolutionSummary has a agreedVersionTagCount of 2"
         summary.getAgreedVersionTagCount() == 2

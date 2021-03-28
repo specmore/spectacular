@@ -3,11 +3,13 @@ package spectacular.backend.specevolution;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
 import spectacular.backend.api.model.EvolutionItem;
 import spectacular.backend.api.model.SpecEvolution;
 import spectacular.backend.api.model.SpecEvolutionSummary;
 import spectacular.backend.api.model.SpecItem;
 
+@Service
 public class SpecEvolutionSummaryMapper {
   /**
    * Maps a full SpecEvolution into a SpecEvolutionSummary.
@@ -15,7 +17,7 @@ public class SpecEvolutionSummaryMapper {
    * @param specEvolution with all the evolution data
    * @return a SpecEvolutionSummary with a summarised version of the evolution data
    */
-  public static SpecEvolutionSummary mapSpecEvolutionToSummary(SpecEvolution specEvolution) {
+  public SpecEvolutionSummary mapSpecEvolutionToSummary(SpecEvolution specEvolution) {
     List<EvolutionItem> allEvolutionItems = new ArrayList<>();
     SpecItem latestAgreedSpecItem = null;
     int agreedVersionTagCount = 0;

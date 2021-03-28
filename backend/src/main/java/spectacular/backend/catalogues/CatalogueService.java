@@ -4,14 +4,18 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import spectacular.backend.api.model.SpecEvolutionSummary;
 import spectacular.backend.cataloguemanifest.CatalogueManifestParser;
 import spectacular.backend.cataloguemanifest.FindAndParseCatalogueResult;
+import spectacular.backend.cataloguemanifest.SpecFileRepositoryResolver;
+import spectacular.backend.cataloguemanifest.model.Catalogue;
 import spectacular.backend.cataloguemanifest.model.Interface;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.common.CatalogueManifestId;
@@ -20,6 +24,7 @@ import spectacular.backend.github.RestApiClient;
 import spectacular.backend.github.domain.ContentItem;
 import spectacular.backend.github.domain.SearchCodeResultItem;
 import spectacular.backend.specevolution.SpecEvolutionService;
+import spectacular.backend.specevolution.SpecEvolutionSummaryMapper;
 import spectacular.backend.specs.SpecLogService;
 
 @Service
@@ -40,6 +45,7 @@ public class CatalogueService {
   private final CatalogueManifestParser catalogueManifestParser;
   private final CatalogueMapper catalogueMapper;
   private final SpecEvolutionService specEvolutionService;
+  private final SpecEvolutionSummaryMapper specEvolutionSummaryMapper;
 
   /**
    * A service component that encapsulates all the logic required to build Catalogue objects from the information stored in git repositories
@@ -49,16 +55,19 @@ public class CatalogueService {
    * @param catalogueManifestParser a helper service to parse catalogue manifest file content into concrete objects
    * @param catalogueMapper a helper service for mapping catalogue manifest objects to API model objects
    * @param specEvolutionService a service for retrieving spec evolution information about an interface file
+   * @param specEvolutionSummaryMapper a helper mapper for creating summarised evolutionary views
    */
   public CatalogueService(RestApiClient restApiClient,
                           SpecLogService specLogService,
                           CatalogueManifestParser catalogueManifestParser, CatalogueMapper catalogueMapper,
-                          SpecEvolutionService specEvolutionService) {
+                          SpecEvolutionService specEvolutionService,
+                          SpecEvolutionSummaryMapper specEvolutionSummaryMapper) {
     this.restApiClient = restApiClient;
     this.specLogService = specLogService;
     this.catalogueManifestParser = catalogueManifestParser;
     this.catalogueMapper = catalogueMapper;
     this.specEvolutionService = specEvolutionService;
+    this.specEvolutionSummaryMapper = specEvolutionSummaryMapper;
   }
 
   /**
@@ -215,7 +224,11 @@ public class CatalogueService {
 
     var catalogueManifestFileContentItem = getAndParseCatalogueResult.getCatalogueManifestFileContentItem();
     var catalogueDetails = catalogueMapper.mapCatalogue(catalogue, catalogueId, catalogueManifestFileContentItem.getHtml_url());
-    var specEvolutionSummaries = specEvolutionService.getSpecEvolutionSummariesFor(catalogue, catalogueId);
+
+    var specEvolutionSummaries = catalogue.getInterfaces().getAdditionalProperties().entrySet().stream()
+        .map(interfaceEntry -> getSpecEvolutionSummaryFor(interfaceEntry, catalogueId))
+        .collect(Collectors.toList());
+
     var specLogs = specLogService.getSpecLogsFor(catalogue, catalogueId);
     return catalogueDetails.specLogs(specLogs).specEvolutionSummaries(specEvolutionSummaries);
   }
@@ -247,6 +260,17 @@ public class CatalogueService {
     }
 
     return new GetAndParseCatalogueResult(fileContentItem, catalogueParseResult);
+  }
+
+  private SpecEvolutionSummary getSpecEvolutionSummaryFor(Map.Entry<String, Interface> interfaceEntry, CatalogueId catalogueId) {
+    var catalogueInterfaceEntry = interfaceEntry.getValue();
+    var specEvolutionConfig = catalogueInterfaceEntry.getSpecEvolutionConfig();
+
+    var specFileRepo = SpecFileRepositoryResolver.resolveSpecFileRepository(catalogueInterfaceEntry, catalogueId);
+    var specFilePath = catalogueInterfaceEntry.getSpecFile().getFilePath();
+
+    var specEvolution = specEvolutionService.getSpecEvolution(interfaceEntry.getKey(), specEvolutionConfig, specFileRepo, specFilePath);
+    return specEvolutionSummaryMapper.mapSpecEvolutionToSummary(specEvolution);
   }
 
   private class GetAndParseCatalogueResult {

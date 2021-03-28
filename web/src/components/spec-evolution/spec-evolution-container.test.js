@@ -3,27 +3,19 @@ import '@testing-library/jest-dom/extend-expect';
 import SpecEvolution from './spec-evolution-container';
 import { renderWithRouter } from '../../__tests__/test-utils';
 import Generator from '../../__tests__/test-data-generator';
-import { useGetInterfaceSpecEvolution as useGetInterfaceSpecEvolutionMock } from '../../backend-api-client';
 import SpecEvolutionBranchContainerMock from './spec-evolution-branch';
 
-jest.mock('../../backend-api-client');
 
 // mock out the actual spec evolution branch items
 jest.mock('./spec-evolution-branch', () => jest.fn(() => null));
 
 describe('SpecEvolution component', () => {
   test('renders the release spec evolution branches before the main branch', async () => {
-    // given a mocked successful spec evolution response with 2 release branches and a main branch
+    // given a spec evolution with 2 release branches and a main branch
     const specEvolution = Generator.SpecEvolution.generateSpecEvolution({ numberReleaseBranches: 2 });
-    const getInterfaceSpecEvolutionResult = {
-      data: {
-        specEvolution,
-      },
-    };
-    useGetInterfaceSpecEvolutionMock.mockReturnValueOnce(getInterfaceSpecEvolutionResult);
 
     // when spec evolution component renders
-    const { getByTestId } = renderWithRouter(<SpecEvolution />);
+    const { getByTestId } = renderWithRouter(<SpecEvolution specEvolution={specEvolution} />);
 
     // then an spec evolution container is found
     expect(getByTestId('spec-evolution-container')).toBeInTheDocument();
@@ -36,43 +28,5 @@ describe('SpecEvolution component', () => {
       { evolutionBranch: specEvolution.main, isMain: true },
       {},
     );
-  });
-
-
-  test('renders loading placeholder when spec evolution data is loading', async () => {
-    // given a spec log
-    const specLog = Generator.SpecLog.generateSpecLog();
-
-    // and a mocked spec evolution response that is not yet resolved
-    const specEvolutionResult = {
-      loading: true,
-    };
-    useGetInterfaceSpecEvolutionMock.mockReturnValueOnce(specEvolutionResult);
-
-    // when spec evolution component renders
-    const { getByTestId } = renderWithRouter(<SpecEvolution specLog={specLog} />);
-
-    // then  it contains a place holder item
-    expect(getByTestId('spec-evolution-placeholder')).toBeInTheDocument();
-  });
-
-
-  test('renders error message when an error is received while loading spec evolution', async () => {
-    // given a spec log
-    const specLog = Generator.SpecLog.generateSpecLog();
-
-    // and a mocked spec evolution response that has an error
-    const specEvolutionResult = {
-      error: {
-        message: 'An error message.',
-      },
-    };
-    useGetInterfaceSpecEvolutionMock.mockReturnValueOnce(specEvolutionResult);
-
-    // when spec evolution component renders
-    const { findByText } = renderWithRouter(<SpecEvolution specLog={specLog} />);
-
-    // then  it contains a place holder item
-    expect(await findByText('An error message.')).toBeInTheDocument();
   });
 });

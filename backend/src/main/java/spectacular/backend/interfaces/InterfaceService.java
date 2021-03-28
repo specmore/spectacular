@@ -1,22 +1,19 @@
 package spectacular.backend.interfaces;
 
 import java.io.UnsupportedEncodingException;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import spectacular.backend.api.model.EvolutionBranch;
+import spectacular.backend.api.model.GetInterfaceResult;
 import spectacular.backend.api.model.SpecEvolution;
 import spectacular.backend.cataloguemanifest.SpecFileRepositoryResolver;
 import spectacular.backend.catalogues.CatalogueService;
 import spectacular.backend.common.CatalogueId;
-import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
-import spectacular.backend.specevolution.EvolutionBranchBuilder;
-import spectacular.backend.specevolution.SpecEvolutionBuilder;
 import spectacular.backend.specevolution.SpecEvolutionService;
+import spectacular.backend.specevolution.SpecEvolutionSummaryMapper;
 
 @Service
 public class InterfaceService {
@@ -25,18 +22,22 @@ public class InterfaceService {
   private final CatalogueService catalogueService;
   private final RestApiClient restApiClient;
   private final SpecEvolutionService specEvolutionService;
+  private final SpecEvolutionSummaryMapper specEvolutionSummaryMapper;
 
   /**
    * A service for returning information about an interface and its specification file.
    * @param catalogueService the catalogue service used to get information about where the spec file is located
    * @param restApiClient the rest client for retrieving information from the git service
    * @param specEvolutionService a helper service for building the evolutionary view of a specification file
+   * @param specEvolutionSummaryMapper a helper mapper for creating summarised evolutionary views
    */
   public InterfaceService(CatalogueService catalogueService, RestApiClient restApiClient,
-                          SpecEvolutionService specEvolutionService) {
+                          SpecEvolutionService specEvolutionService,
+                          SpecEvolutionSummaryMapper specEvolutionSummaryMapper) {
     this.catalogueService = catalogueService;
     this.restApiClient = restApiClient;
     this.specEvolutionService = specEvolutionService;
+    this.specEvolutionSummaryMapper = specEvolutionSummaryMapper;
   }
 
   /**
@@ -96,5 +97,34 @@ public class InterfaceService {
     var specFilePath = catalogueInterfaceEntry.getSpecFile().getFilePath();
 
     return specEvolutionService.getSpecEvolution(interfaceName, specEvolutionConfig, specFileRepo, specFilePath);
+  }
+
+  /**
+   * Gets the details of an interface.
+   *
+   * @param catalogueId the catalogue the interface belongs to
+   * @param interfaceName the name of the interface
+   * @param username the name of the user requesting the spec evolution
+   */
+  public GetInterfaceResult getInterface(CatalogueId catalogueId, String interfaceName, String username) {
+    var catalogueInterfaceEntry = this.catalogueService.getInterfaceEntry(catalogueId, interfaceName, username);
+
+    if (catalogueInterfaceEntry == null || catalogueInterfaceEntry.getSpecFile() == null) {
+      return null;
+    }
+
+    var specEvolutionConfig = catalogueInterfaceEntry.getSpecEvolutionConfig();
+
+    var specFileRepo = SpecFileRepositoryResolver.resolveSpecFileRepository(catalogueInterfaceEntry, catalogueId);
+    var specFilePath = catalogueInterfaceEntry.getSpecFile().getFilePath();
+
+    var catalogue = this.catalogueService.getCatalogueForUser(catalogueId, username);
+    var specEvolution = specEvolutionService.getSpecEvolution(interfaceName, specEvolutionConfig, specFileRepo, specFilePath);
+    var specEvolutionSummary = specEvolutionSummaryMapper.mapSpecEvolutionToSummary(specEvolution);
+
+    return new GetInterfaceResult()
+        .catalogue(catalogue)
+        .specEvolutionSummary(specEvolutionSummary)
+        .specEvolution(specEvolution);
   }
 }

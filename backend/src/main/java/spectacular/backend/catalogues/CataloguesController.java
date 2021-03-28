@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import spectacular.backend.api.CataloguesApi;
 import spectacular.backend.api.model.FindCataloguesResult;
 import spectacular.backend.api.model.GetCatalogueResult;
+import spectacular.backend.api.model.GetInterfaceResult;
 import spectacular.backend.api.model.GetSpecEvolutionResult;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.interfaces.InterfaceService;
@@ -48,6 +49,22 @@ public class CataloguesController implements CataloguesApi {
     var getCatalogueResult = new GetCatalogueResult()
         .catalogue(catalogue);
     return ResponseEntity.ok(getCatalogueResult);
+  }
+
+  @Override
+  public ResponseEntity<GetInterfaceResult> getInterfaceDetails(byte[] encodedId, String interfaceName) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    var decodedBytes = Base64.getDecoder().decode(encodedId);
+    var combinedId = new String(decodedBytes);
+    var catalogueId = CatalogueId.createFrom(combinedId);
+
+    var result = this.interfaceService.getInterface(catalogueId, interfaceName, authentication.getName());
+
+    if (result == null) {
+      return ResponseEntity.notFound().build();
+    }
+
+    return ResponseEntity.ok(result);
   }
 
   @Override

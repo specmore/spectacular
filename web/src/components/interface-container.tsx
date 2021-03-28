@@ -5,7 +5,7 @@ import {
 import { useParams } from 'react-router-dom';
 import SwaggerUI from 'swagger-ui-react';
 import 'swagger-ui-react/swagger-ui.css';
-import { useGetCatalogue } from '../backend-api-client';
+import { useGetInterfaceDetails } from '../backend-api-client';
 import LocationBar from './location-bar';
 import InterfaceDetails from './interface-details';
 import { CloseSpecButton, getCurrentSpecRefViewed, isShowSpecEvolution } from '../routes';
@@ -46,8 +46,8 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
   const refName = getCurrentSpecRefViewed();
   const showSpecEvolution = isShowSpecEvolution();
 
-  const getCatalogue = useGetCatalogue({ encodedId });
-  const { data: getCatalogueResult, loading, error } = getCatalogue;
+  const getInterfaceDetails = useGetInterfaceDetails({ encodedId, interfaceName });
+  const { data: getInterfaceResult, loading, error } = getInterfaceDetails;
 
   let catalogue = null;
   let content = null;
@@ -58,9 +58,8 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
   } else if (error) {
     content = (<InterfaceContainerError errorMessage={error.message} />);
   } else {
-    catalogue = getCatalogueResult.catalogue;
-    const specLog = catalogue.specLogs.find((specLogItem) => specLogItem.interfaceName === interfaceName);
-    content = (<InterfaceDetails specLog={specLog} />);
+    catalogue = getInterfaceResult.catalogue;
+    content = (<InterfaceDetails specEvolutionSummary={getInterfaceResult.specEvolutionSummary} />);
 
     if (refName) {
       const interfaceFileContentsPath = createInterfaceFileContentsPath(encodedId, interfaceName, refName);
@@ -76,7 +75,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
       specEvolution = (
         <Segment vertical>
           <Container text>
-            <SpecEvolutionContainer specLog={specLog} interfaceName={interfaceName} encodedId={encodedId} />
+            <SpecEvolutionContainer specEvolution={getInterfaceResult.specEvolution} />
           </Container>
         </Segment>
       );

@@ -2,6 +2,8 @@ package spectacular.backend.interfaces
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
+import spectacular.backend.api.model.SpecEvolution
+import spectacular.backend.api.model.SpecEvolutionSummary
 import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.cataloguemanifest.model.SpecEvolutionConfig
 import spectacular.backend.cataloguemanifest.model.SpecFileLocation
@@ -10,15 +12,16 @@ import spectacular.backend.common.CatalogueId
 import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.domain.ContentItem
-import spectacular.backend.github.domain.Tag
 import spectacular.backend.specevolution.SpecEvolutionService
+import spectacular.backend.specevolution.SpecEvolutionSummaryMapper
 import spock.lang.Specification
 
 class InterfaceServiceTest extends Specification {
     def catalogueService = Mock(CatalogueService)
     def restApiClient = Mock(RestApiClient)
     def specEvolutionService = Mock(SpecEvolutionService)
-    def interfaceService = new InterfaceService(catalogueService, restApiClient, specEvolutionService)
+    def specEvolutionSummaryMapper = Mock(SpecEvolutionSummaryMapper)
+    def interfaceService = new InterfaceService(catalogueService, restApiClient, specEvolutionService, specEvolutionSummaryMapper)
 
     def aUsername = "test-user"
 
@@ -167,9 +170,6 @@ class InterfaceServiceTest extends Specification {
         def specEvolutionConfig = new SpecEvolutionConfig()
         interfaceEntry.setSpecEvolutionConfig(specEvolutionConfig)
 
-//        and: "tags on the spec file's repository main branch"
-//        def mainTags = [new Tag("mainTag1")]
-
         when: "getting the spec evolution for the interface entry name"
         def specEvolution = interfaceService.getSpecEvolution(catalogueId, interfaceEntryName, aUsername)
 
@@ -178,14 +178,42 @@ class InterfaceServiceTest extends Specification {
 
         and: "the spec evolution is built"
         1 * specEvolutionService.getSpecEvolution(interfaceEntryName, specEvolutionConfig, specFileRepoId, specFilePath)
+    }
 
-//        and: "the tags are retrieved from the repository the spec file is in"
-//        1 * restApiClient.getRepositoryTags(specFileRepoId) >> mainTags
-//
-//        and: "the main branch evolution items are generated from the tags"
-//        1 * evolutionBranchBuilder.generateEvolutionItems(specFileRepoId, "master", mainTags) >> [new TagEvolutionItem().tag("mainTag1")]
-//
-//        and: "the spec evolution returned has the main branch evolution items"
-//        specEvolution.getMain().getEvolutionItems().size() == 1
+    def "GetInterface has SpecEvolution and SpecEvolutionSummary"() {
+        given: "a catalogue with an interface entry"
+        def catalogueId = aCatalogue()
+        def interfaceEntryName = "testInterface"
+        def interfaceEntry = new Interface()
+
+        and: "a spec file location for the interface for a .yaml file"
+        def specFileRepoId = RepositoryId.createForNameWithOwner("test-owner/test-repo")
+        def specFilePath = "spec-file.yaml"
+        def specFileLocation = new SpecFileLocation()
+                .withRepo(specFileRepoId.nameWithOwner)
+                .withFilePath(specFilePath)
+        interfaceEntry.setSpecFile(specFileLocation)
+
+        and: "a spec evolution config"
+        def specEvolutionConfig = new SpecEvolutionConfig()
+        interfaceEntry.setSpecEvolutionConfig(specEvolutionConfig)
+
+        and: "a generate spec evolution"
+        def specEvolution = Mock(SpecEvolution)
+
+        and: "a spec evolution summary"
+        def specEvolutionSummary = Mock(SpecEvolutionSummary)
+
+        when: "getting the spec evolution for the interface entry name"
+        def result = interfaceService.getInterface(catalogueId, interfaceEntryName, aUsername)
+
+        then: "the interface entry is retrieved from the catalogue service"
+        1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> interfaceEntry
+
+        and: "the spec evolution for the interface is retrieved"
+        1 * specEvolutionService.getSpecEvolution(interfaceEntryName, specEvolutionConfig, specFileRepoId, specFilePath) >> specEvolution
+
+        and: "the spec evolution summary is created"
+        1 * specEvolutionSummaryMapper.mapSpecEvolutionToSummary(specEvolution) >> specEvolutionSummary
     }
 }
