@@ -2,19 +2,19 @@ import React, { FunctionComponent } from 'react';
 import './location-bar.less';
 import { Link, useParams } from 'react-router-dom';
 import { CATALOGUE_LIST_ROUTE, CreateCatalogueContainerLocation, CreateInterfaceLocation } from '../routes';
-import { Catalogue } from '../backend-api-client';
+import { Catalogue, SpecEvolutionSummary } from '../backend-api-client';
 
 interface LocationBarProps {
   installationOwner: string;
   catalogue?: Catalogue;
+  specEvolutionSummary?: SpecEvolutionSummary;
 }
 
 const LocationBar: FunctionComponent<LocationBarProps> = ({
   installationOwner,
   catalogue,
+  specEvolutionSummary,
 }) => {
-  const { interfaceName } = useParams();
-
   const breadcrumbList = [];
   if (!catalogue) {
     breadcrumbList.push({
@@ -33,10 +33,9 @@ const LocationBar: FunctionComponent<LocationBarProps> = ({
       element: (<Link to={catalogueLocation}>{catalogue.title}</Link>),
     });
 
-    const specLog = catalogue.specLogs.find((specLogItem) => specLogItem.interfaceName === interfaceName);
-    if (specLog) {
-      const interfaceTitle = specLog.latestAgreed.parseResult.openApiSpec.title;
-      const interfaceLocation = CreateInterfaceLocation(catalogue.encodedId, interfaceName);
+    if (specEvolutionSummary) {
+      const interfaceTitle = specEvolutionSummary.latestAgreed.parseResult.openApiSpec.title;
+      const interfaceLocation = CreateInterfaceLocation(catalogue.encodedId, specEvolutionSummary.interfaceName);
       breadcrumbList.push({
         id: 'interface-title-text',
         element: (<Link to={interfaceLocation}>{interfaceTitle}</Link>),

@@ -53,13 +53,15 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
   let content = null;
   let specPreview = null;
   let specEvolution = null;
+  let specEvolutionSummary = null;
   if (loading) {
     content = (<InterfaceContainerLoading />);
   } else if (error) {
     content = (<InterfaceContainerError errorMessage={error.message} />);
   } else {
     catalogue = getInterfaceResult.catalogue;
-    content = (<InterfaceDetails specEvolutionSummary={getInterfaceResult.specEvolutionSummary} />);
+    specEvolutionSummary = getInterfaceResult.specEvolutionSummary;
+    content = (<InterfaceDetails specEvolutionSummary={specEvolutionSummary} />);
 
     if (refName) {
       const interfaceFileContentsPath = createInterfaceFileContentsPath(encodedId, interfaceName, refName);
@@ -84,7 +86,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
 
   return (
     <>
-      <LocationBar installationOwner={org} catalogue={catalogue} />
+      <LocationBar installationOwner={org} catalogue={catalogue} specEvolutionSummary={specEvolutionSummary} />
       <div data-testid="interface-container-segment">
         <Segment vertical>
           <Container text>
