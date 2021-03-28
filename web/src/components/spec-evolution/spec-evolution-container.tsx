@@ -9,11 +9,11 @@ import {
 import { CloseSpecEvolutionButton } from '../../routes';
 import SpecEvolutionBranchContainer from './spec-evolution-branch';
 
-interface SpecLogProps {
+interface SpecEvolutionContainerProps {
   specEvolution: SpecEvolution;
 }
 
-const SpecEvolutionContainer: FunctionComponent<SpecLogProps> = ({ specEvolution }) => {
+const SpecEvolutionContainer: FunctionComponent<SpecEvolutionContainerProps> = ({ specEvolution }) => {
   const { main, releases } = specEvolution;
   const mainBranch = (<SpecEvolutionBranchContainer key={main.branchName} evolutionBranch={main} isMain />);
   const releaseBranches = releases.map((releaseBranch) => (
