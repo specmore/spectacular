@@ -5,7 +5,6 @@ import org.springframework.web.client.HttpClientErrorException
 import spectacular.backend.api.model.Catalogue
 import spectacular.backend.api.model.SpecEvolution
 import spectacular.backend.api.model.SpecEvolutionSummary
-import spectacular.backend.api.model.SpecLog
 import spectacular.backend.cataloguemanifest.CatalogueManifestParseResult
 import spectacular.backend.cataloguemanifest.CatalogueManifestParser
 import spectacular.backend.cataloguemanifest.FindAndParseCatalogueResult
@@ -20,19 +19,18 @@ import spectacular.backend.github.domain.SearchCodeResultItem
 import spectacular.backend.github.domain.SearchCodeResults
 import spectacular.backend.specevolution.SpecEvolutionService
 import spectacular.backend.specevolution.SpecEvolutionSummaryMapper
-import spectacular.backend.specs.SpecLogService
+
 import spock.lang.Specification
 
 class CatalogueServiceTest extends Specification {
     def catalogueManifestYamlFilename = "spectacular-config.yaml"
     def catalogueManifestYmlFilename = "spectacular-config.yml"
     def restApiClient = Mock(RestApiClient)
-    def specLogService = Mock(SpecLogService)
     def catalogueManifestParser = Mock(CatalogueManifestParser)
     def catalogueMapper = Mock(CatalogueMapper)
     def specEvolutionService = Mock(SpecEvolutionService)
     def specEvolutionSummaryMapper = Mock(SpecEvolutionSummaryMapper)
-    def catalogueService = new CatalogueService(restApiClient, specLogService, catalogueManifestParser, catalogueMapper, specEvolutionService, specEvolutionSummaryMapper)
+    def catalogueService = new CatalogueService(restApiClient, catalogueManifestParser, catalogueMapper, specEvolutionService, specEvolutionSummaryMapper)
 
     def aUsername = "test-user"
     def anOrg = "test-org"
@@ -86,9 +84,6 @@ class CatalogueServiceTest extends Specification {
         and: "a catalogue API model representation of the catalogue manifest object without spec log items"
         def catalogueModel = Mock(Catalogue)
 
-        and: "spec logs for each file in the manifest"
-        def specLogs = [Mock(SpecLog), Mock(SpecLog)]
-
         when: "the get catalogue for user is called"
         def result = catalogueService.getCatalogueForUser(catalogueId, aUsername)
 
@@ -104,17 +99,11 @@ class CatalogueServiceTest extends Specification {
         and: "the manifest catalogue entry object is mapped to an API catalogue model"
         1 * catalogueMapper.mapCatalogue(_, catalogueId, _) >> catalogueModel
 
-        and: "spec logs are retrieved for the catalogue"
-        1 * specLogService.getSpecLogsFor(_, catalogueId) >> specLogs
-
         and: "the spec evolutions are retrieved for each interface entry in the catalogue"
         1 * specEvolutionService.getSpecEvolution(interfaceEntryName, _, _, _) >> interfaceSpecEvolution
 
         and: "the spec evolutions are converted into a summary"
         1 * specEvolutionSummaryMapper.mapSpecEvolutionToSummary(interfaceSpecEvolution) >> interfaceSpecEvolutionSummary
-
-        and: "the spec logs are added to the catalogue API model object"
-        1 * catalogueModel.specLogs(specLogs) >> catalogueModel
 
         and: "the spec evolutions are added to the catalogue API model object"
         1 * catalogueModel.specEvolutionSummaries([interfaceSpecEvolutionSummary]) >> catalogueModel
@@ -141,7 +130,7 @@ class CatalogueServiceTest extends Specification {
         !catalogue
 
         and: "no spec items are retrieved"
-        0 * specLogService.getSpecLogsFor(_, _)
+        0 * specEvolutionService.getSpecEvolution(_, _)
     }
 
     def "get catalogue returns null for a repository the app installation does not have access to"() {
@@ -161,7 +150,7 @@ class CatalogueServiceTest extends Specification {
         !catalogue
 
         and: "no spec items are retrieved"
-        0 * specLogService.getSpecLogsFor(_, _)
+        0 * specEvolutionService.getSpecEvolution(_, _)
     }
 
     def "get catalogue for manifest file that does not exist"() {
@@ -182,7 +171,7 @@ class CatalogueServiceTest extends Specification {
         !catalogue
 
         and: "no spec items are retrieved"
-        0 * specLogService.getSpecLogsFor(_, _)
+        0 * specEvolutionService.getSpecEvolution(_, _)
     }
 
     def "find catalogues for valid user and org"() {

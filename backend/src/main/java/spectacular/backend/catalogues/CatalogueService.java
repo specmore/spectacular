@@ -15,7 +15,6 @@ import spectacular.backend.api.model.SpecEvolutionSummary;
 import spectacular.backend.cataloguemanifest.CatalogueManifestParser;
 import spectacular.backend.cataloguemanifest.FindAndParseCatalogueResult;
 import spectacular.backend.cataloguemanifest.SpecFileRepositoryResolver;
-import spectacular.backend.cataloguemanifest.model.Catalogue;
 import spectacular.backend.cataloguemanifest.model.Interface;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.common.CatalogueManifestId;
@@ -25,7 +24,6 @@ import spectacular.backend.github.domain.ContentItem;
 import spectacular.backend.github.domain.SearchCodeResultItem;
 import spectacular.backend.specevolution.SpecEvolutionService;
 import spectacular.backend.specevolution.SpecEvolutionSummaryMapper;
-import spectacular.backend.specs.SpecLogService;
 
 @Service
 public class CatalogueService {
@@ -41,7 +39,6 @@ public class CatalogueService {
   private static final Logger logger = LoggerFactory.getLogger(CatalogueService.class);
 
   private final RestApiClient restApiClient;
-  private final SpecLogService specLogService;
   private final CatalogueManifestParser catalogueManifestParser;
   private final CatalogueMapper catalogueMapper;
   private final SpecEvolutionService specEvolutionService;
@@ -51,19 +48,16 @@ public class CatalogueService {
    * A service component that encapsulates all the logic required to build Catalogue objects from the information stored in git repositories
    * accessible for a given request's installation context.
    * @param restApiClient an API client to retrieve information about the git repositories
-   * @param specLogService a service component providing the functionality to retrieve Spec Log items referenced within the catalogue
    * @param catalogueManifestParser a helper service to parse catalogue manifest file content into concrete objects
    * @param catalogueMapper a helper service for mapping catalogue manifest objects to API model objects
    * @param specEvolutionService a service for retrieving spec evolution information about an interface file
    * @param specEvolutionSummaryMapper a helper mapper for creating summarised evolutionary views
    */
   public CatalogueService(RestApiClient restApiClient,
-                          SpecLogService specLogService,
                           CatalogueManifestParser catalogueManifestParser, CatalogueMapper catalogueMapper,
                           SpecEvolutionService specEvolutionService,
                           SpecEvolutionSummaryMapper specEvolutionSummaryMapper) {
     this.restApiClient = restApiClient;
-    this.specLogService = specLogService;
     this.catalogueManifestParser = catalogueManifestParser;
     this.catalogueMapper = catalogueMapper;
     this.specEvolutionService = specEvolutionService;
@@ -229,8 +223,7 @@ public class CatalogueService {
         .map(interfaceEntry -> getSpecEvolutionSummaryFor(interfaceEntry, catalogueId))
         .collect(Collectors.toList());
 
-    var specLogs = specLogService.getSpecLogsFor(catalogue, catalogueId);
-    return catalogueDetails.specLogs(specLogs).specEvolutionSummaries(specEvolutionSummaries);
+    return catalogueDetails.specEvolutionSummaries(specEvolutionSummaries);
   }
 
   private GetAndParseCatalogueResult getAndParseCatalogueInManifest(CatalogueId catalogueId) {

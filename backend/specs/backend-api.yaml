@@ -200,10 +200,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SpecEvolutionSummary'
-        specLogs:
-          type: array
-          items:
-            $ref: '#/components/schemas/SpecLog'
       required:
         - fullPath
         - name
@@ -241,34 +237,6 @@ components:
         - upcomingReleaseCount
         - proposedChangesCount
         - agreedVersionTagCount
-    SpecLog:
-      type: object
-      properties:
-        interfaceName:
-          type: string
-        latestAgreed:
-          $ref: '#/components/schemas/SpecItem'
-        proposedChanges:
-          type: array
-          items:
-            $ref: '#/components/schemas/ChangeProposal'
-      required:
-        - id
-        - latestAgreed
-        - proposedChanges
-    ChangeProposal:
-      type: object
-      properties:
-        id:
-          type: integer
-        pullRequest:
-          $ref: '#/components/schemas/PullRequest'
-        specItem:
-          $ref: '#/components/schemas/SpecItem'
-      required:
-        - id
-        - pullRequest
-        - specItem
     GetSpecEvolutionResult:
       type: object
       properties:
