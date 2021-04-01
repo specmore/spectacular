@@ -33,7 +33,7 @@ public class CatalogueMapper {
         .collect(Collectors.toList());
   }
 
-  public Catalogue mapCatalogueManifestEntry(
+  private Catalogue mapCatalogueManifestEntry(
       Map.Entry<String, spectacular.backend.cataloguemanifest.model.Catalogue> catalogueEntry,
       CatalogueManifestId manifestId,
       URI manifestUrl) {

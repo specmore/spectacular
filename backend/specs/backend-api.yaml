@@ -85,33 +85,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetInterfaceResult'
-  /catalogues/{encodedId}/interfaces/{interfaceName}/spec-evolution:
-    get:
-      tags:
-        - Interfaces
-      description: Gets the evolution for the specification file of an interface
-      operationId: getInterfaceSpecEvolution
-      parameters:
-        - name: encodedId
-          in: path
-          description: The base64 encoded id of the Catalogue being referenced
-          required: true
-          schema:
-            type: string
-            format: byte
-        - name: interfaceName
-          in: path
-          description: The name of the Interface in the Catalogue being referenced
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetSpecEvolutionResult'
   /catalogues/{encodedId}/interfaces/{interfaceName}/file:
     get:
       tags:
@@ -209,6 +182,8 @@ components:
     GetInterfaceResult:
       type: object
       properties:
+        interfaceName:
+          type: string
         catalogue:
             $ref: '#/components/schemas/Catalogue'
         specEvolutionSummary:
@@ -216,6 +191,7 @@ components:
         specEvolution:
             $ref: '#/components/schemas/SpecEvolution'
       required:
+        - interfaceName
         - catalogue
         - specEvolutionSummary
         - specEvolution
@@ -237,13 +213,6 @@ components:
         - upcomingReleaseCount
         - proposedChangesCount
         - agreedVersionTagCount
-    GetSpecEvolutionResult:
-      type: object
-      properties:
-        specEvolution:
-            $ref: '#/components/schemas/SpecEvolution'
-      required:
-        - specEvolution
     SpecEvolution:
       type: object
       properties:

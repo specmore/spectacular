@@ -17,13 +17,10 @@ import spectacular.backend.specevolution.SpecEvolutionSummaryMapper
 import spock.lang.Specification
 
 class InterfaceServiceTest extends Specification {
-    def catalogueService = Mock(CatalogueService)
     def restApiClient = Mock(RestApiClient)
     def specEvolutionService = Mock(SpecEvolutionService)
     def specEvolutionSummaryMapper = Mock(SpecEvolutionSummaryMapper)
-    def interfaceService = new InterfaceService(catalogueService, restApiClient, specEvolutionService, specEvolutionSummaryMapper)
-
-    def aUsername = "test-user"
+    def interfaceService = new InterfaceService(restApiClient, specEvolutionService, specEvolutionSummaryMapper)
 
     def aCatalogue() {
         def catalogueRepo = new RepositoryId("test-owner","test-repo987")
@@ -35,10 +32,9 @@ class InterfaceServiceTest extends Specification {
     def "GetInterfaceFileContents returns file contents"() {
         given: "a catalogue with an interface entry"
         def catalogueId = aCatalogue()
-        def interfaceEntryName = "testInterface"
         def interfaceEntry = new Interface()
 
-        and: "a spec file location for the interface for a .yaml file"
+        and: "a spec file location for the interface entry for a .yaml file"
         def specFileRepoId = RepositoryId.createForNameWithOwner("test-owner/test-repo")
         def specFilePath = "spec-file.yaml"
         def specFileLocation = new SpecFileLocation()
@@ -50,13 +46,10 @@ class InterfaceServiceTest extends Specification {
         def ref = "some-ref"
         def specFileContentItem = new ContentItem(specFilePath, specFilePath, "some-sha", "type?", null, "dGVzdCBmaWxlIGNvbnRlbnQ=", "base64")
 
-        when: "getting the interface file contents for the interface entry name and git ref"
-        def result = interfaceService.getInterfaceFileContents(catalogueId, interfaceEntryName, ref, aUsername)
+        when: "getting the interface file contents for the interface entry and git ref"
+        def result = interfaceService.getInterfaceFileContents(catalogueId, interfaceEntry, ref)
 
-        then: "the interface entry is retrieved from the catalogue service"
-        1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> interfaceEntry
-
-        and: "the file contents are retrieved"
+        then: "the file contents are retrieved"
         1 * restApiClient.getRepositoryContent(specFileRepoId, specFilePath, "some-ref") >> specFileContentItem
 
         and: "the decoded file contents are returned with yaml media type"
@@ -67,7 +60,6 @@ class InterfaceServiceTest extends Specification {
     def "GetInterfaceFileContents uses catalogue repo when spec file location doesn't specify a repo"() {
         given: "a catalogue with an interface entry"
         def catalogueId = aCatalogue()
-        def interfaceEntryName = "testInterface"
         def interfaceEntry = new Interface()
 
         and: "a spec file location for the interface for a .yaml file"
@@ -80,49 +72,25 @@ class InterfaceServiceTest extends Specification {
         def ref = "some-ref"
         def specFileContentItem = new ContentItem(specFilePath, specFilePath, "some-sha", "type?", null, "dGVzdCBmaWxlIGNvbnRlbnQ=", "base64")
 
-        when: "getting the interface file contents for the interface entry name and git ref"
-        def result = interfaceService.getInterfaceFileContents(catalogueId, interfaceEntryName, ref, aUsername)
+        when: "getting the interface file contents for the interface entry and git ref"
+        def result = interfaceService.getInterfaceFileContents(catalogueId, interfaceEntry, ref)
 
-        then: "the interface entry is retrieved from the catalogue service"
-        1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> interfaceEntry
-
-        and: "the file contents are retrieved"
+        then: "the file contents are retrieved from the catalogue's repo"
         1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), specFilePath, "some-ref") >> specFileContentItem
 
         and: "the decoded file contents are returned"
         result.contents == "test file content"
     }
 
-    def "GetInterfaceFileContents returns null for interfaceName not found in catalogue"() {
-        given: "a catalogue"
-        def catalogueId = aCatalogue()
-
-        and: "an interface entry name that does not exist in the catalogue"
-        def interfaceEntryName = "missingInterface"
-
-        when: "getting the interface file contents for the interface entry name"
-        def result = interfaceService.getInterfaceFileContents(catalogueId, interfaceEntryName, "some-ref", aUsername)
-
-        then: "the interface entry is retrieved from the catalogue service"
-        1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> null
-
-        and: "a null interface file contents is returned"
-        !result
-    }
-
     def "GetInterfaceFileContents returns null for an interface without a spec file location"() {
         given: "a catalogue with an interface entry with no spec file location"
         def catalogueId = aCatalogue()
-        def interfaceEntryName = "testInterface"
         def interfaceEntry = new Interface()
 
-        when: "getting the interface file contents for the interface entry name"
-        def result = interfaceService.getInterfaceFileContents(catalogueId, interfaceEntryName, "some-ref", aUsername)
+        when: "getting the interface file contents for the interface entry"
+        def result = interfaceService.getInterfaceFileContents(catalogueId, interfaceEntry, "some-ref")
 
-        then: "the interface entry is retrieved from the catalogue service"
-        1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> null
-
-        and: "a null interface file contents is returned"
+        then: "a null interface file contents is returned"
         !result
     }
 
@@ -130,7 +98,6 @@ class InterfaceServiceTest extends Specification {
 
         given: "a catalogue with an interface entry"
         def catalogueId = aCatalogue()
-        def interfaceEntryName = "testInterface"
         def interfaceEntry = new Interface()
 
         and: "a spec file location for the interface for a .yaml file"
@@ -139,45 +106,14 @@ class InterfaceServiceTest extends Specification {
                 .withFilePath(specFilePath)
         interfaceEntry.setSpecFile(specFileLocation)
 
-        when: "getting the interface file contents for the interface entry name and git ref"
-        def result = interfaceService.getInterfaceFileContents(catalogueId, interfaceEntryName, "some-ref", aUsername)
+        when: "getting the interface file contents for the interface entry and git ref"
+        def result = interfaceService.getInterfaceFileContents(catalogueId, interfaceEntry, "some-ref")
 
-        then: "the interface entry is retrieved from the catalogue service"
-        1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> interfaceEntry
-
-        and: "the missing file contents are retrieved"
+        then: "the missing file contents are retrieved"
         1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), specFilePath, "some-ref") >> { throw new HttpClientErrorException(HttpStatus.NOT_FOUND) }
 
         and: "a null interface file contents is returned"
         !result
-    }
-
-    def "GetSpecEvolution is built for spec evolution config"() {
-        given: "a catalogue with an interface entry"
-        def catalogueId = aCatalogue()
-        def interfaceEntryName = "testInterface"
-        def interfaceEntry = new Interface()
-
-        and: "a spec file location for the interface for a .yaml file"
-        def specFileRepoId = RepositoryId.createForNameWithOwner("test-owner/test-repo")
-        def specFilePath = "spec-file.yaml"
-        def specFileLocation = new SpecFileLocation()
-                .withRepo(specFileRepoId.nameWithOwner)
-                .withFilePath(specFilePath)
-        interfaceEntry.setSpecFile(specFileLocation)
-
-        and: "a spec evolution config"
-        def specEvolutionConfig = new SpecEvolutionConfig()
-        interfaceEntry.setSpecEvolutionConfig(specEvolutionConfig)
-
-        when: "getting the spec evolution for the interface entry name"
-        def specEvolution = interfaceService.getSpecEvolution(catalogueId, interfaceEntryName, aUsername)
-
-        then: "the interface entry is retrieved from the catalogue service"
-        1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> interfaceEntry
-
-        and: "the spec evolution is built"
-        1 * specEvolutionService.getSpecEvolution(interfaceEntryName, specEvolutionConfig, specFileRepoId, specFilePath)
     }
 
     def "GetInterface has SpecEvolution and SpecEvolutionSummary"() {
@@ -204,16 +140,34 @@ class InterfaceServiceTest extends Specification {
         and: "a spec evolution summary"
         def specEvolutionSummary = Mock(SpecEvolutionSummary)
 
-        when: "getting the spec evolution for the interface entry name"
-        def result = interfaceService.getInterface(catalogueId, interfaceEntryName, aUsername)
+        when: "getting the spec evolution for the interface entry"
+        def result = interfaceService.getInterfaceDetails(catalogueId, interfaceEntry, interfaceEntryName)
 
-        then: "the interface entry is retrieved from the catalogue service"
-        1 * catalogueService.getInterfaceEntry(catalogueId, interfaceEntryName, aUsername) >> interfaceEntry
-
-        and: "the spec evolution for the interface is retrieved"
+        then: "the spec evolution for the interface is retrieved"
         1 * specEvolutionService.getSpecEvolution(interfaceEntryName, specEvolutionConfig, specFileRepoId, specFilePath) >> specEvolution
 
         and: "the spec evolution summary is created"
         1 * specEvolutionSummaryMapper.mapSpecEvolutionToSummary(specEvolution) >> specEvolutionSummary
+
+        and: "the interface details is returned with the spec evolution and spec evolution summary"
+        result
+        result.getSpecEvolution() == specEvolution
+        result.getSpecEvolutionSummary() == specEvolutionSummary
+    }
+
+    def "GetInterface returns null for an interface without a spec file location"() {
+        given: "a catalogue with an interface entry with no spec file location"
+        def catalogueId = aCatalogue()
+        def interfaceEntryName = "testInterface"
+        def interfaceEntry = new Interface()
+
+        when: "getting the spec evolution for the interface entry"
+        def result = interfaceService.getInterfaceDetails(catalogueId, interfaceEntry, interfaceEntryName)
+
+        then: "the spec evolution for the interface is not retrieved"
+        0 * specEvolutionService.getSpecEvolution(_, _, _, _)
+
+        and: "no interface details are returned"
+        !result
     }
 }

@@ -75,12 +75,12 @@ public class CatalogueManifestParser {
       var cataloguesNode = rootNode.get("catalogues");
       if (cataloguesNode == null) {
         logger.debug("Unable to find 'catalogues' root node catalogue manifest yaml file.");
-        return new FindAndParseCatalogueResult(null, null);
+        return FindAndParseCatalogueResult.createCatalogueEntryNotFoundResult();
       }
       var catalogueNode = cataloguesNode.get(catalogueName);
       if (catalogueNode == null) {
         logger.debug("Unable to find catalogue node '{}' in 'catalogues' node catalogue manifest yaml file.", catalogueName);
-        return new FindAndParseCatalogueResult(null, null);
+        return FindAndParseCatalogueResult.createCatalogueEntryNotFoundResult();
       }
       catalogue = mapper.treeToValue(catalogueNode, Catalogue.class);
     } catch (MismatchedInputException e) {
@@ -93,7 +93,7 @@ public class CatalogueManifestParser {
     }
 
     if (error != null) {
-      return new FindAndParseCatalogueResult(null, error);
+      return FindAndParseCatalogueResult.createCatalogueEntryParseErrorResult(error);
     }
 
     var violations = validator.validate(catalogue);
@@ -103,9 +103,9 @@ public class CatalogueManifestParser {
           .collect(Collectors.toList());
       error = "The following validation errors were found with catalogue entry '" + catalogueName + "': " +
           String.join(", ", violationMessage);
-      return new FindAndParseCatalogueResult(null, error);
+      return FindAndParseCatalogueResult.createCatalogueEntryParseErrorResult(error);
     }
 
-    return new FindAndParseCatalogueResult(catalogue, null);
+    return FindAndParseCatalogueResult.createCatalogueEntryParsedResult(catalogue);
   }
 }

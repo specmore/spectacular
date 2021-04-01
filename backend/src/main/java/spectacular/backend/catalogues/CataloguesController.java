@@ -13,7 +13,6 @@ import spectacular.backend.api.CataloguesApi;
 import spectacular.backend.api.model.FindCataloguesResult;
 import spectacular.backend.api.model.GetCatalogueResult;
 import spectacular.backend.api.model.GetInterfaceResult;
-import spectacular.backend.api.model.GetSpecEvolutionResult;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.interfaces.InterfaceService;
 
@@ -58,7 +57,7 @@ public class CataloguesController implements CataloguesApi {
     var combinedId = new String(decodedBytes);
     var catalogueId = CatalogueId.createFrom(combinedId);
 
-    var result = this.interfaceService.getInterface(catalogueId, interfaceName, authentication.getName());
+    var result = this.catalogueService.getInterfaceDetails(catalogueId, interfaceName, authentication.getName());
 
     if (result == null) {
       return ResponseEntity.notFound().build();
@@ -75,7 +74,7 @@ public class CataloguesController implements CataloguesApi {
     var catalogueId = CatalogueId.createFrom(combinedId);
 
     try {
-      var interfaceFileContents = this.interfaceService.getInterfaceFileContents(catalogueId, interfaceName, ref, authentication.getName());
+      var interfaceFileContents = this.catalogueService.getInterfaceFileContents(catalogueId, interfaceName, ref, authentication.getName());
 
       if (interfaceFileContents == null) {
         return ResponseEntity.notFound().build();
@@ -90,23 +89,5 @@ public class CataloguesController implements CataloguesApi {
           .status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("An unexpected error occurred while decoding the file contents.");
     }
-  }
-
-  @Override
-  public ResponseEntity<GetSpecEvolutionResult> getInterfaceSpecEvolution(byte[] encodedId, String interfaceName) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    var decodedBytes = Base64.getDecoder().decode(encodedId);
-    var combinedId = new String(decodedBytes);
-    var catalogueId = CatalogueId.createFrom(combinedId);
-
-    var specEvolution = this.interfaceService.getSpecEvolution(catalogueId, interfaceName, authentication.getName());
-
-    if (specEvolution == null) {
-      return ResponseEntity.notFound().build();
-    }
-
-    var result = new GetSpecEvolutionResult().specEvolution(specEvolution);
-
-    return ResponseEntity.ok(result);
   }
 }
