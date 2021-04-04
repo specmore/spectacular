@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import spectacular.backend.api.CataloguesApi;
 import spectacular.backend.api.model.FindCataloguesResult;
 import spectacular.backend.api.model.GetCatalogueResult;
@@ -41,12 +42,14 @@ public class CataloguesController implements CataloguesApi {
     var decodedBytes = Base64.getDecoder().decode(encoded);
     var combinedId = new String(decodedBytes);
     var catalogueId = CatalogueId.createFrom(combinedId);
-    var catalogue = catalogueService.getCatalogueForUser(catalogueId, authentication.getName());
-    if (catalogue == null) {
-      return ResponseEntity.notFound().build();
+
+    var getCatalogueForUserResult = catalogueService.getCatalogueForUser(catalogueId, authentication.getName());
+
+    if (getCatalogueForUserResult.isNotFound()) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, getCatalogueForUserResult.getNotFoundErrorMessage());
     }
-    var getCatalogueResult = new GetCatalogueResult()
-        .catalogue(catalogue);
+
+    var getCatalogueResult = new GetCatalogueResult().catalogue(getCatalogueForUserResult.getCatalogueDetails());
     return ResponseEntity.ok(getCatalogueResult);
   }
 
@@ -57,13 +60,17 @@ public class CataloguesController implements CataloguesApi {
     var combinedId = new String(decodedBytes);
     var catalogueId = CatalogueId.createFrom(combinedId);
 
-    var result = this.catalogueService.getInterfaceDetails(catalogueId, interfaceName, authentication.getName());
+    var getInterfaceDetailsResult = this.catalogueService.getInterfaceDetails(catalogueId, interfaceName, authentication.getName());
 
-    if (result == null) {
-      return ResponseEntity.notFound().build();
+    if (getInterfaceDetailsResult.isNotFound()) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, getInterfaceDetailsResult.getNotFoundErrorMessage());
     }
 
-    return ResponseEntity.ok(result);
+    if (getInterfaceDetailsResult.isConfigError()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, getInterfaceDetailsResult.getConfigErrorMessage());
+    }
+
+    return ResponseEntity.ok(getInterfaceDetailsResult.getGetInterfaceResult());
   }
 
   @Override

@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import spectacular.backend.api.model.Catalogue;
 import spectacular.backend.api.model.GetInterfaceResult;
 import spectacular.backend.cataloguemanifest.CatalogueManifestParser;
 import spectacular.backend.cataloguemanifest.CatalogueManifestProvider;
@@ -84,58 +83,76 @@ public class CatalogueService {
    * @param username the username of the user
    * @return A Catalogue object
    */
-  public spectacular.backend.api.model.Catalogue getCatalogueForUser(CatalogueId catalogueId, String username) {
-    var getCatalogueDetailsResult = this.getCatalogueDetailsForUser(catalogueId, username);
+  public GetCatalogueForUserResult getCatalogueForUser(CatalogueId catalogueId, String username) {
+    GetAndParseCatalogueResult getAndParseCatalogueResult = catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, username);
 
-    if (getCatalogueDetailsResult == null) {
-      return null;
+    if (!getAndParseCatalogueResult.isCatalogueManifestFileExists()) {
+      return GetCatalogueForUserResult.createNotFoundResult("Catalogue manifest file not found: " + catalogueId.getFullPath());
     }
 
-    var catalogueManifest = getCatalogueDetailsResult.getCatalogueManifest();
-    var catalogueDetails = getCatalogueDetailsResult.getCatalogueDetails();
+    var catalogueEntryParseResult = getAndParseCatalogueResult.getCatalogueParseResult();
 
-    if (catalogueManifest == null) {
-      return catalogueDetails;
+    if (catalogueEntryParseResult.isCatalogueEntryNotFound()) {
+      return GetCatalogueForUserResult.createNotFoundResult("Catalogue entry in manifest file not found: " + catalogueId.getCombined());
     }
 
+    if (catalogueEntryParseResult.isCatalogueEntryContainsError()) {
+      var catalogueDetails = catalogueMapper.createForParseError(catalogueEntryParseResult.getError(), catalogueId);
+      return GetCatalogueForUserResult.createFoundResult(catalogueDetails);
+    }
 
-    var specEvolutionSummaries = catalogueManifest.getInterfaces().getAdditionalProperties().entrySet().stream()
+    var catalogueEntry = catalogueEntryParseResult.getCatalogue();
+    var manifestUrl = getAndParseCatalogueResult.getCatalogueManifestFileHtmlUrl();
+    var catalogueDetails = catalogueMapper.mapCatalogue(catalogueEntry, catalogueId, manifestUrl);
+
+    var specEvolutionSummaries = catalogueEntry.getInterfaces().getAdditionalProperties().entrySet().stream()
         .map(interfaceEntry -> {
           var getInterfaceResult = this.interfaceService.getInterfaceDetails(catalogueId, interfaceEntry.getValue(), interfaceEntry.getKey());
           return getInterfaceResult.getSpecEvolutionSummary();
         })
         .collect(Collectors.toList());
 
-    return catalogueDetails.specEvolutionSummaries(specEvolutionSummaries);
+    var catalogueDetailsWithInterfaceSummaries = catalogueDetails.specEvolutionSummaries(specEvolutionSummaries);
+
+    return GetCatalogueForUserResult.createFoundResult(catalogueDetailsWithInterfaceSummaries);
   }
 
-  public GetInterfaceResult getInterfaceDetails(CatalogueId catalogueId, String interfaceName, String username) {
-    var getCatalogueDetailsResult = this.getCatalogueDetailsForUser(catalogueId, username);
+  public GetInterfaceDetailsResult getInterfaceDetails(CatalogueId catalogueId, String interfaceName, String username) {
+    GetAndParseCatalogueResult getAndParseCatalogueResult = catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, username);
 
-    if (getCatalogueDetailsResult == null) {
-      return null;
+    if (!getAndParseCatalogueResult.isCatalogueManifestFileExists()) {
+      return GetInterfaceDetailsResult.createNotFoundResult("Catalogue manifest file not found: " + catalogueId.getFullPath());
     }
 
-    var catalogueManifest = getCatalogueDetailsResult.getCatalogueManifest();
-    var catalogueDetails = getCatalogueDetailsResult.getCatalogueDetails();
+    var catalogueEntryParseResult = getAndParseCatalogueResult.getCatalogueParseResult();
 
-    if (catalogueManifest == null) {
-      return new GetInterfaceResult().interfaceName(interfaceName).catalogue(getCatalogueDetailsResult.getCatalogueDetails());
+    if (catalogueEntryParseResult.isCatalogueEntryNotFound()) {
+      return GetInterfaceDetailsResult.createNotFoundResult("Catalogue entry in manifest file not found: " + catalogueId.getCombined());
     }
 
-    var catalogueInterfaceEntry = catalogueManifest.getInterfaces().getAdditionalProperties().get(interfaceName);
-
-    if (catalogueInterfaceEntry == null) {
-      return null;
+    if (catalogueEntryParseResult.isCatalogueEntryContainsError()) {
+      return GetInterfaceDetailsResult.createConfigErrorResult("Catalogue entry in manifest file: " + catalogueId.getCombined() +
+          ", has parse error: " + catalogueEntryParseResult.getError());
     }
 
+    var catalogueEntry = catalogueEntryParseResult.getCatalogue();
+    if (!catalogueEntry.getInterfaces().getAdditionalProperties().containsKey(interfaceName)) {
+      return GetInterfaceDetailsResult.createNotFoundResult("Interface entry not found in Catalogue entry in manifest file: " + catalogueId.getCombined() +
+          ", with name: " + interfaceName);
+    }
+
+    var catalogueInterfaceEntry = catalogueEntry.getInterfaces().getAdditionalProperties().get(interfaceName);
     var interfaceDetailsResult = this.interfaceService.getInterfaceDetails(catalogueId, catalogueInterfaceEntry, interfaceName);
 
     if (interfaceDetailsResult == null) {
-      return null;
+      return GetInterfaceDetailsResult.createConfigErrorResult("Interface entry in Catalogue entry in manifest file: " + catalogueId.getCombined() +
+          ", with name: " + interfaceName + ", has no spec file location set.");
     }
 
-    return interfaceDetailsResult.catalogue(catalogueDetails);
+    var manifestUrl = getAndParseCatalogueResult.getCatalogueManifestFileHtmlUrl();
+    var catalogueDetails = catalogueMapper.mapCatalogue(catalogueEntry, catalogueId, manifestUrl);
+    var interfaceDetails = interfaceDetailsResult.catalogue(catalogueDetails);
+    return GetInterfaceDetailsResult.createFoundResult(interfaceDetails);
   }
 
   public InterfaceFileContents getInterfaceFileContents(CatalogueId catalogueId, String interfaceName, String ref, String username)
@@ -232,58 +249,6 @@ public class CatalogueService {
       logger.error("An error occurred while decoding the catalogue manifest yaml file: " + manifestId.toString(), e);
       var error = "An error occurred while decoding the catalogue manifest yaml file: " + e.getMessage();
       return Collections.singletonList(catalogueMapper.createForParseError(error, manifestId));
-    }
-  }
-
-  private GetCatalogueDetailsResult getCatalogueDetailsForUser(CatalogueId catalogueId, String username) {
-    GetAndParseCatalogueResult getAndParseCatalogueResult = catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, username);
-
-    if (!getAndParseCatalogueResult.isCatalogueManifestFileExists()) {
-      return null;
-    }
-
-    var catalogueEntryParseResult = getAndParseCatalogueResult.getCatalogueParseResult();
-
-    if (catalogueEntryParseResult.isCatalogueEntryNotFound()) {
-      var error = String.format("Unable to find catalogue entry '%s' in 'catalogues' map inside of catalogue manifest yaml file.",
-          catalogueId.getCatalogueName());
-      return GetCatalogueDetailsResult.createErrorResult(catalogueId, error);
-    }
-
-    if (catalogueEntryParseResult.isCatalogueEntryContainsError()) {
-      return GetCatalogueDetailsResult.createErrorResult(catalogueId, catalogueEntryParseResult.getError());
-    }
-
-    var catalogue = catalogueEntryParseResult.getCatalogue();
-    var manifestUrl = getAndParseCatalogueResult.getCatalogueManifestFileHtmlUrl();
-    var catalogueDetails = catalogueMapper.mapCatalogue(catalogue, catalogueId, manifestUrl);
-    return new GetCatalogueDetailsResult(catalogueDetails, catalogue);
-  }
-
-  private static class GetCatalogueDetailsResult {
-    private final Catalogue catalogueDetails;
-    private final spectacular.backend.cataloguemanifest.model.Catalogue catalogueManifest;
-
-    private GetCatalogueDetailsResult(Catalogue catalogueDetails, spectacular.backend.cataloguemanifest.model.Catalogue catalogueManifest) {
-      this.catalogueDetails = catalogueDetails;
-      this.catalogueManifest = catalogueManifest;
-    }
-
-    private static GetCatalogueDetailsResult createErrorResult(CatalogueId catalogueId, String error) {
-      var catalogueDetails = new Catalogue()
-          .fullPath(catalogueId.getFullPath())
-          .name(catalogueId.getCatalogueName())
-          .parseError(error);
-
-      return new GetCatalogueDetailsResult(catalogueDetails, null);
-    }
-
-    public Catalogue getCatalogueDetails() {
-      return catalogueDetails;
-    }
-
-    public spectacular.backend.cataloguemanifest.model.Catalogue getCatalogueManifest() {
-      return catalogueManifest;
     }
   }
 }

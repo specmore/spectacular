@@ -58,6 +58,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetCatalogueResult'
+        '404':
+          description: Not Found result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
   /catalogues/{encodedId}/interfaces/{interfaceName}:
     get:
       tags:
@@ -85,6 +91,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetInterfaceResult'
+        '404':
+          description: Not Found result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
   /catalogues/{encodedId}/interfaces/{interfaceName}/file:
     get:
       tags:
@@ -123,6 +135,8 @@ paths:
                 type: object
 components:
   schemas:
+    NotFoundResponse:
+      type: string
     Installation:
       type: object
       properties:
@@ -183,6 +197,8 @@ components:
       type: object
       properties:
         interfaceName:
+          type: string
+        parseError:
           type: string
         catalogue:
             $ref: '#/components/schemas/Catalogue'

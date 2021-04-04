@@ -15,7 +15,7 @@ public class GetAndParseCatalogueResult {
     this.catalogueParseResult = catalogueParseResult;
   }
 
-  public static GetAndParseCatalogueResult createNotFoundResult() {
+  public static GetAndParseCatalogueResult createFileNotFoundResult() {
     return new GetAndParseCatalogueResult(false, null, null);
   }
 

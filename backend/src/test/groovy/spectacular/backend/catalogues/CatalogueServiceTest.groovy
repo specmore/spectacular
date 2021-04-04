@@ -11,12 +11,14 @@ import spectacular.backend.cataloguemanifest.CatalogueManifestProvider
 import spectacular.backend.cataloguemanifest.FindAndParseCatalogueResult
 import spectacular.backend.cataloguemanifest.GetAndParseCatalogueResult
 import spectacular.backend.cataloguemanifest.model.CatalogueManifest
+import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.common.CatalogueId
 import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.domain.ContentItem
 import spectacular.backend.github.domain.SearchCodeResultItem
 import spectacular.backend.github.domain.SearchCodeResults
+import spectacular.backend.interfaces.InterfaceFileContents
 import spectacular.backend.interfaces.InterfaceService
 
 import spock.lang.Specification
@@ -35,7 +37,7 @@ class CatalogueServiceTest extends Specification {
     def anOrg = "test-org"
     def default_branch = null
 
-    def aCatalogue() {
+    def aCatalogueId() {
         def catalogueRepo = new RepositoryId("test-owner","test-repo987")
         def catalogueManifestFile = catalogueManifestYmlFilename;
         def catalogueName = "testCatalogue1"
@@ -58,26 +60,43 @@ class CatalogueServiceTest extends Specification {
         return new SearchCodeResults(searchCodeResultItems.size(), searchCodeResultItems, false)
     }
 
-    def "get catalogue for repository and valid user returns evolution summaries for each interface in catalogue manifest"() {
-        given: "a specific catalogue the user has access to and exists"
-        def catalogueId = aCatalogue()
-        def getAndParseCatalogueResult = Mock(GetAndParseCatalogueResult)
-        getAndParseCatalogueResult.isCatalogueManifestFileExists() >> true
+    def aCatalogueManifest(String interfaceEntryName, Interface interfaceEntry) {
+        def interfaces = new spectacular.backend.cataloguemanifest.model.Interfaces().withAdditionalProperty(interfaceEntryName, interfaceEntry)
+        return new spectacular.backend.cataloguemanifest.model.Catalogue().withInterfaces(interfaces)
+    }
 
-        and: "a catalogue manifest interface entry"
-        def interfaceEntry = Mock(spectacular.backend.cataloguemanifest.model.Interface)
+    def aSuccessfulGetAndParseCatalogueResult(spectacular.backend.cataloguemanifest.model.Catalogue catalogue) {
+        def catalogueParseResult = FindAndParseCatalogueResult.createCatalogueEntryParsedResult(catalogue)
+        def contentItem = Mock(ContentItem)
+        return GetAndParseCatalogueResult.createFoundAndParsedResult(contentItem, catalogueParseResult)
+    }
+
+    def aGetAndParseCatalogueResultWithEntryNotFound() {
+        def catalogueParseResult = FindAndParseCatalogueResult.createCatalogueEntryNotFoundResult()
+        def contentItem = Mock(ContentItem)
+        return GetAndParseCatalogueResult.createFoundAndParsedResult(contentItem, catalogueParseResult)
+    }
+
+    def aGetAndParseCatalogueResultWithParseError(errorMessage) {
+        def catalogueParseResult = FindAndParseCatalogueResult.createCatalogueEntryParseErrorResult(errorMessage)
+        def contentItem = Mock(ContentItem)
+        return GetAndParseCatalogueResult.createFoundAndParsedResult(contentItem, catalogueParseResult)
+    }
+
+    def "get catalogue for repository and valid user returns evolution summaries for each interface in manifest catalogue entry"() {
+        given: "a catalogue config in a manifest file with an interface entry"
+        def catalogueId = aCatalogueId()
+        def interfaceEntry = Mock(Interface)
         def interfaceEntryName = "testInterface1"
+        def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
+
+        and: "a successful catalogue config get and parse result"
+        def getAndParseCatalogueResult = aSuccessfulGetAndParseCatalogueResult(catalogue)
 
         and: "interface details for the interface entry with a spec evolution summary"
         def interfaceDetails = Mock(GetInterfaceResult)
         def interfaceSpecEvolutionSummary = Mock(SpecEvolutionSummary)
         interfaceDetails.getSpecEvolutionSummary() >> interfaceSpecEvolutionSummary
-
-        and: "a catalogue config parse result for catalogue in the manifest file contents with catalogue entry"
-        def interfaces = new spectacular.backend.cataloguemanifest.model.Interfaces().withAdditionalProperty(interfaceEntryName, interfaceEntry)
-        def catalogue = new spectacular.backend.cataloguemanifest.model.Catalogue().withInterfaces(interfaces)
-        def catalogueParseResult = FindAndParseCatalogueResult.createCatalogueEntryParsedResult(catalogue)
-        getAndParseCatalogueResult.getCatalogueParseResult() >> catalogueParseResult
 
         and: "a catalogue API model representation of the catalogue manifest object without interface details"
         def catalogueDetails = Mock(Catalogue)
@@ -98,63 +117,16 @@ class CatalogueServiceTest extends Specification {
         1 * catalogueDetails.specEvolutionSummaries([interfaceSpecEvolutionSummary]) >> catalogueDetails
 
         and: "the mapped catalogue API model object is returned"
-        result == catalogueDetails
+        result.getCatalogueDetails() == catalogueDetails
     }
 
-    def "get catalogue returns a catalogue with parse errors for a catalogue manifest that doesn't parse"() {
-        given: "a specific catalogue in a manifest file"
-        def catalogueId = aCatalogue()
-        def getAndParseCatalogueResult = Mock(GetAndParseCatalogueResult)
-        getAndParseCatalogueResult.isCatalogueManifestFileExists() >> true
-
-        and: "a catalogue config parse result with parse errors"
-        def catalogueParseResult = FindAndParseCatalogueResult.createCatalogueEntryParseErrorResult("test error")
-        getAndParseCatalogueResult.getCatalogueParseResult() >> catalogueParseResult
-
-        when: "the get catalogue for user is called"
-        def catalogue = catalogueService.getCatalogueForUser(catalogueId, aUsername)
-
-        then: "catalogue config is retrieved and parsed from the catalogue manifest"
-        1 * catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, aUsername) >> getAndParseCatalogueResult
-
-        and: "no interface details are retrieved"
-        0 * interfaceService.getInterfaceDetails(_, _, _)
-
-        and: "a catalogue is returned with a parse error"
-        catalogue.getParseError() == catalogueParseResult.getError()
-    }
-
-    def "get catalogue returns a catalogue with parse errors for a catalogue manifest that doesn't contain the catalogue entry" () {
-        given: "a specific catalogue in a manifest file"
-        def catalogueId = aCatalogue()
-        def getAndParseCatalogueResult = Mock(GetAndParseCatalogueResult)
-        getAndParseCatalogueResult.isCatalogueManifestFileExists() >> true
-
-        and: "a catalogue config parse result for an entry that doesn't exist"
-        def catalogueParseResult = FindAndParseCatalogueResult.createCatalogueEntryNotFoundResult()
-        getAndParseCatalogueResult.getCatalogueParseResult() >> catalogueParseResult
-
-        when: "the get catalogue for user is called"
-        def catalogue = catalogueService.getCatalogueForUser(catalogueId, aUsername)
-
-        then: "catalogue config is retrieved and parsed from the catalogue manifest"
-        1 * catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, aUsername) >> getAndParseCatalogueResult
-
-        and: "no interface details are retrieved"
-        0 * interfaceService.getInterfaceDetails(_, _, _)
-
-        and: "a catalogue is returned with a parse error"
-        catalogue.getParseError()
-    }
-
-    def "get catalogue returns null for a catalogue manifest that doesn't exist"() {
+    def "get catalogue returns not found error for a catalogue manifest that doesn't exist"() {
         given: "a specific catalogue in a manifest file that doesn't exists"
-        def catalogueId = aCatalogue()
-        def getAndParseCatalogueResult = Mock(GetAndParseCatalogueResult)
-        getAndParseCatalogueResult.isCatalogueManifestFileExists() >> false
+        def catalogueId = aCatalogueId()
+        def getAndParseCatalogueResult = GetAndParseCatalogueResult.createFileNotFoundResult()
 
         when: "the get catalogue for user is called"
-        def catalogue = catalogueService.getCatalogueForUser(catalogueId, aUsername)
+        def result = catalogueService.getCatalogueForUser(catalogueId, aUsername)
 
         then: "catalogue config is retrieved and parsed from the catalogue manifest"
         1 * catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, aUsername) >> getAndParseCatalogueResult
@@ -162,8 +134,234 @@ class CatalogueServiceTest extends Specification {
         and: "no interface details are retrieved"
         0 * interfaceService.getInterfaceDetails(_, _, _)
 
-        and: "no catalogue is returned"
-        !catalogue
+        and: "a not found result is returned with no catalogue details"
+        result.getNotFoundErrorMessage()
+        !result.getCatalogueDetails()
+    }
+
+    def "get catalogue returns not found error for a catalogue manifest that doesn't contain the catalogue entry" () {
+        given: "a specific catalogue in a manifest file"
+        def catalogueId = aCatalogueId()
+
+        and: "a catalogue config get and parse result for an catalogue entry that doesn't exist"
+        def getAndParseCatalogueResult = aGetAndParseCatalogueResultWithEntryNotFound()
+
+        when: "the get catalogue for user is called"
+        def result = catalogueService.getCatalogueForUser(catalogueId, aUsername)
+
+        then: "catalogue config is retrieved and parsed from the catalogue manifest"
+        1 * catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, aUsername) >> getAndParseCatalogueResult
+
+        and: "no interface details are retrieved"
+        0 * interfaceService.getInterfaceDetails(_, _, _)
+
+        and: "a not found result is returned with no catalogue details"
+        result.getNotFoundErrorMessage()
+        !result.getCatalogueDetails()
+    }
+
+    def "get catalogue returns a catalogue with parse error for a catalogue manifest that doesn't parse"() {
+        given: "a specific catalogue identifier for a manifest"
+        def catalogueId = aCatalogueId()
+
+        and: "a catalogue config get and parse result with parse errors"
+        def parseErrorMessage = "test error"
+        def getAndParseCatalogueResult = aGetAndParseCatalogueResultWithParseError(parseErrorMessage)
+
+        and: "a catalogue API model representation of the catalogue manifest object without interface details"
+        def catalogueDetails = Mock(Catalogue)
+
+        when: "the get catalogue for user is called"
+        def result = catalogueService.getCatalogueForUser(catalogueId, aUsername)
+
+        then: "catalogue config is retrieved and parsed from the catalogue manifest"
+        1 * catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, aUsername) >> getAndParseCatalogueResult
+
+        and: "an API catalogue model is created for the parse error"
+        1 * catalogueMapper.createForParseError(parseErrorMessage, catalogueId) >> catalogueDetails
+
+        and: "no interface details are retrieved"
+        0 * interfaceService.getInterfaceDetails(_, _, _)
+
+        and: "the catalogue API model with parse error is returned"
+        result.getCatalogueDetails() == catalogueDetails
+    }
+
+    def "get interface details for valid repository, interface name and user successfully returns interface details"() {
+        given: "a catalogue id and interface entry name"
+        def catalogueId = aCatalogueId()
+        def interfaceEntryName = "testInterface1"
+
+        and: "a successful catalogue config get and parse result"
+        def interfaceEntry = Mock(Interface)
+        def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
+        def getAndParseCatalogueResult = aSuccessfulGetAndParseCatalogueResult(catalogue)
+
+        and: "interface details for the interface entry with a spec evolution summary"
+        def interfaceDetails = Mock(GetInterfaceResult)
+        def interfaceSpecEvolutionSummary = Mock(SpecEvolutionSummary)
+        interfaceDetails.getSpecEvolutionSummary() >> interfaceSpecEvolutionSummary
+
+        and: "a catalogue API model representation of the catalogue manifest object without interface details"
+        def catalogueDetails = Mock(Catalogue)
+
+        when: "the get interface details for user is called"
+        def result = catalogueService.getInterfaceDetails(catalogueId, interfaceEntryName, aUsername)
+
+        then: "catalogue config is retrieved and parsed from the catalogue manifest"
+        1 * catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, aUsername) >> getAndParseCatalogueResult
+
+        and: "the interface details are retrieved for the interface entry in the catalogue"
+        1 * interfaceService.getInterfaceDetails(catalogueId, interfaceEntry, interfaceEntryName) >> interfaceDetails
+
+        and: "the manifest catalogue entry object is mapped to an API catalogue model"
+        1 * catalogueMapper.mapCatalogue(catalogue, catalogueId, _) >> catalogueDetails
+
+        and: "the catalogue API object is added to the interface details"
+        1 * interfaceDetails.catalogue(catalogueDetails) >> interfaceDetails
+
+        and: "the mapped catalogue API model object is returned"
+        result.getInterfaceResult == interfaceDetails
+    }
+
+    def "get interface details returns not found error for a catalogue manifest that doesn't exist"() {
+        given: "a catalogue id and interface entry name"
+        def catalogueId = aCatalogueId()
+        def interfaceEntryName = "testInterface1"
+
+        and: "a catalogue config get and parse result for an manifest file that doesn't exist"
+        def getAndParseCatalogueResult = GetAndParseCatalogueResult.createFileNotFoundResult()
+
+        when: "the get interface details for user is called"
+        def result = catalogueService.getInterfaceDetails(catalogueId, interfaceEntryName, aUsername)
+
+        then: "catalogue config is retrieved and parsed from the catalogue manifest"
+        1 * catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, aUsername) >> getAndParseCatalogueResult
+
+        and: "no interface details are retrieved"
+        0 * interfaceService.getInterfaceDetails(_, _, _)
+
+        and: "a not found result is returned"
+        result.getNotFoundErrorMessage()
+        !result.getGetInterfaceResult()
+    }
+
+    def "get interface details returns not found error for a catalogue manifest that doesn't contain the catalogue entry" () {
+        given: "a catalogue id and interface entry name"
+        def catalogueId = aCatalogueId()
+        def interfaceEntryName = "testInterface1"
+
+        and: "a catalogue config get and parse result for an catalogue entry that doesn't exist"
+        def getAndParseCatalogueResult = aGetAndParseCatalogueResultWithEntryNotFound()
+
+        when: "the get interface details for user is called"
+        def result = catalogueService.getInterfaceDetails(catalogueId, interfaceEntryName, aUsername)
+
+        then: "catalogue config is retrieved and parsed from the catalogue manifest"
+        1 * catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, aUsername) >> getAndParseCatalogueResult
+
+        and: "no interface details are retrieved"
+        0 * interfaceService.getInterfaceDetails(_, _, _)
+
+        and: "a not found result is returned"
+        result.getNotFoundErrorMessage()
+        !result.getGetInterfaceResult()
+    }
+
+    def "get interface details returns a config error for a catalogue manifest that doesn't parse"() {
+        given: "a catalogue id and interface entry name"
+        def catalogueId = aCatalogueId()
+        def interfaceEntryName = "testInterface1"
+
+        and: "a catalogue config get and parse result with parse errors"
+        def parseErrorMessage = "test error"
+        def getAndParseCatalogueResult = aGetAndParseCatalogueResultWithParseError(parseErrorMessage)
+
+        when: "the get interface details for user is called"
+        def result = catalogueService.getInterfaceDetails(catalogueId, interfaceEntryName, aUsername)
+
+        then: "catalogue config is retrieved and parsed from the catalogue manifest"
+        1 * catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, aUsername) >> getAndParseCatalogueResult
+
+        and: "no interface details are retrieved"
+        0 * interfaceService.getInterfaceDetails(_, _, _)
+
+        and: "a config parse error result is returned"
+        result.getConfigErrorMessage()
+        !result.getGetInterfaceResult()
+    }
+
+    def "get interface details returns a config error an interface entry that doesn't have a spec file"() {
+        given: "a catalogue id and interface entry name"
+        def catalogueId = aCatalogueId()
+        def interfaceEntryName = "testInterface1"
+
+        and: "a successful catalogue config get and parse result"
+        def interfaceEntry = Mock(Interface)
+        def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
+        def getAndParseCatalogueResult = aSuccessfulGetAndParseCatalogueResult(catalogue)
+
+        when: "the get interface details for user is called"
+        def result = catalogueService.getInterfaceDetails(catalogueId, interfaceEntryName, aUsername)
+
+        then: "catalogue config is retrieved and parsed from the catalogue manifest"
+        1 * catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, aUsername) >> getAndParseCatalogueResult
+
+        and: "the interface details are retrieved for the interface entry in the catalogue"
+        1 * interfaceService.getInterfaceDetails(catalogueId, interfaceEntry, interfaceEntryName) >> null
+
+        and: "a config parse error result is returned"
+        result.getConfigErrorMessage()
+        !result.getGetInterfaceResult()
+    }
+
+    def "get interface file contents for valid repository, interface name and user successfully returns file contents"() {
+        given: "a catalogue id, interface entry name and ref"
+        def catalogueId = aCatalogueId()
+        def interfaceEntryName = "testInterface1"
+        def ref = 'branch1'
+
+        and: "a successful catalogue config get and parse result"
+        def interfaceEntry = Mock(Interface)
+        def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
+        def getAndParseCatalogueResult = aSuccessfulGetAndParseCatalogueResult(catalogue)
+
+        and: "contents for the interface spec file"
+        def interfaceFileContents = Mock(InterfaceFileContents)
+
+        when: "the get interface file contents for ref and user is called"
+        def result = catalogueService.getInterfaceFileContents(catalogueId, interfaceEntryName, ref, aUsername)
+
+        then: "catalogue config is retrieved and parsed from the catalogue manifest"
+        1 * catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, aUsername) >> getAndParseCatalogueResult
+
+        and: "the interface file contents are retrieved for the interface entry in the catalogue"
+        1 * interfaceService.getInterfaceFileContents(catalogueId, interfaceEntry, ref) >> interfaceFileContents
+
+        and: "the interface file contents is returned"
+        result == interfaceFileContents
+    }
+
+    def "get interface file contents returns not found error for a catalogue manifest that doesn't exist"() {
+        given: "a catalogue id, interface entry name and ref"
+        def catalogueId = aCatalogueId()
+        def interfaceEntryName = "testInterface1"
+        def ref = 'branch1'
+
+        and: "a catalogue config get and parse result for an manifest file that doesn't exist"
+        def getAndParseCatalogueResult = GetAndParseCatalogueResult.createFileNotFoundResult()
+
+        when: "the get interface file contents for ref and user is called"
+        def result = catalogueService.getInterfaceFileContents(catalogueId, interfaceEntryName, ref, aUsername)
+
+        then: "catalogue config is retrieved and parsed from the catalogue manifest"
+        1 * catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, aUsername) >> getAndParseCatalogueResult
+
+        and: "no interface file contents is retrieved"
+        0 * interfaceService.getInterfaceFileContents(_, _, _)
+
+        and: "a not found result is returned"
+        !result
     }
 
     def "find catalogues for valid user and org"() {

@@ -27,7 +27,7 @@ public class CatalogueManifestProvider {
 
   public GetAndParseCatalogueResult getAndParseCatalogueInManifest(CatalogueId catalogueId, String username) {
     if (!isRepositoryAccessible(catalogueId.getRepositoryId(), username)) {
-      return GetAndParseCatalogueResult.createNotFoundResult();
+      return GetAndParseCatalogueResult.createFileNotFoundResult();
     }
 
     ContentItem fileContentItem = null;
@@ -37,7 +37,7 @@ public class CatalogueManifestProvider {
     } catch (HttpClientErrorException e) {
       if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
         logger.warn("A request for a catalogue manifest that does not exist was received. CatalogueId: {}", catalogueId);
-        return GetAndParseCatalogueResult.createNotFoundResult();
+        return GetAndParseCatalogueResult.createFileNotFoundResult();
       } else {
         throw e;
       }
