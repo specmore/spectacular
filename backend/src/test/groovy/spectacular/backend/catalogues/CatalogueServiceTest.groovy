@@ -13,6 +13,7 @@ import spectacular.backend.cataloguemanifest.FindAndParseCatalogueResult
 import spectacular.backend.cataloguemanifest.GetCatalogueEntryConfigurationResult
 import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemError
 import spectacular.backend.cataloguemanifest.GetCatalogueManifestFileContentResult
+import spectacular.backend.cataloguemanifest.GetInterfaceEntryConfigurationResult
 import spectacular.backend.cataloguemanifest.model.CatalogueManifest
 import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.cataloguemanifest.model.Interfaces
@@ -98,7 +99,7 @@ class CatalogueServiceTest extends Specification {
         given: "a location for a catalogue config"
         def catalogueId = aCatalogueId()
 
-        and: "no catalogue manifest file with an error"
+        and: "a catalogue config entry with an error"
         def configItemError = Mock(GetCatalogueManifestConfigurationItemError)
         def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createErrorResult(configItemError)
 
@@ -121,14 +122,10 @@ class CatalogueServiceTest extends Specification {
         def catalogueId = aCatalogueId()
         def interfaceEntryName = "testInterface1"
 
-        and: "a catalogue manifest file at that location"
-        def catalogueManifestFileContents = Mock(ContentItem)
-        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueId, catalogueManifestFileContents)
-
         and: "a catalogue config entry in the manifest file with the interface entry in it"
         def interfaceEntry = Mock(Interface)
         def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
-        def findAndParseCatalogueResult = FindAndParseCatalogueResult.createCatalogueEntryParsedResult(catalogueManifestFileContents, catalogue)
+        def getInterfaceEntryConfigurationResult = GetInterfaceEntryConfigurationResult.createSuccessfulResult(catalogue, interfaceEntry, aManifestUri)
 
         and: "interface details for the interface entry with a spec evolution summary"
         def interfaceDetails = Mock(GetInterfaceResult)
@@ -141,11 +138,8 @@ class CatalogueServiceTest extends Specification {
         when: "the get interface details for user is called"
         def result = catalogueService.getInterfaceDetails(catalogueId, interfaceEntryName, aUsername)
 
-        then: "the catalogue manifest contents is retrieved"
-        1 * catalogueManifestProvider.getCatalogueManifest(catalogueId, aUsername) >> getCatalogueManifestFileContentResult
-
-        and: "catalogue config is found and parsed from the catalogue manifest contents"
-        1 * catalogueManifestParser.findAndParseCatalogueInManifestFileContents(catalogueManifestFileContents, catalogueId.getCatalogueName()) >> findAndParseCatalogueResult
+        then: "the interface entry configuration is resolved"
+        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(catalogueId, interfaceEntryName, aUsername) >> getInterfaceEntryConfigurationResult
 
         and: "the interface details are retrieved for the interface entry in the catalogue"
         1 * interfaceService.getInterfaceDetails(catalogueId, interfaceEntry, interfaceEntryName) >> interfaceDetails
@@ -160,145 +154,26 @@ class CatalogueServiceTest extends Specification {
         result.getInterfaceResult == interfaceDetails
     }
 
-    def "get interface details returns not found error for a catalogue manifest that doesn't exist"() {
+    def "get interface details returns error result for interface entry config that resolves with error"() {
         given: "a catalogue id and interface entry name"
         def catalogueId = aCatalogueId()
         def interfaceEntryName = "testInterface1"
 
-        and: "no catalogue manifest file at that location"
-        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createNotFoundResult(catalogueId)
+        and: "a interface entry config with an error"
+        def configItemError = Mock(GetCatalogueManifestConfigurationItemError)
+        def getInterfaceEntryConfigurationResult = GetInterfaceEntryConfigurationResult.createErrorResult(configItemError)
 
         when: "the get interface details for user is called"
         def result = catalogueService.getInterfaceDetails(catalogueId, interfaceEntryName, aUsername)
 
-        then: "the catalogue manifest contents is retrieved"
-        1 * catalogueManifestProvider.getCatalogueManifest(catalogueId, aUsername) >> getCatalogueManifestFileContentResult
+        then: "the interface entry configuration is resolved"
+        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(catalogueId, interfaceEntryName, aUsername) >> getInterfaceEntryConfigurationResult
 
         and: "no interface details are retrieved"
         0 * interfaceService.getInterfaceDetails(_, _, _)
 
-        and: "a not found result is returned"
-        result.getNotFoundErrorMessage()
-        !result.getGetInterfaceResult()
-    }
-
-    def "get interface details returns not found error for a catalogue manifest that doesn't contain the catalogue entry" () {
-        given: "a catalogue id and interface entry name"
-        def catalogueId = aCatalogueId()
-        def interfaceEntryName = "testInterface1"
-
-        and: "a catalogue manifest file at that location"
-        def catalogueManifestFileContents = Mock(ContentItem)
-        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueId, catalogueManifestFileContents)
-
-        and: "no catalogue config entry in the manifest file"
-        def findAndParseCatalogueResult = FindAndParseCatalogueResult.createCatalogueEntryNotFoundResult(catalogueManifestFileContents)
-
-        when: "the get interface details for user is called"
-        def result = catalogueService.getInterfaceDetails(catalogueId, interfaceEntryName, aUsername)
-
-        then: "catalogue config is retrieved and parsed from the catalogue manifest"
-        1 * catalogueManifestProvider.getCatalogueManifest(catalogueId, aUsername) >> getCatalogueManifestFileContentResult
-
-        and: "catalogue config is attempted to be found and parsed from the catalogue manifest contents"
-        1 * catalogueManifestParser.findAndParseCatalogueInManifestFileContents(catalogueManifestFileContents, catalogueId.getCatalogueName()) >> findAndParseCatalogueResult
-
-        and: "no interface details are retrieved"
-        0 * interfaceService.getInterfaceDetails(_, _, _)
-
-        and: "a not found result is returned"
-        result.getNotFoundErrorMessage()
-        !result.getGetInterfaceResult()
-    }
-
-    def "get interface details returns not found error for a catalogue manifest that doesn't contain the interface entry" () {
-        given: "a catalogue id and interface entry name"
-        def catalogueId = aCatalogueId()
-        def interfaceEntryName = "testInterface1"
-
-        and: "a catalogue manifest file at that location"
-        def catalogueManifestFileContents = Mock(ContentItem)
-        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueId, catalogueManifestFileContents)
-
-        and: "a catalogue config entry in the manifest file without the interface entry in it"
-        def catalogue = new spectacular.backend.cataloguemanifest.model.Catalogue()
-        def findAndParseCatalogueResult = FindAndParseCatalogueResult.createCatalogueEntryParsedResult(catalogueManifestFileContents, catalogue)
-
-        when: "the get interface details for user is called"
-        def result = catalogueService.getInterfaceDetails(catalogueId, interfaceEntryName, aUsername)
-
-        then: "catalogue config is retrieved and parsed from the catalogue manifest"
-        1 * catalogueManifestProvider.getCatalogueManifest(catalogueId, aUsername) >> getCatalogueManifestFileContentResult
-
-        and: "catalogue config is attempted to be found and parsed from the catalogue manifest contents"
-        1 * catalogueManifestParser.findAndParseCatalogueInManifestFileContents(catalogueManifestFileContents, catalogueId.getCatalogueName()) >> findAndParseCatalogueResult
-
-        and: "no interface details are retrieved"
-        0 * interfaceService.getInterfaceDetails(_, _, _)
-
-        and: "a not found result is returned"
-        result.getNotFoundErrorMessage()
-        !result.getGetInterfaceResult()
-    }
-
-    def "get interface details returns a config error for a catalogue manifest that doesn't parse"() {
-        given: "a catalogue id and interface entry name"
-        def catalogueId = aCatalogueId()
-        def interfaceEntryName = "testInterface1"
-
-        and: "a catalogue manifest file at that location"
-        def catalogueManifestFileContents = Mock(ContentItem)
-        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueId, catalogueManifestFileContents)
-
-        and: "a catalogue config entry in the manifest file with parse errors"
-        def parseErrorMessage = "test error"
-        def findAndParseCatalogueResult = FindAndParseCatalogueResult.createCatalogueEntryParseErrorResult(catalogueManifestFileContents, parseErrorMessage)
-
-        when: "the get interface details for user is called"
-        def result = catalogueService.getInterfaceDetails(catalogueId, interfaceEntryName, aUsername)
-
-        then: "catalogue config is retrieved and parsed from the catalogue manifest"
-        1 * catalogueManifestProvider.getCatalogueManifest(catalogueId, aUsername) >> getCatalogueManifestFileContentResult
-
-        and: "catalogue config is attempted to be found and parsed from the catalogue manifest contents"
-        1 * catalogueManifestParser.findAndParseCatalogueInManifestFileContents(catalogueManifestFileContents, catalogueId.getCatalogueName()) >> findAndParseCatalogueResult
-
-        and: "no interface details are retrieved"
-        0 * interfaceService.getInterfaceDetails(_, _, _)
-
-        and: "a config parse error result is returned"
-        result.getConfigErrorMessage()
-        !result.getGetInterfaceResult()
-    }
-
-    def "get interface details returns a config error an interface entry that doesn't have a spec file"() {
-        given: "a catalogue id and interface entry name"
-        def catalogueId = aCatalogueId()
-        def interfaceEntryName = "testInterface1"
-
-        and: "a catalogue manifest file at that location"
-        def catalogueManifestFileContents = Mock(ContentItem)
-        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueId, catalogueManifestFileContents)
-
-        and: "a catalogue config entry in the manifest file with the interface entry in it"
-        def interfaceEntry = Mock(Interface)
-        def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
-        def findAndParseCatalogueResult = FindAndParseCatalogueResult.createCatalogueEntryParsedResult(catalogueManifestFileContents, catalogue)
-
-        when: "the get interface details for user is called"
-        def result = catalogueService.getInterfaceDetails(catalogueId, interfaceEntryName, aUsername)
-
-        then: "the catalogue manifest contents is retrieved"
-        1 * catalogueManifestProvider.getCatalogueManifest(catalogueId, aUsername) >> getCatalogueManifestFileContentResult
-
-        and: "catalogue config is found and parsed from the catalogue manifest contents"
-        1 * catalogueManifestParser.findAndParseCatalogueInManifestFileContents(catalogueManifestFileContents, catalogueId.getCatalogueName()) >> findAndParseCatalogueResult
-
-        and: "the interface details are retrieved for the interface entry in the catalogue"
-        1 * interfaceService.getInterfaceDetails(catalogueId, interfaceEntry, interfaceEntryName) >> null
-
-        and: "a config parse error result is returned"
-        result.getConfigErrorMessage()
+        and: "a error result is returned with no interface details"
+        result.getGetConfigurationItemError()
         !result.getGetInterfaceResult()
     }
 

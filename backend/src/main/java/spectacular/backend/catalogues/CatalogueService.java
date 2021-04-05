@@ -110,42 +110,21 @@ public class CatalogueService {
    *     3. The interface details.
    */
   public GetInterfaceDetailsResult getInterfaceDetails(CatalogueId catalogueId, String interfaceName, String username) {
-    var getCatalogueManifestFileContentResult = catalogueManifestProvider.getCatalogueManifest(catalogueId, username);
+    var getInterfaceEntryConfigurationResult = catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(
+        catalogueId, interfaceName, username);
 
-    if (getCatalogueManifestFileContentResult.isFileNotFoundResult()) {
-      return GetInterfaceDetailsResult.createNotFoundResult("Catalogue manifest file not found: " + catalogueId.getFullPath());
+    if (getInterfaceEntryConfigurationResult.hasError()) {
+      return GetInterfaceDetailsResult.createErrorResult(getInterfaceEntryConfigurationResult.getError());
     }
 
-    var catalogueManifestContent = getCatalogueManifestFileContentResult.getCatalogueManifestContent();
-    var parseResult = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(catalogueManifestContent,
-        catalogueId.getCatalogueName());
-
-    if (parseResult.isCatalogueEntryNotFound()) {
-      return GetInterfaceDetailsResult.createNotFoundResult("Catalogue entry in manifest file not found: " + catalogueId.getCombined());
-    }
-
-    if (parseResult.isCatalogueEntryContainsError()) {
-      return GetInterfaceDetailsResult.createConfigErrorResult("Catalogue entry in manifest file: " + catalogueId.getCombined() +
-          ", has parse error: " + parseResult.getError());
-    }
-
-    var catalogueEntry = parseResult.getCatalogue();
-    if (catalogueEntry.getInterfaces() == null || !catalogueEntry.getInterfaces().getAdditionalProperties().containsKey(interfaceName)) {
-      return GetInterfaceDetailsResult.createNotFoundResult("Interface entry not found in Catalogue entry in manifest file: " +
-          catalogueId.getCombined() + ", with name: " + interfaceName);
-    }
-
-    var catalogueInterfaceEntry = catalogueEntry.getInterfaces().getAdditionalProperties().get(interfaceName);
+    var catalogueInterfaceEntry = getInterfaceEntryConfigurationResult.getInterfaceEntry();
     var interfaceDetailsResult = this.interfaceService.getInterfaceDetails(catalogueId, catalogueInterfaceEntry, interfaceName);
 
-    if (interfaceDetailsResult == null) {
-      return GetInterfaceDetailsResult.createConfigErrorResult("Interface entry in Catalogue entry in manifest file: " +
-          catalogueId.getCombined() + ", with name: " + interfaceName + ", has no spec file location set.");
-    }
-
-    var manifestUrl = catalogueManifestContent.getHtml_url();
+    var catalogueEntry = getInterfaceEntryConfigurationResult.getCatalogueEntry();
+    var manifestUrl = getInterfaceEntryConfigurationResult.getManifestUri();
     var catalogueDetails = catalogueMapper.mapCatalogue(catalogueEntry, catalogueId, manifestUrl);
     var interfaceDetails = interfaceDetailsResult.catalogue(catalogueDetails);
+
     return GetInterfaceDetailsResult.createFoundResult(interfaceDetails);
   }
 

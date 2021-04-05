@@ -3,12 +3,11 @@ package spectacular.backend.catalogues;
 import spectacular.backend.api.model.Catalogue;
 import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemError;
 
-public class GetCatalogueForUserResult {
-  private final GetCatalogueManifestConfigurationItemError getConfigurationItemError;
+public class GetCatalogueForUserResult extends GetCatalogueConfigurationItemResult {
   private final Catalogue catalogueDetails;
 
   private GetCatalogueForUserResult(GetCatalogueManifestConfigurationItemError getConfigurationItemError, Catalogue catalogueDetails) {
-    this.getConfigurationItemError = getConfigurationItemError;
+    super(getConfigurationItemError);
     this.catalogueDetails = catalogueDetails;
   }
 
@@ -22,9 +21,5 @@ public class GetCatalogueForUserResult {
 
   public Catalogue getCatalogueDetails() {
     return catalogueDetails;
-  }
-
-  public GetCatalogueManifestConfigurationItemError getGetConfigurationItemError() {
-    return getConfigurationItemError;
   }
 }

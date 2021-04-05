@@ -14,6 +14,7 @@ import spectacular.backend.api.CataloguesApi;
 import spectacular.backend.api.model.FindCataloguesResult;
 import spectacular.backend.api.model.GetCatalogueResult;
 import spectacular.backend.api.model.GetInterfaceResult;
+import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemError;
 import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemErrorType;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.interfaces.InterfaceService;
@@ -46,15 +47,7 @@ public class CataloguesController implements CataloguesApi {
 
     var getCatalogueForUserResult = catalogueService.getCatalogueForUser(catalogueId, authentication.getName());
 
-    if (getCatalogueForUserResult.getGetConfigurationItemError() != null) {
-      var errorType = getCatalogueForUserResult.getGetConfigurationItemError().getType();
-      var errorMessage = getCatalogueForUserResult.getGetConfigurationItemError().getMessage();
-      if (errorType == GetCatalogueManifestConfigurationItemErrorType.NOT_FOUND) {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, errorMessage);
-      } else if (errorType == GetCatalogueManifestConfigurationItemErrorType.CONFIG_ERROR) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage);
-      }
-    }
+    handleAnyError(getCatalogueForUserResult.getGetConfigurationItemError());
 
     var getCatalogueResult = new GetCatalogueResult().catalogue(getCatalogueForUserResult.getCatalogueDetails());
     return ResponseEntity.ok(getCatalogueResult);
@@ -69,13 +62,7 @@ public class CataloguesController implements CataloguesApi {
 
     var getInterfaceDetailsResult = this.catalogueService.getInterfaceDetails(catalogueId, interfaceName, authentication.getName());
 
-    if (getInterfaceDetailsResult.isNotFound()) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, getInterfaceDetailsResult.getNotFoundErrorMessage());
-    }
-
-    if (getInterfaceDetailsResult.isConfigError()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, getInterfaceDetailsResult.getConfigErrorMessage());
-    }
+    handleAnyError(getInterfaceDetailsResult.getGetConfigurationItemError());
 
     return ResponseEntity.ok(getInterfaceDetailsResult.getGetInterfaceResult());
   }
@@ -102,6 +89,18 @@ public class CataloguesController implements CataloguesApi {
       return ResponseEntity
           .status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("An unexpected error occurred while decoding the file contents.");
+    }
+  }
+
+  private void handleAnyError(GetCatalogueManifestConfigurationItemError configurationItemError) {
+    if(configurationItemError != null) {
+      var errorType = configurationItemError.getType();
+      var errorMessage = configurationItemError.getMessage();
+      if (errorType == GetCatalogueManifestConfigurationItemErrorType.NOT_FOUND) {
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, errorMessage);
+      } else if (errorType == GetCatalogueManifestConfigurationItemErrorType.CONFIG_ERROR) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage);
+      }
     }
   }
 }

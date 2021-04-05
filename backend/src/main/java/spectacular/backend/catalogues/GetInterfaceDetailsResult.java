@@ -1,30 +1,26 @@
 package spectacular.backend.catalogues;
 
 import spectacular.backend.api.model.GetInterfaceResult;
+import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemError;
 
-public class GetInterfaceDetailsResult extends GetCatalogueManifestConfiguredResourceResult {
+public class GetInterfaceDetailsResult extends GetCatalogueConfigurationItemResult {
   private final GetInterfaceResult getInterfaceResult;
 
-  private GetInterfaceDetailsResult(boolean isNotFound, boolean isConfigError, String notFoundErrorMessage, String configErrorMessage,
+  private GetInterfaceDetailsResult(GetCatalogueManifestConfigurationItemError getConfigurationItemError,
                                     GetInterfaceResult getInterfaceResult) {
-    super(isNotFound, isConfigError, notFoundErrorMessage, configErrorMessage);
+    super(getConfigurationItemError);
     this.getInterfaceResult = getInterfaceResult;
   }
 
-  public static GetInterfaceDetailsResult createNotFoundResult(String error) {
-    return new GetInterfaceDetailsResult(true, false, error, null, null);
-  }
-
-  public static GetInterfaceDetailsResult createConfigErrorResult(String error) {
-    return new GetInterfaceDetailsResult(false, true, null, error, null);
+  public static GetInterfaceDetailsResult createErrorResult(GetCatalogueManifestConfigurationItemError getConfigurationItemError) {
+    return new GetInterfaceDetailsResult(getConfigurationItemError, null);
   }
 
   public static GetInterfaceDetailsResult createFoundResult(GetInterfaceResult getInterfaceResult) {
-    return new GetInterfaceDetailsResult(false, false, null, null, getInterfaceResult);
+    return new GetInterfaceDetailsResult(null, getInterfaceResult);
   }
 
   public GetInterfaceResult getGetInterfaceResult() {
     return getInterfaceResult;
   }
-
 }
