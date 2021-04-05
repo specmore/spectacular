@@ -4,8 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.stream.Collectors;
-import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import spectacular.backend.cataloguemanifest.model.Catalogue;
 import spectacular.backend.cataloguemanifest.model.CatalogueManifest;
+import spectacular.backend.github.domain.ContentItem;
 
 @Component
 public class CatalogueManifestParser {
@@ -23,10 +25,22 @@ public class CatalogueManifestParser {
   /**
    * Parses the YAML contents of a catalogue manifest file and returns the result.
    *
-   * @param manifestFileContents the YAML contents of a catalogue manifest file to be parsed
-   * @return the CatalogueManifestParseResult
+   * @param contentItem the github api content item holding the contents of a catalogue manifest file to be parsed
+   * @return the CatalogueManifestContentItemParseResult
    */
-  public CatalogueManifestParseResult parseManifestFileContents(String manifestFileContents) {
+  public CatalogueManifestContentItemParseResult parseManifestFileContentItem(ContentItem contentItem) {
+    try {
+      var fileContents = contentItem.getDecodedContent();
+      var parseResult = parseManifestFileContents(fileContents);
+      return CatalogueManifestContentItemParseResult.createFrom(parseResult, contentItem);
+    } catch (UnsupportedEncodingException e) {
+      logger.error("An error occurred while decoding the catalogue manifest yaml file at " + contentItem.getHtml_url().toString(), e);
+      var error = "An error occurred while decoding the catalogue manifest yaml file contents.";
+      return CatalogueManifestContentItemParseResult.createParseErrorResult(error, contentItem);
+    }
+  }
+
+  private CatalogueManifestParseResult parseManifestFileContents(String manifestFileContents) {
     CatalogueManifest manifest = null;
     String error = null;
     try {
@@ -41,7 +55,7 @@ public class CatalogueManifestParser {
     }
 
     if (error != null) {
-      return new CatalogueManifestParseResult(null, error);
+      return CatalogueManifestParseResult.createParseErrorResult(error);
     }
 
     var violations = validator.validate(manifest);
@@ -51,10 +65,10 @@ public class CatalogueManifestParser {
           .collect(Collectors.toList());
       error = "The following validation errors were found with the catalogue manifest file: " +
           String.join(", ", violationMessage);
-      return new CatalogueManifestParseResult(null, error);
+      return CatalogueManifestParseResult.createParseErrorResult(error);
     }
 
-    return new CatalogueManifestParseResult(manifest, null);
+    return CatalogueManifestParseResult.createSuccessfulCatalogueManifestParseResult(manifest);
   }
 
   /**
@@ -108,6 +122,4 @@ public class CatalogueManifestParser {
 
     return FindAndParseCatalogueResult.createCatalogueEntryParsedResult(catalogue);
   }
-
-
 }

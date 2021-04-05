@@ -79,6 +79,13 @@ public class CatalogueManifestProvider {
     return GetAndParseCatalogueResult.createFoundAndParsedResult(fileContentItem, catalogueParseResult);
   }
 
+  /**
+   * Searches for catalogue manifest files that are in repositories that belong to an organisation and the user has access to.
+   *
+   * @param orgName the name of the organisation to search repositories in
+   * @param username the user who's access to check
+   * @return all the manifest files that are found and their file content
+   */
   public List<GetCatalogueManifestFileContentResult> findCatalogueManifestsForOrg(String orgName, String username) {
     var searchCodeResults = restApiClient.findFiles(CATALOGUE_MANIFEST_FILE_NAME,
         List.of(CATALOGUE_MANIFEST_YAML_FILE_EXTENSION, CATALOGUE_MANIFEST_YML_FILE_EXTENSION),

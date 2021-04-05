@@ -5,6 +5,7 @@ import org.springframework.web.client.HttpClientErrorException
 import spectacular.backend.api.model.Catalogue
 import spectacular.backend.api.model.GetInterfaceResult
 import spectacular.backend.api.model.SpecEvolutionSummary
+import spectacular.backend.cataloguemanifest.CatalogueManifestContentItemParseResult
 import spectacular.backend.cataloguemanifest.CatalogueManifestParseResult
 import spectacular.backend.cataloguemanifest.CatalogueManifestParser
 import spectacular.backend.cataloguemanifest.CatalogueManifestProvider
@@ -358,14 +359,12 @@ class CatalogueServiceTest extends Specification {
 
         and: "a catalogue manifest file with contents"
         def catalogueManifestId = aCatalogueManifestId()
-        def fileContents = "test contents"
         def fileContentItem = Mock(ContentItem)
-        fileContentItem.getDecodedContent() >> fileContents
         def getCatalogueManifestFileContentsResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueManifestId, fileContentItem)
 
         and: "a catalogue manifest object parsed from the manifest file contents"
         def catalogueManifest = Mock(CatalogueManifest)
-        def catalogueManifestParseResult = new CatalogueManifestParseResult(catalogueManifest, null)
+        def catalogueManifestParseResult = CatalogueManifestContentItemParseResult.createSuccessfulParseResult(catalogueManifest, fileContentItem)
 
         and: "mapped catalogue API models for each catalogue entry in the manifest object"
         def mappedCatalogues = [Mock(Catalogue)]
@@ -377,7 +376,7 @@ class CatalogueServiceTest extends Specification {
         1 * catalogueManifestProvider.findCatalogueManifestsForOrg(org, username) >> [getCatalogueManifestFileContentsResult]
 
         and: "the manifest file contents are parsed"
-        1 * catalogueManifestParser.parseManifestFileContents(fileContents) >> catalogueManifestParseResult
+        1 * catalogueManifestParser.parseManifestFileContentItem(fileContentItem) >> catalogueManifestParseResult
 
         and: "the manifest catalogue entry object is mapped to an API catalogue model"
         1 * catalogueMapper.mapCatalogueManifestEntries(catalogueManifest, catalogueManifestId, _) >> mappedCatalogues
@@ -403,7 +402,7 @@ class CatalogueServiceTest extends Specification {
         1 * catalogueManifestProvider.findCatalogueManifestsForOrg(org, username) >> [getCatalogueManifestFileContentsResult]
 
         and: "no manifest file contents are parsed"
-        0 * catalogueManifestParser.parseManifestFileContents(_)
+        0 * catalogueManifestParser.parseManifestFileContentItem(_)
 
         and: "no manifest catalogue entry object is mapped to an API catalogue model"
         0 * catalogueMapper.mapCatalogueManifestEntries(_, _, _)

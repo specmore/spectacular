@@ -1,5 +1,6 @@
 package spectacular.backend.cataloguemanifest
 
+import spectacular.backend.github.domain.ContentItem
 import spock.lang.Specification
 
 class CatalogueManifestParserTest extends Specification {
@@ -51,18 +52,41 @@ class CatalogueManifestParserTest extends Specification {
             "          filePath: \"specs/example-spec.yaml\"\n" +
             "          repo: \"test-owner2/specs-test2\""
 
-    def "parseManifestFileContents returns parse error for invalid catalogue manifest with missing version header"() {
+    def "parseManifestFileContentItem returns parse error for invalid catalogue manifest with missing version header"() {
         given: "an invalid catalogue manifest with missing version header"
         def yamlManifest = aCatalogueManifestWithMissingVersionHeader
+        def contentItem = Mock(ContentItem)
+        contentItem.getHtml_url() >> new URI("test-uri")
 
         when: "parsing the manifest file contents"
-        def result = catalogueManifestParser.parseManifestFileContents(yamlManifest);
+        def result = catalogueManifestParser.parseManifestFileContentItem(contentItem);
 
-        then: "no catalogue manifest is returned"
+        then: "the file contents are decoded"
+        1 * contentItem.getDecodedContent() >> yamlManifest
+
+        and: "no catalogue manifest is returned"
         !result.catalogueManifest
 
         and: "there is a parse error"
         result.error == "The following validation errors were found with the catalogue manifest file: spectacular must not be null"
+    }
+
+    def "parseManifestFileContentItem returns parse error for file contents that cannot be decoded"() {
+        given: "a file content item that cannot be decoded"
+        def contentItem = Mock(ContentItem)
+        contentItem.getHtml_url() >> new URI("test-uri")
+
+        when: "parsing the manifest file contents"
+        def result = catalogueManifestParser.parseManifestFileContentItem(contentItem);
+
+        then: "the file contents are decoded unsuccessfully"
+        1 * contentItem.getDecodedContent() >> { throw new UnsupportedEncodingException() }
+
+        and: "no catalogue manifest is returned"
+        !result.catalogueManifest
+
+        and: "there is a parse error"
+        result.error == "An error occurred while decoding the catalogue manifest yaml file contents."
     }
 
     def "FindAndParseCatalogueInManifestFileContents for valid catalogue manifest"() {

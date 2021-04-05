@@ -193,27 +193,18 @@ public class CatalogueService {
     var manifestId = getCatalogueManifestFileContentResult.getCatalogueManifestId();
 
     if (getCatalogueManifestFileContentResult.isFileNotFoundResult()) {
-      logger.warn("A manifest file was found during a search but the actual file contents could not be found for: " +
+      logger.warn("A manifest file was found during a search but the actual file contents could not subsequently be found for: " +
           manifestId.getFullPath());
       return Collections.emptyList();
     }
 
     var fileContentItem = getCatalogueManifestFileContentResult.getCatalogueManifestContent();
-    try {
-      var catalogueManifestParseResult = catalogueManifestParser.parseManifestFileContents(fileContentItem.getDecodedContent());
+    var parseResult = catalogueManifestParser.parseManifestFileContentItem(fileContentItem);
 
-      if (catalogueManifestParseResult.getCatalogueManifest() != null) {
-        return catalogueMapper.mapCatalogueManifestEntries(
-            catalogueManifestParseResult.getCatalogueManifest(),
-            manifestId,
-            fileContentItem.getHtml_url());
-      } else {
-        return Collections.singletonList(catalogueMapper.createForParseError(catalogueManifestParseResult.getError(), manifestId));
-      }
-    } catch (UnsupportedEncodingException e) {
-      logger.error("An error occurred while decoding the catalogue manifest yaml file: " + manifestId.toString(), e);
-      var error = "An error occurred while decoding the catalogue manifest yaml file: " + e.getMessage();
-      return Collections.singletonList(catalogueMapper.createForParseError(error, manifestId));
+    if (parseResult.getError() != null) {
+      return Collections.singletonList(catalogueMapper.createForParseError(parseResult.getError(), manifestId));
     }
+
+    return catalogueMapper.mapCatalogueManifestEntries(parseResult.getCatalogueManifest(), manifestId, fileContentItem.getHtml_url());
   }
 }
