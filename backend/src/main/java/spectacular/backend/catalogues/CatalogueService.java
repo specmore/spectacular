@@ -11,10 +11,8 @@ import org.springframework.stereotype.Service;
 import spectacular.backend.api.model.Catalogue;
 import spectacular.backend.cataloguemanifest.CatalogueManifestParser;
 import spectacular.backend.cataloguemanifest.CatalogueManifestProvider;
-import spectacular.backend.cataloguemanifest.GetAndParseCatalogueResult;
 import spectacular.backend.cataloguemanifest.GetCatalogueManifestFileContentResult;
 import spectacular.backend.common.CatalogueId;
-import spectacular.backend.github.RestApiClient;
 import spectacular.backend.interfaces.InterfaceFileContents;
 import spectacular.backend.interfaces.InterfaceService;
 
@@ -87,6 +85,11 @@ public class CatalogueService {
       var catalogueDetails = catalogueMapper.createForParseError(parseResult.getError(), catalogueId);
       return GetCatalogueForUserResult.createFoundResult(catalogueDetails);
     }
+
+//    if (parseResult.isCatalogueEntryContainsError()) {
+//      return GetCatalogueForUserResult.createConfigErrorResult("Catalogue entry in manifest file: " + catalogueId.getCombined() +
+//          ", has parse error: " + parseResult.getError());
+//    }
 
     var catalogueEntry = parseResult.getCatalogue();
     var manifestUrl = catalogueManifestContent.getHtml_url();

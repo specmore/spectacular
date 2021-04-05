@@ -1,16 +1,14 @@
 package spectacular.backend.catalogues
 
-import org.springframework.http.HttpStatus
-import org.springframework.web.client.HttpClientErrorException
+
 import spectacular.backend.api.model.Catalogue
 import spectacular.backend.api.model.GetInterfaceResult
 import spectacular.backend.api.model.SpecEvolutionSummary
 import spectacular.backend.cataloguemanifest.CatalogueManifestContentItemParseResult
-import spectacular.backend.cataloguemanifest.CatalogueManifestParseResult
 import spectacular.backend.cataloguemanifest.CatalogueManifestParser
 import spectacular.backend.cataloguemanifest.CatalogueManifestProvider
 import spectacular.backend.cataloguemanifest.FindAndParseCatalogueResult
-import spectacular.backend.cataloguemanifest.GetAndParseCatalogueResult
+
 import spectacular.backend.cataloguemanifest.GetCatalogueManifestFileContentResult
 import spectacular.backend.cataloguemanifest.model.CatalogueManifest
 import spectacular.backend.cataloguemanifest.model.Interface
@@ -51,18 +49,6 @@ class CatalogueServiceTest extends Specification {
     def aCatalogueManifest(String interfaceEntryName, Interface interfaceEntry) {
         def interfaces = new Interfaces().withAdditionalProperty(interfaceEntryName, interfaceEntry)
         return new spectacular.backend.cataloguemanifest.model.Catalogue().withInterfaces(interfaces)
-    }
-
-    def aGetAndParseCatalogueResultWithEntryNotFound() {
-        def catalogueParseResult = FindAndParseCatalogueResult.createCatalogueEntryNotFoundResult()
-        def contentItem = Mock(ContentItem)
-        return GetAndParseCatalogueResult.createFoundAndParsedResult(contentItem, catalogueParseResult)
-    }
-
-    def aGetAndParseCatalogueResultWithParseError(errorMessage) {
-        def catalogueParseResult = FindAndParseCatalogueResult.createCatalogueEntryParseErrorResult(errorMessage)
-        def contentItem = Mock(ContentItem)
-        return GetAndParseCatalogueResult.createFoundAndParsedResult(contentItem, catalogueParseResult)
     }
 
     def "get catalogue for repository and valid user returns evolution summaries for each interface in manifest catalogue entry"() {

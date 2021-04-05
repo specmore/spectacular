@@ -2,19 +2,12 @@ package spectacular.backend.catalogues;
 
 import spectacular.backend.api.model.GetInterfaceResult;
 
-public class GetInterfaceDetailsResult {
-  private final boolean isNotFound;
-  private final boolean isConfigError;
-  private final String notFoundErrorMessage;
-  private final String configErrorMessage;
+public class GetInterfaceDetailsResult extends GetCatalogueManifestConfiguredResourceResult {
   private final GetInterfaceResult getInterfaceResult;
 
   private GetInterfaceDetailsResult(boolean isNotFound, boolean isConfigError, String notFoundErrorMessage, String configErrorMessage,
                                     GetInterfaceResult getInterfaceResult) {
-    this.isNotFound = isNotFound;
-    this.isConfigError = isConfigError;
-    this.notFoundErrorMessage = notFoundErrorMessage;
-    this.configErrorMessage = configErrorMessage;
+    super(isNotFound, isConfigError, notFoundErrorMessage, configErrorMessage);
     this.getInterfaceResult = getInterfaceResult;
   }
 
@@ -30,23 +23,8 @@ public class GetInterfaceDetailsResult {
     return new GetInterfaceDetailsResult(false, false, null, null, getInterfaceResult);
   }
 
-  public boolean isNotFound() {
-    return isNotFound;
-  }
-
-  public String getNotFoundErrorMessage() {
-    return notFoundErrorMessage;
-  }
-
   public GetInterfaceResult getGetInterfaceResult() {
     return getInterfaceResult;
   }
 
-  public String getConfigErrorMessage() {
-    return configErrorMessage;
-  }
-
-  public boolean isConfigError() {
-    return isConfigError;
-  }
 }
