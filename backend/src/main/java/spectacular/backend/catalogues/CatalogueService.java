@@ -69,25 +69,27 @@ public class CatalogueService {
    * @return A Catalogue object
    */
   public GetCatalogueForUserResult getCatalogueForUser(CatalogueId catalogueId, String username) {
-    GetAndParseCatalogueResult getAndParseCatalogueResult = catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, username);
+    var getCatalogueManifestFileContentResult = catalogueManifestProvider.getCatalogueManifest(catalogueId, username);
 
-    if (!getAndParseCatalogueResult.isCatalogueManifestFileExists()) {
+    if (getCatalogueManifestFileContentResult.isFileNotFoundResult()) {
       return GetCatalogueForUserResult.createNotFoundResult("Catalogue manifest file not found: " + catalogueId.getFullPath());
     }
 
-    var catalogueEntryParseResult = getAndParseCatalogueResult.getCatalogueParseResult();
+    var catalogueManifestContent = getCatalogueManifestFileContentResult.getCatalogueManifestContent();
+    var parseResult = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(catalogueManifestContent,
+        catalogueId.getCatalogueName());
 
-    if (catalogueEntryParseResult.isCatalogueEntryNotFound()) {
+    if (parseResult.isCatalogueEntryNotFound()) {
       return GetCatalogueForUserResult.createNotFoundResult("Catalogue entry in manifest file not found: " + catalogueId.getCombined());
     }
 
-    if (catalogueEntryParseResult.isCatalogueEntryContainsError()) {
-      var catalogueDetails = catalogueMapper.createForParseError(catalogueEntryParseResult.getError(), catalogueId);
+    if (parseResult.isCatalogueEntryContainsError()) {
+      var catalogueDetails = catalogueMapper.createForParseError(parseResult.getError(), catalogueId);
       return GetCatalogueForUserResult.createFoundResult(catalogueDetails);
     }
 
-    var catalogueEntry = catalogueEntryParseResult.getCatalogue();
-    var manifestUrl = getAndParseCatalogueResult.getCatalogueManifestFileHtmlUrl();
+    var catalogueEntry = parseResult.getCatalogue();
+    var manifestUrl = catalogueManifestContent.getHtml_url();
     var catalogueDetails = catalogueMapper.mapCatalogue(catalogueEntry, catalogueId, manifestUrl);
 
     var specEvolutionSummaries = catalogueEntry.getInterfaces().getAdditionalProperties().entrySet().stream()
@@ -113,25 +115,27 @@ public class CatalogueService {
    *     3. The interface details.
    */
   public GetInterfaceDetailsResult getInterfaceDetails(CatalogueId catalogueId, String interfaceName, String username) {
-    GetAndParseCatalogueResult getAndParseCatalogueResult = catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, username);
+    var getCatalogueManifestFileContentResult = catalogueManifestProvider.getCatalogueManifest(catalogueId, username);
 
-    if (!getAndParseCatalogueResult.isCatalogueManifestFileExists()) {
+    if (getCatalogueManifestFileContentResult.isFileNotFoundResult()) {
       return GetInterfaceDetailsResult.createNotFoundResult("Catalogue manifest file not found: " + catalogueId.getFullPath());
     }
 
-    var catalogueEntryParseResult = getAndParseCatalogueResult.getCatalogueParseResult();
+    var catalogueManifestContent = getCatalogueManifestFileContentResult.getCatalogueManifestContent();
+    var parseResult = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(catalogueManifestContent,
+        catalogueId.getCatalogueName());
 
-    if (catalogueEntryParseResult.isCatalogueEntryNotFound()) {
+    if (parseResult.isCatalogueEntryNotFound()) {
       return GetInterfaceDetailsResult.createNotFoundResult("Catalogue entry in manifest file not found: " + catalogueId.getCombined());
     }
 
-    if (catalogueEntryParseResult.isCatalogueEntryContainsError()) {
+    if (parseResult.isCatalogueEntryContainsError()) {
       return GetInterfaceDetailsResult.createConfigErrorResult("Catalogue entry in manifest file: " + catalogueId.getCombined() +
-          ", has parse error: " + catalogueEntryParseResult.getError());
+          ", has parse error: " + parseResult.getError());
     }
 
-    var catalogueEntry = catalogueEntryParseResult.getCatalogue();
-    if (!catalogueEntry.getInterfaces().getAdditionalProperties().containsKey(interfaceName)) {
+    var catalogueEntry = parseResult.getCatalogue();
+    if (catalogueEntry.getInterfaces() == null || !catalogueEntry.getInterfaces().getAdditionalProperties().containsKey(interfaceName)) {
       return GetInterfaceDetailsResult.createNotFoundResult("Interface entry not found in Catalogue entry in manifest file: " +
           catalogueId.getCombined() + ", with name: " + interfaceName);
     }
@@ -144,7 +148,7 @@ public class CatalogueService {
           catalogueId.getCombined() + ", with name: " + interfaceName + ", has no spec file location set.");
     }
 
-    var manifestUrl = getAndParseCatalogueResult.getCatalogueManifestFileHtmlUrl();
+    var manifestUrl = catalogueManifestContent.getHtml_url();
     var catalogueDetails = catalogueMapper.mapCatalogue(catalogueEntry, catalogueId, manifestUrl);
     var interfaceDetails = interfaceDetailsResult.catalogue(catalogueDetails);
     return GetInterfaceDetailsResult.createFoundResult(interfaceDetails);
@@ -161,22 +165,26 @@ public class CatalogueService {
    */
   public InterfaceFileContents getInterfaceFileContents(CatalogueId catalogueId, String interfaceName, String ref, String username)
       throws UnsupportedEncodingException {
-    GetAndParseCatalogueResult getAndParseCatalogueResult = catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, username);
+    var getCatalogueManifestFileContentResult = catalogueManifestProvider.getCatalogueManifest(catalogueId, username);
 
-    if (!getAndParseCatalogueResult.isCatalogueManifestFileExists()) {
+    if (getCatalogueManifestFileContentResult.isFileNotFoundResult()) {
       return null;
     }
 
-    var parseError = getAndParseCatalogueResult.getCatalogueParseResult().getError();
+    var catalogueManifestContent = getCatalogueManifestFileContentResult.getCatalogueManifestContent();
+    var parseResult = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(catalogueManifestContent,
+        catalogueId.getCatalogueName());
+
+    var parseError = parseResult.getError();
     if (parseError != null) {
       logger.warn("A request for an interface entry in a catalogue manifest that does not parse correctly was received. " +
           "CatalogueId: {} and ParseError '{}'", catalogueId, parseError);
       throw new RuntimeException("An error occurred while parsing the catalogue manifest file for interface requested.");
     }
 
-    var catalogue = getAndParseCatalogueResult.getCatalogueParseResult().getCatalogue();
+    var catalogue = parseResult.getCatalogue();
 
-    if (catalogue == null) {
+    if (catalogue == null || catalogue.getInterfaces() == null) {
       return null;
     }
 

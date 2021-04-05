@@ -92,11 +92,15 @@ class CatalogueManifestParserTest extends Specification {
     def "FindAndParseCatalogueInManifestFileContents for valid catalogue manifest"() {
         given: "a valid catalogue manifest YAML content in the manifest file"
         def yamlManifest = aValidYamlCatalogueManifestFileContents
+        def contentItem = Mock(ContentItem)
 
         when: "finding and parsing a specific catalogue name in the manifest YAML"
-        def result = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(yamlManifest, "testCatalogue1");
+        def result = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(contentItem, "testCatalogue1");
 
-        then: "the catalogue is found"
+        then: "the file contents are decoded"
+        1 * contentItem.getDecodedContent() >> yamlManifest
+
+        and: "the catalogue is found"
         result.catalogue
         result.catalogue.getTitle() == "Test Catalogue 1"
 
@@ -107,11 +111,15 @@ class CatalogueManifestParserTest extends Specification {
     def "FindAndParseCatalogueInManifestFileContents accepts unknown fields in catalogue manifest to support backwards compatibility"() {
         given: "an invalid catalogue manifest YAML content"
         def yamlManifest = aCatalogueManifestWithInvalidFields
+        def contentItem = Mock(ContentItem)
 
         when: "finding and parsing a specific catalogue name in the manifest YAML"
-        def result = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(yamlManifest, "testCatalogue1");
+        def result = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(contentItem, "testCatalogue1");
 
-        then: "the catalogue is not found"
+        then: "the file contents are decoded"
+        1 * contentItem.getDecodedContent() >> yamlManifest
+
+        and: "the catalogue is not found"
         result.catalogue
 
         and: "there is no error"
@@ -121,25 +129,51 @@ class CatalogueManifestParserTest extends Specification {
     def "FindAndParseCatalogueInManifestFileContents returns parse error for missing required fields in catalogue manifest"() {
         given: "an invalid catalogue manifest YAML content"
         def yamlManifest = aCatalogueManifestWithMissingCatalogueTitle
+        def contentItem = Mock(ContentItem)
 
         when: "finding and parsing a specific catalogue name in the manifest YAML"
-        def result = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(yamlManifest, "testCatalogue1");
+        def result = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(contentItem, "testCatalogue1");
 
-        then: "the catalogue is not found"
+        then: "the file contents are decoded"
+        1 * contentItem.getDecodedContent() >> yamlManifest
+
+        and: "the catalogue is not found"
         !result.catalogue
 
         and: "there is a parse error"
         result.error == "The following validation errors were found with catalogue entry 'testCatalogue1': title must not be null"
     }
 
+    def "FindAndParseCatalogueInManifestFileContents returns parse error for file contents that cannot be decoded"() {
+        given: "a file content item that cannot be decoded"
+        def contentItem = Mock(ContentItem)
+        contentItem.getHtml_url() >> new URI("test-uri")
+
+        when: "finding and parsing a specific catalogue name in the manifest YAML"
+        def result = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(contentItem, "testCatalogue1");
+
+        then: "the file contents are decoded unsuccessfully"
+        1 * contentItem.getDecodedContent() >> { throw new UnsupportedEncodingException() }
+
+        and: "the catalogue is not found"
+        !result.catalogue
+
+        and: "there is a parse error"
+        result.error == "An error occurred while decoding the catalogue manifest yaml file contents."
+    }
+
     def "FindAndParseCatalogueInManifestFileContents for catalogue manifest with no catalogues field"() {
         given: "an empty manifest file"
         def yamlManifest = "spectacular: '0.1'"
+        def contentItem = Mock(ContentItem)
 
         when: "finding and parsing a specific catalogue name in the manifest YAML"
-        def result = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(yamlManifest, "testCatalogue1");
+        def result = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(contentItem, "testCatalogue1");
 
-        then: "the catalogue is not found"
+        then: "the file contents are decoded"
+        1 * contentItem.getDecodedContent() >> yamlManifest
+
+        and: "the catalogue is not found"
         !result.catalogue
 
         and: "there is no error"
@@ -149,11 +183,15 @@ class CatalogueManifestParserTest extends Specification {
     def "FindAndParseCatalogueInManifestFileContents for catalogue manifest with missing catalogue"() {
         given: "a valid catalogue manifest YAML content in the manifest file"
         def yamlManifest = aValidYamlCatalogueManifestFileContents
+        def contentItem = Mock(ContentItem)
 
         when: "finding and parsing a specific catalogue name not in the manifest YAML"
-        def result = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(yamlManifest, "anotherCatalogue");
+        def result = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(contentItem, "anotherCatalogue");
 
-        then: "the catalogue is not found"
+        then: "the file contents are decoded"
+        1 * contentItem.getDecodedContent() >> yamlManifest
+
+        and: "the catalogue is not found"
         !result.catalogue
 
         and: "there is no error"

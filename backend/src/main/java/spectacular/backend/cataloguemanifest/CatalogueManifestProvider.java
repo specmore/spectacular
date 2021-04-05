@@ -28,55 +28,24 @@ public class CatalogueManifestProvider {
   private static final Logger logger = LoggerFactory.getLogger(CatalogueManifestProvider.class);
 
   private final RestApiClient restApiClient;
-  private final CatalogueManifestParser catalogueManifestParser;
 
-  public CatalogueManifestProvider(RestApiClient restApiClient,
-                                   CatalogueManifestParser catalogueManifestParser) {
+  public CatalogueManifestProvider(RestApiClient restApiClient) {
     this.restApiClient = restApiClient;
-    this.catalogueManifestParser = catalogueManifestParser;
   }
 
   /**
    * Gets an interface catalogue item from a catalogue manifest file.
    *
-   * @param catalogueId an identifier object containing the location of the manifest file and the name of the catalogue entry in the file
+   * @param catalogueManifestId an identifier object containing the location of the manifest file
    * @param username the username of the user trying to access the catalogue
-   * @return a GetAndParseCatalogueResult object that indicates the different outcomes.
-   *     1. The file is not found or not accessible by the user
-   *     2. There is a problem parsing the manifest file
-   *     3. A successfully found and parsed catalogue item
+   * @return a GetCatalogueManifestFileContentResult object
    */
-  public GetAndParseCatalogueResult getAndParseCatalogueInManifest(CatalogueId catalogueId, String username) {
-    if (!isRepositoryAccessible(catalogueId.getRepositoryId(), username)) {
-      return GetAndParseCatalogueResult.createFileNotFoundResult();
+  public GetCatalogueManifestFileContentResult getCatalogueManifest(CatalogueManifestId catalogueManifestId, String username) {
+    if (!isRepositoryAccessible(catalogueManifestId.getRepositoryId(), username)) {
+      return GetCatalogueManifestFileContentResult.createNotFoundResult(catalogueManifestId);
     }
 
-    ContentItem fileContentItem = null;
-
-    try {
-      fileContentItem = restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), catalogueId.getPath(), null);
-    } catch (HttpClientErrorException e) {
-      if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-        logger.warn("A request for a catalogue manifest that does not exist was received. CatalogueId: {}", catalogueId);
-        return GetAndParseCatalogueResult.createFileNotFoundResult();
-      } else {
-        throw e;
-      }
-    }
-
-    String fileContents = null;
-    FindAndParseCatalogueResult catalogueParseResult = null;
-    try {
-      fileContents = fileContentItem.getDecodedContent();
-      catalogueParseResult = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(fileContents,
-          catalogueId.getCatalogueName());
-    } catch (UnsupportedEncodingException e) {
-      logger.error("An error occurred while decoding the catalogue manifest yml file: " + ((CatalogueManifestId)catalogueId).toString(), e);
-      var error = "An error occurred while decoding the catalogue manifest yml file: " + e.getMessage();
-      catalogueParseResult =  FindAndParseCatalogueResult.createCatalogueEntryParseErrorResult(error);
-    }
-
-    return GetAndParseCatalogueResult.createFoundAndParsedResult(fileContentItem, catalogueParseResult);
+    return getCatalogueManifestFileContent(catalogueManifestId);
   }
 
   /**
@@ -113,7 +82,7 @@ public class CatalogueManifestProvider {
       return GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueManifestId, fileContentItem);
     } catch (HttpClientErrorException e) {
       if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-        logger.warn("A request for a catalogue manifest that does not exist was received. CatalogueId: {}", catalogueManifestId);
+        logger.warn("A request for a catalogue manifest that does not exist was received. catalogueManifestId: {}", catalogueManifestId);
         return GetCatalogueManifestFileContentResult.createNotFoundResult(catalogueManifestId);
       } else {
         throw e;

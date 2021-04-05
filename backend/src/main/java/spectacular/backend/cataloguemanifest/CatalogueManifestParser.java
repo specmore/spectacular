@@ -74,14 +74,23 @@ public class CatalogueManifestParser {
   /**
    * Finds a specific catalogue in the YAML contents of a catalogue manifest file and returns the parsed result.
    *
-   * @param manifestFileContents the YAML contents of a catalogue manifest file to be searched and parsed
+   * @param contentItem a content item with the YAML contents of a catalogue manifest file to be searched and parsed
    * @param catalogueName the name of the specific catalogue to be found
    * @return the FindAndParseCatalogueResult with the catalogue manifest entry.
    *     If the catalogue entry could not be found, then a FindAndParseCatalogueResult with a null catalogue property is returned.
    *     If an error occurred while trying to find the catalogue entry, then a FindAndParseCatalogueResult with a null error message
    *     property is returned.
    */
-  public FindAndParseCatalogueResult findAndParseCatalogueInManifestFileContents(String manifestFileContents, String catalogueName) {
+  public FindAndParseCatalogueResult findAndParseCatalogueInManifestFileContents(ContentItem contentItem, String catalogueName) {
+    String manifestFileContents = null;
+    try {
+      manifestFileContents = contentItem.getDecodedContent();
+    } catch (UnsupportedEncodingException e) {
+      logger.error("An error occurred while decoding the catalogue manifest yaml file at " + contentItem.getHtml_url().toString(), e);
+      var error = "An error occurred while decoding the catalogue manifest yaml file contents.";
+      return FindAndParseCatalogueResult.createCatalogueEntryParseErrorResult(contentItem, error);
+    }
+
     Catalogue catalogue = null;
     String error = null;
     try {
@@ -89,12 +98,12 @@ public class CatalogueManifestParser {
       var cataloguesNode = rootNode.get("catalogues");
       if (cataloguesNode == null) {
         logger.debug("Unable to find 'catalogues' root node catalogue manifest yaml file.");
-        return FindAndParseCatalogueResult.createCatalogueEntryNotFoundResult();
+        return FindAndParseCatalogueResult.createCatalogueEntryNotFoundResult(contentItem);
       }
       var catalogueNode = cataloguesNode.get(catalogueName);
       if (catalogueNode == null) {
         logger.debug("Unable to find catalogue node '{}' in 'catalogues' node catalogue manifest yaml file.", catalogueName);
-        return FindAndParseCatalogueResult.createCatalogueEntryNotFoundResult();
+        return FindAndParseCatalogueResult.createCatalogueEntryNotFoundResult(contentItem);
       }
       catalogue = mapper.treeToValue(catalogueNode, Catalogue.class);
     } catch (MismatchedInputException e) {
@@ -107,7 +116,7 @@ public class CatalogueManifestParser {
     }
 
     if (error != null) {
-      return FindAndParseCatalogueResult.createCatalogueEntryParseErrorResult(error);
+      return FindAndParseCatalogueResult.createCatalogueEntryParseErrorResult(contentItem, error);
     }
 
     var violations = validator.validate(catalogue);
@@ -117,9 +126,9 @@ public class CatalogueManifestParser {
           .collect(Collectors.toList());
       error = "The following validation errors were found with catalogue entry '" + catalogueName + "': " +
           String.join(", ", violationMessage);
-      return FindAndParseCatalogueResult.createCatalogueEntryParseErrorResult(error);
+      return FindAndParseCatalogueResult.createCatalogueEntryParseErrorResult(contentItem, error);
     }
 
-    return FindAndParseCatalogueResult.createCatalogueEntryParsedResult(catalogue);
+    return FindAndParseCatalogueResult.createCatalogueEntryParsedResult(contentItem, catalogue);
   }
 }
