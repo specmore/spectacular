@@ -107,8 +107,8 @@ public class CatalogueService {
 
     var specEvolutionSummaries = catalogueEntry.getInterfaces().getAdditionalProperties().entrySet().stream()
         .map(interfaceEntry -> {
-          var getInterfaceResult = this.interfaceService.getInterfaceDetails(catalogueId, interfaceEntry.getValue(), interfaceEntry.getKey());
-          return getInterfaceResult.getSpecEvolutionSummary();
+          var interfaceDetails = this.interfaceService.getInterfaceDetails(catalogueId,interfaceEntry.getValue(), interfaceEntry.getKey());
+          return interfaceDetails.getSpecEvolutionSummary();
         })
         .collect(Collectors.toList());
 
@@ -117,6 +117,16 @@ public class CatalogueService {
     return GetCatalogueForUserResult.createFoundResult(catalogueDetailsWithInterfaceSummaries);
   }
 
+  /**
+   * Get details about an interface that is listed in a catalogue for a given user.
+   * @param catalogueId an identifier object containing the exact location of the catalogue definition
+   * @param interfaceName the name of the interface entry in the catalogue definition
+   * @param username the username of the user trying to access the interface details
+   * @return a GetInterfaceDetailsResult object that indicates several outcomes:
+   *     1. The interface entry could not be found due to the reason indicated.
+   *     2. The interface entry could not be retrieved due to a configuration problem in the catalogue manifest file.
+   *     3. The interface details.
+   */
   public GetInterfaceDetailsResult getInterfaceDetails(CatalogueId catalogueId, String interfaceName, String username) {
     GetAndParseCatalogueResult getAndParseCatalogueResult = catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, username);
 
@@ -137,16 +147,16 @@ public class CatalogueService {
 
     var catalogueEntry = catalogueEntryParseResult.getCatalogue();
     if (!catalogueEntry.getInterfaces().getAdditionalProperties().containsKey(interfaceName)) {
-      return GetInterfaceDetailsResult.createNotFoundResult("Interface entry not found in Catalogue entry in manifest file: " + catalogueId.getCombined() +
-          ", with name: " + interfaceName);
+      return GetInterfaceDetailsResult.createNotFoundResult("Interface entry not found in Catalogue entry in manifest file: " +
+          catalogueId.getCombined() + ", with name: " + interfaceName);
     }
 
     var catalogueInterfaceEntry = catalogueEntry.getInterfaces().getAdditionalProperties().get(interfaceName);
     var interfaceDetailsResult = this.interfaceService.getInterfaceDetails(catalogueId, catalogueInterfaceEntry, interfaceName);
 
     if (interfaceDetailsResult == null) {
-      return GetInterfaceDetailsResult.createConfigErrorResult("Interface entry in Catalogue entry in manifest file: " + catalogueId.getCombined() +
-          ", with name: " + interfaceName + ", has no spec file location set.");
+      return GetInterfaceDetailsResult.createConfigErrorResult("Interface entry in Catalogue entry in manifest file: " +
+          catalogueId.getCombined() + ", with name: " + interfaceName + ", has no spec file location set.");
     }
 
     var manifestUrl = getAndParseCatalogueResult.getCatalogueManifestFileHtmlUrl();
@@ -155,6 +165,15 @@ public class CatalogueService {
     return GetInterfaceDetailsResult.createFoundResult(interfaceDetails);
   }
 
+  /**
+   * Get contents of an interface specification file that is listed in a catalogue for a given user.
+   * @param catalogueId an identifier object containing the exact location of the catalogue definition
+   * @param interfaceName the name of the interface entry in the catalogue definition
+   * @param ref a specific point in the version control history of the file to get the contents at
+   * @param username the username of the user trying to access the interface details
+   * @return a InterfaceFileContents containing the file contents and other file information
+   * @throws UnsupportedEncodingException if the contents of the file can't be decoded
+   */
   public InterfaceFileContents getInterfaceFileContents(CatalogueId catalogueId, String interfaceName, String ref, String username)
       throws UnsupportedEncodingException {
     GetAndParseCatalogueResult getAndParseCatalogueResult = catalogueManifestProvider.getAndParseCatalogueInManifest(catalogueId, username);

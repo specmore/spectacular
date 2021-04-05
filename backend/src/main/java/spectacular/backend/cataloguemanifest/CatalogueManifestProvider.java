@@ -25,6 +25,16 @@ public class CatalogueManifestProvider {
     this.catalogueManifestParser = catalogueManifestParser;
   }
 
+  /**
+   * Gets an interface catalogue item from a catalogue manifest file.
+   *
+   * @param catalogueId an identifier object containing the location of the manifest file and the name of the catalogue entry in the file
+   * @param username the username of the user trying to access the catalogue
+   * @return a GetAndParseCatalogueResult object that indicates the different outcomes.
+   *     1. The file is not found or not accessible by the user
+   *     2. There is a problem parsing the manifest file
+   *     3. A successfully found and parsed catalogue item
+   */
   public GetAndParseCatalogueResult getAndParseCatalogueInManifest(CatalogueId catalogueId, String username) {
     if (!isRepositoryAccessible(catalogueId.getRepositoryId(), username)) {
       return GetAndParseCatalogueResult.createFileNotFoundResult();

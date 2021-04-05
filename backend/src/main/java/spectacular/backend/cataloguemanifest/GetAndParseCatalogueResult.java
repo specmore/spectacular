@@ -19,7 +19,8 @@ public class GetAndParseCatalogueResult {
     return new GetAndParseCatalogueResult(false, null, null);
   }
 
-  public static GetAndParseCatalogueResult createFoundAndParsedResult(ContentItem fileContentItem, FindAndParseCatalogueResult catalogueParseResult) {
+  public static GetAndParseCatalogueResult createFoundAndParsedResult(ContentItem fileContentItem,
+                                                                      FindAndParseCatalogueResult catalogueParseResult) {
     return new GetAndParseCatalogueResult(true, fileContentItem.getHtml_url(), catalogueParseResult);
   }
 
