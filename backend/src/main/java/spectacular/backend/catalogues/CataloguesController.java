@@ -14,6 +14,7 @@ import spectacular.backend.api.CataloguesApi;
 import spectacular.backend.api.model.FindCataloguesResult;
 import spectacular.backend.api.model.GetCatalogueResult;
 import spectacular.backend.api.model.GetInterfaceResult;
+import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemErrorType;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.interfaces.InterfaceService;
 
@@ -45,8 +46,14 @@ public class CataloguesController implements CataloguesApi {
 
     var getCatalogueForUserResult = catalogueService.getCatalogueForUser(catalogueId, authentication.getName());
 
-    if (getCatalogueForUserResult.isNotFound()) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, getCatalogueForUserResult.getNotFoundErrorMessage());
+    if (getCatalogueForUserResult.getGetConfigurationItemError() != null) {
+      var errorType = getCatalogueForUserResult.getGetConfigurationItemError().getType();
+      var errorMessage = getCatalogueForUserResult.getGetConfigurationItemError().getMessage();
+      if (errorType == GetCatalogueManifestConfigurationItemErrorType.NOT_FOUND) {
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, errorMessage);
+      } else if (errorType == GetCatalogueManifestConfigurationItemErrorType.CONFIG_ERROR) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage);
+      }
     }
 
     var getCatalogueResult = new GetCatalogueResult().catalogue(getCatalogueForUserResult.getCatalogueDetails());

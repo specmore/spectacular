@@ -1,5 +1,6 @@
 package spectacular.backend.cataloguemanifest;
 
+import java.net.URI;
 import spectacular.backend.cataloguemanifest.model.Catalogue;
 import spectacular.backend.cataloguemanifest.model.Interface;
 
@@ -11,8 +12,8 @@ public class GetInterfaceEntryConfigurationResult extends GetCatalogueEntryConfi
     this.interfaceEntry = null;
   }
 
-  protected GetInterfaceEntryConfigurationResult(Catalogue catalogueEntry, Interface interfaceEntry) {
-    super(catalogueEntry);
+  protected GetInterfaceEntryConfigurationResult(Catalogue catalogueEntry, Interface interfaceEntry, URI manifestUri) {
+    super(catalogueEntry, manifestUri);
     this.interfaceEntry = interfaceEntry;
   }
 
@@ -24,7 +25,9 @@ public class GetInterfaceEntryConfigurationResult extends GetCatalogueEntryConfi
     return new GetInterfaceEntryConfigurationResult(error);
   }
 
-  public static GetInterfaceEntryConfigurationResult createSuccessfulResult(Catalogue catalogueEntry, Interface interfaceEntry) {
-    return new GetInterfaceEntryConfigurationResult(catalogueEntry, interfaceEntry);
+  public static GetInterfaceEntryConfigurationResult createSuccessfulResult(Catalogue catalogueEntry,
+                                                                            Interface interfaceEntry,
+                                                                            URI manifestUri) {
+    return new GetInterfaceEntryConfigurationResult(catalogueEntry, interfaceEntry, manifestUri);
   }
 }

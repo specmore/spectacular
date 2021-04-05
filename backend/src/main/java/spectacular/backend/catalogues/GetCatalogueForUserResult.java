@@ -1,35 +1,30 @@
 package spectacular.backend.catalogues;
 
 import spectacular.backend.api.model.Catalogue;
+import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemError;
 
 public class GetCatalogueForUserResult {
-  private final boolean isNotFound;
-  private final String notFoundErrorMessage;
+  private final GetCatalogueManifestConfigurationItemError getConfigurationItemError;
   private final Catalogue catalogueDetails;
 
-  private GetCatalogueForUserResult(boolean isNotFound, String notFoundErrorMessage, Catalogue catalogueDetails) {
-    this.isNotFound = isNotFound;
-    this.notFoundErrorMessage = notFoundErrorMessage;
+  private GetCatalogueForUserResult(GetCatalogueManifestConfigurationItemError getConfigurationItemError, Catalogue catalogueDetails) {
+    this.getConfigurationItemError = getConfigurationItemError;
     this.catalogueDetails = catalogueDetails;
   }
 
-  public static GetCatalogueForUserResult createNotFoundResult(String error) {
-    return new GetCatalogueForUserResult(true, error, null);
+  public static GetCatalogueForUserResult createErrorResult(GetCatalogueManifestConfigurationItemError getConfigurationItemError) {
+    return new GetCatalogueForUserResult(getConfigurationItemError, null);
   }
 
   public static GetCatalogueForUserResult createFoundResult(Catalogue catalogueDetails) {
-    return new GetCatalogueForUserResult(false, null, catalogueDetails);
-  }
-
-  public boolean isNotFound() {
-    return isNotFound;
-  }
-
-  public String getNotFoundErrorMessage() {
-    return notFoundErrorMessage;
+    return new GetCatalogueForUserResult(null, catalogueDetails);
   }
 
   public Catalogue getCatalogueDetails() {
     return catalogueDetails;
+  }
+
+  public GetCatalogueManifestConfigurationItemError getGetConfigurationItemError() {
+    return getConfigurationItemError;
   }
 }

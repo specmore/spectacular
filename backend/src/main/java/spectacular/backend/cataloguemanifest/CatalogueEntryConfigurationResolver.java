@@ -3,8 +3,10 @@ package spectacular.backend.cataloguemanifest;
 import static spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemError.createConfigError;
 import static spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemError.createNotFoundError;
 
+import org.springframework.stereotype.Service;
 import spectacular.backend.common.CatalogueId;
 
+@Service
 public class CatalogueEntryConfigurationResolver {
   private final CatalogueManifestParser catalogueManifestParser;
   private final CatalogueManifestProvider catalogueManifestProvider;
@@ -38,6 +40,6 @@ public class CatalogueEntryConfigurationResolver {
               ", has parse error: " + parseResult.getError()));
     }
 
-    return GetCatalogueEntryConfigurationResult.createSuccessfulResult(parseResult.getCatalogue());
+    return GetCatalogueEntryConfigurationResult.createSuccessfulResult(parseResult.getCatalogue(), catalogueManifestContent.getHtml_url());
   }
 }

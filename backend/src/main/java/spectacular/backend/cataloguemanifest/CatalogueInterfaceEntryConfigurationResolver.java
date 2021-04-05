@@ -3,8 +3,10 @@ package spectacular.backend.cataloguemanifest;
 import static spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemError.createConfigError;
 import static spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemError.createNotFoundError;
 
+import org.springframework.stereotype.Service;
 import spectacular.backend.common.CatalogueId;
 
+@Service
 public class CatalogueInterfaceEntryConfigurationResolver {
   private final CatalogueEntryConfigurationResolver catalogueEntryConfigurationResolver;
 
@@ -37,6 +39,7 @@ public class CatalogueInterfaceEntryConfigurationResolver {
               ", with name: " + interfaceName + ", has no spec file location set."));
     }
 
-    return GetInterfaceEntryConfigurationResult.createSuccessfulResult(catalogueEntry, catalogueInterfaceEntry);
+    var manifestUri = getCatalogueEntryConfigurationResult.getManifestUri();
+    return GetInterfaceEntryConfigurationResult.createSuccessfulResult(catalogueEntry, catalogueInterfaceEntry, manifestUri);
   }
 }

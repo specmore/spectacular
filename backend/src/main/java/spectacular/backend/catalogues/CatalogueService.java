@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import spectacular.backend.api.model.Catalogue;
+import spectacular.backend.cataloguemanifest.CatalogueEntryConfigurationResolver;
+import spectacular.backend.cataloguemanifest.CatalogueInterfaceEntryConfigurationResolver;
 import spectacular.backend.cataloguemanifest.CatalogueManifestParser;
 import spectacular.backend.cataloguemanifest.CatalogueManifestProvider;
 import spectacular.backend.cataloguemanifest.GetCatalogueManifestFileContentResult;
@@ -22,6 +24,8 @@ public class CatalogueService {
 
   private final CatalogueManifestParser catalogueManifestParser;
   private final CatalogueManifestProvider catalogueManifestProvider;
+  private final CatalogueEntryConfigurationResolver catalogueEntryConfigurationResolver;
+  private final CatalogueInterfaceEntryConfigurationResolver catalogueInterfaceEntryConfigurationResolver;
   private final CatalogueMapper catalogueMapper;
   private final InterfaceService interfaceService;
 
@@ -30,15 +34,21 @@ public class CatalogueService {
    * accessible for a given request's installation context.
    * @param catalogueManifestParser a helper service to parse catalogue manifest file content into concrete objects
    * @param catalogueManifestProvider a data provider that retrieves catalogue manifest files from the data source
+   * @param catalogueEntryConfigurationResolver
+   * @param catalogueInterfaceEntryConfigurationResolver
    * @param catalogueMapper a helper service for mapping catalogue manifest objects to API model objects
    * @param interfaceService a service for retrieving more interface information for an interface configured in a catalogue manifest
    */
   public CatalogueService(CatalogueManifestParser catalogueManifestParser,
                           CatalogueManifestProvider catalogueManifestProvider,
+                          CatalogueEntryConfigurationResolver catalogueEntryConfigurationResolver,
+                          CatalogueInterfaceEntryConfigurationResolver catalogueInterfaceEntryConfigurationResolver,
                           CatalogueMapper catalogueMapper,
                           InterfaceService interfaceService) {
     this.catalogueManifestParser = catalogueManifestParser;
     this.catalogueManifestProvider = catalogueManifestProvider;
+    this.catalogueEntryConfigurationResolver = catalogueEntryConfigurationResolver;
+    this.catalogueInterfaceEntryConfigurationResolver = catalogueInterfaceEntryConfigurationResolver;
     this.catalogueMapper = catalogueMapper;
     this.interfaceService = interfaceService;
   }
@@ -67,32 +77,14 @@ public class CatalogueService {
    * @return A Catalogue object
    */
   public GetCatalogueForUserResult getCatalogueForUser(CatalogueId catalogueId, String username) {
-    var getCatalogueManifestFileContentResult = catalogueManifestProvider.getCatalogueManifest(catalogueId, username);
+    var getCatalogueEntryConfigurationResult = catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, username);
 
-    if (getCatalogueManifestFileContentResult.isFileNotFoundResult()) {
-      return GetCatalogueForUserResult.createNotFoundResult("Catalogue manifest file not found: " + catalogueId.getFullPath());
+    if (getCatalogueEntryConfigurationResult.hasError()) {
+      return GetCatalogueForUserResult.createErrorResult(getCatalogueEntryConfigurationResult.getError());
     }
 
-    var catalogueManifestContent = getCatalogueManifestFileContentResult.getCatalogueManifestContent();
-    var parseResult = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(catalogueManifestContent,
-        catalogueId.getCatalogueName());
-
-    if (parseResult.isCatalogueEntryNotFound()) {
-      return GetCatalogueForUserResult.createNotFoundResult("Catalogue entry in manifest file not found: " + catalogueId.getCombined());
-    }
-
-    if (parseResult.isCatalogueEntryContainsError()) {
-      var catalogueDetails = catalogueMapper.createForParseError(parseResult.getError(), catalogueId);
-      return GetCatalogueForUserResult.createFoundResult(catalogueDetails);
-    }
-
-//    if (parseResult.isCatalogueEntryContainsError()) {
-//      return GetCatalogueForUserResult.createConfigErrorResult("Catalogue entry in manifest file: " + catalogueId.getCombined() +
-//          ", has parse error: " + parseResult.getError());
-//    }
-
-    var catalogueEntry = parseResult.getCatalogue();
-    var manifestUrl = catalogueManifestContent.getHtml_url();
+    var catalogueEntry = getCatalogueEntryConfigurationResult.getCatalogueEntry();
+    var manifestUrl = getCatalogueEntryConfigurationResult.getManifestUri();
     var catalogueDetails = catalogueMapper.mapCatalogue(catalogueEntry, catalogueId, manifestUrl);
 
     var specEvolutionSummaries = catalogueEntry.getInterfaces().getAdditionalProperties().entrySet().stream()
