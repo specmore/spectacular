@@ -108,4 +108,6 @@ public class CatalogueManifestParser {
 
     return FindAndParseCatalogueResult.createCatalogueEntryParsedResult(catalogue);
   }
+
+
 }

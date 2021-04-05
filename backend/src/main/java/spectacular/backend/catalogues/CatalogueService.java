@@ -8,33 +8,20 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import spectacular.backend.api.model.GetInterfaceResult;
+import spectacular.backend.api.model.Catalogue;
 import spectacular.backend.cataloguemanifest.CatalogueManifestParser;
 import spectacular.backend.cataloguemanifest.CatalogueManifestProvider;
 import spectacular.backend.cataloguemanifest.GetAndParseCatalogueResult;
+import spectacular.backend.cataloguemanifest.GetCatalogueManifestFileContentResult;
 import spectacular.backend.common.CatalogueId;
-import spectacular.backend.common.CatalogueManifestId;
-import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
-import spectacular.backend.github.domain.SearchCodeResultItem;
 import spectacular.backend.interfaces.InterfaceFileContents;
 import spectacular.backend.interfaces.InterfaceService;
 
 @Service
 public class CatalogueService {
-  private static final String CATALOGUE_MANIFEST_FILE_NAME = "spectacular-config";
-  private static final String CATALOGUE_MANIFEST_YAML_FILE_EXTENSION = "yaml";
-  private static final String CATALOGUE_MANIFEST_YML_FILE_EXTENSION = "yml";
-  private static final String CATALOGUE_MANIFEST_FILE_PATH = "/";
-  private static final String CATALOGUE_MANIFEST_FULL_YAML_FILE_NAME =
-      CATALOGUE_MANIFEST_FILE_NAME + "." + CATALOGUE_MANIFEST_YAML_FILE_EXTENSION;
-  private static final String CATALOGUE_MANIFEST_FULL_YML_FILE_NAME =
-      CATALOGUE_MANIFEST_FILE_NAME + "." + CATALOGUE_MANIFEST_YML_FILE_EXTENSION;
-
   private static final Logger logger = LoggerFactory.getLogger(CatalogueService.class);
 
-  private final RestApiClient restApiClient;
   private final CatalogueManifestParser catalogueManifestParser;
   private final CatalogueManifestProvider catalogueManifestProvider;
   private final CatalogueMapper catalogueMapper;
@@ -43,18 +30,15 @@ public class CatalogueService {
   /**
    * A service component that encapsulates all the logic required to build Catalogue objects from the information stored in git repositories
    * accessible for a given request's installation context.
-   * @param restApiClient an API client to retrieve information about the git repositories
    * @param catalogueManifestParser a helper service to parse catalogue manifest file content into concrete objects
    * @param catalogueManifestProvider a data provider that retrieves catalogue manifest files from the data source
    * @param catalogueMapper a helper service for mapping catalogue manifest objects to API model objects
    * @param interfaceService a service for retrieving more interface information for an interface configured in a catalogue manifest
    */
-  public CatalogueService(RestApiClient restApiClient,
-                          CatalogueManifestParser catalogueManifestParser,
+  public CatalogueService(CatalogueManifestParser catalogueManifestParser,
                           CatalogueManifestProvider catalogueManifestProvider,
                           CatalogueMapper catalogueMapper,
                           InterfaceService interfaceService) {
-    this.restApiClient = restApiClient;
     this.catalogueManifestParser = catalogueManifestParser;
     this.catalogueManifestProvider = catalogueManifestProvider;
     this.catalogueMapper = catalogueMapper;
@@ -69,8 +53,9 @@ public class CatalogueService {
    * @return a list of all the accessible catalogues
    */
   public List<spectacular.backend.api.model.Catalogue> findCataloguesForOrgAndUser(String orgName, String username) {
-    return findCataloguesForOrg(orgName).stream()
-        .filter(catalogueManifestId -> isRepositoryAccessible(catalogueManifestId.getRepositoryId(), username))
+    var manifestFiles = this.catalogueManifestProvider.findCatalogueManifestsForOrg(orgName, username);
+
+    return manifestFiles.stream()
         .map(this::getCataloguesFromManifest)
         .flatMap(Collection::stream)
         .collect(Collectors.toList());
@@ -204,55 +189,16 @@ public class CatalogueService {
     return this.interfaceService.getInterfaceFileContents(catalogueId, catalogueInterfaceEntry, ref);
   }
 
-  private CatalogueManifestId pickCatalogueFileFromSearchResults(List<SearchCodeResultItem> searchCodeResultItems) {
-    var manifestFileResult = searchCodeResultItems.stream()
-        .filter(resultItem -> isExactFileNameMatch(resultItem, CATALOGUE_MANIFEST_FULL_YML_FILE_NAME))
-        .findFirst();
+  private List<Catalogue> getCataloguesFromManifest(GetCatalogueManifestFileContentResult getCatalogueManifestFileContentResult) {
+    var manifestId = getCatalogueManifestFileContentResult.getCatalogueManifestId();
 
-    if (manifestFileResult.isPresent()) {
-      return CatalogueManifestId.createFrom(manifestFileResult.get());
+    if (getCatalogueManifestFileContentResult.isFileNotFoundResult()) {
+      logger.warn("A manifest file was found during a search but the actual file contents could not be found for: " +
+          manifestId.getFullPath());
+      return Collections.emptyList();
     }
 
-    manifestFileResult = searchCodeResultItems.stream()
-        .filter(resultItem -> isExactFileNameMatch(resultItem, CATALOGUE_MANIFEST_FULL_YAML_FILE_NAME))
-        .findFirst();
-
-    return manifestFileResult.map(CatalogueManifestId::createFrom).orElse(null);
-
-  }
-
-  private List<CatalogueManifestId> findCataloguesForOrg(String orgName) {
-    var searchCodeResults = restApiClient.findFiles(CATALOGUE_MANIFEST_FILE_NAME,
-        List.of(CATALOGUE_MANIFEST_YAML_FILE_EXTENSION, CATALOGUE_MANIFEST_YML_FILE_EXTENSION),
-        CATALOGUE_MANIFEST_FILE_PATH,
-        orgName, null);
-    logger.debug("find catalogue manifest files results for org '{}': {}", orgName, searchCodeResults.toString());
-
-    var repositorySearchCodeResultsMap = searchCodeResults.getItems().stream()
-        .filter(resultItem -> isExactFileNameMatch(resultItem, CATALOGUE_MANIFEST_FULL_YAML_FILE_NAME) ||
-            isExactFileNameMatch(resultItem, CATALOGUE_MANIFEST_FULL_YML_FILE_NAME))
-        .collect(Collectors.groupingBy(RepositoryId::createRepositoryFrom));
-
-    return repositorySearchCodeResultsMap.entrySet().stream()
-        .map(entry -> pickCatalogueFileFromSearchResults(entry.getValue()))
-        .collect(Collectors.toList());
-  }
-
-  private boolean isExactFileNameMatch(SearchCodeResultItem searchCodeResultItem, String filename) {
-    return searchCodeResultItem.getName().equals(filename);
-  }
-
-  private boolean isRepositoryAccessible(RepositoryId repo, String username) {
-    try {
-      return restApiClient.isUserRepositoryCollaborator(repo, username);
-    } catch (HttpClientErrorException ex) {
-      logger.debug("An error occurred while trying to check collaborators for repo: " + repo.getNameWithOwner(), ex);
-      return false;
-    }
-  }
-
-  private List<spectacular.backend.api.model.Catalogue> getCataloguesFromManifest(CatalogueManifestId manifestId) {
-    var fileContentItem = restApiClient.getRepositoryContent(manifestId.getRepositoryId(), manifestId.getPath(), null);
+    var fileContentItem = getCatalogueManifestFileContentResult.getCatalogueManifestContent();
     try {
       var catalogueManifestParseResult = catalogueManifestParser.parseManifestFileContents(fileContentItem.getDecodedContent());
 
