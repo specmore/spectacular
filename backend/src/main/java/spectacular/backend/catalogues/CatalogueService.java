@@ -87,16 +87,21 @@ public class CatalogueService {
     var manifestUrl = getCatalogueEntryConfigurationResult.getManifestUri();
     var catalogueDetails = catalogueMapper.mapCatalogue(catalogueEntry, catalogueId, manifestUrl);
 
-    var specEvolutionSummaries = catalogueEntry.getInterfaces().getAdditionalProperties().entrySet().stream()
-        .map(interfaceEntry -> {
-          var interfaceDetails = this.interfaceService.getInterfaceDetails(catalogueId,interfaceEntry.getValue(), interfaceEntry.getKey());
-          return interfaceDetails.getSpecEvolutionSummary();
-        })
-        .collect(Collectors.toList());
+    if (catalogueEntry.getInterfaces() != null) {
+      var specEvolutionSummaries = catalogueEntry.getInterfaces().getAdditionalProperties().entrySet().stream()
+          .filter(interfaceEntry -> interfaceEntry.getValue() != null)
+          .map(interfaceEntry -> {
+            var interfaceDetails = this.interfaceService.getInterfaceDetails(catalogueId,
+                interfaceEntry.getValue(),
+                interfaceEntry.getKey());
+            return interfaceDetails.getSpecEvolutionSummary();
+          })
+          .collect(Collectors.toList());
 
-    var catalogueDetailsWithInterfaceSummaries = catalogueDetails.specEvolutionSummaries(specEvolutionSummaries);
+      catalogueDetails = catalogueDetails.specEvolutionSummaries(specEvolutionSummaries);
+    }
 
-    return GetCatalogueForUserResult.createFoundResult(catalogueDetailsWithInterfaceSummaries);
+    return GetCatalogueForUserResult.createFoundResult(catalogueDetails);
   }
 
   /**

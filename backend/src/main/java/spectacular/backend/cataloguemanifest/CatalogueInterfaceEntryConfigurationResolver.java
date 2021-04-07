@@ -33,7 +33,7 @@ public class CatalogueInterfaceEntryConfigurationResolver {
 
     var catalogueInterfaceEntry = catalogueEntry.getInterfaces().getAdditionalProperties().get(interfaceName);
 
-    if (catalogueInterfaceEntry.getSpecFile() == null) {
+    if (catalogueInterfaceEntry == null || catalogueInterfaceEntry.getSpecFile() == null) {
       return GetInterfaceEntryConfigurationResult.createErrorResult(
           createConfigError("Interface entry in Catalogue entry in manifest file: " + catalogueId.getCombined() +
               ", with name: " + interfaceName + ", has no spec file location set."));

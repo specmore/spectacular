@@ -78,10 +78,6 @@ public class InterfaceService {
    * @param interfaceName the name of the manifest interface entry
    */
   public GetInterfaceResult getInterfaceDetails(CatalogueId catalogueId, Interface interfaceConfig, String interfaceName) {
-    if (interfaceConfig.getSpecFile() == null) {
-      return null;
-    }
-
     var specEvolutionConfig = interfaceConfig.getSpecEvolutionConfig();
 
     var specFileRepo = SpecFileRepositoryResolver.resolveSpecFileRepository(interfaceConfig, catalogueId);

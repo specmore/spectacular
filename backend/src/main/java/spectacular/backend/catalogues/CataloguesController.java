@@ -93,7 +93,7 @@ public class CataloguesController implements CataloguesApi {
   }
 
   private void handleAnyError(GetCatalogueManifestConfigurationItemError configurationItemError) {
-    if(configurationItemError != null) {
+    if (configurationItemError != null) {
       var errorType = configurationItemError.getType();
       var errorMessage = configurationItemError.getMessage();
       if (errorType == GetCatalogueManifestConfigurationItemErrorType.NOT_FOUND) {

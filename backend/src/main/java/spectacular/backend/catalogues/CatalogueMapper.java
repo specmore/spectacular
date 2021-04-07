@@ -1,8 +1,10 @@
 package spectacular.backend.catalogues;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,10 @@ public class CatalogueMapper {
       CatalogueManifest catalogueManifest,
       CatalogueManifestId manifestId,
       URI manifestUrl) {
+    if (catalogueManifest.getCatalogues() == null) {
+      return Collections.emptyList();
+    }
+
     return catalogueManifest.getCatalogues().getAdditionalProperties().entrySet().stream()
         .map(catalogueEntry -> this.mapCatalogueManifestEntry(catalogueEntry, manifestId, manifestUrl))
         .collect(Collectors.toList());
@@ -60,6 +66,9 @@ public class CatalogueMapper {
       CatalogueManifestId manifestId,
       URI manifestUrl,
       String catalogueName) {
+    var interfaceCount = catalogue.getInterfaces() == null ?
+        0 :
+        (int) catalogue.getInterfaces().getAdditionalProperties().values().stream().filter(Objects::nonNull).count();
     return new Catalogue()
         .encodedId(manifestId.createCatalogueId(catalogueName).getCombined().getBytes())
         .fullPath(manifestId.getFullPath())
@@ -67,7 +76,7 @@ public class CatalogueMapper {
         .title(catalogue.getTitle())
         .description(catalogue.getDescription())
         .htmlUrl(manifestUrl)
-        .interfaceCount(catalogue.getInterfaces().getAdditionalProperties().size());
+        .interfaceCount(interfaceCount);
   }
 
   /**

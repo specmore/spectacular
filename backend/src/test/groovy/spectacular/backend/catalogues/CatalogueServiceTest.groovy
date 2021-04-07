@@ -95,6 +95,37 @@ class CatalogueServiceTest extends Specification {
         result.getCatalogueDetails() == catalogueDetails
     }
 
+    def "get catalogue ignores evolution summaries for null interface entries in catalogue manifest"() {
+        given: "a location for a catalogue config"
+        def catalogueId = aCatalogueId()
+
+        and: "a catalogue config entry in the manifest file with a null interface entry in it"
+        def interfaceEntryName = "testInterface1"
+        def catalogue = aCatalogueManifest(interfaceEntryName, null)
+        def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createSuccessfulResult(catalogue, aManifestUri)
+
+        and: "a catalogue API model representation of the catalogue manifest object without interface details"
+        def catalogueDetails = Mock(Catalogue)
+
+        when: "the get catalogue for user is called"
+        def result = catalogueService.getCatalogueForUser(catalogueId, aUsername)
+
+        then: "the catalogue entry configuration is resolved"
+        1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
+
+        and: "the manifest catalogue entry object is mapped to an API catalogue model"
+        1 * catalogueMapper.mapCatalogue(catalogue, catalogueId, _) >> catalogueDetails
+
+        and: "no interface details are retrieved for the null interface"
+        0 * interfaceService.getInterfaceDetails(catalogueId, _, interfaceEntryName)
+
+        and: "the an empty list of spec evolutions are added to the catalogue API model object"
+        1 * catalogueDetails.specEvolutionSummaries([]) >> catalogueDetails
+
+        and: "the mapped catalogue API model object is returned"
+        result.getCatalogueDetails() == catalogueDetails
+    }
+
     def "get catalogue returns error result for a catalogue entry resolve error"() {
         given: "a location for a catalogue config"
         def catalogueId = aCatalogueId()

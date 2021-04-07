@@ -154,20 +154,4 @@ class InterfaceServiceTest extends Specification {
         result.getSpecEvolution() == specEvolution
         result.getSpecEvolutionSummary() == specEvolutionSummary
     }
-
-    def "GetInterface returns null for an interface without a spec file location"() {
-        given: "a catalogue with an interface entry with no spec file location"
-        def catalogueId = aCatalogue()
-        def interfaceEntryName = "testInterface"
-        def interfaceEntry = new Interface()
-
-        when: "getting the spec evolution for the interface entry"
-        def result = interfaceService.getInterfaceDetails(catalogueId, interfaceEntry, interfaceEntryName)
-
-        then: "the spec evolution for the interface is not retrieved"
-        0 * specEvolutionService.getSpecEvolution(_, _, _, _)
-
-        and: "no interface details are returned"
-        !result
-    }
 }
