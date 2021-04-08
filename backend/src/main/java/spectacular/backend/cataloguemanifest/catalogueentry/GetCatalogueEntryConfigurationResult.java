@@ -1,13 +1,15 @@
-package spectacular.backend.cataloguemanifest;
+package spectacular.backend.cataloguemanifest.catalogueentry;
 
 import java.net.URI;
+import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError;
+import spectacular.backend.cataloguemanifest.configurationitem.GetCatalogueManifestConfigurationItemResult;
 import spectacular.backend.cataloguemanifest.model.Catalogue;
 
 public class GetCatalogueEntryConfigurationResult extends GetCatalogueManifestConfigurationItemResult {
   private final Catalogue catalogueEntry;
   private final URI manifestUri;
 
-  protected GetCatalogueEntryConfigurationResult(GetCatalogueManifestConfigurationItemError error) {
+  protected GetCatalogueEntryConfigurationResult(ConfigurationItemError error) {
     super(error);
     this.catalogueEntry = null;
     this.manifestUri = null;
@@ -27,7 +29,7 @@ public class GetCatalogueEntryConfigurationResult extends GetCatalogueManifestCo
     return manifestUri;
   }
 
-  public static GetCatalogueEntryConfigurationResult createErrorResult(GetCatalogueManifestConfigurationItemError error) {
+  public static GetCatalogueEntryConfigurationResult createErrorResult(ConfigurationItemError error) {
     return new GetCatalogueEntryConfigurationResult(error);
   }
 

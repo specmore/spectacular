@@ -4,11 +4,10 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 import spectacular.backend.api.model.SpecEvolution
 import spectacular.backend.api.model.SpecEvolutionSummary
-import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemErrorType
+import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemErrorType
 import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.cataloguemanifest.model.SpecEvolutionConfig
 import spectacular.backend.cataloguemanifest.model.SpecFileLocation
-import spectacular.backend.catalogues.CatalogueService
 import spectacular.backend.common.CatalogueId
 import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.RestApiClient
@@ -99,7 +98,7 @@ class InterfaceServiceTest extends Specification {
 
         then: "a config error is returned"
         result.hasError()
-        result.getError().getType() == GetCatalogueManifestConfigurationItemErrorType.CONFIG_ERROR
+        result.getError().getType() == ConfigurationItemErrorType.CONFIG_ERROR
     }
 
     def "GetInterfaceFileContents returns not found error for a spec file location that does not exist"() {
@@ -121,7 +120,7 @@ class InterfaceServiceTest extends Specification {
 
         and: "a not found error is returned"
         result.hasError()
-        result.getError().getType() == GetCatalogueManifestConfigurationItemErrorType.NOT_FOUND
+        result.getError().getType() == ConfigurationItemErrorType.NOT_FOUND
     }
 
     def "GetInterface has SpecEvolution and SpecEvolutionSummary"() {

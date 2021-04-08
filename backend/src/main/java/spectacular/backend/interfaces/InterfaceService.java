@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import spectacular.backend.api.model.GetInterfaceResult;
-import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemError;
 import spectacular.backend.cataloguemanifest.SpecFileRepositoryResolver;
+import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError;
 import spectacular.backend.cataloguemanifest.model.Interface;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.github.RestApiClient;
@@ -52,7 +52,7 @@ public class InterfaceService {
       throws UnsupportedEncodingException {
     if (interfaceConfig.getSpecFile() == null) {
       var errorMessage = "The requested interface spec file has no location configured.";
-      var configError = GetCatalogueManifestConfigurationItemError.createConfigError(errorMessage);
+      var configError = ConfigurationItemError.createConfigError(errorMessage);
       return GetInterfaceFileContentsResult.createErrorResult(configError);
     }
 
@@ -70,7 +70,7 @@ public class InterfaceService {
         var errorMessage = "Interface specification file not found for path '" + filePath + "' in repo '" + fileRepo.getNameWithOwner() +
             "' at ref '" + ref + "'";
         logger.debug("A request for a interface spec file contents that does not exist was received. " + errorMessage);
-        var notFoundError = GetCatalogueManifestConfigurationItemError.createNotFoundError(errorMessage);
+        var notFoundError = ConfigurationItemError.createNotFoundError(errorMessage);
         return GetInterfaceFileContentsResult.createErrorResult(notFoundError);
       } else {
         throw e;

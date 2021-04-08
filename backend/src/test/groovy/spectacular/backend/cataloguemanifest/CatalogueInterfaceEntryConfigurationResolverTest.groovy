@@ -1,5 +1,10 @@
 package spectacular.backend.cataloguemanifest
 
+import spectacular.backend.cataloguemanifest.catalogueentry.CatalogueEntryConfigurationResolver
+import spectacular.backend.cataloguemanifest.catalogueentry.GetCatalogueEntryConfigurationResult
+import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError
+import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemErrorType
+import spectacular.backend.cataloguemanifest.interfaceentry.CatalogueInterfaceEntryConfigurationResolver
 import spectacular.backend.cataloguemanifest.model.Catalogue
 import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.cataloguemanifest.model.Interfaces
@@ -69,7 +74,7 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
         def interfaceEntryName = "testInterface1"
 
         and: "a catalogue config entry with error"
-        def error = GetCatalogueManifestConfigurationItemError.createNotFoundError("test error");
+        def error = ConfigurationItemError.createNotFoundError("test error");
         def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createErrorResult(error)
 
         when: "the interface configuration is retrieved"
@@ -101,7 +106,7 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
         1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
 
         and: "the result has a not found error"
-        result.getError().getType() == GetCatalogueManifestConfigurationItemErrorType.NOT_FOUND
+        result.getError().getType() == ConfigurationItemErrorType.NOT_FOUND
 
         and: "no the interface entry is returned"
         !result.getInterfaceEntry()
@@ -124,7 +129,7 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
         1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
 
         and: "the result has a not found error"
-        result.getError().getType() == GetCatalogueManifestConfigurationItemErrorType.NOT_FOUND
+        result.getError().getType() == ConfigurationItemErrorType.NOT_FOUND
 
         and: "no the interface entry is returned"
         !result.getInterfaceEntry()
@@ -146,7 +151,7 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
         1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
 
         and: "the result has a config error"
-        result.getError().getType() == GetCatalogueManifestConfigurationItemErrorType.CONFIG_ERROR
+        result.getError().getType() == ConfigurationItemErrorType.CONFIG_ERROR
 
         and: "no the interface entry is returned"
         !result.getInterfaceEntry()
@@ -169,7 +174,7 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
         1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
 
         and: "the result has a config error"
-        result.getError().getType() == GetCatalogueManifestConfigurationItemErrorType.CONFIG_ERROR
+        result.getError().getType() == ConfigurationItemErrorType.CONFIG_ERROR
 
         and: "no the interface entry is returned"
         !result.getInterfaceEntry()

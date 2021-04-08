@@ -4,16 +4,15 @@ package spectacular.backend.catalogues
 import spectacular.backend.api.model.Catalogue
 import spectacular.backend.api.model.GetInterfaceResult
 import spectacular.backend.api.model.SpecEvolutionSummary
-import spectacular.backend.cataloguemanifest.CatalogueEntryConfigurationResolver
-import spectacular.backend.cataloguemanifest.CatalogueInterfaceEntryConfigurationResolver
+import spectacular.backend.cataloguemanifest.catalogueentry.CatalogueEntryConfigurationResolver
+import spectacular.backend.cataloguemanifest.interfaceentry.CatalogueInterfaceEntryConfigurationResolver
 import spectacular.backend.cataloguemanifest.CatalogueManifestContentItemParseResult
 import spectacular.backend.cataloguemanifest.CatalogueManifestParser
 import spectacular.backend.cataloguemanifest.CatalogueManifestProvider
-import spectacular.backend.cataloguemanifest.FindAndParseCatalogueResult
-import spectacular.backend.cataloguemanifest.GetCatalogueEntryConfigurationResult
-import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemError
+import spectacular.backend.cataloguemanifest.catalogueentry.GetCatalogueEntryConfigurationResult
+import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError
 import spectacular.backend.cataloguemanifest.GetCatalogueManifestFileContentResult
-import spectacular.backend.cataloguemanifest.GetInterfaceEntryConfigurationResult
+import spectacular.backend.cataloguemanifest.interfaceentry.GetInterfaceEntryConfigurationResult
 import spectacular.backend.cataloguemanifest.model.CatalogueManifest
 import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.cataloguemanifest.model.Interfaces
@@ -22,7 +21,6 @@ import spectacular.backend.common.CatalogueManifestId
 import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.domain.ContentItem
 import spectacular.backend.interfaces.GetInterfaceFileContentsResult
-import spectacular.backend.interfaces.InterfaceFileContents
 import spectacular.backend.interfaces.InterfaceService
 
 import spock.lang.Specification
@@ -132,7 +130,7 @@ class CatalogueServiceTest extends Specification {
         def catalogueId = aCatalogueId()
 
         and: "a catalogue config entry with an error"
-        def configItemError = Mock(GetCatalogueManifestConfigurationItemError)
+        def configItemError = Mock(ConfigurationItemError)
         def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createErrorResult(configItemError)
 
         when: "the get catalogue for user is called"
@@ -192,7 +190,7 @@ class CatalogueServiceTest extends Specification {
         def interfaceEntryName = "testInterface1"
 
         and: "a interface entry config with an error"
-        def configItemError = Mock(GetCatalogueManifestConfigurationItemError)
+        def configItemError = Mock(ConfigurationItemError)
         def getInterfaceEntryConfigurationResult = GetInterfaceEntryConfigurationResult.createErrorResult(configItemError)
 
         when: "the get interface details for user is called"
@@ -243,7 +241,7 @@ class CatalogueServiceTest extends Specification {
         def ref = 'branch1'
 
         and: "a interface entry config with an error"
-        def configItemError = Mock(GetCatalogueManifestConfigurationItemError)
+        def configItemError = Mock(ConfigurationItemError)
         def getInterfaceEntryConfigurationResult = GetInterfaceEntryConfigurationResult.createErrorResult(configItemError)
 
         when: "the get interface file contents for ref and user is called"

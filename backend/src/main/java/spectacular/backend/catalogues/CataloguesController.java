@@ -14,8 +14,8 @@ import spectacular.backend.api.CataloguesApi;
 import spectacular.backend.api.model.FindCataloguesResult;
 import spectacular.backend.api.model.GetCatalogueResult;
 import spectacular.backend.api.model.GetInterfaceResult;
-import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemError;
-import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemErrorType;
+import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError;
+import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemErrorType;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.interfaces.InterfaceService;
 
@@ -94,13 +94,13 @@ public class CataloguesController implements CataloguesApi {
     }
   }
 
-  private void handleAnyError(GetCatalogueManifestConfigurationItemError configurationItemError) {
+  private void handleAnyError(ConfigurationItemError configurationItemError) {
     if (configurationItemError != null) {
       var errorType = configurationItemError.getType();
       var errorMessage = configurationItemError.getMessage();
-      if (errorType == GetCatalogueManifestConfigurationItemErrorType.NOT_FOUND) {
+      if (errorType == ConfigurationItemErrorType.NOT_FOUND) {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, errorMessage);
-      } else if (errorType == GetCatalogueManifestConfigurationItemErrorType.CONFIG_ERROR) {
+      } else if (errorType == ConfigurationItemErrorType.CONFIG_ERROR) {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage);
       }
     }

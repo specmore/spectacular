@@ -1,5 +1,7 @@
 package spectacular.backend.cataloguemanifest
 
+import spectacular.backend.cataloguemanifest.catalogueentry.CatalogueEntryConfigurationResolver
+import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemErrorType
 import spectacular.backend.cataloguemanifest.model.Catalogue
 import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.cataloguemanifest.model.Interfaces
@@ -80,7 +82,7 @@ class CatalogueEntryConfigurationResolverTest extends Specification {
 
         and: "the result has a not found error"
         result.hasError()
-        result.getError().getType() == GetCatalogueManifestConfigurationItemErrorType.NOT_FOUND
+        result.getError().getType() == ConfigurationItemErrorType.NOT_FOUND
     }
 
     def "GetCatalogueEntryConfiguration returns not found error for a catalogue manifest that doesn't contain the catalogue entry" () {
@@ -105,7 +107,7 @@ class CatalogueEntryConfigurationResolverTest extends Specification {
 
         and: "the result has a not found error"
         result.hasError()
-        result.getError().getType() == GetCatalogueManifestConfigurationItemErrorType.NOT_FOUND
+        result.getError().getType() == ConfigurationItemErrorType.NOT_FOUND
     }
 
     def "GetCatalogueEntryConfiguration returns a catalogue with parse error for a catalogue manifest that doesn't parse"() {
@@ -131,6 +133,6 @@ class CatalogueEntryConfigurationResolverTest extends Specification {
 
         and: "the result has a not found error"
         result.hasError()
-        result.getError().getType() == GetCatalogueManifestConfigurationItemErrorType.CONFIG_ERROR
+        result.getError().getType() == ConfigurationItemErrorType.CONFIG_ERROR
     }
 }

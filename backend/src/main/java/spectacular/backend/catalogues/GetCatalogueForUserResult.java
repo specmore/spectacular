@@ -1,18 +1,18 @@
 package spectacular.backend.catalogues;
 
 import spectacular.backend.api.model.Catalogue;
-import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemError;
-import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemResult;
+import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError;
+import spectacular.backend.cataloguemanifest.configurationitem.GetCatalogueManifestConfigurationItemResult;
 
 public class GetCatalogueForUserResult extends GetCatalogueManifestConfigurationItemResult {
   private final Catalogue catalogueDetails;
 
-  private GetCatalogueForUserResult(GetCatalogueManifestConfigurationItemError getConfigurationItemError, Catalogue catalogueDetails) {
+  private GetCatalogueForUserResult(ConfigurationItemError getConfigurationItemError, Catalogue catalogueDetails) {
     super(getConfigurationItemError);
     this.catalogueDetails = catalogueDetails;
   }
 
-  public static GetCatalogueForUserResult createErrorResult(GetCatalogueManifestConfigurationItemError getConfigurationItemError) {
+  public static GetCatalogueForUserResult createErrorResult(ConfigurationItemError getConfigurationItemError) {
     return new GetCatalogueForUserResult(getConfigurationItemError, null);
   }
 

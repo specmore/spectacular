@@ -1,9 +1,11 @@
-package spectacular.backend.cataloguemanifest;
+package spectacular.backend.cataloguemanifest.catalogueentry;
 
-import static spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemError.createConfigError;
-import static spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemError.createNotFoundError;
+import static spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError.createConfigError;
+import static spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError.createNotFoundError;
 
 import org.springframework.stereotype.Service;
+import spectacular.backend.cataloguemanifest.CatalogueManifestParser;
+import spectacular.backend.cataloguemanifest.CatalogueManifestProvider;
 import spectacular.backend.common.CatalogueId;
 
 @Service
