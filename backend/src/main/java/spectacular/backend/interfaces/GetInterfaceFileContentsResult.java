@@ -1,9 +1,9 @@
 package spectacular.backend.interfaces;
 
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError;
-import spectacular.backend.cataloguemanifest.configurationitem.GetCatalogueManifestConfigurationItemResult;
+import spectacular.backend.cataloguemanifest.configurationitem.ResolveConfigurationItemResult;
 
-public class GetInterfaceFileContentsResult extends GetCatalogueManifestConfigurationItemResult {
+public class GetInterfaceFileContentsResult extends ResolveConfigurationItemResult {
   private final InterfaceFileContents interfaceFileContents;
 
   protected GetInterfaceFileContentsResult(ConfigurationItemError error, InterfaceFileContents interfaceFileContents) {

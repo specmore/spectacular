@@ -2,10 +2,10 @@ package spectacular.backend.cataloguemanifest.catalogueentry;
 
 import java.net.URI;
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError;
-import spectacular.backend.cataloguemanifest.configurationitem.GetCatalogueManifestConfigurationItemResult;
+import spectacular.backend.cataloguemanifest.configurationitem.ResolveConfigurationItemResult;
 import spectacular.backend.cataloguemanifest.model.Catalogue;
 
-public class GetCatalogueEntryConfigurationResult extends GetCatalogueManifestConfigurationItemResult {
+public class GetCatalogueEntryConfigurationResult extends ResolveConfigurationItemResult {
   private final Catalogue catalogueEntry;
   private final URI manifestUri;
 

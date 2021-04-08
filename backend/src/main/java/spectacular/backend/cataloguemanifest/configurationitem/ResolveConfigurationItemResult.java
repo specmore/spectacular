@@ -1,9 +1,9 @@
 package spectacular.backend.cataloguemanifest.configurationitem;
 
-public abstract class GetCatalogueManifestConfigurationItemResult {
+public abstract class ResolveConfigurationItemResult {
   private final ConfigurationItemError error;
 
-  protected GetCatalogueManifestConfigurationItemResult(ConfigurationItemError error) {
+  protected ResolveConfigurationItemResult(ConfigurationItemError error) {
     this.error = error;
   }
 

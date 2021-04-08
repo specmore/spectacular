@@ -2,9 +2,9 @@ package spectacular.backend.catalogues;
 
 import spectacular.backend.api.model.GetInterfaceResult;
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError;
-import spectacular.backend.cataloguemanifest.configurationitem.GetCatalogueManifestConfigurationItemResult;
+import spectacular.backend.cataloguemanifest.configurationitem.ResolveConfigurationItemResult;
 
-public class GetInterfaceDetailsResult extends GetCatalogueManifestConfigurationItemResult {
+public class GetInterfaceDetailsResult extends ResolveConfigurationItemResult {
   private final GetInterfaceResult getInterfaceResult;
 
   private GetInterfaceDetailsResult(ConfigurationItemError getConfigurationItemError,
