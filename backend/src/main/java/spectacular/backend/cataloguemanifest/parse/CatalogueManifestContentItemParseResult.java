@@ -1,14 +1,17 @@
-package spectacular.backend.cataloguemanifest;
+package spectacular.backend.cataloguemanifest.parse;
 
 import javax.validation.constraints.NotNull;
 import spectacular.backend.cataloguemanifest.model.CatalogueManifest;
 import spectacular.backend.github.domain.ContentItem;
 
-public class CatalogueManifestContentItemParseResult extends CatalogueManifestParseResult {
+public class CatalogueManifestContentItemParseResult {
+  private final CatalogueManifest catalogueManifest;
+  private final String error;
   private final ContentItem manifestContentItem;
 
   private CatalogueManifestContentItemParseResult(CatalogueManifest catalogueManifest, String error, ContentItem manifestContentItem) {
-    super(catalogueManifest, error);
+    this.catalogueManifest = catalogueManifest;
+    this.error = error;
     this.manifestContentItem = manifestContentItem;
   }
 
@@ -21,9 +24,12 @@ public class CatalogueManifestContentItemParseResult extends CatalogueManifestPa
     return new CatalogueManifestContentItemParseResult(catalogueManifest, null, manifestContentItem);
   }
 
-  public static CatalogueManifestContentItemParseResult createFrom(@NotNull CatalogueManifestParseResult result,
-                                                                   ContentItem manifestContentItem) {
-    return new CatalogueManifestContentItemParseResult(result.getCatalogueManifest(), result.getError(), manifestContentItem);
+  public CatalogueManifest getCatalogueManifest() {
+    return catalogueManifest;
+  }
+
+  public String getError() {
+    return error;
   }
 
   public ContentItem getManifestContentItem() {

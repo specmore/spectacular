@@ -1,4 +1,4 @@
-package spectacular.backend.cataloguemanifest;
+package spectacular.backend.cataloguemanifest.parse;
 
 import spectacular.backend.cataloguemanifest.model.Catalogue;
 import spectacular.backend.github.domain.ContentItem;

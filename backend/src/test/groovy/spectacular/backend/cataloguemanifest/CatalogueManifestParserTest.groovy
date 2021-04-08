@@ -1,5 +1,6 @@
 package spectacular.backend.cataloguemanifest
 
+import spectacular.backend.cataloguemanifest.parse.CatalogueManifestParser
 import spectacular.backend.github.domain.ContentItem
 import spock.lang.Specification
 

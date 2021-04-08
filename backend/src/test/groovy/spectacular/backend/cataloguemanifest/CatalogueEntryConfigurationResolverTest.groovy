@@ -5,6 +5,8 @@ import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItem
 import spectacular.backend.cataloguemanifest.model.Catalogue
 import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.cataloguemanifest.model.Interfaces
+import spectacular.backend.cataloguemanifest.parse.CatalogueManifestParser
+import spectacular.backend.cataloguemanifest.parse.FindAndParseCatalogueResult
 import spectacular.backend.common.CatalogueId
 import spectacular.backend.common.CatalogueManifestId
 import spectacular.backend.common.RepositoryId

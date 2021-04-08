@@ -1,11 +1,10 @@
-package spectacular.backend.cataloguemanifest;
+package spectacular.backend.cataloguemanifest.parse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Collections;
 import java.util.stream.Collectors;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -29,33 +28,27 @@ public class CatalogueManifestParser {
    * @return the CatalogueManifestContentItemParseResult
    */
   public CatalogueManifestContentItemParseResult parseManifestFileContentItem(ContentItem contentItem) {
+    String manifestFileContents;
     try {
-      var fileContents = contentItem.getDecodedContent();
-      var parseResult = parseManifestFileContents(fileContents);
-      return CatalogueManifestContentItemParseResult.createFrom(parseResult, contentItem);
+      manifestFileContents = contentItem.getDecodedContent();
     } catch (UnsupportedEncodingException e) {
       logger.error("An error occurred while decoding the catalogue manifest yaml file at " + contentItem.getHtml_url().toString(), e);
       var error = "An error occurred while decoding the catalogue manifest yaml file contents.";
       return CatalogueManifestContentItemParseResult.createParseErrorResult(error, contentItem);
     }
-  }
 
-  private CatalogueManifestParseResult parseManifestFileContents(String manifestFileContents) {
-    CatalogueManifest manifest = null;
-    String error = null;
+    CatalogueManifest manifest;
     try {
       manifest = mapper.readValue(manifestFileContents, CatalogueManifest.class);
     } catch (MismatchedInputException e) {
       logger.debug("A mapping error occurred while parsing a catalogue manifest yaml file. ", e);
-      error = "A mapping error occurred while parsing the catalogue manifest yaml file. The following field is invalid: " +
+      var error = "A mapping error occurred while parsing the catalogue manifest yaml file. The following field is invalid: " +
           e.getPathReference();
+      return CatalogueManifestContentItemParseResult.createParseErrorResult(error, contentItem);
     } catch (IOException e) {
       logger.error("An IO error occurred while parsing a catalogue manifest yaml file.", e);
-      error = "An IO error occurred while parsing the catalogue manifest yaml file: " + e.getMessage();
-    }
-
-    if (error != null) {
-      return CatalogueManifestParseResult.createParseErrorResult(error);
+      var error = "An IO error occurred while parsing the catalogue manifest yaml file: " + e.getMessage();
+      return CatalogueManifestContentItemParseResult.createParseErrorResult(error, contentItem);
     }
 
     var violations = validator.validate(manifest);
@@ -63,12 +56,12 @@ public class CatalogueManifestParser {
       var violationMessage = violations.stream()
           .map(violation -> violation.getPropertyPath() + " " + violation.getMessage())
           .collect(Collectors.toList());
-      error = "The following validation errors were found with the catalogue manifest file: " +
+      var error = "The following validation errors were found with the catalogue manifest file: " +
           String.join(", ", violationMessage);
-      return CatalogueManifestParseResult.createParseErrorResult(error);
+      return CatalogueManifestContentItemParseResult.createParseErrorResult(error, contentItem);
     }
 
-    return CatalogueManifestParseResult.createSuccessfulCatalogueManifestParseResult(manifest);
+    return CatalogueManifestContentItemParseResult.createSuccessfulParseResult(manifest, contentItem);
   }
 
   /**
@@ -82,7 +75,7 @@ public class CatalogueManifestParser {
    *     property is returned.
    */
   public FindAndParseCatalogueResult findAndParseCatalogueInManifestFileContents(ContentItem contentItem, String catalogueName) {
-    String manifestFileContents = null;
+    String manifestFileContents;
     try {
       manifestFileContents = contentItem.getDecodedContent();
     } catch (UnsupportedEncodingException e) {
@@ -91,8 +84,7 @@ public class CatalogueManifestParser {
       return FindAndParseCatalogueResult.createCatalogueEntryParseErrorResult(contentItem, error);
     }
 
-    Catalogue catalogue = null;
-    String error = null;
+    Catalogue catalogue;
     try {
       var rootNode = mapper.readTree(manifestFileContents);
       var cataloguesNode = rootNode.get("catalogues");
@@ -108,14 +100,12 @@ public class CatalogueManifestParser {
       catalogue = mapper.treeToValue(catalogueNode, Catalogue.class);
     } catch (MismatchedInputException e) {
       logger.debug("A mapping error occurred while parsing a catalogue manifest yaml file. ", e);
-      error = "A mapping error occurred while parsing the catalogue manifest yaml file. The following field is invalid: " +
+      var error = "A mapping error occurred while parsing the catalogue manifest yaml file. The following field is invalid: " +
           e.getPathReference();
+      return FindAndParseCatalogueResult.createCatalogueEntryParseErrorResult(contentItem, error);
     } catch (IOException e) {
       logger.error("An IO error occurred while parsing a catalogue manifest yaml file.", e);
-      error = "An IO error occurred while parsing the catalogue manifest yaml file: " + e.getMessage();
-    }
-
-    if (error != null) {
+      var error = "An IO error occurred while parsing the catalogue manifest yaml file: " + e.getMessage();
       return FindAndParseCatalogueResult.createCatalogueEntryParseErrorResult(contentItem, error);
     }
 
@@ -124,7 +114,7 @@ public class CatalogueManifestParser {
       var violationMessage = violations.stream()
           .map(violation -> violation.getPropertyPath() + " " + violation.getMessage())
           .collect(Collectors.toList());
-      error = "The following validation errors were found with catalogue entry '" + catalogueName + "': " +
+      var error = "The following validation errors were found with catalogue entry '" + catalogueName + "': " +
           String.join(", ", violationMessage);
       return FindAndParseCatalogueResult.createCatalogueEntryParseErrorResult(contentItem, error);
     }

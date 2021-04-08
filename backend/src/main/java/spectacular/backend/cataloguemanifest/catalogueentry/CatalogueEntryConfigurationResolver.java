@@ -4,8 +4,8 @@ import static spectacular.backend.cataloguemanifest.configurationitem.Configurat
 import static spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError.createNotFoundError;
 
 import org.springframework.stereotype.Service;
-import spectacular.backend.cataloguemanifest.CatalogueManifestParser;
 import spectacular.backend.cataloguemanifest.CatalogueManifestProvider;
+import spectacular.backend.cataloguemanifest.parse.CatalogueManifestParser;
 import spectacular.backend.common.CatalogueId;
 
 @Service
