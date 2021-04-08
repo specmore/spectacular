@@ -17,6 +17,15 @@ public class CatalogueEntryConfigurationResolver {
     this.catalogueManifestProvider = catalogueManifestProvider;
   }
 
+  /**
+   * Gets a catalogue manifest file and attempts to find and parse a catalogue entry in it for a given user.
+   *
+   * @param catalogueId an object containing the manifest file location and name of the catalogue entry
+   * @param username the user that is trying access the catalogue
+   * @return a GetCatalogueEntryConfigurationResult object with
+   *     1. a successfully found and parsed catalogue entry
+   *     2. an error if the catalogue entry could not be found or it was not parsable
+   */
   public GetCatalogueEntryConfigurationResult getCatalogueEntryConfiguration(CatalogueId catalogueId, String username) {
     var getCatalogueManifestFileContentResult = catalogueManifestProvider.getCatalogueManifest(catalogueId, username);
 

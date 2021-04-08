@@ -21,6 +21,7 @@ import spectacular.backend.common.CatalogueId
 import spectacular.backend.common.CatalogueManifestId
 import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.domain.ContentItem
+import spectacular.backend.interfaces.GetInterfaceFileContentsResult
 import spectacular.backend.interfaces.InterfaceFileContents
 import spectacular.backend.interfaces.InterfaceService
 
@@ -144,7 +145,7 @@ class CatalogueServiceTest extends Specification {
         0 * interfaceService.getInterfaceDetails(_, _, _)
 
         and: "a error result is returned with no catalogue details"
-        result.getGetConfigurationItemError()
+        result.getError()
         !result.getCatalogueDetails()
     }
 
@@ -204,7 +205,7 @@ class CatalogueServiceTest extends Specification {
         0 * interfaceService.getInterfaceDetails(_, _, _)
 
         and: "a error result is returned with no interface details"
-        result.getGetConfigurationItemError()
+        result.getError()
         !result.getGetInterfaceResult()
     }
 
@@ -214,54 +215,48 @@ class CatalogueServiceTest extends Specification {
         def interfaceEntryName = "testInterface1"
         def ref = 'branch1'
 
-        and: "a catalogue manifest file at that location"
-        def catalogueManifestFileContents = Mock(ContentItem)
-        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueId, catalogueManifestFileContents)
-
         and: "a catalogue config entry in the manifest file with the interface entry in it"
         def interfaceEntry = Mock(Interface)
         def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
-        def findAndParseCatalogueResult = FindAndParseCatalogueResult.createCatalogueEntryParsedResult(catalogueManifestFileContents, catalogue)
+        def getInterfaceEntryConfigurationResult = GetInterfaceEntryConfigurationResult.createSuccessfulResult(catalogue, interfaceEntry, aManifestUri)
 
-        and: "contents for the interface spec file"
-        def interfaceFileContents = Mock(InterfaceFileContents)
+        and: "a file contents result for the interface entry"
+        def getInterfaceFileContentsResult = Mock(GetInterfaceFileContentsResult)
 
         when: "the get interface file contents for ref and user is called"
         def result = catalogueService.getInterfaceFileContents(catalogueId, interfaceEntryName, ref, aUsername)
 
-        then: "the catalogue manifest contents is retrieved"
-        1 * catalogueManifestProvider.getCatalogueManifest(catalogueId, aUsername) >> getCatalogueManifestFileContentResult
-
-        and: "catalogue config is found and parsed from the catalogue manifest contents"
-        1 * catalogueManifestParser.findAndParseCatalogueInManifestFileContents(catalogueManifestFileContents, catalogueId.getCatalogueName()) >> findAndParseCatalogueResult
+        then: "the interface entry configuration is resolved"
+        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(catalogueId, interfaceEntryName, aUsername) >> getInterfaceEntryConfigurationResult
 
         and: "the interface file contents are retrieved for the interface entry in the catalogue"
-        1 * interfaceService.getInterfaceFileContents(catalogueId, interfaceEntry, ref) >> interfaceFileContents
+        1 * interfaceService.getInterfaceFileContents(catalogueId, interfaceEntry, ref) >> getInterfaceFileContentsResult
 
-        and: "the interface file contents is returned"
-        result == interfaceFileContents
+        and: "the interface file contents result is returned"
+        result == getInterfaceFileContentsResult
     }
 
-    def "get interface file contents returns not found error for a catalogue manifest that doesn't exist"() {
+    def "get interface file contents returns error result for interface entry config that resolves with error"() {
         given: "a catalogue id, interface entry name and ref"
         def catalogueId = aCatalogueId()
         def interfaceEntryName = "testInterface1"
         def ref = 'branch1'
 
-        and: "no catalogue manifest file at that location"
-        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createNotFoundResult(catalogueId)
+        and: "a interface entry config with an error"
+        def configItemError = Mock(GetCatalogueManifestConfigurationItemError)
+        def getInterfaceEntryConfigurationResult = GetInterfaceEntryConfigurationResult.createErrorResult(configItemError)
 
         when: "the get interface file contents for ref and user is called"
         def result = catalogueService.getInterfaceFileContents(catalogueId, interfaceEntryName, ref, aUsername)
 
-        then: "the catalogue manifest contents is retrieved"
-        1 * catalogueManifestProvider.getCatalogueManifest(catalogueId, aUsername) >> getCatalogueManifestFileContentResult
+        then: "the interface entry configuration is resolved"
+        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(catalogueId, interfaceEntryName, aUsername) >> getInterfaceEntryConfigurationResult
 
         and: "no interface file contents is retrieved"
         0 * interfaceService.getInterfaceFileContents(_, _, _)
 
-        and: "a not found result is returned"
-        !result
+        and: "a error result is returned"
+        result.hasError()
     }
 
     def "find catalogues for valid user and org returns catalogues for each catalogue manifest file found with actual valid contents"() {

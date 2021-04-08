@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.client.HttpClientErrorException
 import spectacular.backend.api.model.SpecEvolution
 import spectacular.backend.api.model.SpecEvolutionSummary
+import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemErrorType
 import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.cataloguemanifest.model.SpecEvolutionConfig
 import spectacular.backend.cataloguemanifest.model.SpecFileLocation
@@ -52,9 +53,12 @@ class InterfaceServiceTest extends Specification {
         then: "the file contents are retrieved"
         1 * restApiClient.getRepositoryContent(specFileRepoId, specFilePath, "some-ref") >> specFileContentItem
 
+        and: "there is no error"
+        !result.hasError()
+
         and: "the decoded file contents are returned with yaml media type"
-        result.contents == "test file content"
-        result.getMediaTypeGuess().toString() == "application/yaml"
+        result.getInterfaceFileContents().contents == "test file content"
+        result.getInterfaceFileContents().getMediaTypeGuess().toString() == "application/yaml"
     }
 
     def "GetInterfaceFileContents uses catalogue repo when spec file location doesn't specify a repo"() {
@@ -78,11 +82,14 @@ class InterfaceServiceTest extends Specification {
         then: "the file contents are retrieved from the catalogue's repo"
         1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), specFilePath, "some-ref") >> specFileContentItem
 
+        and: "there is no error"
+        !result.hasError()
+
         and: "the decoded file contents are returned"
-        result.contents == "test file content"
+        result.getInterfaceFileContents().contents == "test file content"
     }
 
-    def "GetInterfaceFileContents returns null for an interface without a spec file location"() {
+    def "GetInterfaceFileContents returns config error for an interface without a spec file location"() {
         given: "a catalogue with an interface entry with no spec file location"
         def catalogueId = aCatalogue()
         def interfaceEntry = new Interface()
@@ -90,12 +97,12 @@ class InterfaceServiceTest extends Specification {
         when: "getting the interface file contents for the interface entry"
         def result = interfaceService.getInterfaceFileContents(catalogueId, interfaceEntry, "some-ref")
 
-        then: "a null interface file contents is returned"
-        !result
+        then: "a config error is returned"
+        result.hasError()
+        result.getError().getType() == GetCatalogueManifestConfigurationItemErrorType.CONFIG_ERROR
     }
 
-    def "GetInterfaceFileContents returns null for a spec file location that does not exist"() {
-
+    def "GetInterfaceFileContents returns not found error for a spec file location that does not exist"() {
         given: "a catalogue with an interface entry"
         def catalogueId = aCatalogue()
         def interfaceEntry = new Interface()
@@ -112,8 +119,9 @@ class InterfaceServiceTest extends Specification {
         then: "the missing file contents are retrieved"
         1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), specFilePath, "some-ref") >> { throw new HttpClientErrorException(HttpStatus.NOT_FOUND) }
 
-        and: "a null interface file contents is returned"
-        !result
+        and: "a not found error is returned"
+        result.hasError()
+        result.getError().getType() == GetCatalogueManifestConfigurationItemErrorType.NOT_FOUND
     }
 
     def "GetInterface has SpecEvolution and SpecEvolutionSummary"() {

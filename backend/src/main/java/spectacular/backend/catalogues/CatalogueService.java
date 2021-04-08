@@ -15,7 +15,7 @@ import spectacular.backend.cataloguemanifest.CatalogueManifestParser;
 import spectacular.backend.cataloguemanifest.CatalogueManifestProvider;
 import spectacular.backend.cataloguemanifest.GetCatalogueManifestFileContentResult;
 import spectacular.backend.common.CatalogueId;
-import spectacular.backend.interfaces.InterfaceFileContents;
+import spectacular.backend.interfaces.GetInterfaceFileContentsResult;
 import spectacular.backend.interfaces.InterfaceService;
 
 @Service
@@ -34,8 +34,8 @@ public class CatalogueService {
    * accessible for a given request's installation context.
    * @param catalogueManifestParser a helper service to parse catalogue manifest file content into concrete objects
    * @param catalogueManifestProvider a data provider that retrieves catalogue manifest files from the data source
-   * @param catalogueEntryConfigurationResolver
-   * @param catalogueInterfaceEntryConfigurationResolver
+   * @param catalogueEntryConfigurationResolver a helper service for retrieving and parsing catalogue entries in manifest files
+   * @param catalogueInterfaceEntryConfigurationResolver a helper service for retrieving and parsing interface entries in manifest files
    * @param catalogueMapper a helper service for mapping catalogue manifest objects to API model objects
    * @param interfaceService a service for retrieving more interface information for an interface configured in a catalogue manifest
    */
@@ -142,36 +142,16 @@ public class CatalogueService {
    * @return a InterfaceFileContents containing the file contents and other file information
    * @throws UnsupportedEncodingException if the contents of the file can't be decoded
    */
-  public InterfaceFileContents getInterfaceFileContents(CatalogueId catalogueId, String interfaceName, String ref, String username)
+  public GetInterfaceFileContentsResult getInterfaceFileContents(CatalogueId catalogueId, String interfaceName, String ref, String username)
       throws UnsupportedEncodingException {
-    var getCatalogueManifestFileContentResult = catalogueManifestProvider.getCatalogueManifest(catalogueId, username);
+    var getInterfaceEntryConfigurationResult = catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(
+        catalogueId, interfaceName, username);
 
-    if (getCatalogueManifestFileContentResult.isFileNotFoundResult()) {
-      return null;
+    if (getInterfaceEntryConfigurationResult.hasError()) {
+      return GetInterfaceFileContentsResult.createErrorResult(getInterfaceEntryConfigurationResult.getError());
     }
 
-    var catalogueManifestContent = getCatalogueManifestFileContentResult.getCatalogueManifestContent();
-    var parseResult = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(catalogueManifestContent,
-        catalogueId.getCatalogueName());
-
-    var parseError = parseResult.getError();
-    if (parseError != null) {
-      logger.warn("A request for an interface entry in a catalogue manifest that does not parse correctly was received. " +
-          "CatalogueId: {} and ParseError '{}'", catalogueId, parseError);
-      throw new RuntimeException("An error occurred while parsing the catalogue manifest file for interface requested.");
-    }
-
-    var catalogue = parseResult.getCatalogue();
-
-    if (catalogue == null || catalogue.getInterfaces() == null) {
-      return null;
-    }
-
-    var catalogueInterfaceEntry = catalogue.getInterfaces().getAdditionalProperties().get(interfaceName);
-
-    if (catalogueInterfaceEntry == null) {
-      return null;
-    }
+    var catalogueInterfaceEntry = getInterfaceEntryConfigurationResult.getInterfaceEntry();
 
     return this.interfaceService.getInterfaceFileContents(catalogueId, catalogueInterfaceEntry, ref);
   }

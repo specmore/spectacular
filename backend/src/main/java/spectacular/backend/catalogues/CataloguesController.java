@@ -47,7 +47,7 @@ public class CataloguesController implements CataloguesApi {
 
     var getCatalogueForUserResult = catalogueService.getCatalogueForUser(catalogueId, authentication.getName());
 
-    handleAnyError(getCatalogueForUserResult.getGetConfigurationItemError());
+    handleAnyError(getCatalogueForUserResult.getError());
 
     var getCatalogueResult = new GetCatalogueResult().catalogue(getCatalogueForUserResult.getCatalogueDetails());
     return ResponseEntity.ok(getCatalogueResult);
@@ -62,7 +62,7 @@ public class CataloguesController implements CataloguesApi {
 
     var getInterfaceDetailsResult = this.catalogueService.getInterfaceDetails(catalogueId, interfaceName, authentication.getName());
 
-    handleAnyError(getInterfaceDetailsResult.getGetConfigurationItemError());
+    handleAnyError(getInterfaceDetailsResult.getError());
 
     return ResponseEntity.ok(getInterfaceDetailsResult.getGetInterfaceResult());
   }
@@ -75,16 +75,18 @@ public class CataloguesController implements CataloguesApi {
     var catalogueId = CatalogueId.createFrom(combinedId);
 
     try {
-      var interfaceFileContents = this.catalogueService.getInterfaceFileContents(catalogueId, interfaceName, ref, authentication.getName());
+      var getInterfaceFileContentsResult = this.catalogueService.getInterfaceFileContents(
+          catalogueId,
+          interfaceName,
+          ref,
+          authentication.getName());
 
-      if (interfaceFileContents == null) {
-        return ResponseEntity.notFound().build();
-      }
+      handleAnyError(getInterfaceFileContentsResult.getError());
 
       return ResponseEntity
           .ok()
-          .contentType(interfaceFileContents.getMediaTypeGuess())
-          .body(interfaceFileContents.getContents());
+          .contentType(getInterfaceFileContentsResult.getInterfaceFileContents().getMediaTypeGuess())
+          .body(getInterfaceFileContentsResult.getInterfaceFileContents().getContents());
     } catch (UnsupportedEncodingException e) {
       return ResponseEntity
           .status(HttpStatus.INTERNAL_SERVER_ERROR)

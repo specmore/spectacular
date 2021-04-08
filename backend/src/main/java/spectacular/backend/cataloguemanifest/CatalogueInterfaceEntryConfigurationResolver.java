@@ -15,6 +15,16 @@ public class CatalogueInterfaceEntryConfigurationResolver {
     this.catalogueEntryConfigurationResolver = catalogueEntryConfigurationResolver;
   }
 
+  /**
+   * Gets a catalogue manifest file and attempts to find and parse an interface entry in it for a given user.
+   *
+   * @param catalogueId an object containing the manifest file location and name of the catalogue entry the interface entry is inside
+   * @param interfaceName the name of the interface entry
+   * @param username the user that is trying access the catalogue
+   * @return a GetInterfaceEntryConfigurationResult object with
+   *     1. a successfully found and parsed interface entry
+   *     2. an error if the interface entry could not be found or it was not valid
+   */
   public GetInterfaceEntryConfigurationResult getCatalogueInterfaceEntryConfiguration(CatalogueId catalogueId,
                                                                                       String interfaceName,
                                                                                       String username) {

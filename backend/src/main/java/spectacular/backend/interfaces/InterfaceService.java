@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import spectacular.backend.api.model.GetInterfaceResult;
+import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemError;
 import spectacular.backend.cataloguemanifest.SpecFileRepositoryResolver;
 import spectacular.backend.cataloguemanifest.model.Interface;
 import spectacular.backend.common.CatalogueId;
@@ -42,13 +43,17 @@ public class InterfaceService {
    * @param catalogueId the catalogue the interface belongs to
    * @param interfaceConfig the catalogue manifest interface entry to get the interface details for
    * @param ref the name of the git ref at which to get the file contents
-   * @return a InterfaceFileContents result if the file is found and the user has access to it. Else it returns null
+   * @return a GetInterfaceFileContentsResult
+   *     result with the InterfaceFileContents if the file is found and the user has access to it.
+   *     Else it returns with an error.
    * @throws UnsupportedEncodingException if an error occurred while decoding the content
    */
-  public InterfaceFileContents getInterfaceFileContents(CatalogueId catalogueId, Interface interfaceConfig, String ref)
+  public GetInterfaceFileContentsResult getInterfaceFileContents(CatalogueId catalogueId, Interface interfaceConfig, String ref)
       throws UnsupportedEncodingException {
     if (interfaceConfig.getSpecFile() == null) {
-      return null;
+      var errorMessage = "The requested interface spec file has no location configured.";
+      var configError = GetCatalogueManifestConfigurationItemError.createConfigError(errorMessage);
+      return GetInterfaceFileContentsResult.createErrorResult(configError);
     }
 
     var fileRepo = SpecFileRepositoryResolver.resolveSpecFileRepository(interfaceConfig, catalogueId);
@@ -58,12 +63,15 @@ public class InterfaceService {
       var fileContentItem = restApiClient.getRepositoryContent(fileRepo, filePath, ref);
       var fileContents = fileContentItem.getDecodedContent();
 
-      return new InterfaceFileContents(fileContents, filePath);
+      var interfaceFileContents = new InterfaceFileContents(fileContents, filePath);
+      return GetInterfaceFileContentsResult.createFoundResult(interfaceFileContents);
     } catch (HttpClientErrorException e) {
       if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-        logger.debug("A request for a interface spec file that does not exist was received. Spec File Location: {}",
-            interfaceConfig.getSpecFile());
-        return null;
+        var errorMessage = "Interface specification file not found for path '" + filePath + "' in repo '" + fileRepo.getNameWithOwner() +
+            "' at ref '" + ref + "'";
+        logger.debug("A request for a interface spec file contents that does not exist was received. " + errorMessage);
+        var notFoundError = GetCatalogueManifestConfigurationItemError.createNotFoundError(errorMessage);
+        return GetInterfaceFileContentsResult.createErrorResult(notFoundError);
       } else {
         throw e;
       }

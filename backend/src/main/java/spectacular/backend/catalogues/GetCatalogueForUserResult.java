@@ -2,8 +2,9 @@ package spectacular.backend.catalogues;
 
 import spectacular.backend.api.model.Catalogue;
 import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemError;
+import spectacular.backend.cataloguemanifest.GetCatalogueManifestConfigurationItemResult;
 
-public class GetCatalogueForUserResult extends GetCatalogueConfigurationItemResult {
+public class GetCatalogueForUserResult extends GetCatalogueManifestConfigurationItemResult {
   private final Catalogue catalogueDetails;
 
   private GetCatalogueForUserResult(GetCatalogueManifestConfigurationItemError getConfigurationItemError, Catalogue catalogueDetails) {

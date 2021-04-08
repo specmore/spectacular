@@ -7,7 +7,7 @@ public class GetCatalogueManifestConfigurationItemError {
   private final GetCatalogueManifestConfigurationItemErrorType type;
   private final String message;
 
-  public GetCatalogueManifestConfigurationItemError(
+  private GetCatalogueManifestConfigurationItemError(
       GetCatalogueManifestConfigurationItemErrorType type, String message) {
     this.type = type;
     this.message = message;
