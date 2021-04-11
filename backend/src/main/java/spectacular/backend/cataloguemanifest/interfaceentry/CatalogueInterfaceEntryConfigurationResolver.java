@@ -4,12 +4,11 @@ import static spectacular.backend.cataloguemanifest.configurationitem.Configurat
 import static spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError.createNotFoundError;
 
 import org.springframework.stereotype.Service;
-import spectacular.backend.cataloguemanifest.catalogueentry.GetCatalogueEntryConfigurationResult;
+import spectacular.backend.cataloguemanifest.catalogueentry.CatalogueEntryConfigurationResolver;
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError;
 import spectacular.backend.cataloguemanifest.configurationitem.ResolveConfigurationItemResult;
 import spectacular.backend.cataloguemanifest.model.Interface;
 import spectacular.backend.common.CatalogueId;
-import spectacular.backend.common.RepositoryId;
 
 @Service
 public class CatalogueInterfaceEntryConfigurationResolver {
@@ -27,7 +26,7 @@ public class CatalogueInterfaceEntryConfigurationResolver {
    *     2. an error if the interface entry could not be found or it was not valid
    */
   public GetInterfaceEntryConfigurationResult getCatalogueInterfaceEntryConfiguration(
-      GetCatalogueEntryConfigurationResult getCatalogueEntryConfigurationResult,
+      CatalogueEntryConfigurationResolver.GetCatalogueEntryConfigurationResult getCatalogueEntryConfigurationResult,
       String interfaceName) {
     var catalogueId = getCatalogueEntryConfigurationResult.getCatalogueId();
     var catalogueEntry = getCatalogueEntryConfigurationResult.getCatalogueEntry();

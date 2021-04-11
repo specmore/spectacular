@@ -3,8 +3,12 @@ package spectacular.backend.cataloguemanifest.catalogueentry;
 import static spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError.createConfigError;
 import static spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError.createNotFoundError;
 
+import java.net.URI;
 import org.springframework.stereotype.Service;
 import spectacular.backend.cataloguemanifest.CatalogueManifestProvider;
+import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError;
+import spectacular.backend.cataloguemanifest.configurationitem.ResolveConfigurationItemResult;
+import spectacular.backend.cataloguemanifest.model.Catalogue;
 import spectacular.backend.cataloguemanifest.parse.CatalogueManifestParser;
 import spectacular.backend.common.CatalogueId;
 
@@ -55,5 +59,50 @@ public class CatalogueEntryConfigurationResolver {
         parseResult.getCatalogue(),
         catalogueManifestContent.getHtml_url(),
         catalogueId);
+  }
+
+  public static class GetCatalogueEntryConfigurationResult extends ResolveConfigurationItemResult {
+    private final Catalogue catalogueEntry;
+    private final URI manifestUri;
+    private final CatalogueId catalogueId;
+
+    private GetCatalogueEntryConfigurationResult(ConfigurationItemError error) {
+      super(error);
+      this.catalogueEntry = null;
+      this.manifestUri = null;
+      this.catalogueId = null;
+    }
+
+    private GetCatalogueEntryConfigurationResult(Catalogue catalogueEntry, URI manifestUri, CatalogueId catalogueId) {
+      super(null);
+      this.catalogueEntry = catalogueEntry;
+      this.manifestUri = manifestUri;
+      this.catalogueId = catalogueId;
+    }
+
+    public Catalogue getCatalogueEntry() {
+      return catalogueEntry;
+    }
+
+    public URI getManifestUri() {
+      return manifestUri;
+    }
+
+    public CatalogueId getCatalogueId() {
+      return catalogueId;
+    }
+
+    private static GetCatalogueEntryConfigurationResult createErrorResult(
+        ConfigurationItemError error) {
+      return new GetCatalogueEntryConfigurationResult(error);
+    }
+
+    private static GetCatalogueEntryConfigurationResult createSuccessfulResult(
+        Catalogue catalogueEntry,
+        URI manifestUri,
+        CatalogueId catalogueId) {
+      return new GetCatalogueEntryConfigurationResult(catalogueEntry, manifestUri,
+          catalogueId);
+    }
   }
 }

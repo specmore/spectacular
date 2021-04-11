@@ -1,8 +1,6 @@
 package spectacular.backend.cataloguemanifest
 
 import spectacular.backend.cataloguemanifest.catalogueentry.CatalogueEntryConfigurationResolver
-import spectacular.backend.cataloguemanifest.catalogueentry.GetCatalogueEntryConfigurationResult
-import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemErrorType
 import spectacular.backend.cataloguemanifest.interfaceentry.CatalogueInterfaceEntryConfigurationResolver
 import spectacular.backend.cataloguemanifest.model.Catalogue
@@ -18,7 +16,6 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
     def catalogueInterfaceEntryConfigurationResolver = new CatalogueInterfaceEntryConfigurationResolver()
 
     def catalogueManifestYmlFilename = "spectacular-config.yml"
-    def aManifestUri = new URI("test-uri")
 
     def aCatalogueManifestId() {
         def catalogueRepo = new RepositoryId("test-owner","test-repo987")
@@ -38,6 +35,13 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
         return new Catalogue().withInterfaces(interfaces)
     }
 
+    def aSuccessfulCatalogueEntryResult(CatalogueId catalogueId, Catalogue catalogueEntry) {
+        def catalogueEntryResult = Mock(CatalogueEntryConfigurationResolver.GetCatalogueEntryConfigurationResult);
+        catalogueEntryResult.getCatalogueEntry() >> catalogueEntry
+        catalogueEntryResult.getCatalogueId() >> catalogueId
+        return catalogueEntryResult;
+    }
+
     def "GetCatalogueInterfaceEntryConfiguration for valid interface config and user successfully returns interface entry"() {
         given: "a location for a catalogue config and interface entry name"
         def catalogueId = aCatalogueId()
@@ -46,7 +50,7 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
         and: "a catalogue config entry in the manifest file with the interface entry in it"
         def interfaceEntry = new Interface()
         def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
-        def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createSuccessfulResult(catalogue, aManifestUri, catalogueId)
+        def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
 
         and: "a spec file location on the interface entry"
         def specFileLocation = new SpecFileLocation()
@@ -70,7 +74,7 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
 
         and: "a catalogue config entry in the manifest file no interface entries in it"
         def catalogue = new Catalogue()
-        def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createSuccessfulResult(catalogue, aManifestUri, catalogueId)
+        def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
 
         when: "the interface configuration is retrieved"
         def result = catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName)
@@ -90,7 +94,7 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
         and: "a catalogue config entry in the manifest file with other interface entries in it"
         def otherInterfaceEntry = new Interface()
         def catalogue = aCatalogueManifest("otherInterfaceName", otherInterfaceEntry)
-        def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createSuccessfulResult(catalogue, aManifestUri, catalogueId)
+        def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
 
         when: "the interface configuration is retrieved"
         def result = catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName)
@@ -102,14 +106,14 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
         !result.getInterfaceEntry()
     }
 
-    def "GetCatalogueInterfaceEntryConfiguration for interface entry with missing spec file location config returns config error result"() {
+    def "GetCatalogueInterfaceEntryConfiguration for null interface entry returns config error result"() {
         given: "a location for a catalogue config and interface entry name"
         def catalogueId = aCatalogueId()
         def interfaceEntryName = "testInterface1"
 
         and: "a catalogue config entry in the manifest file with a null interface entry in it"
         def catalogue = aCatalogueManifest(interfaceEntryName, null)
-        def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createSuccessfulResult(catalogue, aManifestUri, catalogueId)
+        def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
 
         when: "the interface configuration is retrieved"
         def result = catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName)
@@ -121,7 +125,7 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
         !result.getInterfaceEntry()
     }
 
-    def "GetCatalogueInterfaceEntryConfiguration for null interface entry returns config error result"() {
+    def "GetCatalogueInterfaceEntryConfiguration for interface entry with missing spec file location config returns config error result"() {
         given: "a location for a catalogue config and interface entry name"
         def catalogueId = aCatalogueId()
         def interfaceEntryName = "testInterface1"
@@ -129,7 +133,7 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
         and: "a catalogue config entry in the manifest file with the interface entry in it"
         def interfaceEntry = new Interface()
         def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
-        def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createSuccessfulResult(catalogue, aManifestUri, catalogueId)
+        def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
 
         when: "the interface configuration is retrieved"
         def result = catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName)
