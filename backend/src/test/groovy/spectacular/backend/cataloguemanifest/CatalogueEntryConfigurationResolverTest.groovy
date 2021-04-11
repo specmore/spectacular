@@ -3,8 +3,11 @@ package spectacular.backend.cataloguemanifest
 import spectacular.backend.cataloguemanifest.catalogueentry.CatalogueEntryConfigurationResolver
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemErrorType
 import spectacular.backend.cataloguemanifest.model.Catalogue
+import spectacular.backend.cataloguemanifest.model.CatalogueManifest
+import spectacular.backend.cataloguemanifest.model.Catalogues
 import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.cataloguemanifest.model.Interfaces
+import spectacular.backend.cataloguemanifest.parse.CatalogueManifestContentItemParseResult
 import spectacular.backend.cataloguemanifest.parse.CatalogueManifestParser
 import spectacular.backend.cataloguemanifest.parse.FindAndParseCatalogueResult
 import spectacular.backend.common.CatalogueId
@@ -20,11 +23,17 @@ class CatalogueEntryConfigurationResolverTest extends Specification {
 
     def catalogueManifestYmlFilename = "spectacular-config.yml"
     def aUsername = "test-user"
+    def anOrg = "test-org"
 
     def aCatalogueManifestId() {
         def catalogueRepo = new RepositoryId("test-owner","test-repo987")
         def catalogueManifestFile = catalogueManifestYmlFilename;
         return new CatalogueManifestId(catalogueRepo, catalogueManifestFile)
+    }
+
+    def aCatalogueManifest(String catalogueEntryName, Catalogue catalogueEntry) {
+        def catalogueEntries = new Catalogues().withAdditionalProperty(catalogueEntryName, catalogueEntry)
+        return new CatalogueManifest().withCatalogues(catalogueEntries)
     }
 
     def aCatalogueId() {
@@ -136,5 +145,115 @@ class CatalogueEntryConfigurationResolverTest extends Specification {
         and: "the result has a not found error"
         result.hasError()
         result.getError().getType() == ConfigurationItemErrorType.CONFIG_ERROR
+    }
+
+    def "findCataloguesForOrgAndUser returns resolved catalogue configs for each valid catalogue entry in manifest files it finds"() {
+        given: "user and org"
+        def username = aUsername
+        def org = anOrg
+
+        and: "a catalogue manifest file accessible by the org and user"
+        def manifestFileId = aCatalogueManifestId()
+        def catalogueManifestFileContents = Mock(ContentItem)
+        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(manifestFileId, catalogueManifestFileContents)
+
+        and: "the manifest has a catalogue entry"
+        def catalogueEntry = Mock(Catalogue)
+        def catalogueEntryName = "testCatalogue1"
+        def catalogueManifestConfig = aCatalogueManifest(catalogueEntryName, catalogueEntry)
+        def catalogueManifestContentItemParseResult = Mock(CatalogueManifestContentItemParseResult)
+        catalogueManifestContentItemParseResult.getCatalogueManifest() >> catalogueManifestConfig
+
+        when: "the catalogue entries are searched for"
+        def result = catalogueEntryConfigurationResolver.findCataloguesForOrgAndUser(org, username)
+
+        then: "the catalogue manifests are found for the org and user"
+        1 * catalogueManifestProvider.findCatalogueManifestsForOrg(org, username) >> [getCatalogueManifestFileContentResult]
+
+        and: "manifest config is parsed from the catalogue manifest contents"
+        1 * catalogueManifestParser.parseManifestFileContentItem(catalogueManifestFileContents) >> catalogueManifestContentItemParseResult
+
+        and: "the catalogue entries are returned"
+        result.size() == 1
+        result.first().getCatalogueEntry() == catalogueEntry
+    }
+
+    def "findCataloguesForOrgAndUser ignores manifest files without content"() {
+        given: "user and org"
+        def username = aUsername
+        def org = anOrg
+
+        and: "a catalogue manifest file accessible by the org and user has no content found"
+        def manifestFileId = aCatalogueManifestId()
+        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createNotFoundResult(manifestFileId)
+
+        when: "the catalogue entries are searched for"
+        def result = catalogueEntryConfigurationResolver.findCataloguesForOrgAndUser(org, username)
+
+        then: "the catalogue manifests are found for the org and user"
+        1 * catalogueManifestProvider.findCatalogueManifestsForOrg(org, username) >> [getCatalogueManifestFileContentResult]
+
+        and: "no manifest config is parsed from the catalogue manifest contents"
+        0 * catalogueManifestParser.parseManifestFileContentItem(_)
+
+        and: "no catalogue entries are returned"
+        !result
+    }
+
+    def "findCataloguesForOrgAndUser returns an error catalogue config for a invalid manifest files"() {
+        given: "user and org"
+        def username = aUsername
+        def org = anOrg
+
+        and: "a catalogue manifest file accessible by the org and user"
+        def manifestFileId = aCatalogueManifestId()
+        def catalogueManifestFileContents = Mock(ContentItem)
+        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(manifestFileId, catalogueManifestFileContents)
+
+        and: "the manifest with parse error"
+        def parseError = "manifest parse error"
+        def catalogueManifestContentItemParseResult = Mock(CatalogueManifestContentItemParseResult)
+        catalogueManifestContentItemParseResult.getError() >> parseError
+
+        when: "the catalogue entries are searched for"
+        def result = catalogueEntryConfigurationResolver.findCataloguesForOrgAndUser(org, username)
+
+        then: "the catalogue manifests are found for the org and user"
+        1 * catalogueManifestProvider.findCatalogueManifestsForOrg(org, username) >> [getCatalogueManifestFileContentResult]
+
+        and: "manifest config is parsed from the catalogue manifest contents"
+        1 * catalogueManifestParser.parseManifestFileContentItem(catalogueManifestFileContents) >> catalogueManifestContentItemParseResult
+
+        and: "the error catalogue entry is returned"
+        result.size() == 1
+        result.first().getError().getMessage() == parseError
+    }
+
+    def "findCataloguesForOrgAndUser ignores manifest files without catalogue entries"() {
+        given: "user and org"
+        def username = aUsername
+        def org = anOrg
+
+        and: "a catalogue manifest file accessible by the org and user"
+        def manifestFileId = aCatalogueManifestId()
+        def catalogueManifestFileContents = Mock(ContentItem)
+        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(manifestFileId, catalogueManifestFileContents)
+
+        and: "the manifest has no catalogues "
+        def catalogueManifestConfig = new CatalogueManifest()
+        def catalogueManifestContentItemParseResult = Mock(CatalogueManifestContentItemParseResult)
+        catalogueManifestContentItemParseResult.getCatalogueManifest() >> catalogueManifestConfig
+
+        when: "the catalogue entries are searched for"
+        def result = catalogueEntryConfigurationResolver.findCataloguesForOrgAndUser(org, username)
+
+        then: "the catalogue manifests are found for the org and user"
+        1 * catalogueManifestProvider.findCatalogueManifestsForOrg(org, username) >> [getCatalogueManifestFileContentResult]
+
+        and: "manifest config is parsed from the catalogue manifest contents"
+        1 * catalogueManifestParser.parseManifestFileContentItem(catalogueManifestFileContents) >> catalogueManifestContentItemParseResult
+
+        and: "no catalogue entries are returned"
+        !result
     }
 }

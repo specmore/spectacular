@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import spectacular.backend.api.model.Catalogue;
+import spectacular.backend.cataloguemanifest.catalogueentry.CatalogueEntryConfigurationResolver;
 import spectacular.backend.cataloguemanifest.model.CatalogueManifest;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.common.CatalogueManifestId;
@@ -19,38 +20,20 @@ public class CatalogueMapper {
   private static final Logger logger = LoggerFactory.getLogger(CatalogueMapper.class);
 
   /**
-   * Maps catalogue entries in a Catalogue Manifest file to API Catalogue objects.
+   * Maps a resolved manifest catalogue entry to an API Catalogue model.
    *
-   * @param catalogueManifest the catalogue manifest with catalogue entries to be mapped
-   * @param manifestId the id of the manifest file
-   * @param manifestUrl the HTML URL location of the manifest file
-   * @return a list of API Catalogue objects found in the manifest file
+   * @param catalogueEntryResult a resolved catalogue entry
+   * @return a Catalogue API model
    */
-  public List<Catalogue> mapCatalogueManifestEntries(
-      CatalogueManifest catalogueManifest,
-      CatalogueManifestId manifestId,
-      URI manifestUrl) {
-    if (catalogueManifest.getCatalogues() == null) {
-      return Collections.emptyList();
+  public Catalogue mapCatalogue(CatalogueEntryConfigurationResolver.GetCatalogueEntryConfigurationResult catalogueEntryResult) {
+    if (catalogueEntryResult.hasError()) {
+      return createForParseError(catalogueEntryResult.getError().getMessage(), catalogueEntryResult.getCatalogueId());
     }
 
-    return catalogueManifest.getCatalogues().getAdditionalProperties().entrySet().stream()
-        .map(catalogueEntry -> this.mapCatalogueManifestEntry(catalogueEntry, manifestId, manifestUrl))
-        .collect(Collectors.toList());
-  }
-
-  private Catalogue mapCatalogueManifestEntry(
-      Map.Entry<String, spectacular.backend.cataloguemanifest.model.Catalogue> catalogueEntry,
-      CatalogueManifestId manifestId,
-      URI manifestUrl) {
-    return mapCatalogue(catalogueEntry.getValue(), manifestId, manifestUrl, catalogueEntry.getKey());
-  }
-
-  public Catalogue mapCatalogue(
-      spectacular.backend.cataloguemanifest.model.Catalogue catalogue,
-      CatalogueId catalogueId,
-      URI manifestUrl) {
-    return mapCatalogue(catalogue, catalogueId, manifestUrl, catalogueId.getCatalogueName());
+    return mapCatalogue(catalogueEntryResult.getCatalogueEntry(),
+        catalogueEntryResult.getCatalogueId(),
+        catalogueEntryResult.getManifestUri(),
+        catalogueEntryResult.getCatalogueId().getCatalogueName());
   }
 
   /**

@@ -1,20 +1,14 @@
 package spectacular.backend.catalogues;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import spectacular.backend.api.model.Catalogue;
 import spectacular.backend.api.model.GetInterfaceResult;
-import spectacular.backend.cataloguemanifest.CatalogueManifestProvider;
-import spectacular.backend.cataloguemanifest.GetCatalogueManifestFileContentResult;
 import spectacular.backend.cataloguemanifest.catalogueentry.CatalogueEntryConfigurationResolver;
 import spectacular.backend.cataloguemanifest.interfaceentry.CatalogueInterfaceEntryConfigurationResolver;
-import spectacular.backend.cataloguemanifest.parse.CatalogueManifestParser;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.interfaces.GetInterfaceFileContentsResult;
 import spectacular.backend.interfaces.InterfaceService;
@@ -23,8 +17,6 @@ import spectacular.backend.interfaces.InterfaceService;
 public class CatalogueService {
   private static final Logger logger = LoggerFactory.getLogger(CatalogueService.class);
 
-  private final CatalogueManifestParser catalogueManifestParser;
-  private final CatalogueManifestProvider catalogueManifestProvider;
   private final CatalogueEntryConfigurationResolver catalogueEntryConfigurationResolver;
   private final CatalogueInterfaceEntryConfigurationResolver catalogueInterfaceEntryConfigurationResolver;
   private final CatalogueMapper catalogueMapper;
@@ -33,21 +25,15 @@ public class CatalogueService {
   /**
    * A service component that encapsulates all the logic required to build Catalogue objects from the information stored in git repositories
    * accessible for a given request's installation context.
-   * @param catalogueManifestParser a helper service to parse catalogue manifest file content into concrete objects
-   * @param catalogueManifestProvider a data provider that retrieves catalogue manifest files from the data source
    * @param catalogueEntryConfigurationResolver a helper service for retrieving and parsing catalogue entries in manifest files
    * @param catalogueInterfaceEntryConfigurationResolver a helper service for retrieving and parsing interface entries in manifest files
    * @param catalogueMapper a helper service for mapping catalogue manifest objects to API model objects
    * @param interfaceService a service for retrieving more interface information for an interface configured in a catalogue manifest
    */
-  public CatalogueService(CatalogueManifestParser catalogueManifestParser,
-                          CatalogueManifestProvider catalogueManifestProvider,
-                          CatalogueEntryConfigurationResolver catalogueEntryConfigurationResolver,
+  public CatalogueService(CatalogueEntryConfigurationResolver catalogueEntryConfigurationResolver,
                           CatalogueInterfaceEntryConfigurationResolver catalogueInterfaceEntryConfigurationResolver,
                           CatalogueMapper catalogueMapper,
                           InterfaceService interfaceService) {
-    this.catalogueManifestParser = catalogueManifestParser;
-    this.catalogueManifestProvider = catalogueManifestProvider;
     this.catalogueEntryConfigurationResolver = catalogueEntryConfigurationResolver;
     this.catalogueInterfaceEntryConfigurationResolver = catalogueInterfaceEntryConfigurationResolver;
     this.catalogueMapper = catalogueMapper;
@@ -62,11 +48,10 @@ public class CatalogueService {
    * @return a list of all the accessible catalogues
    */
   public List<spectacular.backend.api.model.Catalogue> findCataloguesForOrgAndUser(String orgName, String username) {
-    var manifestFiles = this.catalogueManifestProvider.findCatalogueManifestsForOrg(orgName, username);
+    var catalogueEntryResults = catalogueEntryConfigurationResolver.findCataloguesForOrgAndUser(orgName, username);
 
-    return manifestFiles.stream()
-        .map(this::getCataloguesFromManifest)
-        .flatMap(Collection::stream)
+    return catalogueEntryResults.stream()
+        .map(catalogueMapper::mapCatalogue)
         .collect(Collectors.toList());
   }
 
@@ -84,9 +69,8 @@ public class CatalogueService {
       return GetCatalogueForUserResult.createErrorResult(getCatalogueEntryConfigurationResult.getError());
     }
 
+    var catalogueDetails = catalogueMapper.mapCatalogue(getCatalogueEntryConfigurationResult);
     var catalogueEntry = getCatalogueEntryConfigurationResult.getCatalogueEntry();
-    var manifestUrl = getCatalogueEntryConfigurationResult.getManifestUri();
-    var catalogueDetails = catalogueMapper.mapCatalogue(catalogueEntry, catalogueId, manifestUrl);
 
     if (catalogueEntry.getInterfaces() != null) {
       var resolvedInterfaceEntries = catalogueEntry.getInterfaces().getAdditionalProperties().keySet().stream()
@@ -132,9 +116,7 @@ public class CatalogueService {
 
     var interfaceDetailsResult = this.interfaceService.getInterfaceDetails(getInterfaceEntryConfigurationResult);
 
-    var catalogueEntry = getCatalogueEntryConfigurationResult.getCatalogueEntry();
-    var manifestUrl = getCatalogueEntryConfigurationResult.getManifestUri();
-    var catalogueDetails = catalogueMapper.mapCatalogue(catalogueEntry, catalogueId, manifestUrl);
+    var catalogueDetails = catalogueMapper.mapCatalogue(getCatalogueEntryConfigurationResult);
     var interfaceDetails = interfaceDetailsResult.catalogue(catalogueDetails);
 
     return GetInterfaceDetailsResult.createFoundResult(interfaceDetails);
@@ -167,24 +149,5 @@ public class CatalogueService {
     var catalogueInterfaceEntry = getInterfaceEntryConfigurationResult.getInterfaceEntry();
 
     return this.interfaceService.getInterfaceFileContents(catalogueId, catalogueInterfaceEntry, ref);
-  }
-
-  private List<Catalogue> getCataloguesFromManifest(GetCatalogueManifestFileContentResult getCatalogueManifestFileContentResult) {
-    var manifestId = getCatalogueManifestFileContentResult.getCatalogueManifestId();
-
-    if (getCatalogueManifestFileContentResult.isFileNotFoundResult()) {
-      logger.warn("A manifest file was found during a search but the actual file contents could not subsequently be found for: " +
-          manifestId.getFullPath());
-      return Collections.emptyList();
-    }
-
-    var fileContentItem = getCatalogueManifestFileContentResult.getCatalogueManifestContent();
-    var parseResult = catalogueManifestParser.parseManifestFileContentItem(fileContentItem);
-
-    if (parseResult.getError() != null) {
-      return Collections.singletonList(catalogueMapper.createForParseError(parseResult.getError(), manifestId));
-    }
-
-    return catalogueMapper.mapCatalogueManifestEntries(parseResult.getCatalogueManifest(), manifestId, fileContentItem.getHtml_url());
   }
 }

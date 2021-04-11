@@ -7,8 +7,6 @@ import spectacular.backend.api.model.SpecEvolutionSummary
 import spectacular.backend.cataloguemanifest.catalogueentry.CatalogueEntryConfigurationResolver
 import spectacular.backend.cataloguemanifest.interfaceentry.CatalogueInterfaceEntryConfigurationResolver
 import spectacular.backend.cataloguemanifest.parse.CatalogueManifestContentItemParseResult
-import spectacular.backend.cataloguemanifest.parse.CatalogueManifestParser
-import spectacular.backend.cataloguemanifest.CatalogueManifestProvider
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError
 import spectacular.backend.cataloguemanifest.GetCatalogueManifestFileContentResult
 import spectacular.backend.cataloguemanifest.model.CatalogueManifest
@@ -25,13 +23,11 @@ import spock.lang.Specification
 
 class CatalogueServiceTest extends Specification {
     def catalogueManifestYmlFilename = "spectacular-config.yml"
-    def catalogueManifestParser = Mock(CatalogueManifestParser)
-    def catalogueManifestProvider = Mock(CatalogueManifestProvider)
     def catalogueEntryConfigurationResolver = Mock(CatalogueEntryConfigurationResolver)
     def catalogueInterfaceEntryConfigurationResolver = Mock(CatalogueInterfaceEntryConfigurationResolver)
     def catalogueMapper = Mock(CatalogueMapper)
     def interfaceService = Mock(InterfaceService)
-    def catalogueService = new CatalogueService(catalogueManifestParser, catalogueManifestProvider, catalogueEntryConfigurationResolver, catalogueInterfaceEntryConfigurationResolver, catalogueMapper, interfaceService)
+    def catalogueService = new CatalogueService(catalogueEntryConfigurationResolver, catalogueInterfaceEntryConfigurationResolver, catalogueMapper, interfaceService)
 
     def aUsername = "test-user"
     def anOrg = "test-org"
@@ -112,7 +108,7 @@ class CatalogueServiceTest extends Specification {
         1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName) >> getInterfaceEntryConfigurationResult
 
         and: "the manifest catalogue entry object is mapped to an API catalogue model"
-        1 * catalogueMapper.mapCatalogue(catalogue, catalogueId, _) >> catalogueDetails
+        1 * catalogueMapper.mapCatalogue(getCatalogueEntryConfigurationResult) >> catalogueDetails
 
         and: "the interface details are retrieved for each interface entry in the catalogue"
         1 * interfaceService.getInterfaceDetails(getInterfaceEntryConfigurationResult) >> interfaceDetails
@@ -148,7 +144,7 @@ class CatalogueServiceTest extends Specification {
         1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName) >> getInterfaceEntryConfigurationResult
 
         and: "the manifest catalogue entry object is mapped to an API catalogue model"
-        1 * catalogueMapper.mapCatalogue(catalogue, catalogueId, _) >> catalogueDetails
+        1 * catalogueMapper.mapCatalogue(getCatalogueEntryConfigurationResult) >> catalogueDetails
 
         and: "no interface details are retrieved for the null interface"
         0 * interfaceService.getInterfaceDetails(_)
@@ -213,7 +209,7 @@ class CatalogueServiceTest extends Specification {
         1 * interfaceService.getInterfaceDetails(getInterfaceEntryConfigurationResult) >> interfaceDetails
 
         and: "the manifest catalogue entry object is mapped to an API catalogue model"
-        1 * catalogueMapper.mapCatalogue(catalogue, catalogueId, _) >> catalogueDetails
+        1 * catalogueMapper.mapCatalogue(getCatalogueEntryConfigurationResult) >> catalogueDetails
 
         and: "the catalogue API object is added to the interface details"
         1 * interfaceDetails.catalogue(catalogueDetails) >> interfaceDetails
@@ -313,7 +309,6 @@ class CatalogueServiceTest extends Specification {
         def ref = 'branch1'
 
         and: "a catalogue config entry with an error"
-        def configItemError = Mock(ConfigurationItemError)
         def getCatalogueEntryConfigurationResult = aCatalogueEntryResultWithError()
 
         when: "the get interface file contents for ref and user is called"
@@ -365,57 +360,25 @@ class CatalogueServiceTest extends Specification {
         def username = aUsername
         def org = anOrg
 
-        and: "a catalogue manifest file with contents"
-        def catalogueManifestId = aCatalogueManifestId()
-        def fileContentItem = Mock(ContentItem)
-        def getCatalogueManifestFileContentsResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueManifestId, fileContentItem)
-
-        and: "a catalogue manifest object parsed from the manifest file contents"
-        def catalogueManifest = Mock(CatalogueManifest)
-        def catalogueManifestParseResult = CatalogueManifestContentItemParseResult.createSuccessfulParseResult(catalogueManifest, fileContentItem)
+        and: "a catalogue entry found in a manifest file"
+        def catalogueId = aCatalogueId()
+        def catalogue = Mock(spectacular.backend.cataloguemanifest.model.Catalogue)
+        def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
 
         and: "mapped catalogue API models for each catalogue entry in the manifest object"
-        def mappedCatalogues = [Mock(Catalogue)]
+        def mappedCatalogues = Mock(Catalogue)
 
         when: "the find catalogues for user and org is called"
         def result = catalogueService.findCataloguesForOrgAndUser(org, username)
 
-        then: "the catalogue manifest provider is searched"
-        1 * catalogueManifestProvider.findCatalogueManifestsForOrg(org, username) >> [getCatalogueManifestFileContentsResult]
-
-        and: "the manifest file contents are parsed"
-        1 * catalogueManifestParser.parseManifestFileContentItem(fileContentItem) >> catalogueManifestParseResult
+        then: "catalogue entries configuration are found and resolved"
+        1 * catalogueEntryConfigurationResolver.findCataloguesForOrgAndUser(org, username) >> [getCatalogueEntryConfigurationResult]
 
         and: "the manifest catalogue entry object is mapped to an API catalogue model"
-        1 * catalogueMapper.mapCatalogueManifestEntries(catalogueManifest, catalogueManifestId, _) >> mappedCatalogues
+        1 * catalogueMapper.mapCatalogue(getCatalogueEntryConfigurationResult) >> mappedCatalogues
 
         and: "the catalogues returned contain the mapped entries"
         result.size() == 1
-        result.first() == mappedCatalogues.first()
-    }
-
-    def "find catalogues ignores catalogue manifest files where no contents can be not found"() {
-        given: "user and org"
-        def username = aUsername
-        def org = anOrg
-
-        and: "a catalogue manifest file match is found but without contents"
-        def catalogueManifestId = aCatalogueManifestId()
-        def getCatalogueManifestFileContentsResult = GetCatalogueManifestFileContentResult.createNotFoundResult(catalogueManifestId)
-
-        when: "the find catalogues for user and org is called"
-        def result = catalogueService.findCataloguesForOrgAndUser(org, username)
-
-        then: "the catalogue manifest provider is searched"
-        1 * catalogueManifestProvider.findCatalogueManifestsForOrg(org, username) >> [getCatalogueManifestFileContentsResult]
-
-        and: "no manifest file contents are parsed"
-        0 * catalogueManifestParser.parseManifestFileContentItem(_)
-
-        and: "no manifest catalogue entry object is mapped to an API catalogue model"
-        0 * catalogueMapper.mapCatalogueManifestEntries(_, _, _)
-
-        and: "no catalogues are returned"
-        !result
+        result.first() == mappedCatalogues
     }
 }
