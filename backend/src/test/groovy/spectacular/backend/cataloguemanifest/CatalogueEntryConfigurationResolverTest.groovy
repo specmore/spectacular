@@ -34,7 +34,7 @@ class CatalogueEntryConfigurationResolverTest extends Specification {
         return new CatalogueId(catalogueRepo, catalogueManifestFile, catalogueName)
     }
 
-    def aCatalogueManifest(String interfaceEntryName, Interface interfaceEntry) {
+    def aCatalogueEntry(String interfaceEntryName, Interface interfaceEntry) {
         def interfaces = new Interfaces().withAdditionalProperty(interfaceEntryName, interfaceEntry)
         return new Catalogue().withInterfaces(interfaces)
     }
@@ -50,7 +50,7 @@ class CatalogueEntryConfigurationResolverTest extends Specification {
         and: "a catalogue config entry in the manifest file with an interface entry in it"
         def interfaceEntry = Mock(Interface)
         def interfaceEntryName = "testInterface1"
-        def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
+        def catalogue = aCatalogueEntry(interfaceEntryName, interfaceEntry)
         def findAndParseCatalogueResult = FindAndParseCatalogueResult.createCatalogueEntryParsedResult(catalogueManifestFileContents, catalogue)
 
         when: "the catalogue configuration is retrieved"

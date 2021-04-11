@@ -30,7 +30,7 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
         return new CatalogueId(catalogueRepo, catalogueManifestFile, catalogueName)
     }
 
-    def aCatalogueManifest(String interfaceEntryName, Interface interfaceEntry) {
+    def aCatalogueEntry(String interfaceEntryName, Interface interfaceEntry) {
         def interfaces = new Interfaces().withAdditionalProperty(interfaceEntryName, interfaceEntry)
         return new Catalogue().withInterfaces(interfaces)
     }
@@ -49,7 +49,7 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
 
         and: "a catalogue config entry in the manifest file with the interface entry in it"
         def interfaceEntry = new Interface()
-        def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
+        def catalogue = aCatalogueEntry(interfaceEntryName, interfaceEntry)
         def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
 
         and: "a spec file location on the interface entry"
@@ -93,7 +93,7 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
 
         and: "a catalogue config entry in the manifest file with other interface entries in it"
         def otherInterfaceEntry = new Interface()
-        def catalogue = aCatalogueManifest("otherInterfaceName", otherInterfaceEntry)
+        def catalogue = aCatalogueEntry("otherInterfaceName", otherInterfaceEntry)
         def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
 
         when: "the interface configuration is retrieved"
@@ -112,7 +112,7 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
         def interfaceEntryName = "testInterface1"
 
         and: "a catalogue config entry in the manifest file with a null interface entry in it"
-        def catalogue = aCatalogueManifest(interfaceEntryName, null)
+        def catalogue = aCatalogueEntry(interfaceEntryName, null)
         def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
 
         when: "the interface configuration is retrieved"
@@ -132,7 +132,7 @@ class CatalogueInterfaceEntryConfigurationResolverTest extends Specification {
 
         and: "a catalogue config entry in the manifest file with the interface entry in it"
         def interfaceEntry = new Interface()
-        def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
+        def catalogue = aCatalogueEntry(interfaceEntryName, interfaceEntry)
         def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
 
         when: "the interface configuration is retrieved"

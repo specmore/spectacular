@@ -35,7 +35,6 @@ class CatalogueServiceTest extends Specification {
 
     def aUsername = "test-user"
     def anOrg = "test-org"
-    def aManifestUri = new URI("test-uri")
 
     def aCatalogueManifestId() {
         def catalogueRepo = new RepositoryId("test-owner","test-repo987")
@@ -50,7 +49,7 @@ class CatalogueServiceTest extends Specification {
         return new CatalogueId(catalogueRepo, catalogueManifestFile, catalogueName)
     }
 
-    def aCatalogueManifest(String interfaceEntryName, Interface interfaceEntry) {
+    def aCatalogueEntry(String interfaceEntryName, Interface interfaceEntry) {
         def interfaces = new Interfaces().withAdditionalProperty(interfaceEntryName, interfaceEntry)
         return new spectacular.backend.cataloguemanifest.model.Catalogue().withInterfaces(interfaces)
     }
@@ -91,7 +90,7 @@ class CatalogueServiceTest extends Specification {
         and: "a catalogue config entry in the manifest file with an interface entry in it"
         def interfaceEntry = Mock(Interface)
         def interfaceEntryName = "testInterface1"
-        def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
+        def catalogue = aCatalogueEntry(interfaceEntryName, interfaceEntry)
         def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
         def getInterfaceEntryConfigurationResult = aSuccessfulInterfaceEntryResult(interfaceEntry)
 
@@ -132,7 +131,7 @@ class CatalogueServiceTest extends Specification {
         and: "a catalogue config entry in the manifest file with an interface entry in it that has an error"
         def interfaceEntry = Mock(Interface)
         def interfaceEntryName = "testInterface1"
-        def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
+        def catalogue = aCatalogueEntry(interfaceEntryName, interfaceEntry)
         def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
         def getInterfaceEntryConfigurationResult = anInterfaceEntryResultWithError()
 
@@ -189,7 +188,7 @@ class CatalogueServiceTest extends Specification {
 
         and: "a catalogue config entry in the manifest file with the interface entry in it"
         def interfaceEntry = Mock(Interface)
-        def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
+        def catalogue = aCatalogueEntry(interfaceEntryName, interfaceEntry)
         def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
         def getInterfaceEntryConfigurationResult = aSuccessfulInterfaceEntryResult(interfaceEntry)
 
@@ -255,7 +254,7 @@ class CatalogueServiceTest extends Specification {
 
         and: "a catalogue config entry in the manifest file with an interface entry in it that has an error"
         def interfaceEntry = Mock(Interface)
-        def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
+        def catalogue = aCatalogueEntry(interfaceEntryName, interfaceEntry)
         def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
         def getInterfaceEntryConfigurationResult = anInterfaceEntryResultWithError()
 
@@ -284,7 +283,7 @@ class CatalogueServiceTest extends Specification {
 
         and: "a catalogue config entry in the manifest file with the interface entry in it"
         def interfaceEntry = Mock(Interface)
-        def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
+        def catalogue = aCatalogueEntry(interfaceEntryName, interfaceEntry)
         def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
         def getInterfaceEntryConfigurationResult = aSuccessfulInterfaceEntryResult(interfaceEntry)
 
@@ -341,7 +340,7 @@ class CatalogueServiceTest extends Specification {
 
         and: "a catalogue config entry in the manifest file with an interface entry in it that has an error"
         def interfaceEntry = Mock(Interface)
-        def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
+        def catalogue = aCatalogueEntry(interfaceEntryName, interfaceEntry)
         def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
         def getInterfaceEntryConfigurationResult = anInterfaceEntryResultWithError()
 
