@@ -9,8 +9,10 @@ import org.springframework.web.client.HttpClientErrorException;
 import spectacular.backend.api.model.GetInterfaceResult;
 import spectacular.backend.cataloguemanifest.SpecFileRepositoryResolver;
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError;
+import spectacular.backend.cataloguemanifest.interfaceentry.CatalogueInterfaceEntryConfigurationResolver;
 import spectacular.backend.cataloguemanifest.model.Interface;
 import spectacular.backend.common.CatalogueId;
+import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.specevolution.SpecEvolutionService;
 import spectacular.backend.specevolution.SpecEvolutionSummaryMapper;
@@ -81,15 +83,15 @@ public class InterfaceService {
   /**
    * Gets the details of an interface.
    *
-   * @param catalogueId the catalogue the interface belongs to
-   * @param interfaceConfig the catalogue manifest interface entry to get the interface details for
-   * @param interfaceName the name of the manifest interface entry
+   * @param interfaceEntryConfigurationResult a successful result containing a resolved interface entry from a catalogue manifest file.
    */
-  public GetInterfaceResult getInterfaceDetails(CatalogueId catalogueId, Interface interfaceConfig, String interfaceName) {
-    var specEvolutionConfig = interfaceConfig.getSpecEvolutionConfig();
+  public GetInterfaceResult getInterfaceDetails(
+      CatalogueInterfaceEntryConfigurationResolver.GetInterfaceEntryConfigurationResult interfaceEntryConfigurationResult) {
+    var interfaceName = interfaceEntryConfigurationResult.getInterfaceName();
+    var specEvolutionConfig = interfaceEntryConfigurationResult.getInterfaceEntry().getSpecEvolutionConfig();
 
-    var specFileRepo = SpecFileRepositoryResolver.resolveSpecFileRepository(interfaceConfig, catalogueId);
-    var specFilePath = interfaceConfig.getSpecFile().getFilePath();
+    var specFileRepo = RepositoryId.createForNameWithOwner(interfaceEntryConfigurationResult.getInterfaceEntry().getSpecFile().getRepo());
+    var specFilePath = interfaceEntryConfigurationResult.getInterfaceEntry().getSpecFile().getFilePath();
 
     var specEvolution = specEvolutionService.getSpecEvolution(interfaceName, specEvolutionConfig, specFileRepo, specFilePath);
     var specEvolutionSummary = specEvolutionSummaryMapper.mapSpecEvolutionToSummary(specEvolution);

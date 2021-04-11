@@ -51,6 +51,9 @@ public class CatalogueEntryConfigurationResolver {
               ", has parse error: " + parseResult.getError()));
     }
 
-    return GetCatalogueEntryConfigurationResult.createSuccessfulResult(parseResult.getCatalogue(), catalogueManifestContent.getHtml_url());
+    return GetCatalogueEntryConfigurationResult.createSuccessfulResult(
+        parseResult.getCatalogue(),
+        catalogueManifestContent.getHtml_url(),
+        catalogueId);
   }
 }

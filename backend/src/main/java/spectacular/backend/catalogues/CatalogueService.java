@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import spectacular.backend.api.model.Catalogue;
+import spectacular.backend.api.model.GetInterfaceResult;
 import spectacular.backend.cataloguemanifest.CatalogueManifestProvider;
 import spectacular.backend.cataloguemanifest.GetCatalogueManifestFileContentResult;
 import spectacular.backend.cataloguemanifest.catalogueentry.CatalogueEntryConfigurationResolver;
@@ -88,14 +89,15 @@ public class CatalogueService {
     var catalogueDetails = catalogueMapper.mapCatalogue(catalogueEntry, catalogueId, manifestUrl);
 
     if (catalogueEntry.getInterfaces() != null) {
-      var specEvolutionSummaries = catalogueEntry.getInterfaces().getAdditionalProperties().entrySet().stream()
-          .filter(interfaceEntry -> interfaceEntry.getValue() != null)
-          .map(interfaceEntry -> {
-            var interfaceDetails = this.interfaceService.getInterfaceDetails(catalogueId,
-                interfaceEntry.getValue(),
-                interfaceEntry.getKey());
-            return interfaceDetails.getSpecEvolutionSummary();
-          })
+      var resolvedInterfaceEntries = catalogueEntry.getInterfaces().getAdditionalProperties().keySet().stream()
+          .map(interfaceEntryName -> catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(
+              getCatalogueEntryConfigurationResult, interfaceEntryName))
+          .filter(getInterfaceEntryConfigurationResult -> !getInterfaceEntryConfigurationResult.hasError())
+          .collect(Collectors.toList());;
+
+      var specEvolutionSummaries = resolvedInterfaceEntries.stream()
+          .map(this.interfaceService::getInterfaceDetails)
+          .map(GetInterfaceResult::getSpecEvolutionSummary)
           .collect(Collectors.toList());
 
       catalogueDetails = catalogueDetails.specEvolutionSummaries(specEvolutionSummaries);
@@ -115,18 +117,23 @@ public class CatalogueService {
    *     3. The interface details.
    */
   public GetInterfaceDetailsResult getInterfaceDetails(CatalogueId catalogueId, String interfaceName, String username) {
+    var getCatalogueEntryConfigurationResult = catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, username);
+
+    if (getCatalogueEntryConfigurationResult.hasError()) {
+      return GetInterfaceDetailsResult.createErrorResult(getCatalogueEntryConfigurationResult.getError());
+    }
+
     var getInterfaceEntryConfigurationResult = catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(
-        catalogueId, interfaceName, username);
+        getCatalogueEntryConfigurationResult, interfaceName);
 
     if (getInterfaceEntryConfigurationResult.hasError()) {
       return GetInterfaceDetailsResult.createErrorResult(getInterfaceEntryConfigurationResult.getError());
     }
 
-    var catalogueInterfaceEntry = getInterfaceEntryConfigurationResult.getInterfaceEntry();
-    var interfaceDetailsResult = this.interfaceService.getInterfaceDetails(catalogueId, catalogueInterfaceEntry, interfaceName);
+    var interfaceDetailsResult = this.interfaceService.getInterfaceDetails(getInterfaceEntryConfigurationResult);
 
-    var catalogueEntry = getInterfaceEntryConfigurationResult.getCatalogueEntry();
-    var manifestUrl = getInterfaceEntryConfigurationResult.getManifestUri();
+    var catalogueEntry = getCatalogueEntryConfigurationResult.getCatalogueEntry();
+    var manifestUrl = getCatalogueEntryConfigurationResult.getManifestUri();
     var catalogueDetails = catalogueMapper.mapCatalogue(catalogueEntry, catalogueId, manifestUrl);
     var interfaceDetails = interfaceDetailsResult.catalogue(catalogueDetails);
 
@@ -144,8 +151,14 @@ public class CatalogueService {
    */
   public GetInterfaceFileContentsResult getInterfaceFileContents(CatalogueId catalogueId, String interfaceName, String ref, String username)
       throws UnsupportedEncodingException {
+    var getCatalogueEntryConfigurationResult = catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, username);
+
+    if (getCatalogueEntryConfigurationResult.hasError()) {
+      return GetInterfaceFileContentsResult.createErrorResult(getCatalogueEntryConfigurationResult.getError());
+    }
+
     var getInterfaceEntryConfigurationResult = catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(
-        catalogueId, interfaceName, username);
+        getCatalogueEntryConfigurationResult, interfaceName);
 
     if (getInterfaceEntryConfigurationResult.hasError()) {
       return GetInterfaceFileContentsResult.createErrorResult(getInterfaceEntryConfigurationResult.getError());

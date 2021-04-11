@@ -12,7 +12,6 @@ import spectacular.backend.cataloguemanifest.CatalogueManifestProvider
 import spectacular.backend.cataloguemanifest.catalogueentry.GetCatalogueEntryConfigurationResult
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError
 import spectacular.backend.cataloguemanifest.GetCatalogueManifestFileContentResult
-import spectacular.backend.cataloguemanifest.interfaceentry.GetInterfaceEntryConfigurationResult
 import spectacular.backend.cataloguemanifest.model.CatalogueManifest
 import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.cataloguemanifest.model.Interfaces
@@ -57,6 +56,20 @@ class CatalogueServiceTest extends Specification {
         return new spectacular.backend.cataloguemanifest.model.Catalogue().withInterfaces(interfaces)
     }
 
+    def aSuccessfulInterfaceEntryResult(Interface interfaceEntry) {
+        def getInterfaceEntryConfigurationResult = Mock(CatalogueInterfaceEntryConfigurationResolver.GetInterfaceEntryConfigurationResult)
+        getInterfaceEntryConfigurationResult.hasError() >> false
+        getInterfaceEntryConfigurationResult.getInterfaceEntry() >> interfaceEntry
+        return getInterfaceEntryConfigurationResult
+    }
+
+    def anInterfaceEntryResultWithError() {
+        def getInterfaceEntryConfigurationResult = Mock(CatalogueInterfaceEntryConfigurationResolver.GetInterfaceEntryConfigurationResult)
+        getInterfaceEntryConfigurationResult.hasError() >> true
+        getInterfaceEntryConfigurationResult.getError() >> Mock(ConfigurationItemError)
+        return getInterfaceEntryConfigurationResult
+    }
+
     def "get catalogue for repository and valid user returns evolution summaries for each interface in manifest catalogue entry"() {
         given: "a location for a catalogue config"
         def catalogueId = aCatalogueId()
@@ -65,7 +78,8 @@ class CatalogueServiceTest extends Specification {
         def interfaceEntry = Mock(Interface)
         def interfaceEntryName = "testInterface1"
         def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
-        def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createSuccessfulResult(catalogue, aManifestUri)
+        def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createSuccessfulResult(catalogue, aManifestUri, catalogueId)
+        def getInterfaceEntryConfigurationResult = aSuccessfulInterfaceEntryResult(interfaceEntry)
 
         and: "interface details for the interface entry with a spec evolution summary"
         def interfaceDetails = Mock(GetInterfaceResult)
@@ -81,11 +95,14 @@ class CatalogueServiceTest extends Specification {
         then: "the catalogue entry configuration is resolved"
         1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
 
+        and: "the interface entry configuration is resolved"
+        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName) >> getInterfaceEntryConfigurationResult
+
         and: "the manifest catalogue entry object is mapped to an API catalogue model"
         1 * catalogueMapper.mapCatalogue(catalogue, catalogueId, _) >> catalogueDetails
 
         and: "the interface details are retrieved for each interface entry in the catalogue"
-        1 * interfaceService.getInterfaceDetails(catalogueId, interfaceEntry, interfaceEntryName) >> interfaceDetails
+        1 * interfaceService.getInterfaceDetails(getInterfaceEntryConfigurationResult) >> interfaceDetails
 
         and: "the spec evolutions are added to the catalogue API model object"
         1 * catalogueDetails.specEvolutionSummaries([interfaceSpecEvolutionSummary]) >> catalogueDetails
@@ -94,14 +111,16 @@ class CatalogueServiceTest extends Specification {
         result.getCatalogueDetails() == catalogueDetails
     }
 
-    def "get catalogue ignores evolution summaries for null interface entries in catalogue manifest"() {
+    def "get catalogue ignores interface entries in catalogue manifest with errors"() {
         given: "a location for a catalogue config"
         def catalogueId = aCatalogueId()
 
-        and: "a catalogue config entry in the manifest file with a null interface entry in it"
+        and: "a catalogue config entry in the manifest file with an interface entry in it that has an error"
+        def interfaceEntry = Mock(Interface)
         def interfaceEntryName = "testInterface1"
-        def catalogue = aCatalogueManifest(interfaceEntryName, null)
-        def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createSuccessfulResult(catalogue, aManifestUri)
+        def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
+        def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createSuccessfulResult(catalogue, aManifestUri, catalogueId)
+        def getInterfaceEntryConfigurationResult = anInterfaceEntryResultWithError()
 
         and: "a catalogue API model representation of the catalogue manifest object without interface details"
         def catalogueDetails = Mock(Catalogue)
@@ -112,11 +131,14 @@ class CatalogueServiceTest extends Specification {
         then: "the catalogue entry configuration is resolved"
         1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
 
+        and: "the interface entry configuration is resolved"
+        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName) >> getInterfaceEntryConfigurationResult
+
         and: "the manifest catalogue entry object is mapped to an API catalogue model"
         1 * catalogueMapper.mapCatalogue(catalogue, catalogueId, _) >> catalogueDetails
 
         and: "no interface details are retrieved for the null interface"
-        0 * interfaceService.getInterfaceDetails(catalogueId, _, interfaceEntryName)
+        0 * interfaceService.getInterfaceDetails(_)
 
         and: "the an empty list of spec evolutions are added to the catalogue API model object"
         1 * catalogueDetails.specEvolutionSummaries([]) >> catalogueDetails
@@ -140,7 +162,7 @@ class CatalogueServiceTest extends Specification {
         1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
 
         and: "no interface details are retrieved"
-        0 * interfaceService.getInterfaceDetails(_, _, _)
+        0 * interfaceService.getInterfaceDetails(_)
 
         and: "a error result is returned with no catalogue details"
         result.getError()
@@ -155,7 +177,8 @@ class CatalogueServiceTest extends Specification {
         and: "a catalogue config entry in the manifest file with the interface entry in it"
         def interfaceEntry = Mock(Interface)
         def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
-        def getInterfaceEntryConfigurationResult = GetInterfaceEntryConfigurationResult.createSuccessfulResult(catalogue, interfaceEntry, aManifestUri)
+        def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createSuccessfulResult(catalogue, aManifestUri, catalogueId)
+        def getInterfaceEntryConfigurationResult = aSuccessfulInterfaceEntryResult(interfaceEntry)
 
         and: "interface details for the interface entry with a spec evolution summary"
         def interfaceDetails = Mock(GetInterfaceResult)
@@ -168,11 +191,14 @@ class CatalogueServiceTest extends Specification {
         when: "the get interface details for user is called"
         def result = catalogueService.getInterfaceDetails(catalogueId, interfaceEntryName, aUsername)
 
-        then: "the interface entry configuration is resolved"
-        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(catalogueId, interfaceEntryName, aUsername) >> getInterfaceEntryConfigurationResult
+        then: "the catalogue entry configuration is resolved"
+        1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
+
+        and: "the interface entry configuration is resolved"
+        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName) >> getInterfaceEntryConfigurationResult
 
         and: "the interface details are retrieved for the interface entry in the catalogue"
-        1 * interfaceService.getInterfaceDetails(catalogueId, interfaceEntry, interfaceEntryName) >> interfaceDetails
+        1 * interfaceService.getInterfaceDetails(getInterfaceEntryConfigurationResult) >> interfaceDetails
 
         and: "the manifest catalogue entry object is mapped to an API catalogue model"
         1 * catalogueMapper.mapCatalogue(catalogue, catalogueId, _) >> catalogueDetails
@@ -184,23 +210,54 @@ class CatalogueServiceTest extends Specification {
         result.getInterfaceResult == interfaceDetails
     }
 
+    def "get interface details returns error result for catalogue entry config that resolves with error"() {
+        given: "a catalogue id and interface entry name"
+        def catalogueId = aCatalogueId()
+        def interfaceEntryName = "testInterface1"
+
+        and: "a catalogue config entry with an error"
+        def configItemError = Mock(ConfigurationItemError)
+        def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createErrorResult(configItemError)
+
+        when: "the get interface details for user is called"
+        def result = catalogueService.getInterfaceDetails(catalogueId, interfaceEntryName, aUsername)
+
+        then: "the catalogue entry configuration is resolved"
+        1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
+
+        and: "no interface entry configuration is resolved"
+        0 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName)
+
+        and: "no interface details are retrieved"
+        0 * interfaceService.getInterfaceDetails(_)
+
+        and: "a error result is returned with no interface details"
+        result.getError()
+        !result.getGetInterfaceResult()
+    }
+
     def "get interface details returns error result for interface entry config that resolves with error"() {
         given: "a catalogue id and interface entry name"
         def catalogueId = aCatalogueId()
         def interfaceEntryName = "testInterface1"
 
-        and: "a interface entry config with an error"
-        def configItemError = Mock(ConfigurationItemError)
-        def getInterfaceEntryConfigurationResult = GetInterfaceEntryConfigurationResult.createErrorResult(configItemError)
+        and: "a catalogue config entry in the manifest file with an interface entry in it that has an error"
+        def interfaceEntry = Mock(Interface)
+        def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
+        def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createSuccessfulResult(catalogue, aManifestUri, catalogueId)
+        def getInterfaceEntryConfigurationResult = anInterfaceEntryResultWithError()
 
         when: "the get interface details for user is called"
         def result = catalogueService.getInterfaceDetails(catalogueId, interfaceEntryName, aUsername)
 
-        then: "the interface entry configuration is resolved"
-        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(catalogueId, interfaceEntryName, aUsername) >> getInterfaceEntryConfigurationResult
+        then: "the catalogue entry configuration is resolved"
+        1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
+
+        and: "the interface entry configuration is resolved"
+        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName) >> getInterfaceEntryConfigurationResult
 
         and: "no interface details are retrieved"
-        0 * interfaceService.getInterfaceDetails(_, _, _)
+        0 * interfaceService.getInterfaceDetails(_)
 
         and: "a error result is returned with no interface details"
         result.getError()
@@ -216,7 +273,8 @@ class CatalogueServiceTest extends Specification {
         and: "a catalogue config entry in the manifest file with the interface entry in it"
         def interfaceEntry = Mock(Interface)
         def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
-        def getInterfaceEntryConfigurationResult = GetInterfaceEntryConfigurationResult.createSuccessfulResult(catalogue, interfaceEntry, aManifestUri)
+        def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createSuccessfulResult(catalogue, aManifestUri, catalogueId)
+        def getInterfaceEntryConfigurationResult = aSuccessfulInterfaceEntryResult(interfaceEntry)
 
         and: "a file contents result for the interface entry"
         def getInterfaceFileContentsResult = Mock(GetInterfaceFileContentsResult)
@@ -224,8 +282,11 @@ class CatalogueServiceTest extends Specification {
         when: "the get interface file contents for ref and user is called"
         def result = catalogueService.getInterfaceFileContents(catalogueId, interfaceEntryName, ref, aUsername)
 
-        then: "the interface entry configuration is resolved"
-        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(catalogueId, interfaceEntryName, aUsername) >> getInterfaceEntryConfigurationResult
+        then: "the catalogue entry configuration is resolved"
+        1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
+
+        and: "the interface entry configuration is resolved"
+        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName) >> getInterfaceEntryConfigurationResult
 
         and: "the interface file contents are retrieved for the interface entry in the catalogue"
         1 * interfaceService.getInterfaceFileContents(catalogueId, interfaceEntry, ref) >> getInterfaceFileContentsResult
@@ -234,21 +295,52 @@ class CatalogueServiceTest extends Specification {
         result == getInterfaceFileContentsResult
     }
 
+    def "get interface file contents returns error result for catalogue entry config that resolves with error"() {
+        given: "a catalogue id, interface entry name and ref"
+        def catalogueId = aCatalogueId()
+        def interfaceEntryName = "testInterface1"
+        def ref = 'branch1'
+
+        and: "a catalogue config entry with an error"
+        def configItemError = Mock(ConfigurationItemError)
+        def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createErrorResult(configItemError)
+
+        when: "the get interface file contents for ref and user is called"
+        def result = catalogueService.getInterfaceFileContents(catalogueId, interfaceEntryName, ref, aUsername)
+
+        then: "the catalogue entry configuration is resolved"
+        1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
+
+        and: "no interface entry configuration is resolved"
+        0 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(catalogueId, interfaceEntryName, aUsername)
+
+        and: "no interface file contents is retrieved"
+        0 * interfaceService.getInterfaceFileContents(_, _, _)
+
+        and: "a error result is returned"
+        result.hasError()
+    }
+
     def "get interface file contents returns error result for interface entry config that resolves with error"() {
         given: "a catalogue id, interface entry name and ref"
         def catalogueId = aCatalogueId()
         def interfaceEntryName = "testInterface1"
         def ref = 'branch1'
 
-        and: "a interface entry config with an error"
-        def configItemError = Mock(ConfigurationItemError)
-        def getInterfaceEntryConfigurationResult = GetInterfaceEntryConfigurationResult.createErrorResult(configItemError)
+        and: "a catalogue config entry in the manifest file with an interface entry in it that has an error"
+        def interfaceEntry = Mock(Interface)
+        def catalogue = aCatalogueManifest(interfaceEntryName, interfaceEntry)
+        def getCatalogueEntryConfigurationResult = GetCatalogueEntryConfigurationResult.createSuccessfulResult(catalogue, aManifestUri, catalogueId)
+        def getInterfaceEntryConfigurationResult = anInterfaceEntryResultWithError()
 
         when: "the get interface file contents for ref and user is called"
         def result = catalogueService.getInterfaceFileContents(catalogueId, interfaceEntryName, ref, aUsername)
 
-        then: "the interface entry configuration is resolved"
-        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(catalogueId, interfaceEntryName, aUsername) >> getInterfaceEntryConfigurationResult
+        then: "the catalogue entry configuration is resolved"
+        1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
+
+        and: "the interface entry configuration is resolved"
+        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName) >> getInterfaceEntryConfigurationResult
 
         and: "no interface file contents is retrieved"
         0 * interfaceService.getInterfaceFileContents(_, _, _)

@@ -5,6 +5,7 @@ import org.springframework.web.client.HttpClientErrorException
 import spectacular.backend.api.model.SpecEvolution
 import spectacular.backend.api.model.SpecEvolutionSummary
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemErrorType
+import spectacular.backend.cataloguemanifest.interfaceentry.CatalogueInterfaceEntryConfigurationResolver
 import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.cataloguemanifest.model.SpecEvolutionConfig
 import spectacular.backend.cataloguemanifest.model.SpecFileLocation
@@ -123,9 +124,8 @@ class InterfaceServiceTest extends Specification {
         result.getError().getType() == ConfigurationItemErrorType.NOT_FOUND
     }
 
-    def "GetInterface has SpecEvolution and SpecEvolutionSummary"() {
+    def "getInterfaceDetails has SpecEvolution and SpecEvolutionSummary"() {
         given: "a catalogue with an interface entry"
-        def catalogueId = aCatalogue()
         def interfaceEntryName = "testInterface"
         def interfaceEntry = new Interface()
 
@@ -141,6 +141,11 @@ class InterfaceServiceTest extends Specification {
         def specEvolutionConfig = new SpecEvolutionConfig()
         interfaceEntry.setSpecEvolutionConfig(specEvolutionConfig)
 
+        and: "a interface entry result"
+        def getInterfaceEntryConfigurationResult = Mock(CatalogueInterfaceEntryConfigurationResolver.GetInterfaceEntryConfigurationResult)
+        getInterfaceEntryConfigurationResult.getInterfaceEntry() >> interfaceEntry
+        getInterfaceEntryConfigurationResult.getInterfaceName() >> interfaceEntryName
+
         and: "a generate spec evolution"
         def specEvolution = Mock(SpecEvolution)
 
@@ -148,7 +153,7 @@ class InterfaceServiceTest extends Specification {
         def specEvolutionSummary = Mock(SpecEvolutionSummary)
 
         when: "getting the spec evolution for the interface entry"
-        def result = interfaceService.getInterfaceDetails(catalogueId, interfaceEntry, interfaceEntryName)
+        def result = interfaceService.getInterfaceDetails(getInterfaceEntryConfigurationResult)
 
         then: "the spec evolution for the interface is retrieved"
         1 * specEvolutionService.getSpecEvolution(interfaceEntryName, specEvolutionConfig, specFileRepoId, specFilePath) >> specEvolution
