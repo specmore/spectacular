@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { Button, Icon } from 'semantic-ui-react';
+import { Button, Icon, Popup } from 'semantic-ui-react';
 import { Link, useParams, useLocation } from 'react-router-dom';
 import { SpecItem } from './backend-api-client';
 
@@ -136,14 +136,19 @@ interface OpenSpecItemContentPageButtonProps {
   specItem: SpecItem;
 }
 export const OpenSpecItemContentPageButton: FunctionComponent<OpenSpecItemContentPageButtonProps> = ({ specItem }) => (
-  <Button
-    icon="file code"
-    circular
-    size="mini"
-    href={specItem.htmlUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    color="grey"
-    floated="right"
+  <Popup
+    content="Open Interface Spec File"
+    trigger={(
+      <Button
+        icon="file code"
+        circular
+        size="mini"
+        href={specItem.htmlUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        color="grey"
+        floated="right"
+      />
+    )}
   />
 );
