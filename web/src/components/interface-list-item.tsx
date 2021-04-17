@@ -58,9 +58,13 @@ const InterfaceListItemContainer: FunctionComponent<InterfaceListItemProps> = ({
           <Label color="blue">
             {latestAgreedSpecItem.parseResult.openApiSpec.version}
           </Label>
-          <Label color="green">
-            <Icon name="code branch" />
+          <Label color="green" data-testid="proposed-changes-label">
+            <Icon name="edit" />
             {specEvolutionSummary.proposedChangesCount}
+          </Label>
+          <Label color="orange" data-testid="upcoming-releases-label">
+            <Icon name="code branch" />
+            {specEvolutionSummary.upcomingReleaseCount}
           </Label>
           <OpenSpecItemContentPageButton specItem={latestAgreedSpecItem} />
         </Item.Extra>

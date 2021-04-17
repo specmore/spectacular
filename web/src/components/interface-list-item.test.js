@@ -1,5 +1,6 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
+import { within } from '@testing-library/react';
 import InterfaceListItem from './interface-list-item';
 import { renderWithRouter } from '../__tests__/test-utils';
 import Generator from '../__tests__/test-data-generator';
@@ -42,9 +43,30 @@ describe('InterfaceListItem component', () => {
     const specEvolutionSummary = Generator.SpecEvolutionSummary.generateSpecEvolutionSummary({ proposedChangesCount: 4 });
 
     // when InterfaceListItem component renders
-    const { getByText } = renderWithRouter(<InterfaceListItem specEvolutionSummary={specEvolutionSummary} />);
+    const { getByTestId } = renderWithRouter(<InterfaceListItem specEvolutionSummary={specEvolutionSummary} />);
 
     // then a proposed changes label is shown with a 4 proposed changes count
-    expect(getByText('4')).toBeInTheDocument();
+    const proposedChangesLabel = getByTestId('proposed-changes-label');
+    expect(proposedChangesLabel).toBeInTheDocument();
+    {
+      const { getByText } = within(proposedChangesLabel);
+      expect(getByText('4')).toBeInTheDocument();
+    }
+  });
+
+  test('shows the upcoming releases count', async () => {
+    // given a specEvolutionSummary with 2 upcomingReleaseCount
+    const specEvolutionSummary = Generator.SpecEvolutionSummary.generateSpecEvolutionSummary({ upcomingReleaseCount: 2 });
+
+    // when InterfaceListItem component renders
+    const { getByTestId } = renderWithRouter(<InterfaceListItem specEvolutionSummary={specEvolutionSummary} />);
+
+    // then a upcoming releases label is shown with a 2 upcoming releases count
+    const upcomingReleasesLabel = getByTestId('upcoming-releases-label');
+    expect(upcomingReleasesLabel).toBeInTheDocument();
+    {
+      const { getByText } = within(upcomingReleasesLabel);
+      expect(getByText('2')).toBeInTheDocument();
+    }
   });
 });
