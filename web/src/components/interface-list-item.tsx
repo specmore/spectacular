@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import {
-  Label, List, Icon, Message, Item,
+  Label, List, Icon, Message, Item, Popup,
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import { SpecItem, SpecEvolutionSummary } from '../backend-api-client';
@@ -55,17 +55,32 @@ const InterfaceListItemContainer: FunctionComponent<InterfaceListItemProps> = ({
           {latestAgreedSpecItem.parseResult.openApiSpec.title}
         </Item.Header>
         <Item.Extra>
-          <Label color="blue">
-            {latestAgreedSpecItem.parseResult.openApiSpec.version}
-          </Label>
-          <Label color="green" data-testid="proposed-changes-label">
-            <Icon name="edit" />
-            {specEvolutionSummary.proposedChangesCount}
-          </Label>
-          <Label color="orange" data-testid="upcoming-releases-label">
-            <Icon name="code branch" />
-            {specEvolutionSummary.upcomingReleaseCount}
-          </Label>
+          <Popup
+            content="Latest Agreed Version"
+            trigger={(
+              <Label color="blue">
+                {latestAgreedSpecItem.parseResult.openApiSpec.version}
+              </Label>
+            )}
+          />
+          <Popup
+            content="Number of Proposed Changes"
+            trigger={(
+              <Label color="green" data-testid="proposed-changes-label">
+                <Icon name="edit" />
+                {specEvolutionSummary.proposedChangesCount}
+              </Label>
+            )}
+          />
+          <Popup
+            content="Number of Upcoming Releases"
+            trigger={(
+              <Label color="orange" data-testid="upcoming-releases-label">
+                <Icon name="code branch" />
+                {specEvolutionSummary.upcomingReleaseCount}
+              </Label>
+            )}
+          />
           <OpenSpecItemContentPageButton specItem={latestAgreedSpecItem} />
         </Item.Extra>
       </Item.Content>
