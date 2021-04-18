@@ -49,7 +49,7 @@ const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProp
             <Label color="blue">{specItem.parseResult.openApiSpec.version}</Label>
           </Grid.Column>
           <Grid.Column width={4}>
-            <ViewSpecLinkButton refName={specItem.ref} />
+            <ViewSpecLinkButton refName={specItem.ref} withoutLabel />
             <OpenSpecItemContentPageButton specItem={specItem} />
           </Grid.Column>
         </Grid.Row>

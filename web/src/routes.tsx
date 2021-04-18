@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { Button, Icon, Popup } from 'semantic-ui-react';
-import { Link, useParams, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { SpecItem } from './backend-api-client';
 
 export const CATALOGUE_LIST_ROUTE = '/';
@@ -50,22 +50,41 @@ export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({
 
   const viewSpecLink = addQueryParam(VIEW_SPEC_QUERY_PARAM_NAME, refName);
 
-  const labelPosition = withoutLabel ? null : 'right';
-  const labelText = withoutLabel ? null : 'View Spec';
+  if (withoutLabel) {
+    return (
+      <Popup
+        content="View Spec"
+        trigger={(
+          <Button
+            icon
+            circular
+            size="mini"
+            as={Link}
+            to={viewSpecLink}
+            disabled={isSelected}
+            data-testid="view-spec-button"
+            floated="right"
+          >
+            <Icon name="eye" />
+          </Button>
+        )}
+      />
+    );
+  }
 
   return (
     <Button
       icon
       circular
       size="mini"
-      labelPosition={labelPosition}
+      labelPosition="right"
       as={Link}
       to={viewSpecLink}
       disabled={isSelected}
       data-testid="view-spec-button"
       floated="right"
     >
-      { labelText }
+      View Spec
       <Icon name="eye" />
     </Button>
   );
