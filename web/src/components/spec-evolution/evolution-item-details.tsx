@@ -1,5 +1,7 @@
 import React, { FunctionComponent } from 'react';
-import { Button, Icon, Label } from 'semantic-ui-react';
+import {
+  Button, Icon, Label, Popup,
+} from 'semantic-ui-react';
 import { EvolutionItem } from '../../backend-api-client';
 import { OpenSpecItemContentPageButton, ViewSpecLinkButton } from '../../routes';
 
@@ -56,20 +58,25 @@ const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolution
   let prLabel = null;
   if (pullRequest) {
     prLabel = (
-      <Button
-        icon
-        labelPosition="right"
-        size="mini"
-        color="green"
-        href={pullRequest.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        data-testid="pull-request-button"
-      >
-        PR #
-        {pullRequest.number}
-        <Icon name="edit" />
-      </Button>
+      <Popup
+        content="Open Pull Request Page"
+        trigger={(
+          <Button
+            icon
+            labelPosition="right"
+            size="mini"
+            color="green"
+            href={pullRequest.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-testid="pull-request-button"
+          >
+            PR #
+            {pullRequest.number}
+            <Icon name="edit" />
+          </Button>
+        )}
+      />
     );
     centreDiv = (<div data-testid="pull-request-title" className="centre">{pullRequest.title}</div>);
   }
