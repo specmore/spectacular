@@ -57,6 +57,7 @@ const InterfaceListItemContainer: FunctionComponent<InterfaceListItemProps> = ({
         <Item.Extra>
           <Popup
             content="Latest Agreed Version"
+            position="bottom center"
             trigger={(
               <Label color="blue">
                 {latestAgreedSpecItem.parseResult.openApiSpec.version}
@@ -65,6 +66,7 @@ const InterfaceListItemContainer: FunctionComponent<InterfaceListItemProps> = ({
           />
           <Popup
             content="Number of Proposed Changes"
+            position="bottom center"
             trigger={(
               <Label color="green" data-testid="proposed-changes-label">
                 <Icon name="edit" />
@@ -74,6 +76,7 @@ const InterfaceListItemContainer: FunctionComponent<InterfaceListItemProps> = ({
           />
           <Popup
             content="Number of Upcoming Releases"
+            position="bottom center"
             trigger={(
               <Label color="orange" data-testid="upcoming-releases-label">
                 <Icon name="code branch" />
