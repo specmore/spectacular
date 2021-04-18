@@ -59,7 +59,7 @@ const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProp
           </Grid.Column>
           <Grid.Column width={8}>
             <Label color="green">
-              <Icon name="code branch" />
+              <Icon name="edit" />
               {specEvolutionSummary.proposedChangesCount}
             </Label>
           </Grid.Column>
