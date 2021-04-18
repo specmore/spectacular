@@ -68,7 +68,7 @@ const EvolutionItemDetails: FunctionComponent<EvolutionItemProps> = ({ evolution
       >
         PR #
         {pullRequest.number}
-        <Icon name="code branch" />
+        <Icon name="edit" />
       </Button>
     );
     centreDiv = (<div data-testid="pull-request-title" className="centre">{pullRequest.title}</div>);
