@@ -7,7 +7,6 @@ import { renderWithRouter } from '../__tests__/test-utils';
 import {
   CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE, VIEW_SPEC_QUERY_PARAM_NAME, SHOW_EVOLUTION_QUERY_PARAM_NAME, CreateInterfaceLocation,
 } from '../routes';
-import Generator from '../__tests__/test-data-generator';
 import { useGetInterfaceDetails as useGetInterfaceDetailsMock } from '../backend-api-client';
 
 jest.mock('../backend-api-client');

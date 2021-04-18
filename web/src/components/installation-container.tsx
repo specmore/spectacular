@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useEffect } from 'react';
+import React, { FunctionComponent } from 'react';
 import {
   Dimmer, Loader, Message, Container,
 } from 'semantic-ui-react';

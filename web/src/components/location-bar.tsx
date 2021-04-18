@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import './location-bar.less';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { CATALOGUE_LIST_ROUTE, CreateCatalogueContainerLocation, CreateInterfaceLocation } from '../routes';
 import { Catalogue, SpecEvolutionSummary } from '../backend-api-client';
 
