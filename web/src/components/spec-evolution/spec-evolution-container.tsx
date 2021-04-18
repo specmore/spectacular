@@ -25,7 +25,7 @@ const SpecEvolutionContainer: FunctionComponent<SpecEvolutionContainerProps> = (
     <div data-testid="spec-evolution-container">
       <CloseSpecEvolutionButton />
       <Header as="h3">Spec Evolution</Header>
-      <div className="spec-evolution-log-container">
+      <div className="spec-evolution-log-container" data-testid="spec-evolution-log-container">
         {evolutionBranches}
       </div>
     </div>
