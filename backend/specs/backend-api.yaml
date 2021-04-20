@@ -14,9 +14,9 @@ paths:
         '200':
           description: Successful operation
           content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Installation'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Installation'
   /catalogues:
     get:
       tags:
@@ -34,9 +34,9 @@ paths:
         '200':
           description: Successful operation
           content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/FindCataloguesResult'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FindCataloguesResult'
   /catalogues/{encodedId}:
     get:
       tags:
@@ -55,9 +55,48 @@ paths:
         '200':
           description: Successful operation
           content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/GetCatalogueResult'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCatalogueResult'
+        '404':
+          description: Not Found result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
+  /catalogues/{encodedId}/interfaces/{interfaceName}:
+    get:
+      tags:
+        - Interfaces
+      description: Gets the details of an interface
+      operationId: getInterfaceDetails
+      parameters:
+        - name: encodedId
+          in: path
+          description: The base64 encoded id of the Catalogue being referenced
+          required: true
+          schema:
+            type: string
+            format: byte
+        - name: interfaceName
+          in: path
+          description: The name of the Interface in the Catalogue being referenced
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetInterfaceResult'
+        '404':
+          description: Not Found result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundResponse'
   /catalogues/{encodedId}/interfaces/{interfaceName}/file:
     get:
       tags:
@@ -96,6 +135,8 @@ paths:
                 type: object
 components:
   schemas:
+    NotFoundResponse:
+      type: string
     Installation:
       type: object
       properties:
@@ -142,44 +183,102 @@ components:
           type: string
         interfaceCount:
           type: integer
-        specLogs:
+        specEvolutionSummaries:
           type: array
           items:
-            $ref: '#/components/schemas/SpecLog'
+            $ref: '#/components/schemas/SpecEvolutionSummary'
       required:
         - fullPath
         - name
       x-keys:
         - fullPath
         - name
-    SpecLog:
+    GetInterfaceResult:
+      type: object
+      properties:
+        interfaceName:
+          type: string
+        parseError:
+          type: string
+        catalogue:
+            $ref: '#/components/schemas/Catalogue'
+        specEvolutionSummary:
+            $ref: '#/components/schemas/SpecEvolutionSummary'
+        specEvolution:
+            $ref: '#/components/schemas/SpecEvolution'
+      required:
+        - interfaceName
+        - catalogue
+        - specEvolutionSummary
+        - specEvolution
+    SpecEvolutionSummary:
       type: object
       properties:
         interfaceName:
           type: string
         latestAgreed:
           $ref: '#/components/schemas/SpecItem'
-        proposedChanges:
-          type: array
-          items:
-            $ref: '#/components/schemas/ChangeProposal'
+        upcomingReleaseCount:
+          type: integer
+        proposedChangesCount:
+          type: integer
+        agreedVersionTagCount:
+          type: integer
       required:
-        - id
-        - latestAgreed
-        - proposedChanges
-    ChangeProposal:
+        - interfaceName
+        - upcomingReleaseCount
+        - proposedChangesCount
+        - agreedVersionTagCount
+    SpecEvolution:
       type: object
       properties:
-        id:
-          type: integer
+        interfaceName:
+          type: string
+        configUsed:
+          type: object
+        main:
+          $ref: '#/components/schemas/EvolutionBranch'
+        releases:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvolutionBranch'
+      required:
+        - interfaceName
+        - main
+        - releases
+    EvolutionBranch:
+      type: object
+      properties:
+        branchName:
+          type: string
+        evolutionItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvolutionItem'
+      required:
+        - branchName
+        - evolutionItems
+    EvolutionItem:
+      type: object
+      properties:
+        ref:
+          type: string
+        tags:
+          description: The associated to this commit.
+          type: array
+          items:
+            type: string
+        branchName:
+          type: string
+          description: If the evolution item represents the head of a branch, the name of the branch is returned.
+        specItem:
+          description: The spec file item at this commit.
+          $ref: '#/components/schemas/SpecItem'
         pullRequest:
           $ref: '#/components/schemas/PullRequest'
-        specItem:
-          $ref: '#/components/schemas/SpecItem'
       required:
-        - id
-        - pullRequest
-        - specItem
+        - ref
+        - tags
     SpecItem:
       type: object
       properties:
@@ -250,6 +349,8 @@ components:
           format: uri
         title:
           type: string
+        branchName:
+          type: string
         updatedAt:
           type: string
           format: date-time
@@ -259,3 +360,4 @@ components:
             type: string
       required:
         - number
+        - branchName

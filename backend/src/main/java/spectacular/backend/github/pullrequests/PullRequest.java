@@ -11,6 +11,7 @@ import spectacular.backend.github.graphql.Label;
 public class PullRequest {
   private final RepositoryId repositoryId;
   private final String branchName;
+  private final String baseBranchName;
   private final int number;
   private final URI url;
   private final List<String> labels;
@@ -20,9 +21,9 @@ public class PullRequest {
 
   /**
    * Constructs a PullRequest object representing a PullRequest in the git source control system.
-   *
-   * @param repositoryId the repository the pull request belongs to
-   * @param branchName the name of the branch the pull request is pull changes from
+   *  @param repositoryId the repository the pull request belongs to
+   * @param branchName the name of the branch the pull request is pulling changes from
+   * @param baseBranchName the name of the branch the pull request is targeting to merge into
    * @param number the number of the PR
    * @param url the url of the PR
    * @param labels a list of labels associated to the PR
@@ -30,11 +31,12 @@ public class PullRequest {
    * @param title the title of the PR
    * @param updatedAt the last time the PR was updated
    */
-  public PullRequest(RepositoryId repositoryId, String branchName, int number, URI url,
+  public PullRequest(RepositoryId repositoryId, String branchName, String baseBranchName, int number, URI url,
                      List<String> labels, List<String> changedFiles, String title,
                      OffsetDateTime updatedAt) {
     this.repositoryId = repositoryId;
     this.branchName = branchName;
+    this.baseBranchName = baseBranchName;
     this.number = number;
     this.url = url;
     this.labels = labels;
@@ -52,10 +54,11 @@ public class PullRequest {
   public static PullRequest createPullRequestFrom(spectacular.backend.github.graphql.PullRequest pullRequest) {
     var repository = RepositoryId.createRepositoryFrom(pullRequest.getHeadRef().getRepository());
     var branchName = pullRequest.getHeadRef().getName();
+    var baseBranchName = pullRequest.getBaseRefName();
     List<String> labels = pullRequest.getLabels().getNodes().stream().map(Label::getName).collect(Collectors.toList());
     List<String> changedFiles = pullRequest.getChangedFiles().getNodes().stream().map(ChangedFile::getPath).collect(Collectors.toList());
 
-    return new PullRequest(repository, branchName, pullRequest.getNumber(), pullRequest.getUrl(), labels, changedFiles,
+    return new PullRequest(repository, branchName, baseBranchName, pullRequest.getNumber(), pullRequest.getUrl(), labels, changedFiles,
         pullRequest.getTitle(), pullRequest.getUpdatedAt());
   }
 
@@ -65,6 +68,10 @@ public class PullRequest {
 
   public String getBranchName() {
     return branchName;
+  }
+
+  public String getBaseBranchName() {
+    return baseBranchName;
   }
 
   public int getNumber() {

@@ -9,9 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import spectacular.backend.api.CataloguesApi;
 import spectacular.backend.api.model.FindCataloguesResult;
 import spectacular.backend.api.model.GetCatalogueResult;
+import spectacular.backend.api.model.GetInterfaceResult;
+import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError;
+import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemErrorType;
 import spectacular.backend.common.CatalogueId;
 import spectacular.backend.interfaces.InterfaceService;
 
@@ -40,13 +44,27 @@ public class CataloguesController implements CataloguesApi {
     var decodedBytes = Base64.getDecoder().decode(encoded);
     var combinedId = new String(decodedBytes);
     var catalogueId = CatalogueId.createFrom(combinedId);
-    var catalogue = catalogueService.getCatalogueForUser(catalogueId, authentication.getName());
-    if (catalogue == null) {
-      return ResponseEntity.notFound().build();
-    }
-    var getCatalogueResult = new GetCatalogueResult()
-        .catalogue(catalogue);
+
+    var getCatalogueForUserResult = catalogueService.getCatalogueForUser(catalogueId, authentication.getName());
+
+    handleAnyError(getCatalogueForUserResult.getError());
+
+    var getCatalogueResult = new GetCatalogueResult().catalogue(getCatalogueForUserResult.getCatalogueDetails());
     return ResponseEntity.ok(getCatalogueResult);
+  }
+
+  @Override
+  public ResponseEntity<GetInterfaceResult> getInterfaceDetails(byte[] encodedId, String interfaceName) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    var decodedBytes = Base64.getDecoder().decode(encodedId);
+    var combinedId = new String(decodedBytes);
+    var catalogueId = CatalogueId.createFrom(combinedId);
+
+    var getInterfaceDetailsResult = this.catalogueService.getInterfaceDetails(catalogueId, interfaceName, authentication.getName());
+
+    handleAnyError(getInterfaceDetailsResult.getError());
+
+    return ResponseEntity.ok(getInterfaceDetailsResult.getGetInterfaceResult());
   }
 
   @Override
@@ -57,20 +75,34 @@ public class CataloguesController implements CataloguesApi {
     var catalogueId = CatalogueId.createFrom(combinedId);
 
     try {
-      var interfaceFileContents = this.interfaceService.getInterfaceFileContents(catalogueId, interfaceName, ref, authentication.getName());
+      var getInterfaceFileContentsResult = this.catalogueService.getInterfaceFileContents(
+          catalogueId,
+          interfaceName,
+          ref,
+          authentication.getName());
 
-      if (interfaceFileContents == null) {
-        return ResponseEntity.notFound().build();
-      }
+      handleAnyError(getInterfaceFileContentsResult.getError());
 
       return ResponseEntity
           .ok()
-          .contentType(interfaceFileContents.getMediaTypeGuess())
-          .body(interfaceFileContents.getContents());
+          .contentType(getInterfaceFileContentsResult.getInterfaceFileContents().getMediaTypeGuess())
+          .body(getInterfaceFileContentsResult.getInterfaceFileContents().getContents());
     } catch (UnsupportedEncodingException e) {
       return ResponseEntity
           .status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("An unexpected error occurred while decoding the file contents.");
+    }
+  }
+
+  private void handleAnyError(ConfigurationItemError configurationItemError) {
+    if (configurationItemError != null) {
+      var errorType = configurationItemError.getType();
+      var errorMessage = configurationItemError.getMessage();
+      if (errorType == ConfigurationItemErrorType.NOT_FOUND) {
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, errorMessage);
+      } else if (errorType == ConfigurationItemErrorType.CONFIG_ERROR) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage);
+      }
     }
   }
 }

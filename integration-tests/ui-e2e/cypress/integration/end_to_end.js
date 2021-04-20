@@ -20,7 +20,7 @@ describe('End to End test without login', function() {
         cy.get('[data-testid=user-menu-bar-item] .item').first().should('have.text', 'Signed in as pburls')
     })
 
-    it('Journey to view an interface and all 3 spec log items', function() {
+    it('Journey to view an interface', function() {
         // then Interface Catalogues location should be shown
         cy.get('[data-testid=location-bar]').contains('specmore > Interface Catalogues')
 
@@ -42,17 +42,17 @@ describe('End to End test without login', function() {
         // then a catalogue page is shown with details block
         cy.get('[data-testid=catalogue-details-container]').should('be.visible')
 
-        // and an interfaces list should be shown with 4 items
+        // and an interfaces list should be shown
         cy.get('[data-testid=catalogue-details-interface-list]').should('be.visible')
 
         // and 1 interface items are shown as interface error messages for invalid spec files
         cy.get('[data-testid=spec-log-error]').should('have.length', 1)
 
-        // and 3 interface items are shown as interface items for valid spec files
-        cy.get('[data-testid=interface-list-item-container]').should('have.length', 3)
+        // and 4 interface items are shown as interface items for valid spec files
+        cy.get('[data-testid=interface-list-item-container]').should('have.length', 4)
 
-        // when selecting the first interface item
-        cy.get('[data-testid=catalogue-details-interface-list] > :nth-child(1) > .content > .header').click()
+        // when selecting the last interface item
+        cy.get('[data-testid=catalogue-details-interface-list] > :nth-child(5) > .content > .header').click()
 
         // then Interface location should be shown
         cy.get('[data-testid=location-bar]').contains('specmore > Interface Catalogues > Test Catalogue 1 > An empty API spec')
@@ -78,11 +78,11 @@ describe('End to End test without login', function() {
         // then spec evolution details are shown
         cy.get('[data-testid=spec-evolution-container]').should('be.visible')
 
-        // and 3 spec log items are shown
-        cy.get('[data-testid=log-entry-container]').should('have.length', 3)
+        // and 10 spec log items are shown
+        cy.get('[data-testid=log-entry-container]').should('have.length', 10)
 
         // when the view spec button on the first PR is click
-        cy.get(':nth-child(1) > [data-testid=log-entry-container] > .details-container > [data-testid=view-spec-button]').click()
+        cy.get('[data-testid=spec-evolution-log-container] > :nth-child(1) > :nth-child(1) [data-testid=view-spec-button]').click()
 
         // then latest agree version swagger ui preview is shown
         cy.get('[data-testid=interface-container-swagger-ui]').should('be.visible')

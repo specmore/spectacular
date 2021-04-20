@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from 'react';
 import {
-  Label, List, Icon, Message, Item,
+  Label, List, Icon, Message, Item, Popup,
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import { SpecLog, SpecItem } from '../backend-api-client';
+import { SpecItem, SpecEvolutionSummary } from '../backend-api-client';
 import { CreateInterfaceLocation, OpenSpecItemContentPageButton } from '../routes';
 
 
@@ -36,19 +36,17 @@ const InterfaceListItemError: FunctionComponent<SpecItemProps> = ({ specItem }) 
 
 interface InterfaceListItemProps {
   catalogueEncodedId: string;
-  specLog: SpecLog;
+  specEvolutionSummary: SpecEvolutionSummary;
 }
 
-const InterfaceListItemContainer: FunctionComponent<InterfaceListItemProps> = ({ catalogueEncodedId, specLog }) => {
-  const interfaceLocation = CreateInterfaceLocation(catalogueEncodedId, specLog.interfaceName);
-  const latestAgreedSpecItem = specLog.latestAgreed;
-  if (specLog.latestAgreed.parseResult.errors.length > 0) {
+const InterfaceListItemContainer: FunctionComponent<InterfaceListItemProps> = ({ catalogueEncodedId, specEvolutionSummary }) => {
+  const interfaceLocation = CreateInterfaceLocation(catalogueEncodedId, specEvolutionSummary.interfaceName);
+  const latestAgreedSpecItem = specEvolutionSummary.latestAgreed;
+  if (latestAgreedSpecItem.parseResult.errors.length > 0) {
     return (
-      <InterfaceListItemError specItem={specLog.latestAgreed} />
+      <InterfaceListItemError specItem={latestAgreedSpecItem} />
     );
   }
-
-  const proposedChangesCount = specLog.proposedChanges.length;
 
   return (
     <Item data-testid="interface-list-item-container">
@@ -57,13 +55,35 @@ const InterfaceListItemContainer: FunctionComponent<InterfaceListItemProps> = ({
           {latestAgreedSpecItem.parseResult.openApiSpec.title}
         </Item.Header>
         <Item.Extra>
-          <Label color="blue">
-            {latestAgreedSpecItem.parseResult.openApiSpec.version}
-          </Label>
-          <Label color="green">
-            <Icon name="code branch" />
-            {proposedChangesCount}
-          </Label>
+          <Popup
+            content="Latest Agreed Version"
+            position="bottom center"
+            trigger={(
+              <Label color="blue">
+                {latestAgreedSpecItem.parseResult.openApiSpec.version}
+              </Label>
+            )}
+          />
+          <Popup
+            content="Number of Proposed Changes"
+            position="bottom center"
+            trigger={(
+              <Label color="green" data-testid="proposed-changes-label">
+                <Icon name="edit" />
+                {specEvolutionSummary.proposedChangesCount}
+              </Label>
+            )}
+          />
+          <Popup
+            content="Number of Upcoming Releases"
+            position="bottom center"
+            trigger={(
+              <Label color="orange" data-testid="upcoming-releases-label">
+                <Icon name="code branch" />
+                {specEvolutionSummary.upcomingReleaseCount}
+              </Label>
+            )}
+          />
           <OpenSpecItemContentPageButton specItem={latestAgreedSpecItem} />
         </Item.Extra>
       </Item.Content>

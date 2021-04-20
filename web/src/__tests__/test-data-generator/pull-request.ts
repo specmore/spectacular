@@ -2,6 +2,7 @@ import { PullRequest } from '../../backend-api-client';
 
 interface GeneratePullRequestParameters {
   number?: number;
+  branchName?: string;
   title?: string;
   repository?: string;
   labels?: string[];
@@ -9,6 +10,7 @@ interface GeneratePullRequestParameters {
 
 const generatePullRequest = ({
   number = 1,
+  branchName = `pr-branch-${number}`,
   title = 'Test PullRequest 1',
   repository = 'test-owner/specs-test',
   labels = ['project-x'],
@@ -17,6 +19,7 @@ const generatePullRequest = ({
 
   return {
     number,
+    branchName,
     title,
     url,
     labels,

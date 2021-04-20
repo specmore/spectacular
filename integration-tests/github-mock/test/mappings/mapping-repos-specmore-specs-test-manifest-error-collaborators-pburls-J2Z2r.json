@@ -1,0 +1,29 @@
+{
+  "id" : "444f8241-5350-338d-b133-ee35020df3ba",
+  "request" : {
+    "url" : "/repos/specmore/specs-test-manifest-error/collaborators/pburls",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 204,
+    "bodyFileName" : "body-repos-specmore-specs-test-manifest-error-collaborators-pburls-J2Z2r.txt",
+    "headers" : {
+      "Server" : "GitHub.com",
+      "Date" : "Sun, 18 Apr 2021 21:45:17 GMT",
+      "X-GitHub-Media-Type" : "github.v3",
+      "X-RateLimit-Limit" : "5000",
+      "X-RateLimit-Remaining" : "4922",
+      "X-RateLimit-Reset" : "1618783955",
+      "X-RateLimit-Used" : "78",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "0",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "Vary" : "Accept-Encoding, Accept, X-Requested-With",
+      "X-GitHub-Request-Id" : "E961:A4E0:7D21232:7EFDC79:607CA86D"
+    }
+  },
+  "uuid" : "444f8241-5350-338d-b133-ee35020df3ba"
+}

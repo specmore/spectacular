@@ -6,7 +6,8 @@ public class Ref {
   private final String name;
   private final Repository repository;
 
-  public Ref(@JsonProperty("name") String name, @JsonProperty("repository") Repository repository) {
+  public Ref(@JsonProperty("name") String name,
+             @JsonProperty("repository") Repository repository) {
     this.name = name;
     this.repository = repository;
   }

@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import {
   Icon, Message, Header, List, Label, Grid,
 } from 'semantic-ui-react';
-import { SpecLog, SpecItem } from '../backend-api-client';
+import { SpecItem, SpecEvolutionSummary } from '../backend-api-client';
 import { ViewSpecLinkButton, ViewSpecEvolutionLinkButton, OpenSpecItemContentPageButton } from '../routes';
 
 interface SpecItemProps {
@@ -27,18 +27,15 @@ const InterfaceDetailsError: FunctionComponent<SpecItemProps> = ({ specItem }) =
 );
 
 interface InterfaceDetailsContainerProps {
-  specLog: SpecLog;
-  interfaceName: string;
+  specEvolutionSummary: SpecEvolutionSummary;
 }
 
-const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProps> = ({ specLog, interfaceName }) => {
-  const specItem = specLog.latestAgreed;
+const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProps> = ({ specEvolutionSummary }) => {
+  const specItem = specEvolutionSummary.latestAgreed;
 
   if (specItem.parseResult.errors && specItem.parseResult.errors.length > 0) {
     return (<InterfaceDetailsError specItem={specItem} />);
   }
-
-  const proposedChangesCount = specLog.proposedChanges.length;
 
   return (
     <div data-testid="interface-details-container">
@@ -52,7 +49,7 @@ const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProp
             <Label color="blue">{specItem.parseResult.openApiSpec.version}</Label>
           </Grid.Column>
           <Grid.Column width={4}>
-            <ViewSpecLinkButton refName={specItem.ref} interfaceName={interfaceName} />
+            <ViewSpecLinkButton refName={specItem.ref} withoutLabel />
             <OpenSpecItemContentPageButton specItem={specItem} />
           </Grid.Column>
         </Grid.Row>
@@ -62,8 +59,8 @@ const InterfaceDetailsContainer: FunctionComponent<InterfaceDetailsContainerProp
           </Grid.Column>
           <Grid.Column width={8}>
             <Label color="green">
-              <Icon name="code branch" />
-              {proposedChangesCount}
+              <Icon name="edit" />
+              {specEvolutionSummary.proposedChangesCount}
             </Label>
           </Grid.Column>
           <Grid.Column width={4}>

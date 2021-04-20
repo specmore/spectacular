@@ -1,12 +1,15 @@
-id: https://spectacular/0.1/catalogue-manifest
+$id: https://specmore.org/schema/spectacular/0.2/catalogue-manifest
 $schema: http://json-schema.org/draft-04/schema#
-description: Validation schema for Catalogue Manifest File v0.1.
+title: Catalogue Manifest
+description: Schema for the Spectacular tool's Catalogue Manifest File v0.2.
 type: object
 properties:
   spectacular:
+    description: This string MUST be the `major`.`minor` portion of  [semantic version number](https://semver.org/spec/v2.0.0.html) of the [Catalogue Manifest version](#version) that the Catalogue Manifest file being created uses.
     type: string
     pattern: ^0\.1?(-.+)?$
   catalogues:
+    description: A map containing the catalogues described in this manifest file.
     type: object
     additionalProperties: 
       $ref: '#/definitions/Catalogue'
@@ -14,33 +17,79 @@ required:
   - spectacular
 definitions:
   Catalogue:
+    description: This object represents a Catalogue of interfaces specification files and the metadata associated with it.
     type: object
     properties:
       title:
+        description:  A short title of the catalogue.
         type: string
       description:
+        description:  A short description of the catalogue's contents.
         type: string
       interfaces:
+        description: A map of the interfaces that this catalogue contains.
         type: object
         additionalProperties: 
           $ref: '#/definitions/Interface'
     required:
       - title
   Interface:
+    description: This object represents an interface and the location of the specification file that describes it.
     type: object
     properties:
       specFile:
+        description: The location of the interface specification file (i.e. the OpenAPI `.yaml` file) for this interface.
         $ref: '#/definitions/SpecFileLocation'
+      specEvolutionConfig:
+        description: The config for determining what git data can be used to generate an evolutionary view of the interface's spec file.
+        $ref: '#/definitions/SpecEvolutionConfig'
     required:
       - specFile
   SpecFileLocation:
+    description: This object represents the location of an interface specification file.
     type: object
     properties:
       filePath:
+        description: The file path to the interface specification file (i.e. the OpenAPI `.yaml` file) relative to the root of the repository it is stored in.
         type: string
       repo:
+        description: This is an optional field. By default, it is assumed the interface specification file is stored in the same repository as the catalogue manifest file. Use the `repo` field to specify an alternative repository location using the full `owner/name` repository identifier.
         type: string
         pattern: ^[^\/]+\/[^\/]+$
     required:
       - filePath
-
+  SpecEvolutionConfig:
+    type: object
+    description: This object captures the configuration for determining what git data can be used to generate an evolutionary view of the interface's spec file.
+    properties:
+      mainBranchConfig:
+        description: Configuration capturing the what branch is used to hold the latest agreed release of the specification file. If not set, defaults are used.
+        type: object
+        properties:
+          branchName:
+            description: The name of the branch that holds the latest agreed release of the specification file. If not set, the name `main` is assumed.
+            type: string
+      releaseTagConfig:
+        description: Configuration capturing the tagging convention used to tag the finalised releases of the specification file. If not set, all tags are returned.
+        type: object
+        properties:
+          tagPrefix:
+            description: The prefix used to select which tags should be included as version milestones for the spec file. The rest of the branch name should conform to the versioning convention used. If not set, all tags are returned.
+            type: string
+          # versioningConvention:
+          #   type: string
+          #   description: Defaults to `semver`.
+          #   enum:
+          #     - semver
+      releaseBranchConfig:
+        description: Configuration capturing the branching conventions used to draft new releases of the specification file. If not set, no release branches are returned.
+        type: object
+        properties:
+          branchPrefix:
+            description: The prefix used to select which branches should be included as draft release branches for the spec file. The rest of the branch name should conform to the versioning convention used. If not set, no release branches are returned.
+            type: string
+          # versioningConvention:
+          #   type: string
+          #   description: Defaults to `majorMinorVersioned`.
+          #   enum:
+          #     - majorMinorVersioned

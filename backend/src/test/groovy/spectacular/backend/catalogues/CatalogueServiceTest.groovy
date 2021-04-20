@@ -1,449 +1,384 @@
 package spectacular.backend.catalogues
 
-import org.springframework.http.HttpStatus
-import org.springframework.web.client.HttpClientErrorException
+
 import spectacular.backend.api.model.Catalogue
-import spectacular.backend.api.model.SpecLog
-import spectacular.backend.cataloguemanifest.CatalogueManifestParseResult
-import spectacular.backend.cataloguemanifest.CatalogueManifestParser
-import spectacular.backend.cataloguemanifest.FindAndParseCatalogueResult
+import spectacular.backend.api.model.GetInterfaceResult
+import spectacular.backend.api.model.SpecEvolutionSummary
+import spectacular.backend.cataloguemanifest.catalogueentry.CatalogueEntryConfigurationResolver
+import spectacular.backend.cataloguemanifest.interfaceentry.CatalogueInterfaceEntryConfigurationResolver
+import spectacular.backend.cataloguemanifest.parse.CatalogueManifestContentItemParseResult
+import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError
+import spectacular.backend.cataloguemanifest.GetCatalogueManifestFileContentResult
 import spectacular.backend.cataloguemanifest.model.CatalogueManifest
 import spectacular.backend.cataloguemanifest.model.Interface
 import spectacular.backend.cataloguemanifest.model.Interfaces
 import spectacular.backend.common.CatalogueId
+import spectacular.backend.common.CatalogueManifestId
 import spectacular.backend.common.RepositoryId
-import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.domain.ContentItem
-import spectacular.backend.github.domain.SearchCodeResultItem
-import spectacular.backend.github.domain.SearchCodeResults
-import spectacular.backend.specs.SpecLogService
+import spectacular.backend.interfaces.GetInterfaceFileContentsResult
+import spectacular.backend.interfaces.InterfaceService
+
 import spock.lang.Specification
 
 class CatalogueServiceTest extends Specification {
-    def catalogueManifestYamlFilename = "spectacular-config.yaml"
     def catalogueManifestYmlFilename = "spectacular-config.yml"
-    def restApiClient = Mock(RestApiClient)
-    def specLogService = Mock(SpecLogService)
-    def catalogueManifestParser = Mock(CatalogueManifestParser)
+    def catalogueEntryConfigurationResolver = Mock(CatalogueEntryConfigurationResolver)
+    def catalogueInterfaceEntryConfigurationResolver = Mock(CatalogueInterfaceEntryConfigurationResolver)
     def catalogueMapper = Mock(CatalogueMapper)
-    def catalogueService = new CatalogueService(restApiClient, specLogService, catalogueManifestParser, catalogueMapper)
+    def interfaceService = Mock(InterfaceService)
+    def catalogueService = new CatalogueService(catalogueEntryConfigurationResolver, catalogueInterfaceEntryConfigurationResolver, catalogueMapper, interfaceService)
 
     def aUsername = "test-user"
     def anOrg = "test-org"
 
-    def aCatalogue() {
+    def aCatalogueManifestId() {
+        def catalogueRepo = new RepositoryId("test-owner","test-repo987")
+        def catalogueManifestFile = catalogueManifestYmlFilename;
+        return new CatalogueManifestId(catalogueRepo, catalogueManifestFile)
+    }
+
+    def aCatalogueId() {
         def catalogueRepo = new RepositoryId("test-owner","test-repo987")
         def catalogueManifestFile = catalogueManifestYmlFilename;
         def catalogueName = "testCatalogue1"
         return new CatalogueId(catalogueRepo, catalogueManifestFile, catalogueName)
     }
 
-    def searchCodeResultsForInstallation(RepositoryId catalogueRepository, boolean isBothFilesPresent = false) {
-        def searchCodeResultItems = [];
-
-        def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, catalogueRepository.getNameWithOwner(), new URI("https://test-url"))
-        def searchCodeResultItem = new SearchCodeResultItem(catalogueManifestYmlFilename, catalogueManifestYmlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
-        searchCodeResultItems.add(searchCodeResultItem)
-
-        if (isBothFilesPresent) {
-            def searchCodeResultRepo2 = new spectacular.backend.github.domain.Repository(1234, catalogueRepository.getNameWithOwner(), new URI("https://test-url"))
-            def searchCodeResultItem2 = new SearchCodeResultItem(catalogueManifestYamlFilename, catalogueManifestYamlFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo2)
-            searchCodeResultItems.add(searchCodeResultItem2)
-        }
-
-        return new SearchCodeResults(searchCodeResultItems.size(), searchCodeResultItems, false)
+    def aCatalogueEntry(String interfaceEntryName, Interface interfaceEntry) {
+        def interfaces = new Interfaces().withAdditionalProperty(interfaceEntryName, interfaceEntry)
+        return new spectacular.backend.cataloguemanifest.model.Catalogue().withInterfaces(interfaces)
     }
 
-    def "get catalogue for repository and valid user"() {
-        given: "a specific catalogue the user has access to"
-        def catalogueId = aCatalogue()
-        def userAndInstallationAccessToCatalogueRepository = true
+    def aSuccessfulCatalogueEntryResult(CatalogueId catalogueId, spectacular.backend.cataloguemanifest.model.Catalogue catalogueEntry) {
+        def catalogueEntryResult = Mock(CatalogueEntryConfigurationResolver.GetCatalogueEntryConfigurationResult);
+        catalogueEntryResult.hasError() >> false
+        catalogueEntryResult.getCatalogueEntry() >> catalogueEntry
+        catalogueEntryResult.getCatalogueId() >> catalogueId
+        return catalogueEntryResult;
+    }
 
-        and: "a catalogue config manifest containing the catalogue"
-        def manifestFileContentItem = Mock(ContentItem)
+    def aCatalogueEntryResultWithError() {
+        def catalogueEntryResult = Mock(CatalogueEntryConfigurationResolver.GetCatalogueEntryConfigurationResult);
+        catalogueEntryResult.hasError() >> true
+        catalogueEntryResult.getError() >> Mock(ConfigurationItemError)
+        return catalogueEntryResult;
+    }
 
-        and: "a catalogue config parse result for catalogue in the manifest file contents with catalogue entry"
-        def catalogue = Mock(spectacular.backend.cataloguemanifest.model.Catalogue)
-        def catalogueParseResult = new FindAndParseCatalogueResult(catalogue, null)
+    def aSuccessfulInterfaceEntryResult(Interface interfaceEntry) {
+        def getInterfaceEntryConfigurationResult = Mock(CatalogueInterfaceEntryConfigurationResolver.GetInterfaceEntryConfigurationResult)
+        getInterfaceEntryConfigurationResult.hasError() >> false
+        getInterfaceEntryConfigurationResult.getInterfaceEntry() >> interfaceEntry
+        return getInterfaceEntryConfigurationResult
+    }
 
-        and: "a catalogue API model representation of the catalogue manifest object without spec log items"
-        def catalogueModel = Mock(Catalogue)
+    def anInterfaceEntryResultWithError() {
+        def getInterfaceEntryConfigurationResult = Mock(CatalogueInterfaceEntryConfigurationResolver.GetInterfaceEntryConfigurationResult)
+        getInterfaceEntryConfigurationResult.hasError() >> true
+        getInterfaceEntryConfigurationResult.getError() >> Mock(ConfigurationItemError)
+        return getInterfaceEntryConfigurationResult
+    }
 
-        and: "spec logs for each file in the manifest"
-        def specLogs = [Mock(SpecLog), Mock(SpecLog)]
+    def "get catalogue for repository and valid user returns evolution summaries for each interface in manifest catalogue entry"() {
+        given: "a location for a catalogue config"
+        def catalogueId = aCatalogueId()
+
+        and: "a catalogue config entry in the manifest file with an interface entry in it"
+        def interfaceEntry = Mock(Interface)
+        def interfaceEntryName = "testInterface1"
+        def catalogue = aCatalogueEntry(interfaceEntryName, interfaceEntry)
+        def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
+        def getInterfaceEntryConfigurationResult = aSuccessfulInterfaceEntryResult(interfaceEntry)
+
+        and: "interface details for the interface entry with a spec evolution summary"
+        def interfaceDetails = Mock(GetInterfaceResult)
+        def interfaceSpecEvolutionSummary = Mock(SpecEvolutionSummary)
+        interfaceDetails.getSpecEvolutionSummary() >> interfaceSpecEvolutionSummary
+
+        and: "a catalogue API model representation of the catalogue manifest object without interface details"
+        def catalogueDetails = Mock(Catalogue)
 
         when: "the get catalogue for user is called"
         def result = catalogueService.getCatalogueForUser(catalogueId, aUsername)
 
-        then: "github is checked if the user is a collaborator of the repository"
-        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), aUsername) >> userAndInstallationAccessToCatalogueRepository
+        then: "the catalogue entry configuration is resolved"
+        1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
 
-        and: "the .yml manifest file contents is retrieved"
-        1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), catalogueId.getPath(), null) >> manifestFileContentItem
-
-        and: "the catalogue entry in the manifest file contents is found and parsed"
-        1 * catalogueManifestParser.findAndParseCatalogueInManifestFileContents(_, catalogueId.getCatalogueName()) >> catalogueParseResult
+        and: "the interface entry configuration is resolved"
+        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName) >> getInterfaceEntryConfigurationResult
 
         and: "the manifest catalogue entry object is mapped to an API catalogue model"
-        1 * catalogueMapper.mapCatalogue(_, catalogueId, _) >> catalogueModel
+        1 * catalogueMapper.mapCatalogue(getCatalogueEntryConfigurationResult) >> catalogueDetails
 
-        and: "spec logs are retrieved for the catalogue"
-        1 * specLogService.getSpecLogsFor(_, catalogueId) >> specLogs
+        and: "the interface details are retrieved for each interface entry in the catalogue"
+        1 * interfaceService.getInterfaceDetails(getInterfaceEntryConfigurationResult) >> interfaceDetails
 
-        and: "the spec logs are added to the catalogue API model object"
-        1 * catalogueModel.specLogs(specLogs) >> catalogueModel
+        and: "the spec evolutions are added to the catalogue API model object"
+        1 * catalogueDetails.specEvolutionSummaries([interfaceSpecEvolutionSummary]) >> catalogueDetails
 
         and: "the mapped catalogue API model object is returned"
-        result == catalogueModel
+        result.getCatalogueDetails() == catalogueDetails
     }
 
-    def "get catalogue returns null for a repository the user does not have access to"() {
-        given: "a specific catalogue the user does not have access to"
-        def catalogueId = aCatalogue()
-        def userAndInstallationAccessToCatalogueRepository = false
+    def "get catalogue ignores interface entries in catalogue manifest with errors"() {
+        given: "a location for a catalogue config"
+        def catalogueId = aCatalogueId()
 
-        when: "the get catalogue for user is called"
-        def catalogue = catalogueService.getCatalogueForUser(catalogueId, aUsername)
-
-        then: "github is checked if the user is a collaborator of the repository"
-        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), aUsername) >> userAndInstallationAccessToCatalogueRepository
-
-        and: "no file contents are retrieved"
-        0 * restApiClient.getRepositoryContent(*_)
-
-        and: "no catalogue is returned"
-        !catalogue
-
-        and: "no spec items are retrieved"
-        0 * specLogService.getSpecLogsFor(_, _)
-    }
-
-    def "get catalogue returns null for a repository the app installation does not have access to"() {
-        given: "a specific catalogue the installation does not have access to"
-        def catalogueId = aCatalogue()
-
-        when: "the get catalogue for user is called"
-        def catalogue = catalogueService.getCatalogueForUser(catalogueId, aUsername)
-
-        then: "github is checked if the user is a collaborator of the repository"
-        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), aUsername) >> { throw new HttpClientErrorException(HttpStatus.FORBIDDEN) }
-
-        and: "no file contents are retrieved"
-        0 * restApiClient.getRepositoryContent(*_)
-
-        and: "no catalogue is returned"
-        !catalogue
-
-        and: "no spec items are retrieved"
-        0 * specLogService.getSpecLogsFor(_, _)
-    }
-
-    def "get catalogue for manifest file that does not exist"() {
-        given: "a specific catalogue the user has access to"
-        def catalogueId = aCatalogue()
-        def userAndInstallationAccessToCatalogueRepository = true
-
-        when: "the get catalogue for user is called"
-        def catalogue = catalogueService.getCatalogueForUser(catalogueId, aUsername)
-
-        then: "github is checked if the user is a collaborator of the repository"
-        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), aUsername) >> userAndInstallationAccessToCatalogueRepository
-
-        and: "the .yml manifest file does not exist"
-        1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), catalogueId.getPath(), null) >> { throw new HttpClientErrorException(HttpStatus.NOT_FOUND) }
-
-        and: "no catalogue is returned"
-        !catalogue
-
-        and: "no spec items are retrieved"
-        0 * specLogService.getSpecLogsFor(_, _)
-    }
-
-    def "find catalogues for valid user and org"() {
-        given: "user and app installation access to 1 repository with a catalogue config manifest file"
-        def repo = new RepositoryId("test-owner","test-repo987")
-        def searchCodeResults = searchCodeResultsForInstallation(repo)
-        def userAndInstallationAccessToCatalogueRepository = true
-
-        and: "valid catalogue manifest YAML content in the manifest file"
-        def manifestFileContentItem = Mock(ContentItem)
-
-        and: "a catalogue manifest parse result the manifest file contents with valid catalogue manifest object"
-        def catalogueManifest = Mock(CatalogueManifest)
-        def catalogueManifestParseResult = new CatalogueManifestParseResult(catalogueManifest, null)
-
-        and: "mapped catalogue API models for each catalogue entry in the manifest object"
-        def mappedCatalogues = [Mock(Catalogue)]
-
-        when: "the find catalogues for user and org is called"
-        def result = catalogueService.findCataloguesForOrgAndUser(anOrg, aUsername)
-
-        then: "github is searched for catalogue manifest files"
-        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", anOrg, null) >> searchCodeResults
-
-        and: "github is checked if the user is a collaborator of the found repositories"
-        1 * restApiClient.isUserRepositoryCollaborator(repo, aUsername) >> userAndInstallationAccessToCatalogueRepository
-
-        and: "the .yml manifest file contents is retrieved"
-        1 * restApiClient.getRepositoryContent(repo, catalogueManifestYmlFilename, null) >> manifestFileContentItem
-
-        and: "the manifest file contents are parsed"
-        1 * catalogueManifestParser.parseManifestFileContents(_) >> catalogueManifestParseResult
-
-        and: "the manifest catalogue entry object is mapped to an API catalogue model"
-        1 * catalogueMapper.mapCatalogueManifestEntries(catalogueManifest, _, _) >> mappedCatalogues
-
-        and: "the catalogues returned contain the mapped entries"
-        result.size() == 1
-        result.first() == mappedCatalogues.first()
-    }
-
-    def "find catalogues for valid user uses .yml config file when files with both extensions is found"() {
-        given: "user and app installation access to 1 repository with a both catalogue config manifest file extensions"
-        def repo = new RepositoryId("test-owner","test-repo987")
-        def searchCodeResults = searchCodeResultsForInstallation(repo, true)
-        def userAndInstallationAccessToCatalogueRepository = true
-
-        and: "valid catalogue manifest YAML content in the manifest file"
-        def manifestFileContentItem = Mock(ContentItem)
-
-        and: "a catalogue manifest parse result the manifest file contents with valid catalogue manifest object"
-        def catalogueManifest = Mock(CatalogueManifest)
-        def catalogueManifestParseResult = new CatalogueManifestParseResult(catalogueManifest, null)
-
-        and: "mapped catalogue API models for each catalogue entry in the manifest object"
-        def mappedCatalogues = [Mock(Catalogue)]
-
-        when: "the find catalogues for user and org is called"
-        def result = catalogueService.findCataloguesForOrgAndUser(anOrg, aUsername)
-
-        then: "github is searched for catalogue manifest files"
-        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", anOrg, null) >> searchCodeResults
-
-        and: "github is checked if the user is a collaborator of the found repositories"
-        1 * restApiClient.isUserRepositoryCollaborator(repo, aUsername) >> userAndInstallationAccessToCatalogueRepository
-
-        and: "the .yml manifest file is retrieved"
-        1 * restApiClient.getRepositoryContent(repo, catalogueManifestYmlFilename, null) >> manifestFileContentItem
-
-        and: "the manifest file contents are parsed"
-        1 * catalogueManifestParser.parseManifestFileContents(_) >> catalogueManifestParseResult
-
-        and: "the manifest catalogue entry object is mapped to an API catalogue model"
-        1 * catalogueMapper.mapCatalogueManifestEntries(catalogueManifest, _, _) >> mappedCatalogues
-
-        and: "the catalogues returned contain the mapped entries"
-        result.size() == 1
-        result.first() == mappedCatalogues.first()
-    }
-
-    def "find catalogues filters out repos the user does not have access to"() {
-        given: "1 repository with a catalogue config manifest file the user does not have access to"
-        def repo = new RepositoryId("test-owner","test-repo987")
-        def searchCodeResults = searchCodeResultsForInstallation(repo)
-        def userAndInstallationAccessToCatalogueRepository = false
-
-        when: "the find catalogues for user and org is called"
-        def result = catalogueService.findCataloguesForOrgAndUser(anOrg, aUsername)
-
-        then: "github is search for instance manifest files"
-        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", anOrg, null) >> searchCodeResults
-
-        and: "github is checked if the user is a collaborator of the found repositories"
-        1 * restApiClient.isUserRepositoryCollaborator(repo, aUsername) >> userAndInstallationAccessToCatalogueRepository
-
-        and: "no catalogues are returned"
-        result.isEmpty()
-
-        and: "no file contents are retrieved"
-        0 * restApiClient.getRepositoryContent(*_)
-    }
-
-    def "find catalogues filters out repos the github app installation does not have access to"() {
-        given: "1 repository with a catalogue config manifest file the app installation does not have access to"
-        def repo = new RepositoryId("test-owner","test-repo987")
-        def searchCodeResults = searchCodeResultsForInstallation(repo)
-
-        when: "the find catalogues for user and org is called"
-        def result = catalogueService.findCataloguesForOrgAndUser(anOrg, aUsername)
-
-        then: "github is search for instance manifest files"
-        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", anOrg, null) >> searchCodeResults
-
-        and: "github is checked if the user is a collaborator of the found repositories"
-        1 * restApiClient.isUserRepositoryCollaborator(repo, aUsername) >> { throw new HttpClientErrorException(HttpStatus.FORBIDDEN) }
-
-        and: "no catalogues are returned"
-        result.isEmpty()
-
-        and: "no file contents are retrieved"
-        0 * restApiClient.getRepositoryContent(*_)
-    }
-
-    def "find catalogues filters out incorrect filename matches"() {
-        given: "an incorrect filename search result"
-        def searchResultFilename = "spectacular-app-config.yaml"
-
-        and: "an app installation with access to 1 repository with a catalogue config manifest file"
-        def repo = new RepositoryId("test-owner","test-repo987")
-        def searchCodeResultRepo = new spectacular.backend.github.domain.Repository(1234, repo.getNameWithOwner(), new URI("https://test-url"))
-        def searchCodeResultItem = new SearchCodeResultItem(searchResultFilename, searchResultFilename, "test_url", "test_git_url", "test_html_url", searchCodeResultRepo)
-        def searchCodeResults = new SearchCodeResults(1, List.of(searchCodeResultItem), false)
-
-        when: "the find catalogues for user and org is called"
-        def result = catalogueService.findCataloguesForOrgAndUser(anOrg, aUsername)
-
-        then: "github is search for instance manifest files"
-        1 * restApiClient.findFiles("spectacular-config", ["yaml", "yml"], "/", anOrg, null) >> searchCodeResults
-
-        and: "no catalogues are returned"
-        result.isEmpty()
-
-        and: "github is not checked if the user is a collaborator of any found repositories"
-        0 * restApiClient.isUserRepositoryCollaborator(*_)
-
-        and: "no file contents are retrieved"
-        0 * restApiClient.getRepositoryContent(*_)
-    }
-
-    def "get interface entry from a catalogue"() {
-        given: "a specific catalogue the user has access to"
-        def catalogueId = aCatalogue()
-        def userAndInstallationAccessToCatalogueRepository = true
-
-        and: "an interface name to get an interface entry for"
-        def interfaceName = "some-interface"
-
-        and: "a catalogue config manifest containing the catalogue"
-        def manifestFileContentItem = Mock(ContentItem)
-
-        and: "a catalogue config parse result with a catalogue entry in the manifest file contents"
-        def catalogue = Mock(spectacular.backend.cataloguemanifest.model.Catalogue)
-        def catalogueParseResult = new FindAndParseCatalogueResult(catalogue, null)
-
-        and: "the parse result catalogue object has an interface entry for the interface name"
-        def interfaces = Mock(Interfaces)
-        catalogue.getInterfaces() >> interfaces
+        and: "a catalogue config entry in the manifest file with an interface entry in it that has an error"
         def interfaceEntry = Mock(Interface)
-        interfaces.getAdditionalProperties() >> ["some-interface": interfaceEntry]
+        def interfaceEntryName = "testInterface1"
+        def catalogue = aCatalogueEntry(interfaceEntryName, interfaceEntry)
+        def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
+        def getInterfaceEntryConfigurationResult = anInterfaceEntryResultWithError()
 
-        when: "the get interface entry for user is called with the name of the interface"
-        def result = catalogueService.getInterfaceEntry(catalogueId, interfaceName, aUsername)
+        and: "a catalogue API model representation of the catalogue manifest object without interface details"
+        def catalogueDetails = Mock(Catalogue)
 
-        then: "github is checked if the user is a collaborator of the repository"
-        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), aUsername) >> userAndInstallationAccessToCatalogueRepository
+        when: "the get catalogue for user is called"
+        def result = catalogueService.getCatalogueForUser(catalogueId, aUsername)
 
-        and: "the .yml manifest file contents is retrieved"
-        1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), catalogueId.getPath(), null) >> manifestFileContentItem
+        then: "the catalogue entry configuration is resolved"
+        1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
 
-        and: "the catalogue entry in the manifest file contents is searched for"
-        1 * catalogueManifestParser.findAndParseCatalogueInManifestFileContents(_, catalogueId.getCatalogueName()) >> catalogueParseResult
+        and: "the interface entry configuration is resolved"
+        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName) >> getInterfaceEntryConfigurationResult
 
-        and: "an interface entry is returned for the specific interface name"
-        result
+        and: "the manifest catalogue entry object is mapped to an API catalogue model"
+        1 * catalogueMapper.mapCatalogue(getCatalogueEntryConfigurationResult) >> catalogueDetails
+
+        and: "no interface details are retrieved for the null interface"
+        0 * interfaceService.getInterfaceDetails(_)
+
+        and: "the an empty list of spec evolutions are added to the catalogue API model object"
+        1 * catalogueDetails.specEvolutionSummaries([]) >> catalogueDetails
+
+        and: "the mapped catalogue API model object is returned"
+        result.getCatalogueDetails() == catalogueDetails
     }
 
-    def "get interface entry from catalogue for name that does not exist in manifest"() {
-        given: "a specific catalogue the user has access to"
-        def catalogueId = aCatalogue()
-        def userAndInstallationAccessToCatalogueRepository = true
+    def "get catalogue returns error result for a catalogue entry resolve error"() {
+        given: "a location for a catalogue config"
+        def catalogueId = aCatalogueId()
 
-        and: "an interface name to get an interface entry for"
-        def interfaceName = "some-interface"
+        and: "a catalogue config entry with an error"
+        def getCatalogueEntryConfigurationResult = aCatalogueEntryResultWithError()
 
-        and: "a catalogue config manifest containing the catalogue"
-        def manifestFileContentItem = Mock(ContentItem)
+        when: "the get catalogue for user is called"
+        def result = catalogueService.getCatalogueForUser(catalogueId, aUsername)
 
-        and: "a catalogue config parse result without a catalogue entry in the manifest file contents"
-        def catalogueParseResult = new FindAndParseCatalogueResult(null, null)
+        then: "the catalogue entry configuration is resolved"
+        1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
 
-        when: "the get interface entry for user is called"
-        def interfaceEntry = catalogueService.getInterfaceEntry(catalogueId, interfaceName, aUsername)
+        and: "no interface details are retrieved"
+        0 * interfaceService.getInterfaceDetails(_)
 
-        then: "github is checked if the user is a collaborator of the repository"
-        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), aUsername) >> userAndInstallationAccessToCatalogueRepository
-
-        and: "the .yml manifest file contents is retrieved"
-        1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), catalogueId.getPath(), null) >> manifestFileContentItem
-
-        and: "the catalogue entry in the manifest file contents is searched for"
-        1 * catalogueManifestParser.findAndParseCatalogueInManifestFileContents(_, catalogueId.getCatalogueName()) >> catalogueParseResult
-
-        and: "no interface entry is found for the specific interface name"
-        !interfaceEntry
+        and: "a error result is returned with no catalogue details"
+        result.getError()
+        !result.getCatalogueDetails()
     }
 
-    def "get interface entry from a catalogue that does not exist"() {
-        given: "a specific catalogue the user has access to"
-        def catalogueId = aCatalogue()
-        def userAndInstallationAccessToCatalogueRepository = true
+    def "get interface details for valid repository, interface name and user successfully returns interface details"() {
+        given: "a location for a catalogue config and interface entry name"
+        def catalogueId = aCatalogueId()
+        def interfaceEntryName = "testInterface1"
 
-        and: "an interface name to get an interface entry for"
-        def interfaceName = "some-interface"
+        and: "a catalogue config entry in the manifest file with the interface entry in it"
+        def interfaceEntry = Mock(Interface)
+        def catalogue = aCatalogueEntry(interfaceEntryName, interfaceEntry)
+        def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
+        def getInterfaceEntryConfigurationResult = aSuccessfulInterfaceEntryResult(interfaceEntry)
 
-        when: "the get interface entry for user is called"
-        def interfaceEntry = catalogueService.getInterfaceEntry(catalogueId, interfaceName, aUsername)
+        and: "interface details for the interface entry with a spec evolution summary"
+        def interfaceDetails = Mock(GetInterfaceResult)
+        def interfaceSpecEvolutionSummary = Mock(SpecEvolutionSummary)
+        interfaceDetails.getSpecEvolutionSummary() >> interfaceSpecEvolutionSummary
 
-        then: "github is checked if the user is a collaborator of the repository"
-        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), aUsername) >> userAndInstallationAccessToCatalogueRepository
+        and: "a catalogue API model representation of the catalogue manifest object without interface details"
+        def catalogueDetails = Mock(Catalogue)
 
-        and: "the .yml manifest file contents is retrieved"
-        1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), catalogueId.getPath(), null) >> { throw new HttpClientErrorException(HttpStatus.NOT_FOUND) }
+        when: "the get interface details for user is called"
+        def result = catalogueService.getInterfaceDetails(catalogueId, interfaceEntryName, aUsername)
 
-        and: "no interface entry is returned"
-        !interfaceEntry
+        then: "the catalogue entry configuration is resolved"
+        1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
+
+        and: "the interface entry configuration is resolved"
+        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName) >> getInterfaceEntryConfigurationResult
+
+        and: "the interface details are retrieved for the interface entry in the catalogue"
+        1 * interfaceService.getInterfaceDetails(getInterfaceEntryConfigurationResult) >> interfaceDetails
+
+        and: "the manifest catalogue entry object is mapped to an API catalogue model"
+        1 * catalogueMapper.mapCatalogue(getCatalogueEntryConfigurationResult) >> catalogueDetails
+
+        and: "the catalogue API object is added to the interface details"
+        1 * interfaceDetails.catalogue(catalogueDetails) >> interfaceDetails
+
+        and: "the mapped catalogue API model object is returned"
+        result.getInterfaceResult == interfaceDetails
     }
 
-    def "get interface entry from a catalogue that the user does not have access to"() {
-        given: "a specific catalogue the user has access to"
-        def catalogueId = aCatalogue()
-        def userAndInstallationAccessToCatalogueRepository = false
+    def "get interface details returns error result for catalogue entry config that resolves with error"() {
+        given: "a catalogue id and interface entry name"
+        def catalogueId = aCatalogueId()
+        def interfaceEntryName = "testInterface1"
 
-        and: "an interface name to get an interface entry for"
-        def interfaceName = "some-interface"
+        and: "a catalogue config entry with an error"
+        def getCatalogueEntryConfigurationResult = aCatalogueEntryResultWithError()
 
-        when: "the get interface entry for user is called"
-        def interfaceEntry = catalogueService.getInterfaceEntry(catalogueId, interfaceName, aUsername)
+        when: "the get interface details for user is called"
+        def result = catalogueService.getInterfaceDetails(catalogueId, interfaceEntryName, aUsername)
 
-        then: "github is checked if the user is a collaborator of the repository"
-        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), aUsername) >> userAndInstallationAccessToCatalogueRepository
+        then: "the catalogue entry configuration is resolved"
+        1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
 
-        and: "no file contents are retrieved"
-        0 * restApiClient.getRepositoryContent(*_)
+        and: "no interface entry configuration is resolved"
+        0 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(_, _)
 
-        and: "no interface entry is returned"
-        !interfaceEntry
+        and: "no interface details are retrieved"
+        0 * interfaceService.getInterfaceDetails(_)
+
+        and: "a error result is returned with no interface details"
+        result.getError()
+        !result.getGetInterfaceResult()
     }
 
-    def "get interface entry from a catalogue that has parse errors"() {
-        given: "a specific catalogue the user has access to"
-        def catalogueId = aCatalogue()
-        def userAndInstallationAccessToCatalogueRepository = true
+    def "get interface details returns error result for interface entry config that resolves with error"() {
+        given: "a catalogue id and interface entry name"
+        def catalogueId = aCatalogueId()
+        def interfaceEntryName = "testInterface1"
 
-        and: "an interface name to get an interface entry for"
-        def interfaceName = "interface2"
+        and: "a catalogue config entry in the manifest file with an interface entry in it that has an error"
+        def interfaceEntry = Mock(Interface)
+        def catalogue = aCatalogueEntry(interfaceEntryName, interfaceEntry)
+        def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
+        def getInterfaceEntryConfigurationResult = anInterfaceEntryResultWithError()
 
-        and: "an invalid catalogue config manifest"
-        def manifestFileContentItem = Mock(ContentItem)
+        when: "the get interface details for user is called"
+        def result = catalogueService.getInterfaceDetails(catalogueId, interfaceEntryName, aUsername)
 
-        and: "a catalogue config parse result with an error"
-        def error = "some parse error"
-        def catalogueParseResult = new FindAndParseCatalogueResult(null, error)
+        then: "the catalogue entry configuration is resolved"
+        1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
 
-        when: "the get interface entry for user is called"
-        def interfaceEntry = catalogueService.getInterfaceEntry(catalogueId, interfaceName, aUsername)
+        and: "the interface entry configuration is resolved"
+        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName) >> getInterfaceEntryConfigurationResult
 
-        then: "github is checked if the user is a collaborator of the repository"
-        1 * restApiClient.isUserRepositoryCollaborator(catalogueId.getRepositoryId(), aUsername) >> userAndInstallationAccessToCatalogueRepository
+        and: "no interface details are retrieved"
+        0 * interfaceService.getInterfaceDetails(_)
 
-        and: "the .yml manifest file contents is retrieved"
-        1 * restApiClient.getRepositoryContent(catalogueId.getRepositoryId(), catalogueId.getPath(), null) >> manifestFileContentItem
+        and: "a error result is returned with no interface details"
+        result.getError()
+        !result.getGetInterfaceResult()
+    }
 
-        and: "the catalogue entry in the manifest file contents is searched for"
-        1 * catalogueManifestParser.findAndParseCatalogueInManifestFileContents(_, catalogueId.getCatalogueName()) >> catalogueParseResult
+    def "get interface file contents for valid repository, interface name and user successfully returns file contents"() {
+        given: "a catalogue id, interface entry name and ref"
+        def catalogueId = aCatalogueId()
+        def interfaceEntryName = "testInterface1"
+        def ref = 'branch1'
 
-        and: "a runtime exception is thrown"
-        def e = thrown(RuntimeException)
-        e.getMessage() == "An error occurred while parsing the catalogue manifest file for interface requested."
+        and: "a catalogue config entry in the manifest file with the interface entry in it"
+        def interfaceEntry = Mock(Interface)
+        def catalogue = aCatalogueEntry(interfaceEntryName, interfaceEntry)
+        def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
+        def getInterfaceEntryConfigurationResult = aSuccessfulInterfaceEntryResult(interfaceEntry)
+
+        and: "a file contents result for the interface entry"
+        def getInterfaceFileContentsResult = Mock(GetInterfaceFileContentsResult)
+
+        when: "the get interface file contents for ref and user is called"
+        def result = catalogueService.getInterfaceFileContents(catalogueId, interfaceEntryName, ref, aUsername)
+
+        then: "the catalogue entry configuration is resolved"
+        1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
+
+        and: "the interface entry configuration is resolved"
+        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName) >> getInterfaceEntryConfigurationResult
+
+        and: "the interface file contents are retrieved for the interface entry in the catalogue"
+        1 * interfaceService.getInterfaceFileContents(catalogueId, interfaceEntry, ref) >> getInterfaceFileContentsResult
+
+        and: "the interface file contents result is returned"
+        result == getInterfaceFileContentsResult
+    }
+
+    def "get interface file contents returns error result for catalogue entry config that resolves with error"() {
+        given: "a catalogue id, interface entry name and ref"
+        def catalogueId = aCatalogueId()
+        def interfaceEntryName = "testInterface1"
+        def ref = 'branch1'
+
+        and: "a catalogue config entry with an error"
+        def getCatalogueEntryConfigurationResult = aCatalogueEntryResultWithError()
+
+        when: "the get interface file contents for ref and user is called"
+        def result = catalogueService.getInterfaceFileContents(catalogueId, interfaceEntryName, ref, aUsername)
+
+        then: "the catalogue entry configuration is resolved"
+        1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
+
+        and: "no interface entry configuration is resolved"
+        0 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(_, _)
+
+        and: "no interface file contents is retrieved"
+        0 * interfaceService.getInterfaceFileContents(_, _, _)
+
+        and: "a error result is returned"
+        result.hasError()
+    }
+
+    def "get interface file contents returns error result for interface entry config that resolves with error"() {
+        given: "a catalogue id, interface entry name and ref"
+        def catalogueId = aCatalogueId()
+        def interfaceEntryName = "testInterface1"
+        def ref = 'branch1'
+
+        and: "a catalogue config entry in the manifest file with an interface entry in it that has an error"
+        def interfaceEntry = Mock(Interface)
+        def catalogue = aCatalogueEntry(interfaceEntryName, interfaceEntry)
+        def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
+        def getInterfaceEntryConfigurationResult = anInterfaceEntryResultWithError()
+
+        when: "the get interface file contents for ref and user is called"
+        def result = catalogueService.getInterfaceFileContents(catalogueId, interfaceEntryName, ref, aUsername)
+
+        then: "the catalogue entry configuration is resolved"
+        1 * catalogueEntryConfigurationResolver.getCatalogueEntryConfiguration(catalogueId, aUsername) >> getCatalogueEntryConfigurationResult
+
+        and: "the interface entry configuration is resolved"
+        1 * catalogueInterfaceEntryConfigurationResolver.getCatalogueInterfaceEntryConfiguration(getCatalogueEntryConfigurationResult, interfaceEntryName) >> getInterfaceEntryConfigurationResult
+
+        and: "no interface file contents is retrieved"
+        0 * interfaceService.getInterfaceFileContents(_, _, _)
+
+        and: "a error result is returned"
+        result.hasError()
+    }
+
+    def "find catalogues for valid user and org returns catalogues for each catalogue manifest file found with actual valid contents"() {
+        given: "user and org"
+        def username = aUsername
+        def org = anOrg
+
+        and: "a catalogue entry found in a manifest file"
+        def catalogueId = aCatalogueId()
+        def catalogue = Mock(spectacular.backend.cataloguemanifest.model.Catalogue)
+        def getCatalogueEntryConfigurationResult = aSuccessfulCatalogueEntryResult(catalogueId, catalogue)
+
+        and: "mapped catalogue API models for each catalogue entry in the manifest object"
+        def mappedCatalogues = Mock(Catalogue)
+
+        when: "the find catalogues for user and org is called"
+        def result = catalogueService.findCataloguesForOrgAndUser(org, username)
+
+        then: "catalogue entries configuration are found and resolved"
+        1 * catalogueEntryConfigurationResolver.findCataloguesForOrgAndUser(org, username) >> [getCatalogueEntryConfigurationResult]
+
+        and: "the manifest catalogue entry object is mapped to an API catalogue model"
+        1 * catalogueMapper.mapCatalogue(getCatalogueEntryConfigurationResult) >> mappedCatalogues
+
+        and: "the catalogues returned contain the mapped entries"
+        result.size() == 1
+        result.first() == mappedCatalogues
     }
 }

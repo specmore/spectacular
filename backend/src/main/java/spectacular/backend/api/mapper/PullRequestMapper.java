@@ -14,6 +14,7 @@ public class PullRequestMapper {
         .number(pullRequest.getNumber())
         .title(pullRequest.getTitle())
         .url(pullRequest.getUrl())
+        .branchName(pullRequest.getBranchName())
         .labels(pullRequest.getLabels())
         .updatedAt(pullRequest.getUpdatedAt());
   }

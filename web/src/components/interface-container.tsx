@@ -5,11 +5,11 @@ import {
 import { useParams } from 'react-router-dom';
 import SwaggerUI from 'swagger-ui-react';
 import 'swagger-ui-react/swagger-ui.css';
-import { useGetCatalogue } from '../backend-api-client';
+import { useGetInterfaceDetails } from '../backend-api-client';
 import LocationBar from './location-bar';
 import InterfaceDetails from './interface-details';
 import { CloseSpecButton, getCurrentSpecRefViewed, isShowSpecEvolution } from '../routes';
-import SpecEvolutionContainer from './spec-evolution';
+import SpecEvolutionContainer from './spec-evolution/spec-evolution-container';
 
 const InterfaceContainerLoading = () => (
   <>
@@ -46,23 +46,22 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
   const refName = getCurrentSpecRefViewed();
   const showSpecEvolution = isShowSpecEvolution();
 
-  const getCatalogue = useGetCatalogue({ encodedId });
-  const { data: getCatalogueResult, loading, error } = getCatalogue;
+  const getInterfaceDetails = useGetInterfaceDetails({ encodedId, interfaceName });
+  const { data: getInterfaceResult, loading, error } = getInterfaceDetails;
 
   let catalogue = null;
-  let interfaceTitle = null;
   let content = null;
   let specPreview = null;
   let specEvolution = null;
+  let specEvolutionSummary = null;
   if (loading) {
     content = (<InterfaceContainerLoading />);
   } else if (error) {
     content = (<InterfaceContainerError errorMessage={error.message} />);
   } else {
-    catalogue = getCatalogueResult.catalogue;
-    const specLog = catalogue.specLogs.find((specLogItem) => specLogItem.interfaceName === interfaceName);
-    interfaceTitle = specLog.latestAgreed.parseResult.openApiSpec.title;
-    content = (<InterfaceDetails specLog={specLog} interfaceName={interfaceName} />);
+    catalogue = getInterfaceResult.catalogue;
+    specEvolutionSummary = getInterfaceResult.specEvolutionSummary;
+    content = (<InterfaceDetails specEvolutionSummary={specEvolutionSummary} />);
 
     if (refName) {
       const interfaceFileContentsPath = createInterfaceFileContentsPath(encodedId, interfaceName, refName);
@@ -78,7 +77,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
       specEvolution = (
         <Segment vertical>
           <Container text>
-            <SpecEvolutionContainer specLog={specLog} interfaceName={interfaceName} />
+            <SpecEvolutionContainer specEvolution={getInterfaceResult.specEvolution} />
           </Container>
         </Segment>
       );
@@ -87,7 +86,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
 
   return (
     <>
-      <LocationBar installationOwner={org} catalogue={catalogue} interfaceTitle={interfaceTitle} />
+      <LocationBar installationOwner={org} catalogue={catalogue} specEvolutionSummary={specEvolutionSummary} />
       <div data-testid="interface-container-segment">
         <Segment vertical>
           <Container text>

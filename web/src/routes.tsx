@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
-import { Button, Icon } from 'semantic-ui-react';
-import { Link, useParams, useLocation } from 'react-router-dom';
+import { Button, Icon, Popup } from 'semantic-ui-react';
+import { Link, useLocation } from 'react-router-dom';
 import { SpecItem } from './backend-api-client';
 
 export const CATALOGUE_LIST_ROUTE = '/';
@@ -42,14 +42,36 @@ export const BackToCatalogueListLinkButton: FunctionComponent = () => (
 
 interface ViewSpecLinkButtonProps {
   refName: string;
-  interfaceName: string;
+  withoutLabel? : boolean;
 }
 
-export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({ refName, interfaceName }) => {
-  const { interfaceName: selectedInterfaceName } = useParams();
-  const isSelected = interfaceName === selectedInterfaceName && useQuery().get(VIEW_SPEC_QUERY_PARAM_NAME) === refName;
+export const ViewSpecLinkButton: FunctionComponent<ViewSpecLinkButtonProps> = ({ refName, withoutLabel = false }) => {
+  const isSelected = useQuery().get(VIEW_SPEC_QUERY_PARAM_NAME) === refName;
 
   const viewSpecLink = addQueryParam(VIEW_SPEC_QUERY_PARAM_NAME, refName);
+
+  if (withoutLabel) {
+    return (
+      <Popup
+        content="View Spec"
+        trigger={(
+          <Button
+            icon
+            circular
+            size="mini"
+            as={Link}
+            to={viewSpecLink}
+            disabled={isSelected}
+            data-testid="view-spec-button"
+            floated="right"
+          >
+            <Icon name="eye" />
+          </Button>
+        )}
+      />
+    );
+  }
+
   return (
     <Button
       icon
@@ -133,14 +155,19 @@ interface OpenSpecItemContentPageButtonProps {
   specItem: SpecItem;
 }
 export const OpenSpecItemContentPageButton: FunctionComponent<OpenSpecItemContentPageButtonProps> = ({ specItem }) => (
-  <Button
-    icon="file code"
-    circular
-    size="mini"
-    href={specItem.htmlUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    color="grey"
-    floated="right"
+  <Popup
+    content="Open Interface Spec File"
+    trigger={(
+      <Button
+        icon="file code"
+        circular
+        size="mini"
+        href={specItem.htmlUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        color="grey"
+        floated="right"
+      />
+    )}
   />
 );

@@ -2,6 +2,7 @@ package spectacular.backend.common;
 
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
+import spectacular.backend.cataloguemanifest.model.Catalogue;
 
 public class CatalogueId extends CatalogueManifestId {
   protected final String catalogueName;
@@ -28,6 +29,10 @@ public class CatalogueId extends CatalogueManifestId {
       combined = String.join("/", this.repositoryId.getNameWithOwner(), this.path, this.catalogueName);
     }
     return combined;
+  }
+
+  public static CatalogueId createFrom(CatalogueManifestId catalogueManifestId, String catalogueName) {
+    return new CatalogueId(catalogueManifestId.getRepositoryId(), catalogueManifestId.getPath(), catalogueName);
   }
 
   /**
