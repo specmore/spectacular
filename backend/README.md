@@ -42,18 +42,19 @@ To regenerate the API interface and model classes from this spec file after maki
 ## Design Decisions
 ### Architecture Pattern
 The objects in this project could be organised horizontally using the following conceptual layers:
-- A RESTful API layer to expose functionality publicly
+- A RESTful API layer to expose functionality publicly and it's associated models (DTOs).
 - A service layer containing all the logic required to fulfil each API request
-- Domain model layer representing the tools [Domain Model](../docs/domain-modal.md)
-- DTOs used for different API resources
-- Client layer for making API requests to other resources like GitHub's API
+- Adaption layer for making API requests to other resources like GitHub's API
 
 However the project is organised vertically by the domain concerns instead, for example:
-- Catalogues
-- Files
-- PullRequests
-- Specs
-- Security
+- [Catalogue Manifests](src/main/java/spectacular/backend/cataloguemanifest) - Responsible for finding and parsing [Catalogue Manifest files](../docs/catalogue-configuration.md).
+- [Catalogues](src/main/java/spectacular/backend/catalogues) - Responsible for collecting information about Interface Catalogues and returning detailed representations back to the user.
+- [GitHub](src/main/java/spectacular/backend/github) - An adaptor to the GitHub VCM system from which interface information is gathered.
+- [Installation](src/main/java/spectacular/backend/installation) - Responsible for returning information about the integration this instance of Spectacular has with the VCM system.
+- [Interfaces](src/main/java/spectacular/backend/interfaces) - Responsible for collecting information about a specific Interface and returning detailed representations back to the user.
+- [Security](src/main/java/spectacular/backend/security) - Responsible for supplying services to help secure the backend application.
+- [Spec Evolution](src/main/java/spectacular/backend/specevolution) - Responsible for collecting git file history data about an Interface's spec file and returning evolutionary timeline information back to the user.
+- [Specs](src/main/java/spectacular/backend/specs) - Responsible for parsing the contents of Interface spec files into objects usable by the Front End application.
 
 ### Architecture Decisions
 This project has been built with the following architectural design decisions in mind:
