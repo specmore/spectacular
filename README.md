@@ -7,7 +7,7 @@ Spectacular helps to make the change review process for interface specifications
 * Integration with GitHub for user login and access control to your interface spec files
 * Ability to organise your interface spec files into "Catalogues", making them easier to find
 * Visualising your interface specifications using graphical documentation tools like [Swagger UI](https://github.com/swagger-api/swagger-ui) for OpenAPI files
-* Easier tracking of open change proposals for an interface by showing all the open Pull Requests in one place
+* Easier tracking of open change proposals and upcoming release versions for an interface by visualising all items on an evolutionary timeline
 
 ## View the Spectacular Demo
 Checkout Spectacular in action by visiting our Spectacular Demo website: [https://spectacular-demo.specmore.org/](https://spectacular-demo.specmore.org/)
