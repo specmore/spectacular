@@ -6,6 +6,8 @@
 -	**Where to file issues**:  
 	[https://github.com/specmore/spectacular/issues](https://github.com/specmore/spectacular/issues)
 
-# Supported tags and respective `Dockerfile` links
+-	**Where to find releases**:  
+	[https://github.com/specmore/spectacular/releases](https://github.com/specmore/spectacular/releases)
 
--	[`0.1.0`](https://github.com/specmore/spectacular/blob/2b05168d4573c37226e924a57f098ab6254a41d1/docker/Dockerfile-web)
+- Link to `Dockerfile`:  
+	[Dockerfile-web](https://github.com/specmore/spectacular/blob/master/docker/Dockerfile-web)
