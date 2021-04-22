@@ -5,8 +5,9 @@ The [Release Drafter](https://github.com/specmore/spectacular/actions?query=work
 
 Check the repository's [Releases](https://github.com/specmore/spectacular/releases) page and  ensure the correct version number is set. Versioning is done according to [SemVer](http://semver.org).
 
-## Ensure the Build version is correct
-The SpectacularCI build pipeline should have created release candidate images for both Backend and Web components with the right version.
+## Create a build from the release tag
+Once release has been published and the tag is created, run the SpectacularCI build pipeline for the `refs/tags/vX.X.X` tag.
+Ensure the pipeline run has created release candidate images for both Backend and Web components with the right version.
 
 ## Promote the Docker Images
 Pull, tag and push the docker images with the new version number.
