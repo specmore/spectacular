@@ -17,16 +17,13 @@ import spectacular.backend.api.model.GetInterfaceResult;
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError;
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemErrorType;
 import spectacular.backend.common.CatalogueId;
-import spectacular.backend.interfaces.InterfaceService;
 
 @RestController
 public class CataloguesController implements CataloguesApi {
   private final CatalogueService catalogueService;
-  private final InterfaceService interfaceService;
 
-  public CataloguesController(CatalogueService catalogueService, InterfaceService interfaceService) {
+  public CataloguesController(CatalogueService catalogueService) {
     this.catalogueService = catalogueService;
-    this.interfaceService = interfaceService;
   }
 
   @Override

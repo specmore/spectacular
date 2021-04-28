@@ -6,7 +6,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.context.WebApplicationContext;
+import spectacular.backend.github.RestApiClient;
 import spectacular.backend.github.app.AppInstallationContextProvider;
+import spectacular.backend.github.pullrequests.PullRequestRepository;
 
 @SpringBootApplication
 public class SpectacularBackendApplication {
@@ -18,5 +20,11 @@ public class SpectacularBackendApplication {
   @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
   public AppInstallationContextProvider appInstallationContextProviderRequestScopedBean() {
     return new AppInstallationContextProvider();
+  }
+
+  @Bean
+  @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+  public PullRequestRepository pullRequestRepositoryRequestScopedBean(RestApiClient restApiClient) {
+    return new PullRequestRepository(restApiClient);
   }
 }

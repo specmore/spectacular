@@ -14,10 +14,14 @@ import spock.lang.Specification
 class SpecEvolutionDataExtractorTest extends Specification {
     def refRepository = Mock(RefRepository)
     def pullRequestRepository = Mock(PullRequestRepository)
-    def specEvolutionDataExtractor = new SpecEvolutionDataExtractor(refRepository, pullRequestRepository)
+    def specEvolutionDataExtractor = new SpecEvolutionDataExtractor(refRepository)
 
     def specFilePath = "some/path/spec.yaml"
     def specRepoId = RepositoryId.createForNameWithOwner("test/repo")
+
+    def setup() {
+        specEvolutionDataExtractor.pullRequestRepository = pullRequestRepository
+    }
 
     def "GetMainBranchAccordingToConfig selects the first exact matching branch to the main branch name"() {
         given: "a spec evolution config with a main branch name config set"
