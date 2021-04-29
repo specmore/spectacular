@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import spectacular.backend.cataloguemanifest.model.SpecEvolutionConfig;
 import spectacular.backend.common.RepositoryId;
@@ -16,12 +17,12 @@ import spectacular.backend.github.refs.TagRef;
 @Component
 public class SpecEvolutionDataExtractor {
   private final RefRepository refRepository;
-  private final PullRequestRepository pullRequestRepository;
 
-  public SpecEvolutionDataExtractor(RefRepository refRepository,
-                                    PullRequestRepository pullRequestRepository) {
+  @Autowired
+  private PullRequestRepository pullRequestRepository;
+
+  public SpecEvolutionDataExtractor(RefRepository refRepository) {
     this.refRepository = refRepository;
-    this.pullRequestRepository = pullRequestRepository;
   }
 
   /**

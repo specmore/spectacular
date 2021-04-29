@@ -13,7 +13,6 @@ import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.github.graphql.GraphQlRequest;
 
-@Repository
 public class PullRequestRepository {
   private static final Logger logger = LoggerFactory.getLogger(PullRequestRepository.class);
 
