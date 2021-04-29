@@ -23,6 +23,8 @@ The following GitHub App registration values need to be set:
 - Under `Repository permissions` give the App:
   - `Read-only` access to the `Contents` item
   - `Read-only` access to the `Pull requests` item
+- Under `Organization permissions` give the App:
+  - `Read-only` access to the `Members` item
 
 Complete the rest of the registration details as appropriate and save your new App.
 
