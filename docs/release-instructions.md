@@ -7,7 +7,9 @@ Check the repository's [Releases](https://github.com/specmore/spectacular/releas
 
 ## Create a build from the release tag
 Once release has been published and the tag is created, run the SpectacularCI build pipeline for the `refs/tags/vX.X.X` tag.
+
 Ensure the pipeline run has created release candidate images for both Backend and Web components with the right version.
+This can be done by running the [Spectacular Test Deploy](https://dev.azure.com/specmore/Spectacular/_build?definitionId=2&_a=summary) pipeline with the `overrideImageTag` set to the `X.X.X` version number and check that the [test site](https://spectacular-test.specmore.org/) reports the appropriate version number.
 
 ## Promote the Docker Images
 Pull, tag and push the docker images with the new version number.
