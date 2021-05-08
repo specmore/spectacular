@@ -78,10 +78,22 @@ describe('End to End test without login', function() {
         // then spec evolution details are shown
         cy.get('[data-testid=spec-evolution-container]').should('be.visible')
 
-        // and 10 spec log items are shown
-        cy.get('[data-testid=log-entry-container]').should('have.length', 10)
+        // and 7 spec log entries and a previous versions label entry are shown
+        cy.get('[data-testid=log-entry-container]').should('have.length', 8)
 
-        // when the view spec button on the first PR is click
+        // when the show previous versions toggle button is clicked
+        cy.get('[data-testid=show-spec-evolution-previous-versions-toggle-button]').click()
+
+        // then 10 spec log entries and a previous versions label entry are now shown
+        cy.get('[data-testid=log-entry-container]').should('have.length', 11)
+
+        // when the show previous versions toggle button is clicked again
+        cy.get('[data-testid=show-spec-evolution-previous-versions-toggle-button]').click()
+
+        // then only 7 spec log entries and a previous versions label entry are shown again
+        cy.get('[data-testid=log-entry-container]').should('have.length', 8)
+
+        // when the view spec button on the first PR is clicked
         cy.get('[data-testid=spec-evolution-log-container] > :nth-child(1) > :nth-child(1) [data-testid=view-spec-button]').click()
 
         // then latest agree version swagger ui preview is shown
