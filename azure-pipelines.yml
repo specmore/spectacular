@@ -160,6 +160,7 @@ stages:
               echo "##vso[task.setVariable variable=VIDEOSEXIST]true";
             fi;
       displayName: Check artifacts exist
+      condition: always()
     - task: PublishPipelineArtifact@1
       displayName: Publish Screenshots
       condition: eq(variables.SCREENSHOTSEXIST, 'true')
