@@ -5,7 +5,11 @@ import InterfaceDetailsMock from './interface-details';
 import SpecEvolutionMock from './spec-evolution/spec-evolution-container';
 import { renderWithRouter } from '../__tests__/test-utils';
 import {
-  CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE, VIEW_SPEC_QUERY_PARAM_NAME, SHOW_EVOLUTION_QUERY_PARAM_NAME, CreateInterfaceLocation,
+  CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE,
+  VIEW_SPEC_QUERY_PARAM_NAME,
+  SHOW_EVOLUTION_QUERY_PARAM_NAME,
+  SHOW_EVOLUTION_QUERY_PARAM_VALUES,
+  CreateInterfaceLocation,
 } from '../routes';
 import { useGetInterfaceDetails as useGetInterfaceDetailsMock } from '../backend-api-client';
 
@@ -102,7 +106,7 @@ describe('InterfaceContainer component', () => {
 
     // and show spec evolution is set
     const interfaceLocation = CreateInterfaceLocation(catalogueId, interfaceName);
-    const location = `${interfaceLocation}?${SHOW_EVOLUTION_QUERY_PARAM_NAME}=true`;
+    const location = `${interfaceLocation}?${SHOW_EVOLUTION_QUERY_PARAM_NAME}=${SHOW_EVOLUTION_QUERY_PARAM_VALUES.SHOW}`;
 
     // when interface container component renders
     const { findByTestId } = renderWithRouter(<InterfaceContainer org="test-org" />,

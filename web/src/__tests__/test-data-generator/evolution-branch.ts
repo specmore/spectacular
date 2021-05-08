@@ -30,7 +30,7 @@ const generateEvolutionBranch = ({
       const tag = `1.${numberPreviousVersions - i}`;
       previousVersionItems.push(EvolutionItemGen.generateEvolutionItem({ ref: tag, tags: [tag] }));
     }
-    evolutionItems = [branchHeadItem, ...pullRequestItems, ...previousVersionItems];
+    evolutionItems = [...pullRequestItems, branchHeadItem, ...previousVersionItems];
   }
   return {
     branchName,

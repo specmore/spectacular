@@ -1,7 +1,9 @@
 import React, { FunctionComponent } from 'react';
+import { Icon, Label } from 'semantic-ui-react';
 import { EvolutionBranch, EvolutionItem } from '../../backend-api-client';
 import EvolutionLinesItem from './evolution-lines-item';
 import EvolutionItemDetails from './evolution-item-details';
+import { isShowSpecEvolutionPreviousVersions, ShowSpecEvolutionPreviousVersionsToggleButton } from '../../routes';
 
 interface EvolutionBranchProps {
   evolutionBranch: EvolutionBranch;
@@ -13,6 +15,10 @@ interface LogEntryContainerProps {
   isMain?: boolean;
 }
 
+interface PreviousVersionsLabelProps {
+  previousVersionsCount: number;
+}
+
 const LogEntryContainer: FunctionComponent<LogEntryContainerProps> = ({ evolutionItem, isMain }) => (
   <div className="item">
     <div className="log-entry-container" data-testid="log-entry-container">
@@ -22,12 +28,19 @@ const LogEntryContainer: FunctionComponent<LogEntryContainerProps> = ({ evolutio
   </div>
 );
 
-const PreviousVersionsItem: FunctionComponent = () => (
+const PreviousVersionsLabel: FunctionComponent<PreviousVersionsLabelProps> = ({ previousVersionsCount }) => (
   <div className="item">
     <div className="log-entry-container" data-testid="log-entry-container">
       <div className="line-container" />
       <div className="details-container" data-testid="previous-versions-details-container">
-        Previous Versions
+        <div className="centre">
+          <span style={{ paddingRight: '1em' }}>Previous Versions</span>
+          <Label className="old-version">
+            <Icon name="history" />
+            {previousVersionsCount}
+          </Label>
+        </div>
+        <ShowSpecEvolutionPreviousVersionsToggleButton />
       </div>
     </div>
   </div>
@@ -39,11 +52,14 @@ const SpecEvolutionBranchContainer: FunctionComponent<EvolutionBranchProps> = ({
   const headAndPrLogItems = evolutionItems.slice(0, branchHeadEvolutionItemIndex + 1).map((evolutionItem) => (
     <LogEntryContainer key={evolutionItem.ref} evolutionItem={evolutionItem} isMain={isMain} />
   ));
-  const previousVersionLogItems = evolutionItems.slice(branchHeadEvolutionItemIndex + 1).map((evolutionItem) => (
-    <LogEntryContainer key={evolutionItem.ref} evolutionItem={evolutionItem} isMain={isMain} />
-  ));
 
-  const previousVersionsEntry = isMain ? (<PreviousVersionsItem />) : null;
+  const previousVersionsCount = evolutionItems.length - branchHeadEvolutionItemIndex - 1;
+  const previousVersionsEntry = isMain ? (<PreviousVersionsLabel previousVersionsCount={previousVersionsCount} />) : null;
+  const previousVersionLogItems = !isMain || isShowSpecEvolutionPreviousVersions()
+    ? evolutionItems.slice(branchHeadEvolutionItemIndex + 1).map((evolutionItem) => (
+      <LogEntryContainer key={evolutionItem.ref} evolutionItem={evolutionItem} isMain={isMain} />
+    ))
+    : null;
 
   return (
     <div className="evolution-branch-container" data-testid="evolution-branch-container">
