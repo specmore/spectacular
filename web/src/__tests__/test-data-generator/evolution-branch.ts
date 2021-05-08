@@ -5,12 +5,14 @@ import PullRequestGen from './pull-request';
 interface GenerateEvolutionBranchParameters {
   branchName?: string;
   numberPullRequests?: number;
+  numberPreviousVersions?: number;
   evolutionItemsOverride?: EvolutionItem[];
 }
 
 const generateEvolutionBranch = ({
   branchName = 'mainBranch',
   numberPullRequests = 0,
+  numberPreviousVersions = 0,
   evolutionItemsOverride = null,
 }: GenerateEvolutionBranchParameters = {}): EvolutionBranch => {
   let evolutionItems: EvolutionItem[] = null;
@@ -23,7 +25,12 @@ const generateEvolutionBranch = ({
       const pullRequest: PullRequest = PullRequestGen.generatePullRequest({ number: i });
       pullRequestItems.push(EvolutionItemGen.generateEvolutionItem({ ref: pullRequest.branchName, pullRequest }));
     }
-    evolutionItems = [branchHeadItem, ...pullRequestItems];
+    const previousVersionItems = [];
+    for (let i = 0; i < numberPreviousVersions; i += 1) {
+      const tag = `1.${numberPreviousVersions - i}`;
+      previousVersionItems.push(EvolutionItemGen.generateEvolutionItem({ ref: tag, tags: [tag] }));
+    }
+    evolutionItems = [...pullRequestItems, branchHeadItem, ...previousVersionItems];
   }
   return {
     branchName,

@@ -15,6 +15,10 @@ export const CreateInterfaceLocation = (encodedId: string, interfaceName: string
 
 export const VIEW_SPEC_QUERY_PARAM_NAME = 'ref';
 export const SHOW_EVOLUTION_QUERY_PARAM_NAME = 'show-evolution';
+export enum SHOW_EVOLUTION_QUERY_PARAM_VALUES {
+  SHOW = 'true',
+  SHOW_WITH_PREVIOUS_VERSIONS = 'with-previous-versions',
+}
 
 export const useQuery = (): URLSearchParams => new URLSearchParams(useLocation().search);
 
@@ -111,9 +115,11 @@ export const CloseSpecButton: FunctionComponent = () => {
 
 export const getCurrentSpecRefViewed = (): string => useQuery().get(VIEW_SPEC_QUERY_PARAM_NAME);
 
+export const isShowSpecEvolution = (): boolean => useQuery().get(SHOW_EVOLUTION_QUERY_PARAM_NAME) != null;
+
 export const ViewSpecEvolutionLinkButton: FunctionComponent = () => {
-  const expandSpecEvolutionLocation = addQueryParam(SHOW_EVOLUTION_QUERY_PARAM_NAME, 'true');
-  const isSelected = useQuery().get(SHOW_EVOLUTION_QUERY_PARAM_NAME) === 'true';
+  const expandSpecEvolutionLocation = addQueryParam(SHOW_EVOLUTION_QUERY_PARAM_NAME, SHOW_EVOLUTION_QUERY_PARAM_VALUES.SHOW);
+  const isSelected = isShowSpecEvolution();
 
   return (
     <Button
@@ -148,8 +154,30 @@ export const CloseSpecEvolutionButton: FunctionComponent = () => {
   );
 };
 
-export const isShowSpecEvolution = (): boolean => useQuery().get(SHOW_EVOLUTION_QUERY_PARAM_NAME) === 'true';
+export const isShowSpecEvolutionPreviousVersions = (): boolean => useQuery().get(SHOW_EVOLUTION_QUERY_PARAM_NAME)
+=== SHOW_EVOLUTION_QUERY_PARAM_VALUES.SHOW_WITH_PREVIOUS_VERSIONS;
 
+export const ShowSpecEvolutionPreviousVersionsToggleButton: FunctionComponent = () => {
+  const isShowing = isShowSpecEvolutionPreviousVersions();
+  const newQueryParamValue = isShowing ? SHOW_EVOLUTION_QUERY_PARAM_VALUES.SHOW
+    : SHOW_EVOLUTION_QUERY_PARAM_VALUES.SHOW_WITH_PREVIOUS_VERSIONS;
+  const toggleLocation = addQueryParam(SHOW_EVOLUTION_QUERY_PARAM_NAME, newQueryParamValue);
+  const angleIconDirection = isShowing ? 'angle down' : 'angle right';
+
+  return (
+    <Button
+      icon
+      circular
+      size="mini"
+      as={Link}
+      to={toggleLocation}
+      data-testid="show-spec-evolution-previous-versions-toggle-button"
+      floated="right"
+    >
+      <Icon name={angleIconDirection} />
+    </Button>
+  );
+};
 
 interface OpenSpecItemContentPageButtonProps {
   specItem: SpecItem;

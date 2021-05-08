@@ -10,8 +10,8 @@ interface GenerateEvolutionItemParameters {
 }
 
 const generateEvolutionItem = ({
-  ref = 'test-branch',
-  branchName = 'test-branch',
+  ref = 'test-ref',
+  branchName = null,
   tags = [],
   pullRequest = null,
   specItem = SpecItemGen.generateSpecItem(),
