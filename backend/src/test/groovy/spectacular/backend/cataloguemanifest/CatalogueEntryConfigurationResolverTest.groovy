@@ -58,6 +58,10 @@ class CatalogueEntryConfigurationResolverTest extends Specification {
         def repositoryTopics = Mock(RepositoryTopics)
         def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueId, catalogueManifestFileContents, repositoryTopics)
 
+        and: "topics on the repository the manifest is in"
+        def topics = ["topic1", "topic2"]
+        repositoryTopics.getNames() >> topics
+
         and: "a catalogue config entry in the manifest file with an interface entry in it"
         def interfaceEntry = Mock(Interface)
         def interfaceEntryName = "testInterface1"
@@ -78,6 +82,9 @@ class CatalogueEntryConfigurationResolverTest extends Specification {
 
         and: "the catalogue entry is returned"
         result.getCatalogueEntry() == catalogue
+
+        and: "the repository topics"
+        result.getTopics() == topics
     }
 
     def "GetCatalogueEntryConfiguration returns not found error for a catalogue manifest file that doesn't exist"() {
@@ -162,6 +169,10 @@ class CatalogueEntryConfigurationResolverTest extends Specification {
         def repositoryTopics = Mock(RepositoryTopics)
         def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(manifestFileId, catalogueManifestFileContents, repositoryTopics)
 
+        and: "topics on the repository the manifest is in"
+        def topics = ["topic1", "topic2"]
+        repositoryTopics.getNames() >> topics
+
         and: "the manifest has a catalogue entry"
         def catalogueEntry = Mock(Catalogue)
         def catalogueEntryName = "testCatalogue1"
@@ -181,6 +192,7 @@ class CatalogueEntryConfigurationResolverTest extends Specification {
         and: "the catalogue entries are returned"
         result.size() == 1
         result.first().getCatalogueEntry() == catalogueEntry
+        result.first().getTopics() == topics
     }
 
     def "findCataloguesForOrgAndUser ignores manifest files without content"() {
