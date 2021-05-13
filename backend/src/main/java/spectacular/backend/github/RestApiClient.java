@@ -161,7 +161,6 @@ public class RestApiClient {
     UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(REPO_PATH);
 
     HttpHeaders headers = new HttpHeaders();
-    headers.set(HttpHeaders.ACCEPT, REPO_TOPICS_PREVIEW_HEADER);
     HttpEntity entity = new HttpEntity(headers);
 
     String contentUri = uriComponentsBuilder.buildAndExpand(repoId.getNameWithOwner()).toUriString();
@@ -180,6 +179,7 @@ public class RestApiClient {
     UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(REPO_TOPICS_PATH);
 
     HttpHeaders headers = new HttpHeaders();
+    headers.set(HttpHeaders.ACCEPT, REPO_TOPICS_PREVIEW_HEADER);
     HttpEntity entity = new HttpEntity(headers);
 
     String contentUri = uriComponentsBuilder.buildAndExpand(repoId.getNameWithOwner()).toUriString();
