@@ -14,6 +14,7 @@ import spectacular.backend.common.CatalogueId
 import spectacular.backend.common.CatalogueManifestId
 import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.domain.ContentItem
+import spectacular.backend.github.domain.RepositoryTopics
 import spock.lang.Specification
 
 class CatalogueEntryConfigurationResolverTest extends Specification {
@@ -54,7 +55,8 @@ class CatalogueEntryConfigurationResolverTest extends Specification {
 
         and: "a catalogue manifest file at that location"
         def catalogueManifestFileContents = Mock(ContentItem)
-        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueId, catalogueManifestFileContents)
+        def repositoryTopics = Mock(RepositoryTopics)
+        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueId, catalogueManifestFileContents, repositoryTopics)
 
         and: "a catalogue config entry in the manifest file with an interface entry in it"
         def interfaceEntry = Mock(Interface)
@@ -102,7 +104,8 @@ class CatalogueEntryConfigurationResolverTest extends Specification {
 
         and: "a catalogue manifest file at that location"
         def catalogueManifestFileContents = Mock(ContentItem)
-        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueId, catalogueManifestFileContents)
+        def repositoryTopics = Mock(RepositoryTopics)
+        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueId, catalogueManifestFileContents, repositoryTopics)
 
         and: "no catalogue config entry in the manifest file"
         def findAndParseCatalogueResult = FindAndParseCatalogueResult.createCatalogueEntryNotFoundResult(catalogueManifestFileContents)
@@ -127,7 +130,8 @@ class CatalogueEntryConfigurationResolverTest extends Specification {
 
         and: "a catalogue manifest file at that location"
         def catalogueManifestFileContents = Mock(ContentItem)
-        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueId, catalogueManifestFileContents)
+        def repositoryTopics = Mock(RepositoryTopics)
+        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueId, catalogueManifestFileContents, repositoryTopics)
 
         and: "a catalogue config entry in the manifest file with parse errors"
         def parseErrorMessage = "test error"
@@ -155,7 +159,8 @@ class CatalogueEntryConfigurationResolverTest extends Specification {
         and: "a catalogue manifest file accessible by the org and user"
         def manifestFileId = aCatalogueManifestId()
         def catalogueManifestFileContents = Mock(ContentItem)
-        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(manifestFileId, catalogueManifestFileContents)
+        def repositoryTopics = Mock(RepositoryTopics)
+        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(manifestFileId, catalogueManifestFileContents, repositoryTopics)
 
         and: "the manifest has a catalogue entry"
         def catalogueEntry = Mock(Catalogue)
@@ -208,7 +213,8 @@ class CatalogueEntryConfigurationResolverTest extends Specification {
         and: "a catalogue manifest file accessible by the org and user"
         def manifestFileId = aCatalogueManifestId()
         def catalogueManifestFileContents = Mock(ContentItem)
-        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(manifestFileId, catalogueManifestFileContents)
+        def repositoryTopics = Mock(RepositoryTopics)
+        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(manifestFileId, catalogueManifestFileContents, repositoryTopics)
 
         and: "the manifest with parse error"
         def parseError = "manifest parse error"
@@ -237,7 +243,8 @@ class CatalogueEntryConfigurationResolverTest extends Specification {
         and: "a catalogue manifest file accessible by the org and user"
         def manifestFileId = aCatalogueManifestId()
         def catalogueManifestFileContents = Mock(ContentItem)
-        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(manifestFileId, catalogueManifestFileContents)
+        def repositoryTopics = Mock(RepositoryTopics)
+        def getCatalogueManifestFileContentResult = GetCatalogueManifestFileContentResult.createSuccessfulResult(manifestFileId, catalogueManifestFileContents, repositoryTopics)
 
         and: "the manifest has no catalogues "
         def catalogueManifestConfig = new CatalogueManifest()
