@@ -19,6 +19,7 @@ const generateCatalogue = ({
     description: 'Specifications for all the interfaces in the across the system X.',
     interfaceCount: 2,
     specEvolutionSummaries,
+    topics: ['test-topic-1'],
   };
 
   return catalogue;

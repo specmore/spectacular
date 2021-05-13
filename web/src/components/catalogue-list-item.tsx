@@ -39,6 +39,9 @@ const CatalogueItemDetails: FunctionComponent<CatalogueItemDetailsProps> = ({ ca
   <Item data-testid="catalogue-list-item-details-item">
     <Item.Content>
       <Item.Header as={Link} to={catalogueLink}>{catalogue.title}</Item.Header>
+      <Item.Meta>
+        {catalogue.topics && catalogue.topics.map((topic) => (<Label key={topic} color="grey">{topic}</Label>))}
+      </Item.Meta>
       <Item.Description>
         {catalogue.description}
       </Item.Description>

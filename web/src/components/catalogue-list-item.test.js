@@ -17,6 +17,9 @@ describe('CatalogueListItem component', () => {
 
     // and the name of the catalogue is shown
     expect(getByText('Test Catalogue 1')).toBeInTheDocument();
+
+    // and the catalogue topics are shown
+    expect(getByText('test-topic-1')).toBeInTheDocument();
   });
 
   test('renders catalogue list item error item when an error is given', async () => {
