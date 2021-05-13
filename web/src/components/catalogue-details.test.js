@@ -24,6 +24,9 @@ describe('CatalogueDetails component', () => {
     // and the name of the catalogue is shown
     expect(getByText('Test Catalogue 1')).toBeInTheDocument();
 
+    // and the catalogue topics are shown
+    expect(getByText('test-topic-1')).toBeInTheDocument();
+
     // and 2 interface items were created
     expect(InterfaceListItemMock).toHaveBeenCalledTimes(2);
   });

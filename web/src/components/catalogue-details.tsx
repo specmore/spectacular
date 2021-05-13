@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import {
-  Icon, Message, Header, Item,
+  Icon, Message, Header, Item, Label,
 } from 'semantic-ui-react';
 import InterfaceListItem from './interface-list-item';
 import { Catalogue } from '../backend-api-client';
@@ -30,6 +30,7 @@ interface CatalogueDetailsProps {
 const CatalogueDetails: FunctionComponent<CatalogueDetailsProps> = ({ catalogue }) => (
   <div data-testid="catalogue-details-container">
     <Header as="h2">{catalogue.title}</Header>
+    <p>{catalogue.topics && catalogue.topics.map((topic) => (<Label key={topic} color="grey">{topic}</Label>))}</p>
     <p>{catalogue.description}</p>
     <Header as="h3">Interface List</Header>
     <Item.Group divided data-testid="catalogue-details-interface-list">
