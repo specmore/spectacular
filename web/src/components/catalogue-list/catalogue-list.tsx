@@ -3,6 +3,7 @@ import {
   Item, Segment, Message, Header, Container, Placeholder,
 } from 'semantic-ui-react';
 import CatalogueListItem from './catalogue-list-item';
+import TopicSelectionList from './topic-selection-list';
 import { useFindCataloguesForUser, Catalogue } from '../../backend-api-client';
 import LocationBar from '../location-bar';
 import './catalogue-list.less';
@@ -33,7 +34,7 @@ interface CatalogueListProps {
 const CatalogueList: FunctionComponent<CatalogueListProps> = ({ catalogues }) => (
   <div className="catalogue-list-container">
     <div className="filter-container cell">
-      <h5>Topics</h5>
+      <TopicSelectionList catalogues={catalogues} />
     </div>
     <div className="cell">
       <Item.Group divided data-testid="catalogue-list-item-group">
