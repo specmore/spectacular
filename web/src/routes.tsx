@@ -201,25 +201,3 @@ export const OpenSpecItemContentPageButton: FunctionComponent<OpenSpecItemConten
     )}
   />
 );
-
-export const getSelectedTopics = (): string[] => {
-  const topicsParamValue = useQuery().get(TOPIC_SELECTION_QUERY_PARAM_NAME);
-  return topicsParamValue.split(',');
-};
-
-export const updateTopicSelection = (topic: string, selected: boolean): void => {
-  const selectedTopics = new Set(getSelectedTopics());
-
-  if (selected) {
-    selectedTopics.add(topic);
-  } else {
-    selectedTopics.delete(topic);
-  }
-
-  if (selectedTopics.size > 0) {
-    const newSelectedTopics = [...selectedTopics].join(',');
-    addQueryParam(TOPIC_SELECTION_QUERY_PARAM_NAME, newSelectedTopics);
-  } else {
-    removeQueryParam(TOPIC_SELECTION_QUERY_PARAM_NAME);
-  }
-};
