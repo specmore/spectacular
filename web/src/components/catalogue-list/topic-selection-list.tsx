@@ -1,20 +1,32 @@
 import React, { FunctionComponent } from 'react';
 import { Checkbox, List } from 'semantic-ui-react';
+import { ArrayParam, useQueryParam } from 'use-query-params';
 import { Catalogue } from '../../backend-api-client';
-import { updateTopicSelection } from '../../routes';
+import { TOPIC_SELECTION_QUERY_PARAM_NAME } from '../../routes';
 
 interface TopicSelectionItemProps {
   topic: string;
 }
 
 const TopicSelectionItem: FunctionComponent<TopicSelectionItemProps> = ({ topic }) => {
+  const [topics, setTopics] = useQueryParam(TOPIC_SELECTION_QUERY_PARAM_NAME, ArrayParam);
+  const isTopicSelected = topics ? topics.includes(topic) : false;
+
   const handleCheckboxChanged = (e: unknown, { checked } : { checked: boolean }) => {
-    updateTopicSelection(topic, checked);
+    const selectedTopics = new Set(topics);
+
+    if (checked) {
+      selectedTopics.add(topic);
+    } else {
+      selectedTopics.delete(topic);
+    }
+
+    setTopics([...selectedTopics]);
   };
 
   return (
     <List.Item>
-      <Checkbox label={topic} onChange={handleCheckboxChanged} />
+      <Checkbox label={topic} checked={isTopicSelected} onChange={handleCheckboxChanged} />
     </List.Item>
   );
 };
