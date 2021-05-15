@@ -1,10 +1,11 @@
 import React, { FunctionComponent } from 'react';
 import {
-  Item, Segment, Message, Header, Container, Placeholder,
+  Item, Segment, Message, Header, Container, Placeholder, Grid,
 } from 'semantic-ui-react';
 import CatalogueListItem from './catalogue-list-item';
 import { useFindCataloguesForUser, Catalogue } from '../backend-api-client';
 import LocationBar from './location-bar';
+import './catalogue-list.less';
 
 const CatalogueListLoading = () => (
   <Placeholder data-testid="catalogue-list-placeholder">
@@ -30,9 +31,16 @@ interface CatalogueListProps {
 }
 
 const CatalogueList: FunctionComponent<CatalogueListProps> = ({ catalogues }) => (
-  <Item.Group divided data-testid="catalogue-list-item-group">
-    {catalogues.map((catalogue) => (<CatalogueListItem key={catalogue.encodedId} catalogue={catalogue} />))}
-  </Item.Group>
+  <div className="catalogue-list-container">
+    <div className="filter-container cell">
+      <h5>Topics</h5>
+    </div>
+    <div className="cell">
+      <Item.Group divided data-testid="catalogue-list-item-group">
+        {catalogues.map((catalogue) => (<CatalogueListItem key={catalogue.encodedId} catalogue={catalogue} />))}
+      </Item.Group>
+    </div>
+  </div>
 );
 
 interface CatalogueListContainerProps {
@@ -56,7 +64,7 @@ const CatalogueListContainer: FunctionComponent<CatalogueListContainerProps> = (
     <>
       <LocationBar installationOwner={org} />
       <Segment vertical>
-        <Container text>
+        <Container>
           <Header as="h3">Available Interface Catalogues</Header>
           {content}
         </Container>
