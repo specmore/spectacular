@@ -2,11 +2,11 @@ import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import CatalogueList from './catalogue-list';
 import CatalogueListItemMock from './catalogue-list-item';
-import { renderWithRouter } from '../__tests__/test-utils';
-import Generator from '../__tests__/test-data-generator';
-import { useFindCataloguesForUser as useFindCataloguesForUserMock } from '../backend-api-client';
+import { renderWithRouter } from '../../__tests__/test-utils';
+import Generator from '../../__tests__/test-data-generator';
+import { useFindCataloguesForUser as useFindCataloguesForUserMock } from '../../backend-api-client';
 
-jest.mock('../backend-api-client');
+jest.mock('../../backend-api-client');
 
 // mock out the actual list items
 jest.mock('./catalogue-list-item', () => jest.fn(() => null));

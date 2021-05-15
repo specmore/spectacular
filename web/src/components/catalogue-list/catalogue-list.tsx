@@ -1,10 +1,10 @@
 import React, { FunctionComponent } from 'react';
 import {
-  Item, Segment, Message, Header, Container, Placeholder, Grid,
+  Item, Segment, Message, Header, Container, Placeholder,
 } from 'semantic-ui-react';
 import CatalogueListItem from './catalogue-list-item';
-import { useFindCataloguesForUser, Catalogue } from '../backend-api-client';
-import LocationBar from './location-bar';
+import { useFindCataloguesForUser, Catalogue } from '../../backend-api-client';
+import LocationBar from '../location-bar';
 import './catalogue-list.less';
 
 const CatalogueListLoading = () => (

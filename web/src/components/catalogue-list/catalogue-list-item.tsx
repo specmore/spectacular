@@ -3,8 +3,8 @@ import {
   Label, Icon, Item, Message,
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import { CreateCatalogueContainerLocation } from '../routes';
-import { Catalogue } from '../backend-api-client';
+import { CreateCatalogueContainerLocation } from '../../routes';
+import { Catalogue } from '../../backend-api-client';
 
 interface CatalogueErrorItemProps {
   catalogue: Catalogue;
