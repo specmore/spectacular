@@ -2,11 +2,13 @@ import React, { FunctionComponent } from 'react';
 import {
   Item, Segment, Message, Header, Container, Placeholder,
 } from 'semantic-ui-react';
+import { ArrayParam, useQueryParam } from 'use-query-params';
 import CatalogueListItem from './catalogue-list-item';
 import TopicSelectionList from './topic-selection-list';
 import { useFindCataloguesForUser, Catalogue } from '../../backend-api-client';
 import LocationBar from '../location-bar';
 import './catalogue-list.less';
+import { TOPIC_SELECTION_QUERY_PARAM_NAME } from '../../routes';
 
 const CatalogueListLoading = () => (
   <Placeholder data-testid="catalogue-list-placeholder">
@@ -31,18 +33,27 @@ interface CatalogueListProps {
   catalogues: Catalogue[];
 }
 
-const CatalogueList: FunctionComponent<CatalogueListProps> = ({ catalogues }) => (
-  <div className="catalogue-list-container">
-    <div className="filter-container cell">
-      <TopicSelectionList catalogues={catalogues} />
+const CatalogueList: FunctionComponent<CatalogueListProps> = ({ catalogues }) => {
+  const [selectedTopics] = useQueryParam(TOPIC_SELECTION_QUERY_PARAM_NAME, ArrayParam);
+  const cataloguesFilteredByTopic = catalogues.filter((catalogue) => {
+    if (!selectedTopics) return true;
+    if (!catalogue.topics) return false;
+    return catalogue.topics.some((topic) => selectedTopics.includes(topic));
+  });
+
+  return (
+    <div className="catalogue-list-container">
+      <div className="filter-container cell">
+        <TopicSelectionList catalogues={cataloguesFilteredByTopic} />
+      </div>
+      <div className="cell">
+        <Item.Group divided data-testid="catalogue-list-item-group">
+          {cataloguesFilteredByTopic.map((catalogue) => (<CatalogueListItem key={catalogue.encodedId} catalogue={catalogue} />))}
+        </Item.Group>
+      </div>
     </div>
-    <div className="cell">
-      <Item.Group divided data-testid="catalogue-list-item-group">
-        {catalogues.map((catalogue) => (<CatalogueListItem key={catalogue.encodedId} catalogue={catalogue} />))}
-      </Item.Group>
-    </div>
-  </div>
-);
+  );
+};
 
 interface CatalogueListContainerProps {
   org: string;
