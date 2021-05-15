@@ -59,5 +59,15 @@ describe('TopicSelectionList component', () => {
 
     // and the topic2 checkbox is not checked
     expect(getByText('topic2').parentElement).not.toHaveClass('checked');
+
+    // // when the topic2 label is clicked
+    // // getByText('topic2').click();
+    // // fireEvent.click(getByText('topic2'), { target: { checked: true } }, true);
+
+    // // then the topic1 checkbox remains checked
+    // expect(getByText('topic1').parentElement).toHaveClass('checked');
+
+    // // and the topic2 checkbox is now checked
+    // expect(getByText('topic2').parentElement).toHaveClass('checked');
   });
 });

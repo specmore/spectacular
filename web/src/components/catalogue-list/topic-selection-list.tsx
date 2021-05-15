@@ -48,7 +48,7 @@ const TopicSelectionList: FunctionComponent<CatalogueListProps> = ({ catalogues 
     <div data-testid="topic-selection-list-container">
       <h5>Topics</h5>
       <List>
-        { [...topics].map((topic) => (<TopicSelectionItem key={topic} topic={topic} />))}
+        { [...topics].map((topic) => (<TopicSelectionItem key={topic} topic={topic} />)) }
       </List>
     </div>
   );
