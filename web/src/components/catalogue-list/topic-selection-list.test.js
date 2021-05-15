@@ -42,4 +42,22 @@ describe('TopicSelectionList component', () => {
     expect(getAllByText('topic1')).toHaveLength(1);
     expect(getAllByText('topic2')).toHaveLength(1);
   });
+
+  test('renders topics in the query param as checked', async () => {
+    // given a catalogue with topics
+    const catalogue1 = Generator.Catalogue.generateCatalogue({ topics: ['topic1', 'topic2'] });
+    const catalogues = [catalogue1];
+
+    // when TopicSelectionList component renders with topic1 in the selected topics query parameters
+    const { getByText } = renderWithRouter(
+      <TopicSelectionList catalogues={catalogues} />,
+      '?topics=topic1',
+    );
+
+    // then the topic1 checkbox is checked
+    expect(getByText('topic1').parentElement).toHaveClass('checked');
+
+    // and the topic2 checkbox is not checked
+    expect(getByText('topic2').parentElement).not.toHaveClass('checked');
+  });
 });
