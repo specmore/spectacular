@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import { Checkbox, List } from 'semantic-ui-react';
 import { Catalogue } from '../../backend-api-client';
 
 interface CatalogueListProps {
@@ -6,10 +7,25 @@ interface CatalogueListProps {
 }
 
 const TopicSelectionList: FunctionComponent<CatalogueListProps> = ({ catalogues }) => {
-  const topics = catalogues.map((catalogue) => catalogue.topics);
+  const topicReducer = (accumulator: Set<string>, currentValue: Catalogue) => {
+    if (currentValue.topics) {
+      currentValue.topics.map((topic) => accumulator.add(topic));
+    }
+    return accumulator;
+  };
+  const topics = catalogues.reduce(topicReducer, new Set<string>());
 
   return (
-    <h5>Topics</h5>
+    <div data-testid="topic-selection-list-container">
+      <h5>Topics</h5>
+      <List>
+        { [...topics].map((topic) => (
+          <List.Item key={topic}>
+            <Checkbox label={topic} />
+          </List.Item>
+        ))}
+      </List>
+    </div>
   );
 };
 
