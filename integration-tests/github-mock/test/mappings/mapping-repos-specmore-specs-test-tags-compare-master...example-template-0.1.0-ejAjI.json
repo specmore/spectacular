@@ -1,0 +1,33 @@
+{
+  "id" : "b2fc010d-1c8d-3352-a431-17bb3aff9037",
+  "request" : {
+    "url" : "/repos/specmore/specs-test-tags/compare/master...example-template-0.1.0",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-repos-specmore-specs-test-tags-compare-master...example-template-0.1.0-ejAjI.json",
+    "headers" : {
+      "Server" : "GitHub.com",
+      "Date" : "Sun, 16 May 2021 10:25:26 GMT",
+      "Content-Type" : "application/json; charset=utf-8",
+      "Cache-Control" : "private, max-age=60, s-maxage=60",
+      "Vary" : [ "Accept, Authorization, Cookie, X-GitHub-OTP", "Accept-Encoding, Accept, X-Requested-With" ],
+      "ETag" : "W/\"32233b8e869886e7d85fccab1b45e84b0cebc73e91e2a574a7852984a38e497f\"",
+      "X-GitHub-Media-Type" : "github.v3",
+      "X-RateLimit-Limit" : "5000",
+      "X-RateLimit-Remaining" : "4925",
+      "X-RateLimit-Reset" : "1621164254",
+      "X-RateLimit-Used" : "75",
+      "X-RateLimit-Resource" : "core",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "0",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "X-GitHub-Request-Id" : "F1CC:7F21:1DB11F3:1E82961:60A0F316"
+    }
+  },
+  "uuid" : "b2fc010d-1c8d-3352-a431-17bb3aff9037"
+}

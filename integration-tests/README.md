@@ -23,28 +23,23 @@ Finally, start all the components manually or using the docker-compose file in r
 #### Run the tests
 First change working directory to the [ui-e2e](ui-e2e/) folder.
 
-Then run cypress using a docker container
+Then open (or run) cypress. For example using the npm package:
 ```
-docker run -it -v $PWD/:/e2e -w /e2e -e "CYPRESS_baseUrl=http://host.docker.internal:80" cypress/included:4.8.0
-```
-
-Or if you have cypress installed in your development environment
-```
-npx cypress@4.8.0 run --config baseUrl=http://localhost:80
+npx cypress@4.8.0 open
 ```
 
 ## Resources
 ### GitHub API Mock
-Start the GitHub API wiremock container with the existing stubbed responses
+Run the tests using a GitHub API wiremock container with the existing stubbed responses using the supplied script:
 ```
-docker run -d --name github-wiremock -p 5006:5000 -v $PWD/github-mock/test:/home/wiremock rodolpheche/wiremock --port 5000
+.\scripts\run-int-tests.bat
 ```
-Stop the GitHub API wiremock container
+or
 ```
-docker rm -f github-wiremock
+./scripts/run-int-tests.sh
 ```
 
-Start the GitHub API wiremock container in "Recording Mode" to record responses from the _actual_ GitHub API.
+Or run the tests with the GitHub API wiremock container recording the interactions with the real GitHub API.
 ```
-docker run -d --name github-wiremock -p 5006:5000 -v $PWD/github-mock/test:/home/wiremock rodolpheche/wiremock --proxy-all="https://api.github.com" --record-mappings --verbose --port 5000
+.\scripts\record-int-tests.ps1
 ```
