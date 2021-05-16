@@ -46,7 +46,7 @@ const CatalogueList: FunctionComponent<CatalogueListProps> = ({ catalogues }) =>
       <div className="filter-container cell">
         <TopicSelectionList catalogues={cataloguesFilteredByTopic} />
       </div>
-      <div className="cell">
+      <div className="catalogue-list cell">
         <Item.Group divided data-testid="catalogue-list-item-group">
           {cataloguesFilteredByTopic.map((catalogue) => (<CatalogueListItem key={catalogue.encodedId} catalogue={catalogue} />))}
         </Item.Group>
