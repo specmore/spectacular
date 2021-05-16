@@ -38,7 +38,7 @@ const CatalogueList: FunctionComponent<CatalogueListProps> = ({ catalogues }) =>
   const cataloguesFilteredByTopic = catalogues.filter((catalogue) => {
     if (!selectedTopics) return true;
     if (!catalogue.topics) return false;
-    return catalogue.topics.some((topic) => selectedTopics.includes(topic));
+    return selectedTopics.every((topic) => catalogue.topics.includes(topic));
   });
 
   return (

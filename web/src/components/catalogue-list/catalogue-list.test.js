@@ -79,8 +79,8 @@ describe('CatalogueList component', () => {
 
   test('filters out catalogue items based on selected topics', async () => {
     // given a mocked successful catalogues response with 2 catalogues
-    const catalogue1 = Generator.Catalogue.generateCatalogue({ name: 'testCatalogue1', topics: ['topic1'] });
-    const catalogue2 = Generator.Catalogue.generateCatalogue({ name: 'testCatalogue2' });
+    const catalogue1 = Generator.Catalogue.generateCatalogue({ name: 'testCatalogue1', topics: ['topic1', 'topic2'] });
+    const catalogue2 = Generator.Catalogue.generateCatalogue({ name: 'testCatalogue2', topics: ['topic1'] });
     const cataloguesResponse = {
       data: {
         catalogues: [catalogue1, catalogue2],
@@ -89,8 +89,11 @@ describe('CatalogueList component', () => {
 
     useFindCataloguesForUserMock.mockReturnValueOnce(cataloguesResponse);
 
+    // and topics query parameter has two topics set, one shared topic across both catalogues and the other only specific to one catalogue
+    const queryParameters = '?topics=topic1&topics=topic2';
+
     // when catalogue list component renders
-    const { findByTestId } = renderWithRouter(<CatalogueList org="test-org" />, '?topics=topic1');
+    const { findByTestId } = renderWithRouter(<CatalogueList org="test-org" />, queryParameters);
 
     // then a catalogue list item group should be found
     expect(await findByTestId('catalogue-list-item-group')).toBeInTheDocument();
