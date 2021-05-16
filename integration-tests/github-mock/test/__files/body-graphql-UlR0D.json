@@ -1,1 +1,0 @@
-{"data":{"repository":{"nameWithOwner":"specmore/specs-test-tags","url":"https://github.com/specmore/specs-test-tags","refs":{"totalCount":2,"nodes":[{"name":"example-template-next-major-version","target":{"oid":"a278cc6571445f2f3ffaeb5c33422e9bf76c8f0c"}},{"name":"example-template-next-minor-version","target":{"oid":"586d756c51c172e3a136073089908004e025b141"}}]}}}}
