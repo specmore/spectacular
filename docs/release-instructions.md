@@ -12,29 +12,7 @@ Ensure the pipeline run has created release candidate images for both Backend an
 This can be done by running the [Spectacular Test Deploy](https://dev.azure.com/specmore/Spectacular/_build?definitionId=2&_a=summary) pipeline with the `overrideImageTag` set to the `X.X.X` version number and check that the [test site](https://spectacular-test.specmore.org/) reports the appropriate version number.
 
 ## Promote the Docker Images
-Pull, tag and push the docker images with the new version number.
-
-Web
-```
-docker pull specmore/spectacular-web-release-candidate:<version number>
-
-docker tag specmore/spectacular-web-release-candidate:<version number> specmore/spectacular-web:<version number>
-docker push specmore/spectacular-web:<version number>
-
-docker tag specmore/spectacular-web-release-candidate:<version number> specmore/spectacular-web:latest
-docker push specmore/spectacular-web:latest
-```
-
-Backend
-```
-docker pull specmore/spectacular-backend-release-candidate:<version number>
-
-docker tag specmore/spectacular-backend-release-candidate:<version number> specmore/spectacular-backend:<version number>
-docker push specmore/spectacular-backend:<version number>
-
-docker tag specmore/spectacular-backend-release-candidate:<version number> specmore/spectacular-backend:latest
-docker push specmore/spectacular-backend:latest
-```
+Pull, tag and push the docker images with the new version number using [promote-release-candidate](../scripts/promote-release-candidate.ps1) script.
 
 ## Update Spectacular Helm Charts
 Update the following files to reflect the new App version number:
