@@ -4,13 +4,13 @@ Keep your interface specifications Spectacular!
 Spectacular helps to make the change review process for interface specifications more visible and organised, resulting in the healthier evolution of interfaces. Ultimately fostering an "API First" culture.
 
 ## Key Features
-* Integration with GitHub for user login and access control to your interface spec files
-* Ability to organise your interface spec files into "Catalogues", making them easier to find
-* Visualising your interface specifications using graphical documentation tools like [Swagger UI](https://github.com/swagger-api/swagger-ui) for OpenAPI files
-* Easier tracking of open change proposals and upcoming release versions for an interface by visualising all items on an evolutionary timeline
+* Integration with GitHub for user login and access control to your interface spec files.
+* Ability to organise your interface spec files into "Catalogues", making them easier to find.
+* Track upcoming versions of the spec files being drafted and what changes are being proposed by visualising all changes on an evolutionary timeline.
+* Visualising your interface specifications using graphical documentation tools like [Swagger UI](https://github.com/swagger-api/swagger-ui) for OpenAPI files.
 
 ## View the Spectacular Demo
-Checkout Spectacular in action by visiting our Spectacular Demo website: [https://spectacular-demo.specmore.org/](https://spectacular-demo.specmore.org/)
+See Spectacular in action by visiting our Spectacular Demo website: [https://spectacular-demo.specmore.org/](https://spectacular-demo.specmore.org/)
 
 The demo website is integrated with the our own demo interface catalogues in the [specmore/spectacular-demo](https://github.com/specmore/spectacular-demo) GitHub repository.
 
