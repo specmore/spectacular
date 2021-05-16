@@ -30,7 +30,7 @@ docker run -it -v $PWD/:/e2e -w /e2e -e "CYPRESS_baseUrl=http://host.docker.inte
 
 Or if you have cypress installed in your development environment
 ```
-npx cypress run --config baseUrl=http://localhost:80
+npx cypress@4.8.0 run --config baseUrl=http://localhost:80
 ```
 
 ## Resources
