@@ -45,9 +45,11 @@ Spectacular requires your interface specification files to be stored in git repo
 This can be done by following the [Git Integration](/docs/git-integration.md) instructions.
 
 ### 2. Create your Catalogue Config Manifest files
-To configure Spectacular display your interface specification files in nice organised catalogues, you will need to add a `spectacular-config.yml` in one of the git repositories Spectacular can access (as configured in the step above).
+Spectacular shows the interface specification files that you list in `spectacular-config.yml` files in any of the git repositories Spectacular can access (as configured in the step above). These catalogue manifest files require your specification files to be organised into collections called "catalogues".
 
 Guidelines for creating a `spectacular-config.yml` can be found in the [Catalogue Configuration Document](docs/catalogue-configuration.md). Or you can use the Demo project's [spectacular-config.yml](https://github.com/specmore/spectacular-demo/blob/master/spectacular-config.yml) as a template.
+
+Catalogues inherit any "topics" associated to the GitHub repository that they were configured in.
 
 ### 3. Configure and run your Spectacular instance
 After setting up a git integration with your git hosting solution (in step 1. above), you should be ready to configure and run your own instance of Spectacular with access to your spec files.
