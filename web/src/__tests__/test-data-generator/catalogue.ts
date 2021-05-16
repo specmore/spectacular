@@ -4,12 +4,14 @@ interface GenerateCatalogueParameters {
   fullPath?: string;
   name?: string;
   specEvolutionSummaries?: SpecEvolutionSummary[];
+  topics?: string[];
 }
 
 const generateCatalogue = ({
   fullPath = 'test-owner/specs-test/spectacular-config.yml',
   name = 'testCatalogue1',
   specEvolutionSummaries,
+  topics = ['test-topic-1'],
 }: GenerateCatalogueParameters = {}): Catalogue => {
   const catalogue = {
     fullPath,
@@ -19,6 +21,7 @@ const generateCatalogue = ({
     description: 'Specifications for all the interfaces in the across the system X.',
     interfaceCount: 2,
     specEvolutionSummaries,
+    topics,
   };
 
   return catalogue;

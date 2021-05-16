@@ -187,6 +187,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SpecEvolutionSummary'
+        topics:
+          type: array
+          items:
+            type: string
       required:
         - fullPath
         - name

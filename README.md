@@ -4,13 +4,13 @@ Keep your interface specifications Spectacular!
 Spectacular helps to make the change review process for interface specifications more visible and organised, resulting in the healthier evolution of interfaces. Ultimately fostering an "API First" culture.
 
 ## Key Features
-* Integration with GitHub for user login and access control to your interface spec files
-* Ability to organise your interface spec files into "Catalogues", making them easier to find
-* Visualising your interface specifications using graphical documentation tools like [Swagger UI](https://github.com/swagger-api/swagger-ui) for OpenAPI files
-* Easier tracking of open change proposals and upcoming release versions for an interface by visualising all items on an evolutionary timeline
+* Integration with GitHub for user login and access control to your interface spec files.
+* Ability to organise your interface spec files into "Catalogues", making them easier to find.
+* Track upcoming versions of the spec files being drafted and what changes are being proposed by visualising all changes on an evolutionary timeline.
+* Visualising your interface specifications using graphical documentation tools like [Swagger UI](https://github.com/swagger-api/swagger-ui) for OpenAPI files.
 
 ## View the Spectacular Demo
-Checkout Spectacular in action by visiting our Spectacular Demo website: [https://spectacular-demo.specmore.org/](https://spectacular-demo.specmore.org/)
+See Spectacular in action by visiting our Spectacular Demo website: [https://spectacular-demo.specmore.org/](https://spectacular-demo.specmore.org/)
 
 The demo website is integrated with the our own demo interface catalogues in the [specmore/spectacular-demo](https://github.com/specmore/spectacular-demo) GitHub repository.
 
@@ -45,9 +45,11 @@ Spectacular requires your interface specification files to be stored in git repo
 This can be done by following the [Git Integration](/docs/git-integration.md) instructions.
 
 ### 2. Create your Catalogue Config Manifest files
-To configure Spectacular display your interface specification files in nice organised catalogues, you will need to add a `spectacular-config.yml` in one of the git repositories Spectacular can access (as configured in the step above).
+Spectacular shows the interface specification files that you list in `spectacular-config.yml` files in any of the git repositories Spectacular can access (as configured in the step above). These catalogue manifest files require your specification files to be organised into collections called "catalogues".
 
 Guidelines for creating a `spectacular-config.yml` can be found in the [Catalogue Configuration Document](docs/catalogue-configuration.md). Or you can use the Demo project's [spectacular-config.yml](https://github.com/specmore/spectacular-demo/blob/master/spectacular-config.yml) as a template.
+
+Catalogues inherit any "topics" associated to the GitHub repository that they were configured in.
 
 ### 3. Configure and run your Spectacular instance
 After setting up a git integration with your git hosting solution (in step 1. above), you should be ready to configure and run your own instance of Spectacular with access to your spec files.

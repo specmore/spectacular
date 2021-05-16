@@ -33,7 +33,8 @@ public class CatalogueMapper {
     return mapCatalogue(catalogueEntryResult.getCatalogueEntry(),
         catalogueEntryResult.getCatalogueId(),
         catalogueEntryResult.getManifestUri(),
-        catalogueEntryResult.getCatalogueId().getCatalogueName());
+        catalogueEntryResult.getCatalogueId().getCatalogueName(),
+        catalogueEntryResult.getTopics());
   }
 
   /**
@@ -48,7 +49,8 @@ public class CatalogueMapper {
       spectacular.backend.cataloguemanifest.model.Catalogue catalogue,
       CatalogueManifestId manifestId,
       URI manifestUrl,
-      String catalogueName) {
+      String catalogueName,
+      List<String> topics) {
     var interfaceCount = catalogue.getInterfaces() == null ?
         0 :
         (int) catalogue.getInterfaces().getAdditionalProperties().values().stream().filter(Objects::nonNull).count();
@@ -59,7 +61,8 @@ public class CatalogueMapper {
         .title(catalogue.getTitle())
         .description(catalogue.getDescription())
         .htmlUrl(manifestUrl)
-        .interfaceCount(interfaceCount);
+        .interfaceCount(interfaceCount)
+        .topics(topics);
   }
 
   /**

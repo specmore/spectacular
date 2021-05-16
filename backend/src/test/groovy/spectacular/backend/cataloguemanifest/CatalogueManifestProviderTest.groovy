@@ -10,6 +10,7 @@ import spectacular.backend.common.RepositoryId
 import spectacular.backend.github.RestApiClient
 import spectacular.backend.github.domain.ContentItem
 import spectacular.backend.github.domain.Repository
+import spectacular.backend.github.domain.RepositoryTopics
 import spectacular.backend.github.domain.SearchCodeResultItem
 import spectacular.backend.github.domain.SearchCodeResults
 import spock.lang.Specification
@@ -60,6 +61,9 @@ class CatalogueManifestProviderTest extends Specification {
         and: "no file contents are retrieved"
         0 * restApiClient.getRepositoryContent(*_)
 
+        and: "no repository topics are retrieved"
+        0 * restApiClient.getRepositoryTopics(*_)
+
         and: "the result is for a manifest file that doesn't exist"
         result.isFileNotFoundResult()
     }
@@ -72,6 +76,9 @@ class CatalogueManifestProviderTest extends Specification {
         and: "there is a manifest file at the location specified"
         def manifestFileContentItem = Mock(ContentItem)
 
+        and: "the repo the manifest file is in has topics"
+        def repositoryTopics = Mock(RepositoryTopics)
+
         when: "the getCatalogueManifest is called by the user"
         def result = catalogueManifestProvider.getCatalogueManifest(catalogueManifestId, aUsername)
 
@@ -81,11 +88,17 @@ class CatalogueManifestProviderTest extends Specification {
         and: "the .yml manifest file contents is retrieved"
         1 * restApiClient.getRepositoryContent(catalogueManifestId.getRepositoryId(), catalogueManifestId.getPath(), null) >> manifestFileContentItem
 
+        and: "the topics of the repository the manifest file is in are retrieved"
+        1 * restApiClient.getRepositoryTopics(catalogueManifestId.getRepositoryId()) >> repositoryTopics
+
         and: "the result is for a manifest file that does exist"
         !result.isFileNotFoundResult()
 
         and: "the result has the content item"
         result.getCatalogueManifestContent() == manifestFileContentItem
+
+        and: "the result has the repository topics"
+        result.getRepositoryTopics() == repositoryTopics
     }
 
     def "findCatalogueManifestsForOrg returns all catalogue manifest file locations and their content that the user and app has access to for an org"() {
@@ -97,6 +110,9 @@ class CatalogueManifestProviderTest extends Specification {
         and: "valid catalogue manifest YAML content in the manifest file"
         def manifestFileContentItem = Mock(ContentItem)
 
+        and: "the repo the manifest file is in has topics"
+        def repositoryTopics = Mock(RepositoryTopics)
+
         when: "the find catalogues for user and org is called"
         def result = catalogueManifestProvider.findCatalogueManifestsForOrg(anOrg, aUsername)
 
@@ -109,10 +125,14 @@ class CatalogueManifestProviderTest extends Specification {
         and: "the .yml manifest file contents is retrieved"
         1 * restApiClient.getRepositoryContent(repo, catalogueManifestYmlFilename, null) >> manifestFileContentItem
 
+        and: "the topics of the repository the manifest file is in are retrieved"
+        1 * restApiClient.getRepositoryTopics(repo) >> repositoryTopics
+
         and: "the find catalogues result returns the location and content of the found manifest file"
         result.size() == 1
         result.first().getCatalogueManifestContent() == manifestFileContentItem
         result.first().getCatalogueManifestId().getRepositoryId() == repo
+        result.first().getRepositoryTopics() == repositoryTopics
     }
 
     def "findCatalogueManifestsForOrg returns only one manifest file when both file extensions are present in a repository"() {
@@ -124,6 +144,9 @@ class CatalogueManifestProviderTest extends Specification {
         and: "valid catalogue manifest YAML content in the manifest file"
         def manifestFileContentItem = Mock(ContentItem)
 
+        and: "the repo the manifest file is in has topics"
+        def repositoryTopics = Mock(RepositoryTopics)
+
         when: "the find catalogues for user and org is called"
         def result = catalogueManifestProvider.findCatalogueManifestsForOrg(anOrg, aUsername)
 
@@ -136,11 +159,15 @@ class CatalogueManifestProviderTest extends Specification {
         and: "the .yml manifest file contents is retrieved"
         1 * restApiClient.getRepositoryContent(repo, catalogueManifestYmlFilename, null) >> manifestFileContentItem
 
+        and: "the topics of the repository the manifest file is in are retrieved"
+        1 * restApiClient.getRepositoryTopics(repo) >> repositoryTopics
+
         and: "the find catalogues result returns the location and content of the .yml manifest file"
         result.size() == 1
         result.first().getCatalogueManifestContent() == manifestFileContentItem
         result.first().getCatalogueManifestId().getRepositoryId() == repo
         result.first().getCatalogueManifestId().getPath().endsWith(".yml")
+        result.first().getRepositoryTopics() == repositoryTopics
     }
 
     def "findCatalogueManifestsForOrg filters out repos the user or app does not have access to"() {

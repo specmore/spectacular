@@ -21,6 +21,7 @@ import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.app.AppInstallationAuthenticationHeaderRequestInterceptor;
 import spectacular.backend.github.domain.Comparison;
 import spectacular.backend.github.domain.ContentItem;
+import spectacular.backend.github.domain.RepositoryTopics;
 import spectacular.backend.github.domain.SearchCodeResults;
 import spectacular.backend.github.graphql.GraphQlRequest;
 import spectacular.backend.github.graphql.GraphQlResponse;
@@ -32,9 +33,12 @@ public class RestApiClient {
   private static final String SEARCH_CODE_PATH = "/search/code";
   private static final String REPO_PATH = "/repos/{repo}";
   private static final String REPO_TAGS_PATH = "/repos/{repo}/tags";
+  private static final String REPO_TOPICS_PATH = "/repos/{repo}/topics";
   private static final String REPO_CONTENT_PATH = "/repos/{repo}/contents/{path}";
   private static final String REPO_COMPARE_PATH = "/repos/{repo}/compare/{base}...{head}";
   private static final String REPO_COLLABORATORS_PATH = "/repos/{repo}/collaborators/{username}";
+
+  private static final String REPO_TOPICS_PREVIEW_HEADER = "application/vnd.github.mercy-preview+json";
 
   private final RestTemplate restTemplate;
 
@@ -162,6 +166,25 @@ public class RestApiClient {
     String contentUri = uriComponentsBuilder.buildAndExpand(repoId.getNameWithOwner()).toUriString();
     ResponseEntity<spectacular.backend.github.domain.Repository> response = restTemplate
         .exchange(contentUri, HttpMethod.GET, entity, spectacular.backend.github.domain.Repository.class);
+    return response.getBody();
+  }
+
+  /**
+   * Get topics for a repository.
+   *
+   * @param repoId the repository identifier to get topics for
+   * @return a list of topics associated to the repository
+   */
+  public RepositoryTopics getRepositoryTopics(RepositoryId repoId) {
+    UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(REPO_TOPICS_PATH);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.set(HttpHeaders.ACCEPT, REPO_TOPICS_PREVIEW_HEADER);
+    HttpEntity entity = new HttpEntity(headers);
+
+    String contentUri = uriComponentsBuilder.buildAndExpand(repoId.getNameWithOwner()).toUriString();
+    ResponseEntity<RepositoryTopics> response = restTemplate.exchange(contentUri, HttpMethod.GET, entity, RepositoryTopics.class);
+
     return response.getBody();
   }
 

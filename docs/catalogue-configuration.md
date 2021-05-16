@@ -5,6 +5,7 @@
     - [Name and Location](#name-and-location)
     - [Version](#version)
     - [Format and Schemas](#format-and-schemas)
+  - [Catalogue Topics](#catalogue-topics)
 
 ## Catalogue Manifest Files
 Spectacular is configured to find and display all your interface specification files using of Catalogue Manifest Files.
@@ -17,3 +18,6 @@ As new features are added to the Spectacular tooling that require changes to the
 
 ### Format and Schemas
 Catalogue Manifest Files must be written using [YAML](https://yaml.org/) and follow the JSON/YAML schema described in the [catalogue-manifest.yaml schema file](../backend/specs/catalogue-manifest.yaml).
+
+## Catalogue Topics
+When Spectacular generates catalogues from a catalogue manifest file, it reads the "topics" set on the GitHub repository and sets them on all the catalogues.

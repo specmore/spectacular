@@ -5,7 +5,7 @@ import {
 import { Switch, Route } from 'react-router-dom';
 import EmptyWelcomeItemImage from '../assets/images/empty-catalogue-item.png';
 import CatalogueContainer from './catalogue-container';
-import CatalogueList from './catalogue-list';
+import CatalogueList from './catalogue-list/catalogue-list';
 import NotFound from './not-found';
 import { CATALOGUE_LIST_ROUTE, CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE } from '../routes';
 import InterfaceContainer from './interface-container';

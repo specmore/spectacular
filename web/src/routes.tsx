@@ -14,6 +14,8 @@ export const CreateInterfaceLocation = (encodedId: string, interfaceName: string
 );
 
 export const VIEW_SPEC_QUERY_PARAM_NAME = 'ref';
+export const TOPIC_SELECTION_QUERY_PARAM_NAME = 'topics';
+
 export const SHOW_EVOLUTION_QUERY_PARAM_NAME = 'show-evolution';
 export enum SHOW_EVOLUTION_QUERY_PARAM_VALUES {
   SHOW = 'true',
@@ -23,17 +25,17 @@ export enum SHOW_EVOLUTION_QUERY_PARAM_VALUES {
 export const useQuery = (): URLSearchParams => new URLSearchParams(useLocation().search);
 
 const addQueryParam = (name: string, value: string): string => {
-  const { pathname } = useLocation();
-  const search = new URLSearchParams(useLocation().search);
-  search.set(name, value);
-  return `${pathname}?${search.toString()}`;
+  const { pathname, search } = useLocation();
+  const searchParams = new URLSearchParams(search);
+  searchParams.set(name, value);
+  return `${pathname}?${searchParams.toString()}`;
 };
 
 const removeQueryParam = (name: string): string => {
-  const { pathname } = useLocation();
-  const search = new URLSearchParams(useLocation().search);
-  search.delete(name);
-  return `${pathname}?${search.toString()}`;
+  const { pathname, search } = useLocation();
+  const searchParams = new URLSearchParams(search);
+  searchParams.delete(name);
+  return `${pathname}?${searchParams.toString()}`;
 };
 
 export const BackToCatalogueListLinkButton: FunctionComponent = () => (

@@ -68,6 +68,7 @@ public class CatalogueEntryConfigurationResolver {
     }
 
     var catalogueManifestContent = getCatalogueManifestFileContentResult.getCatalogueManifestContent();
+    var topics = getCatalogueManifestFileContentResult.getRepositoryTopics().getNames();
     var parseResult = catalogueManifestParser.findAndParseCatalogueInManifestFileContents(catalogueManifestContent,
         catalogueId.getCatalogueName());
 
@@ -85,7 +86,8 @@ public class CatalogueEntryConfigurationResolver {
     return GetCatalogueEntryConfigurationResult.createSuccessfulResult(
         parseResult.getCatalogue(),
         catalogueManifestContent.getHtml_url(),
-        catalogueId);
+        catalogueId,
+        topics);
   }
 
   private List<GetCatalogueEntryConfigurationResult> getCatalogueEntriesFrom(
@@ -99,6 +101,7 @@ public class CatalogueEntryConfigurationResolver {
     }
 
     var fileContentItem = getCatalogueManifestFileContentResult.getCatalogueManifestContent();
+    var topics = getCatalogueManifestFileContentResult.getRepositoryTopics().getNames();
     var parseResult = catalogueManifestParser.parseManifestFileContentItem(fileContentItem);
 
     if (parseResult.getError() != null) {
@@ -119,7 +122,8 @@ public class CatalogueEntryConfigurationResolver {
           return GetCatalogueEntryConfigurationResult.createSuccessfulResult(
               catalogueEntry.getValue(),
               fileContentItem.getHtml_url(),
-              catalogueId);
+              catalogueId,
+              topics);
         })
         .collect(Collectors.toList());
   }
@@ -128,18 +132,21 @@ public class CatalogueEntryConfigurationResolver {
     private final Catalogue catalogueEntry;
     private final URI manifestUri;
     private final CatalogueId catalogueId;
+    private final List<String> topics;
 
     private GetCatalogueEntryConfigurationResult(ConfigurationItemError error, CatalogueId catalogueId) {
       super(error);
       this.catalogueEntry = null;
       this.manifestUri = null;
+      this.topics = null;
       this.catalogueId = catalogueId;
     }
 
-    private GetCatalogueEntryConfigurationResult(Catalogue catalogueEntry, URI manifestUri, CatalogueId catalogueId) {
+    private GetCatalogueEntryConfigurationResult(Catalogue catalogueEntry, URI manifestUri, CatalogueId catalogueId, List<String> topics) {
       super(null);
       this.catalogueEntry = catalogueEntry;
       this.manifestUri = manifestUri;
+      this.topics = topics;
       this.catalogueId = catalogueId;
     }
 
@@ -162,9 +169,13 @@ public class CatalogueEntryConfigurationResolver {
     private static GetCatalogueEntryConfigurationResult createSuccessfulResult(
         Catalogue catalogueEntry,
         URI manifestUri,
-        CatalogueId catalogueId) {
-      return new GetCatalogueEntryConfigurationResult(catalogueEntry, manifestUri,
-          catalogueId);
+        CatalogueId catalogueId,
+        List<String> topics) {
+      return new GetCatalogueEntryConfigurationResult(catalogueEntry, manifestUri, catalogueId, topics);
+    }
+
+    public List<String> getTopics() {
+      return topics;
     }
   }
 }

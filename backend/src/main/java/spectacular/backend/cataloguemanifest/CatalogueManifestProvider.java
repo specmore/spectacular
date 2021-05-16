@@ -1,6 +1,7 @@
 package spectacular.backend.cataloguemanifest;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import spectacular.backend.common.CatalogueManifestId;
 import spectacular.backend.common.RepositoryId;
 import spectacular.backend.github.RestApiClient;
 import spectacular.backend.github.domain.ContentItem;
+import spectacular.backend.github.domain.RepositoryTopics;
 import spectacular.backend.github.domain.SearchCodeResultItem;
 
 @Service
@@ -76,10 +78,10 @@ public class CatalogueManifestProvider {
 
   private GetCatalogueManifestFileContentResult getCatalogueManifestFileContent(CatalogueManifestId catalogueManifestId) {
     ContentItem fileContentItem = null;
+    RepositoryTopics repositoryTopics = null;
 
     try {
       fileContentItem = restApiClient.getRepositoryContent(catalogueManifestId.getRepositoryId(), catalogueManifestId.getPath(), null);
-      return GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueManifestId, fileContentItem);
     } catch (HttpClientErrorException e) {
       if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
         logger.warn("A request for a catalogue manifest that does not exist was received. catalogueManifestId: {}", catalogueManifestId);
@@ -88,6 +90,15 @@ public class CatalogueManifestProvider {
         throw e;
       }
     }
+
+    try {
+      repositoryTopics = restApiClient.getRepositoryTopics(catalogueManifestId.getRepositoryId());
+    } catch (HttpClientErrorException e) {
+      repositoryTopics = new RepositoryTopics(Collections.emptyList());
+      logger.error("Failed to retrieve repository topics for " + catalogueManifestId, e);
+    }
+
+    return GetCatalogueManifestFileContentResult.createSuccessfulResult(catalogueManifestId, fileContentItem, repositoryTopics);
   }
 
   private CatalogueManifestId pickCatalogueFileFromSearchResults(List<SearchCodeResultItem> searchCodeResultItems) {

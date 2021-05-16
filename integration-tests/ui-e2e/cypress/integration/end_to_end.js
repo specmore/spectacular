@@ -24,17 +24,17 @@ describe('End to End test without login', function() {
         // then Interface Catalogues location should be shown
         cy.get('[data-testid=location-bar]').contains('specmore > Interface Catalogues')
 
-        // then the catalogue list should be shown with 2 children catalogue items
-        cy.get('[data-testid=catalogue-list-item-group]').children().should('have.length', 2)
+        // then the catalogue list should be shown with 3 children catalogue items
+        cy.get('[data-testid=catalogue-list-item-group]').children().should('have.length', 3)
         
         // and an error catalogue item is shown for a catalogue manifest with a parsing error
-        cy.get('[data-testid=catalogue-list-item-error-item]').should('be.visible')
+        cy.get('[data-testid=catalogue-list-item-error-item]').should('have.length', 1)
 
-        // and a normal catalogues list item is shown for a valid catalogue manifest
-        cy.get('[data-testid=catalogue-list-item-details-item]').should('be.visible')
+        // and 2 normal catalogues list item should be shown for the valid catalogue manifests
+        cy.get('[data-testid=catalogue-list-item-details-item]').should('have.length', 2)
 
-        // when selecting a catalogue
-        cy.get('[data-testid=catalogue-list-item-details-item] > .content > .header').click()
+        // when selecting Test Catalogue 1 item heading
+        cy.contains('Test Catalogue 1').click()
 
         // then Test Catalogue 1 location should be shown
         cy.get('[data-testid=location-bar]').contains('specmore > Interface Catalogues > Test Catalogue 1')
@@ -110,5 +110,22 @@ describe('End to End test without login', function() {
 
         // then the spec evolution details are removed
         cy.get('[data-testid=spec-evolution-container]').should('not.exist')
+    })
+
+    it('Filtering the catalogue list by topic', function() {
+        // then Interface Catalogues topic selection list should be shown
+        cy.get('[data-testid=topic-selection-list-container]')
+
+        // and there are 3 topic list items
+        cy.get('[data-testid=topic-selection-list-container] > .list > .item').should('have.length', 3)
+
+        // and the catalogue list should show 3 children catalogue items
+        cy.get('[data-testid=catalogue-list-item-group]').children().should('have.length', 3)
+
+        // when selecting domain-x topic item is checked
+        cy.get('[data-testid=topic-selection-list-container]').contains('domain-x').click()
+
+        // then the catalogue list should just show the one catalogue item
+        cy.get('[data-testid=catalogue-list-item-group]').children().should('have.length', 1)
     })
 })

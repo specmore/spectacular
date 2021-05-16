@@ -1,0 +1,37 @@
+{
+  "id" : "0a0d6b0d-24c0-3619-9e8d-a74d1156eb8e",
+  "request" : {
+    "url" : "/graphql",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "equalToJson" : "{\"query\":\"query {\\n    repository(owner: \\\"specmore\\\", name:\\\"specs-test-tags\\\") {\\n        nameWithOwner\\n        url\\n        pullRequests(first: 100, baseRefName: \\\"master\\\", states: [OPEN]) {\\n            totalCount\\n            nodes {\\n                number\\n                url\\n                updatedAt\\n                headRef { name repository { nameWithOwner url } }\\n                baseRefName\\n                labels(first: 100) {\\n                    totalCount\\n                    nodes { name }\\n                }\\n                files(first:100) {\\n                    totalCount\\n                    nodes { path }\\n                }\\n                title\\n            }\\n        }\\n    }\\n}\"}",
+      "ignoreArrayOrder" : true,
+      "ignoreExtraElements" : true
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-graphql-ZT49V.json",
+    "headers" : {
+      "Server" : "GitHub.com",
+      "Date" : "Sun, 16 May 2021 10:25:25 GMT",
+      "Content-Type" : "application/json; charset=utf-8",
+      "Cache-Control" : "no-cache",
+      "X-GitHub-Media-Type" : "github.v4",
+      "X-RateLimit-Limit" : "5000",
+      "X-RateLimit-Remaining" : "4951",
+      "X-RateLimit-Reset" : "1621164258",
+      "X-RateLimit-Used" : "49",
+      "X-RateLimit-Resource" : "graphql",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "0",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "Vary" : "Accept-Encoding, Accept, X-Requested-With",
+      "X-GitHub-Request-Id" : "F1CC:7F21:1DB10F9:1E8285E:60A0F315"
+    }
+  },
+  "uuid" : "0a0d6b0d-24c0-3619-9e8d-a74d1156eb8e"
+}

@@ -1,0 +1,4 @@
+version: '3'
+services:
+    github-mock:
+        command: --proxy-all="https://api.github.com" --record-mappings --verbose
