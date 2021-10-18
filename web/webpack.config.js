@@ -96,9 +96,6 @@ module.exports = () => {
             'x-spec-installation-id': process.env.SPECTACULAR_GITHUB_APP_INSTALLATION_ID,
           },
         },
-        '/login': {
-          target: 'http://localhost:5001',
-        },
       },
     },
   };
