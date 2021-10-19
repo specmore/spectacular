@@ -3,6 +3,8 @@ import { Button, Icon, Popup } from 'semantic-ui-react';
 import { Link, useLocation } from 'react-router-dom';
 import { SpecItem } from './backend-api-client';
 
+export const GITHUB_LOGIN_ROUTE = '/login/github';
+
 export const CATALOGUE_LIST_ROUTE = '/';
 
 export const CATALOGUE_CONTAINER_ROUTE = '/catalogue/:encodedId';
@@ -12,6 +14,8 @@ export const CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE = '/catalogue/:encoded
 export const CreateInterfaceLocation = (encodedId: string, interfaceName: string): string => (
   `/catalogue/${encodedId}/interface/${interfaceName}`
 );
+
+export const LOGIN_REDIRECT_RETURN_TO_PARAM_NAME = 'backTo';
 
 export const VIEW_SPEC_QUERY_PARAM_NAME = 'ref';
 export const TOPIC_SELECTION_QUERY_PARAM_NAME = 'topics';
@@ -36,6 +40,27 @@ const removeQueryParam = (name: string): string => {
   const searchParams = new URLSearchParams(search);
   searchParams.delete(name);
   return `${pathname}?${searchParams.toString()}`;
+};
+
+export const redirectToLogin = (): void => {
+  console.debug('expired token');
+  console.debug(`current location:${window.location.pathname}`);
+
+  const redirectParams = new URLSearchParams();
+  redirectParams.append(LOGIN_REDIRECT_RETURN_TO_PARAM_NAME, window.location.pathname);
+
+  window.location.assign(`${GITHUB_LOGIN_ROUTE}?${redirectParams.toString()}`);
+};
+
+export const extractLoginRedirectReturnToPath = (): string => {
+  const { search } = useLocation();
+  const redirectParams = new URLSearchParams(search);
+  return redirectParams.get(LOGIN_REDIRECT_RETURN_TO_PARAM_NAME);
+};
+
+export const extractLoginCallbackURL = (): string => {
+  const { location } = window;
+  return `${location.protocol}//${location.host}${location.pathname}`;
 };
 
 export const BackToCatalogueListLinkButton: FunctionComponent = () => (

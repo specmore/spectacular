@@ -10,16 +10,11 @@ import FooterBar from './components/footer-bar';
 import GitHubLogin from './components/login/github-login';
 import './index.less';
 import 'semantic-ui-less/semantic.less';
+import { GITHUB_LOGIN_ROUTE, redirectToLogin } from './routes';
 
 const onAPIError = (error) => {
   if (error.status === 401) {
-    console.debug('expired token');
-    console.debug(`current location:${window.location.pathname}`);
-
-    const redirectParams = new URLSearchParams();
-    redirectParams.append('backTo', window.location.pathname);
-
-    window.location.assign(`/login/github?${redirectParams.toString()}`);
+    redirectToLogin();
   }
 };
 
@@ -28,7 +23,7 @@ const Index = () => (
     <Router>
       <QueryParamProvider ReactRouterRoute={Route}>
         <Switch>
-          <Route exact path="/login/github">
+          <Route exact path={GITHUB_LOGIN_ROUTE}>
             <GitHubLogin />
           </Route>
           <Route path="*">
