@@ -4,10 +4,28 @@ info:
   description: The RESTful API for the Spectacular tool's Backend Service.
   version: 0.1.0
 paths:
+  /app:
+    get:
+      tags:
+        - App
+      description: Gets the details of the Spectacular app registration
+      operationId: getAppDetails
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clientId:
+                    type: string
+                required:
+                  - clientId
   /installation:
     get:
       tags:
-        - Installation
+        - App
       description: Gets the details of this installation of the Spectacular app
       operationId: getInstallation
       responses:
@@ -137,6 +155,13 @@ components:
   schemas:
     NotFoundResponse:
       type: string
+    AppDetails:
+      type: object
+      properties:
+        clientId:
+          type: string
+      required:
+        - clientId
     Installation:
       type: object
       properties:

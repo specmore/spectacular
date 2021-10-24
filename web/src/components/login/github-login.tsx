@@ -2,7 +2,11 @@ import React, { FunctionComponent } from 'react';
 import { useLocation } from 'react-router-dom';
 import { extractLoginCallbackURL, extractLoginRedirectReturnToPath } from '../../routes';
 
-const GitHubLoginComponent: FunctionComponent = () => {
+interface GitHubLoginComponentProps {
+  clientId: string;
+}
+
+const GitHubLoginComponent: FunctionComponent<GitHubLoginComponentProps> = ({ clientId }) => {
   const { search } = useLocation();
   const params = new URLSearchParams(search);
   const callbackCode = params.get('code');
@@ -17,7 +21,7 @@ const GitHubLoginComponent: FunctionComponent = () => {
 
     const githubLoginPage = 'https://github.com/login/oauth/authorize';
     const githubLoginParams = new URLSearchParams();
-    githubLoginParams.set('client_id', 'Iv1.8581b3b1c54b9e1c');
+    githubLoginParams.set('client_id', clientId);
     githubLoginParams.set('redirect_uri', loginCallbackUrl);
     githubLoginParams.set('state', stateEncoded);
 
