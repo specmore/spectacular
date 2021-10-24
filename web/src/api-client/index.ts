@@ -1,6 +1,10 @@
 import axios from 'axios';
 
-export const createFileApiURL = (owner, repo, fileLocation) => `/api/catalogues/${owner}/${repo}/files/${fileLocation}`;
+export const createFileApiURL = (
+  owner: string,
+  repo: string,
+  fileLocation: string,
+): string => `/api/catalogues/${owner}/${repo}/files/${fileLocation}`;
 
 axios.interceptors.response.use((response) => response, (error) => {
   if (error.response.status === 401) {
@@ -15,7 +19,7 @@ axios.interceptors.response.use((response) => response, (error) => {
   return Promise.reject(error);
 });
 
-export const fetchUserInfo = async () => {
+export const fetchUserInfo: any = async () => {
   const response = await axios.get('/login/');
   return response.data;
 };
