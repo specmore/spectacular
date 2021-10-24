@@ -1,6 +1,9 @@
 import React, { FunctionComponent } from 'react';
 import { useLocation } from 'react-router-dom';
 import { extractLoginCallbackURL, extractLoginRedirectReturnToPath } from '../../routes';
+import LoginStateService from './login-state-service';
+
+const GITHUB_LOGIN_LOCATION = 'https://github.com/login/oauth/authorize';
 
 interface GitHubLoginComponentProps {
   clientId: string;
@@ -10,27 +13,34 @@ const GitHubLoginComponent: FunctionComponent<GitHubLoginComponentProps> = ({ cl
   const { search } = useLocation();
   const params = new URLSearchParams(search);
   const callbackCode = params.get('code');
+  const returnedState = params.get('state');
 
   if (!callbackCode) {
-    const randomNum = Math.floor(Math.random() * 99999999) + 100000000;
     const returnTo = extractLoginRedirectReturnToPath();
-    const stateString = `${randomNum}+${returnTo}`;
-    const stateEncoded = btoa(stateString);
+    const loginState = LoginStateService.generateAndStoreLoginState(returnTo);
 
     const loginCallbackUrl = extractLoginCallbackURL();
 
-    const githubLoginPage = 'https://github.com/login/oauth/authorize';
     const githubLoginParams = new URLSearchParams();
     githubLoginParams.set('client_id', clientId);
     githubLoginParams.set('redirect_uri', loginCallbackUrl);
-    githubLoginParams.set('state', stateEncoded);
+    githubLoginParams.set('state', loginState);
 
-    const loginLocation = `${githubLoginPage}?${githubLoginParams.toString()}`;
+    const loginLocation = `${GITHUB_LOGIN_LOCATION}?${githubLoginParams.toString()}`;
     window.location.replace(loginLocation);
 
     return (
       <div>
         Redirecting to GitHub Login...
+      </div>
+    );
+  }
+
+  const isReturnedStateValid = LoginStateService.isReturnedStateValid(returnedState);
+  if (!isReturnedStateValid) {
+    return (
+      <div>
+        Login error. State returned is invalid.
       </div>
     );
   }
