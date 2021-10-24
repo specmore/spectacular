@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, FunctionComponent } from 'react';
 import { Dropdown } from 'semantic-ui-react';
-import { fetchUserInfo } from '../api-client';
+import { fetchUserInfo } from '../../api-client';
 
-const UserMenuBarItem = () => {
+const UserMenuBarItem: FunctionComponent = () => {
   const [user, setUser] = useState(null);
   // eslint-disable-next-line no-unused-vars
   const [errorMessage, setErrorMessage] = useState(null);

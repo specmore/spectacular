@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { Menu } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import UserMenuBarItem from '../user-menu-bar-item';
 import SpectacularLogo from '../../assets/images/spectacular-logo.svg';
+import UserMenuBarItem from './user-menu-bar-item';
 
-const MenuBar = () => (
+const MenuBar: FunctionComponent = () => (
   <Menu fixed="top" inverted>
     <Menu.Item header as={Link} to="/">
       <img src={SpectacularLogo} alt="spectacular logo" style={{ width: '96px' }} />
