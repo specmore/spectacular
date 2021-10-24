@@ -16,12 +16,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  clientId:
-                    type: string
-                required:
-                  - clientId
+                $ref: '#/components/schemas/AppDetails'
   /installation:
     get:
       tags:
