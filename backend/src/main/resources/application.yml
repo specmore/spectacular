@@ -5,6 +5,7 @@ github:
     app:
       id: ${GITHUB_APP_ID:testId}
       client-id: ${GITHUB_CLIENT_ID:testClientId}
+      client-secret: ${GITHUB_CLIENT_SECRET:testClientSecret}
       jwt-signing-key-file-path: ${GITHUB_APP_PRIVATE_KEY_FILE_PATH:testPath}
       jwt-duration: PT9S
     root-url: ${GITHUB_API_ROOT_URL:https://api.github.com}

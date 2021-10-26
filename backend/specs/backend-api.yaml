@@ -37,7 +37,7 @@ paths:
             Set-Cookie:
               schema: 
                 type: string
-                example: TOKEN=abcde12345; Path=/; HttpOnly
+                example: jwt_token=abcde12345; Path=/; HttpOnly
           content:
             application/json:
               schema:
