@@ -5,10 +5,12 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import spectacular.backend.github.domain.UserAccessTokenResult;
 
+@Component
 public class AppUserApiClient {
 
   private static final String OAUTH_LOGIN_ACCESS_TOKEN_PATH = "/login/oauth/access_token";

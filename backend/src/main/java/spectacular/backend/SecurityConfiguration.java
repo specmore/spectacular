@@ -6,6 +6,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
@@ -39,6 +40,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   }
 
   @Override
+  public void configure(WebSecurity web) throws Exception {
+    web
+        .ignoring()
+        .antMatchers("/app", "/app/login");
+  }
+
+  @Override
   protected void configure(HttpSecurity http) throws Exception {
     var jwtCookieToAuthorizationHeaderFilter = new JwtCookieToAuthorizationHeaderFilter(this.jwtCookieName);
 
@@ -47,7 +55,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
         .authorizeRequests()
-        .antMatchers("/app").permitAll()
         .anyRequest().authenticated()
         .and()
         .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)

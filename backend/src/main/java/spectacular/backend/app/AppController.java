@@ -23,7 +23,7 @@ public class AppController implements AppApi {
 
   @Override
   public ResponseEntity<UserDetails> createUserSession(@Valid AppLoginRequest appLoginRequest) {
-    final var createUserSessionResult = this.appUserAuthenticationService.createUserSession(appLoginRequest.getUserCode());
+//    final var createUserSessionResult = this.appUserAuthenticationService.createUserSession(appLoginRequest.getUserCode());
 
     final var cookie = ResponseCookie.from("jwt_token", "test-value")
         .httpOnly(true)
@@ -33,7 +33,7 @@ public class AppController implements AppApi {
 
     return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE, cookie.toString())
-        .body(createUserSessionResult.getUserDetails());
+        .body(new UserDetails().username("test-username"));
   }
 
   @Override
