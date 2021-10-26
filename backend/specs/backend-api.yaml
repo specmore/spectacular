@@ -17,6 +17,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AppDetails'
+  /app/login:
+    post:
+      tags:
+        - App
+      description: Creates a spectacular user session from a temporary code provided by GitHub after a user completed an OAuth web flow against the Spectacular app registration
+      operationId: createUserSession
+      requestBody:
+        description: The user authentication parameters
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppLoginRequest'
+      responses:
+        '200':
+          description: Successful operation
+          headers: 
+            Set-Cookie:
+              schema: 
+                type: string
+                example: TOKEN=abcde12345; Path=/; HttpOnly
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetails'
   /installation:
     get:
       tags:
@@ -157,6 +182,20 @@ components:
           type: string
       required:
         - clientId
+    UserDetails:
+      type: object
+      properties:
+        username:
+          type: string
+      required:
+        - username
+    AppLoginRequest:
+      type: object
+      properties:
+        userCode:
+          type: string
+      required:
+        - userCode
     Installation:
       type: object
       properties:
