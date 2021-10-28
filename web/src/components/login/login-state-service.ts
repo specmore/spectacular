@@ -1,4 +1,3 @@
-
 const STORAGE_KEY = 'loginState';
 const storage = window.sessionStorage;
 
@@ -11,6 +10,17 @@ interface LoginState {
 const toEncodedString = (loginState: LoginState): string => {
   const stateString = `${loginState.randomNum}+${loginState.returnTo}`;
   return btoa(stateString);
+};
+
+const toLoginState = (encodedState: string): LoginState => {
+  const decodedString = atob(encodedState);
+  const parts = decodedString.split('+');
+  const randomNum = Number(parts[0]);
+  const returnTo = parts[1];
+  return {
+    randomNum,
+    returnTo,
+  };
 };
 
 const generateAndStoreLoginState = (returnTo: string): string => {
@@ -33,7 +43,13 @@ const isReturnedStateValid = (returnedState: string): boolean => {
   return returnedState === sentState;
 };
 
+const getReturnToLocation = (): string => {
+  const loginState = storage.getItem(STORAGE_KEY);
+  return toLoginState(loginState).returnTo;
+};
+
 export default {
   generateAndStoreLoginState,
   isReturnedStateValid,
+  getReturnToLocation,
 };

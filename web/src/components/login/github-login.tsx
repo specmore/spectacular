@@ -1,9 +1,56 @@
-import React, { FunctionComponent } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { FunctionComponent, useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import { extractLoginCallbackURL, extractLoginRedirectReturnToPath } from '../../routes';
 import LoginStateService from './login-state-service';
+import { useCreateUserSession } from '../../backend-api-client';
 
 const GITHUB_LOGIN_LOCATION = 'https://github.com/login/oauth/authorize';
+
+interface CreateUserSessionComponentProps {
+  code: string;
+  returnToLocation: string;
+}
+
+const GitHubLoginCreateUserSessionComponent: FunctionComponent<CreateUserSessionComponentProps> = ({ code, returnToLocation }) => {
+  const history = useHistory();
+  const [userDetails, setUserDetails] = useState(null);
+  const createUserSession = useCreateUserSession({});
+  const { mutate: postAppLoginRequest, loading, error } = createUserSession;
+  const appLoginRequest = {
+    userCode: code,
+  };
+
+  useEffect(() => {
+    postAppLoginRequest(appLoginRequest).then((response) => {
+      setUserDetails(response);
+    });
+  }, []);
+
+  if (loading) {
+    return (
+      <div>
+        GitHub login successful. Creating user session...
+      </div>
+    );
+  }
+
+  if (userDetails) {
+    history.replace(returnToLocation);
+    return (
+      <div>
+        User Session created for &lsquo
+        {userDetails.username}
+        &rsquo.
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      GitHub login successful. Processing...
+    </div>
+  );
+};
 
 interface GitHubLoginComponentProps {
   clientId: string;
@@ -45,10 +92,10 @@ const GitHubLoginComponent: FunctionComponent<GitHubLoginComponentProps> = ({ cl
     );
   }
 
+  const returnToLocation = LoginStateService.getReturnToLocation();
+
   return (
-    <div>
-      Login successful. Fetching user details..
-    </div>
+    <GitHubLoginCreateUserSessionComponent code={callbackCode} returnToLocation={returnToLocation} />
   );
 };
 
