@@ -35,8 +35,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   @Bean
   public JwtDecoder jwtDecoder() {
     byte[] secretBytes = jwtSigningSecret.getBytes(StandardCharsets.UTF_8);
-    SecretKey secretKey = new SecretKeySpec(secretBytes, "HmacSHA512");
-    return NimbusJwtDecoder.withSecretKey(secretKey).macAlgorithm(MacAlgorithm.HS512).build();
+    SecretKey secretKey = new SecretKeySpec(secretBytes, "HmacSHA256");
+    return NimbusJwtDecoder.withSecretKey(secretKey).macAlgorithm(MacAlgorithm.HS256).build();
   }
 
   @Override

@@ -3,6 +3,7 @@ package spectacular.backend.app;
 import static org.springframework.http.ResponseEntity.ok;
 
 import javax.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -16,16 +17,23 @@ import spectacular.backend.github.app.user.AppUserAuthenticationService;
 @RestController
 public class AppController implements AppApi {
   private final AppUserAuthenticationService appUserAuthenticationService;
+  private final String jwtCookieName;
 
-  public AppController(AppUserAuthenticationService appUserAuthenticationService) {
+  public AppController(AppUserAuthenticationService appUserAuthenticationService,
+                       @Value("${security.authentication.jwt.cookie-name}") String jwtCookieName) {
     this.appUserAuthenticationService = appUserAuthenticationService;
+    this.jwtCookieName = jwtCookieName;
   }
 
   @Override
   public ResponseEntity<UserDetails> createUserSession(@Valid AppLoginRequest appLoginRequest) {
-//    final var createUserSessionResult = this.appUserAuthenticationService.createUserSession(appLoginRequest.getUserCode());
+    final var createUserSessionResult = this.appUserAuthenticationService.createUserSession(appLoginRequest.getUserCode());
 
-    final var cookie = ResponseCookie.from("jwt_token", "test-value")
+    if (createUserSessionResult.getUserSessionToken() == null) {
+      throw new RuntimeException("An error occurred while generating the user session.");
+    }
+
+    final var cookie = ResponseCookie.from(jwtCookieName, createUserSessionResult.getUserSessionToken())
         .httpOnly(true)
         .path("/")
         .sameSite("Strict")
@@ -33,7 +41,7 @@ public class AppController implements AppApi {
 
     return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE, cookie.toString())
-        .body(new UserDetails().username("test-username"));
+        .body(createUserSessionResult.getUserDetails());
   }
 
   @Override

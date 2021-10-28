@@ -16,6 +16,7 @@ security:
     jwt:
       signature-secret: ${JWT_SHARED_SECRET:this_test_shared_key_is_32_bytes}
       cookie-name: ${JWT_COOKIE_NAME:jwt_token}
+      duration: PT2H
 management:
   endpoints:
     web:
