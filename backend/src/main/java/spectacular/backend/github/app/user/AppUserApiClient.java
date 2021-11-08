@@ -4,16 +4,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import spectacular.backend.github.domain.Account;
+import spectacular.backend.github.domain.GetInstallationsResult;
+import spectacular.backend.github.domain.UserAccessTokenRequest;
 import spectacular.backend.github.domain.UserAccessTokenResult;
 
 @Component
 public class AppUserApiClient {
 
-  private static final String OAUTH_LOGIN_ACCESS_TOKEN_PATH = "/login/oauth/access_token";
+  private static final String USER_PATH = "/user";
+  private static final String USER_ACCESSIBLE_INSTALLATIONS_PATH = "/user/installations";
 
   private final RestTemplate restTemplate;
 
@@ -25,17 +31,29 @@ public class AppUserApiClient {
         .build();
   }
 
-  public UserAccessTokenResult requestUserAccessToken(String clientId, String clientSecret, String code) {
-    UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(OAUTH_LOGIN_ACCESS_TOKEN_PATH);
-    uriComponentsBuilder.queryParam("client_id", clientId);
-    uriComponentsBuilder.queryParam("client_secret", clientSecret);
-    uriComponentsBuilder.queryParam("code", code);
-    String accessTokenUri = uriComponentsBuilder.buildAndExpand().toUriString();
+  public Account getUser(String userAccessToken) {
+    UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(USER_PATH);
 
     HttpHeaders headers = new HttpHeaders();
-    HttpEntity entity = new HttpEntity(headers);
+    headers.setBearerAuth(userAccessToken);
+    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    var entity = new HttpEntity<>(headers);
 
-    var response = restTemplate.postForEntity(accessTokenUri, entity, UserAccessTokenResult.class);
+    var response = restTemplate.exchange(uriComponentsBuilder.buildAndExpand().toUriString(), HttpMethod.GET, entity, Account.class);
+
+    return response.getBody();
+
+  }
+
+  public GetInstallationsResult getInstallationsAccessibleByUser(String userAccessToken) {
+    UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(USER_ACCESSIBLE_INSTALLATIONS_PATH);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(userAccessToken);
+    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    var entity = new HttpEntity<>(headers);
+
+    var response = restTemplate.exchange(uriComponentsBuilder.buildAndExpand().toUriString(), HttpMethod.GET, entity, GetInstallationsResult.class);
 
     return response.getBody();
   }

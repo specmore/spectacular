@@ -4,7 +4,6 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.KeyLengthException;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -16,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import spectacular.backend.api.model.UserDetails;
+import spectacular.backend.github.domain.UserAccessTokenRequest;
 
 @Service
 public class AppUserAuthenticationService {
@@ -26,6 +26,7 @@ public class AppUserAuthenticationService {
   private final String jwtSigningSecret;
   private final Duration jwtDuration;
   private final AppUserApiClient appUserApiClient;
+  private final AppOAuthApiClient appOAuthApiClient;
 
   /**
    * A service for authenticating GitHub Users for a GitHub App.
@@ -39,19 +40,23 @@ public class AppUserAuthenticationService {
                                       @Value("${security.authentication.jwt.signature-secret}") String jwtSigningSecret,
                                       @Value("#{T(java.time.Duration).parse('${security.authentication.jwt.duration}')}")
                                           Duration jwtDuration,
-                                      AppUserApiClient appUserApiClient) {
+                                      AppUserApiClient appUserApiClient,
+                                      AppOAuthApiClient appOAuthApiClient) {
     this.clientId = clientId;
     this.clientSecret = clientSecret;
     this.jwtSigningSecret = jwtSigningSecret;
     this.jwtDuration = jwtDuration;
     this.appUserApiClient = appUserApiClient;
+    this.appOAuthApiClient = appOAuthApiClient;
   }
 
   public CreateUserSessionResult createUserSession(String code) {
-//    final var userAccessToken = this.appUserApiClient.requestUserAccessToken(this.clientId, this.clientSecret, code);
+    final var userAccessTokenRequest = new UserAccessTokenRequest(this.clientId, this.clientSecret, code);
+    final var userAccessTokenResult = this.appOAuthApiClient.requestUserAccessToken(userAccessTokenRequest);
 
-    var username = "test-username";
-    var userDetails = new UserDetails().username(username);
+    var user = this.appUserApiClient.getUser(userAccessTokenResult.getAccessToken());
+    var installations = this.appUserApiClient.getInstallationsAccessibleByUser(userAccessTokenResult.getAccessToken());
+    var userDetails = new UserDetails().username(user.getLogin());
 
     String userSessionToken = null;
     try {
@@ -68,10 +73,10 @@ public class AppUserAuthenticationService {
   }
 
   private String generateUserSessionToken(String username) throws JOSEException {
-    final var jwsSigner = new MACSigner(jwtSigningSecret);
+    final var jwsSigner = new MACSigner(this.jwtSigningSecret);
     final var header = new JWSHeader.Builder(JWSAlgorithm.HS256).type(JOSEObjectType.JWT).build();
 
-    Date expiryTime = Date.from(Instant.now().plus(Duration.ofHours(2)));
+    Date expiryTime = Date.from(Instant.now().plus(this.jwtDuration));
 
     JWTClaimsSet claims = new JWTClaimsSet.Builder()
         .subject(username)
