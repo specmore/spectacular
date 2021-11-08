@@ -20,7 +20,7 @@ paths:
   /app/login:
     post:
       tags:
-        - App
+        - App User
       description: Creates a spectacular user session from a temporary code provided by GitHub after a user completed an OAuth web flow against the Spectacular app registration
       operationId: createUserSession
       requestBody:
@@ -42,6 +42,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDetails'
+  /app/user:
+    get:
+      tags:
+        - App User
+      description: Gets the details of the currently logged in user
+      operationId: getUserDetails
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetails'
+
   /installation:
     get:
       tags:
@@ -186,6 +200,10 @@ components:
       type: object
       properties:
         username:
+          type: string
+        fullName:
+          type: string
+        profileImageUrl:
           type: string
       required:
         - username

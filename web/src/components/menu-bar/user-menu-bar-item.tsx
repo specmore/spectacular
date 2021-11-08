@@ -1,32 +1,18 @@
 import React, { useState, useEffect, FunctionComponent } from 'react';
 import { Dropdown } from 'semantic-ui-react';
 import { fetchUserInfo } from '../../api-client';
+import { useGetUserDetails } from '../../backend-api-client';
 
 const UserMenuBarItem: FunctionComponent = () => {
-  const [user, setUser] = useState(null);
-  // eslint-disable-next-line no-unused-vars
-  const [errorMessage, setErrorMessage] = useState(null);
+  const getUserDetails = useGetUserDetails({});
+  const { data: getUserDetailsResult, loading, error } = getUserDetails;
 
-  const fetchInfoUserData = async () => {
-    try {
-      const userInfoData = await fetchUserInfo();
-      setUser(userInfoData);
-    } catch (error) {
-      console.error(error);
-      setErrorMessage('An error occurred while fetching the logged in user info.');
-    }
-  };
-
-  useEffect(() => {
-    fetchInfoUserData();
-  }, []);
-
-  if (user) {
+  if (getUserDetailsResult) {
     return (
-      <Dropdown item pointing text={user.name} data-testid="user-menu-bar-item">
+      <Dropdown item pointing text={getUserDetailsResult.fullName} data-testid="user-menu-bar-item">
         <Dropdown.Menu>
-          <Dropdown.Item as="a" href={user.profile_url}>
-            {`Signed in as ${user.sub}`}
+          <Dropdown.Item as="a" href={getUserDetailsResult.profileImageUrl}>
+            {`Signed in as ${getUserDetailsResult.username}`}
           </Dropdown.Item>
           <Dropdown.Item as="a" href="/login?logout=true">Sign out</Dropdown.Item>
         </Dropdown.Menu>

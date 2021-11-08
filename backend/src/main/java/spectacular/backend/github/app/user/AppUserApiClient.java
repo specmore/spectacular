@@ -12,8 +12,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import spectacular.backend.github.domain.Account;
 import spectacular.backend.github.domain.GetInstallationsResult;
-import spectacular.backend.github.domain.UserAccessTokenRequest;
-import spectacular.backend.github.domain.UserAccessTokenResult;
 
 @Component
 public class AppUserApiClient {

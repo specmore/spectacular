@@ -4,9 +4,12 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.SignedJWT;
+import java.text.ParseException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
@@ -27,6 +30,10 @@ public class AppUserAuthenticationService {
   private final Duration jwtDuration;
   private final AppUserApiClient appUserApiClient;
   private final AppOAuthApiClient appOAuthApiClient;
+
+  private static final String CLAIM_ORIGIN = "origin";
+  private static final String CLAIM_FULL_NAME = "full-name";
+  private static final String CLAIM_PROFILE_IMAGE_URL = "profile-image-url";
 
   /**
    * A service for authenticating GitHub Users for a GitHub App.
@@ -56,11 +63,14 @@ public class AppUserAuthenticationService {
 
     var user = this.appUserApiClient.getUser(userAccessTokenResult.getAccessToken());
     var installations = this.appUserApiClient.getInstallationsAccessibleByUser(userAccessTokenResult.getAccessToken());
-    var userDetails = new UserDetails().username(user.getLogin());
+    var userDetails = new UserDetails()
+        .username(user.getLogin())
+        .fullName(user.getName())
+        .profileImageUrl(user.getAvatarUrl());
 
     String userSessionToken = null;
     try {
-      userSessionToken = generateUserSessionToken(userDetails.getUsername());
+      userSessionToken = generateUserSessionToken(userDetails);
     } catch (JOSEException e) {
       logger.error("An error occurred while generating a new User Session JWT for User: '{}'.", userDetails.getUsername(), e);
     }
@@ -72,22 +82,40 @@ public class AppUserAuthenticationService {
     return clientId;
   }
 
-  private String generateUserSessionToken(String username) throws JOSEException {
+  public UserDetails populateUserDetailsFromSessionToken(String token) {
+    try {
+      var jwt = JWTParser.parse(token);
+      var claims = jwt.getJWTClaimsSet();
+
+      return new UserDetails()
+          .username(claims.getSubject())
+          .fullName(claims.getStringClaim(CLAIM_FULL_NAME))
+          .profileImageUrl(claims.getStringClaim(CLAIM_PROFILE_IMAGE_URL));
+    } catch (ParseException e) {
+      logger.error("An error occurred while parsing a User Session token.", e);
+    }
+
+    return null;
+  }
+
+  private String generateUserSessionToken(UserDetails userDetails) throws JOSEException {
     final var jwsSigner = new MACSigner(this.jwtSigningSecret);
     final var header = new JWSHeader.Builder(JWSAlgorithm.HS256).type(JOSEObjectType.JWT).build();
 
     Date expiryTime = Date.from(Instant.now().plus(this.jwtDuration));
 
-    JWTClaimsSet claims = new JWTClaimsSet.Builder()
-        .subject(username)
+    var claims = new JWTClaimsSet.Builder()
+        .subject(userDetails.getUsername())
         .expirationTime(expiryTime)
-        .claim("origin", "github")
+        .claim(CLAIM_ORIGIN, "github")
+        .claim(CLAIM_FULL_NAME, userDetails.getFullName())
+        .claim(CLAIM_PROFILE_IMAGE_URL, userDetails.getProfileImageUrl())
         .build();
 
     final var signedJwt = new SignedJWT(header, claims);
     signedJwt.sign(jwsSigner);
 
-    logger.info("Generated and signed new User Session JWT for User: '{}' and expiring at '{}'.", username, claims.getExpirationTime());
+    logger.info("Generated and signed new User Session JWT for User: '{}' and expiring at '{}'.", userDetails.getUsername(), claims.getExpirationTime());
 
     return signedJwt.serialize();
   }
