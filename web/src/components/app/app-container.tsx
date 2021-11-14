@@ -4,11 +4,12 @@ import {
 } from 'semantic-ui-react';
 import { Switch, Route } from 'react-router-dom';
 import EmptyWelcomeItemImage from '../../assets/images/empty-catalogue-item.png';
+import InstallationSelectionContainer from '../installation-selection-container';
 import InstallationContainer from '../installation-container';
 import MenuBar from '../menu-bar';
 import FooterBar from '../footer-bar';
 import GitHubLogin from '../login/github-login';
-import { GITHUB_LOGIN_ROUTE } from '../../routes';
+import { GITHUB_LOGIN_ROUTE, INSTALLATION_LIST_ROUTE } from '../../routes';
 import { useGetAppDetails } from '../../backend-api-client';
 
 const AppContainerLoading: FunctionComponent = () => (
@@ -53,7 +54,14 @@ const AppContainer: FunctionComponent = () => {
         <div className="content-container">
           <MenuBar />
           <div className="main-content">
-            <InstallationContainer />
+            <Switch>
+              <Route exact path={INSTALLATION_LIST_ROUTE}>
+                <InstallationSelectionContainer />
+              </Route>
+              <Route path="*">
+                <InstallationContainer />
+              </Route>
+            </Switch>
           </div>
           <FooterBar />
         </div>

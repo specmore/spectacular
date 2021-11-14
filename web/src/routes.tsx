@@ -5,7 +5,10 @@ import { SpecItem } from './backend-api-client';
 
 export const GITHUB_LOGIN_ROUTE = '/login/github';
 
-export const CATALOGUE_LIST_ROUTE = '/';
+export const INSTALLATION_LIST_ROUTE = '/';
+
+export const INSTALLATION_CONTAINER_ROUTE = '/:org';
+export const CreateInstallationContainerLocation = (org: string): string => `/${org}/`;
 
 export const CATALOGUE_CONTAINER_ROUTE = '/catalogue/:encodedId';
 export const CreateCatalogueContainerLocation = (encodedId: string): string => `/catalogue/${encodedId}/`;
@@ -63,13 +66,13 @@ export const extractLoginCallbackURL = (): string => {
   return `${location.protocol}//${location.host}${location.pathname}`;
 };
 
-export const BackToCatalogueListLinkButton: FunctionComponent = () => (
-  <Button icon compact labelPosition="left" as={Link} to={CATALOGUE_LIST_ROUTE} data-testid="back-to-catalogue-list-button">
-    Catalogue List
-    {' '}
-    <Icon name="chevron left" />
-  </Button>
-);
+// export const BackToCatalogueListLinkButton: FunctionComponent = () => (
+//   <Button icon compact labelPosition="left" as={Link} to={CATALOGUE_LIST_ROUTE} data-testid="back-to-catalogue-list-button">
+//     Catalogue List
+//     {' '}
+//     <Icon name="chevron left" />
+//   </Button>
+// );
 
 interface ViewSpecLinkButtonProps {
   refName: string;
