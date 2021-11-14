@@ -1,6 +1,9 @@
 package spectacular.backend.installation;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
+import spectacular.backend.api.model.GetInstallationsResult;
 import spectacular.backend.api.model.Installation;
 import spectacular.backend.github.app.AppApiClient;
 import spectacular.backend.github.app.AppInstallationContextProvider;
@@ -28,5 +31,13 @@ public class InstallationService {
   public Installation getCurrentInstallation() {
     var gitHubInstallation = appApiClient.getAppInstallation(appInstallationContextProvider.getInstallationId());
     return installationMapper.mapInstallation(gitHubInstallation);
+  }
+
+  public GetInstallationsResult getInstallations(List<Integer> installationIds) {
+    final var installations = installationIds.stream()
+        .map(installationId -> this.appApiClient.getAppInstallation(installationId.toString()))
+        .map(this.installationMapper::mapInstallation)
+        .collect(Collectors.toList());
+    return new GetInstallationsResult().installations(installations);
   }
 }

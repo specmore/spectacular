@@ -7,24 +7,31 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
 import spectacular.backend.api.AppApi;
 import spectacular.backend.api.model.AppDetails;
 import spectacular.backend.api.model.AppLoginRequest;
+import spectacular.backend.api.model.GetInstallationsResult;
 import spectacular.backend.api.model.UserDetails;
 import spectacular.backend.github.app.user.AppUserAuthenticationService;
+import spectacular.backend.installation.InstallationService;
 
 @RestController
 public class AppController implements AppApi {
   private final AppUserAuthenticationService appUserAuthenticationService;
+  private final UserSessionTokenService userSessionTokenService;
+  private final InstallationService installationService;
   private final String jwtCookieName;
 
   public AppController(AppUserAuthenticationService appUserAuthenticationService,
+                       UserSessionTokenService userSessionTokenService,
+                       InstallationService installationService,
                        @Value("${security.authentication.jwt.cookie-name}") String jwtCookieName) {
     this.appUserAuthenticationService = appUserAuthenticationService;
+    this.userSessionTokenService = userSessionTokenService;
+    this.installationService = installationService;
     this.jwtCookieName = jwtCookieName;
   }
 
@@ -55,13 +62,25 @@ public class AppController implements AppApi {
   }
 
   @Override
-  public ResponseEntity<UserDetails> getUserDetails() {
-    var securityPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+  public ResponseEntity<GetInstallationsResult> getInstallations() {
+    final var securityPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     if (securityPrincipal instanceof Jwt) {
-      var jwt = (Jwt) securityPrincipal;
-      var userDetails = this.appUserAuthenticationService.populateUserDetailsFromSessionToken(jwt.getTokenValue());
+      final var jwt = (Jwt) securityPrincipal;
+      final var installationIds = this.userSessionTokenService.getInstallationIds(jwt.getTokenValue());
+      final var getInstallationsResult = this.installationService.getInstallations(installationIds);
+      return ok(getInstallationsResult);
+    }
+    throw new RuntimeException("An error occurred while processing the user session.");
+  }
+
+  @Override
+  public ResponseEntity<UserDetails> getUserDetails() {
+    final var securityPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    if (securityPrincipal instanceof Jwt) {
+      final var jwt = (Jwt) securityPrincipal;
+      var userDetails = this.userSessionTokenService.populateUserDetailsFromSessionToken(jwt.getTokenValue());
       return ok(userDetails);
     }
-    return null;
+    throw new RuntimeException("An error occurred while processing the user session.");
   }
 }

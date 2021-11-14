@@ -14,4 +14,12 @@ public class GetInstallationsResult {
     this.totalCount = totalCount;
     this.installations = installations;
   }
+
+  public List<Installation> getInstallations() {
+    return installations;
+  }
+
+  public int getTotalCount() {
+    return totalCount;
+  }
 }

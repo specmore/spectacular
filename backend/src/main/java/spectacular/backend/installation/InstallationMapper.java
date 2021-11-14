@@ -17,6 +17,7 @@ public class InstallationMapper {
   public Installation mapInstallation(spectacular.backend.github.domain.Installation gitHubInstallation) {
     return new Installation()
         .id(gitHubInstallation.getId())
-        .owner(gitHubInstallation.getAccount().getLogin());
+        .owner(gitHubInstallation.getAccount().getLogin())
+        .ownerImageUrl(gitHubInstallation.getAccount().getAvatarUrl());
   }
 }

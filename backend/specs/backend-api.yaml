@@ -55,6 +55,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDetails'
+  /app/installations:
+    get:
+      tags:
+        - App
+      description: Gets the installations accessible to the currently logged in user
+      operationId: getInstallations
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetInstallationsResult'
 
   /installation:
     get:
@@ -214,6 +227,15 @@ components:
           type: string
       required:
         - userCode
+    GetInstallationsResult:
+      type: object
+      properties:
+        installations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Installation'
+      required:
+        - installations
     Installation:
       type: object
       properties:
@@ -221,8 +243,11 @@ components:
           type: integer
         owner:
           type: string
+        ownerImageUrl:
+          type: string
       required:
         - id
+        - owner
     FindCataloguesResult:
       type: object
       properties:
