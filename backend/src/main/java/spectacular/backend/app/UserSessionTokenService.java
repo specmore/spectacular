@@ -84,12 +84,12 @@ public class UserSessionTokenService {
     return signedJwt.serialize();
   }
 
-  public List<Integer> getInstallationIds(String tokenValue) {
+  public List<Long> getInstallationIds(String tokenValue) {
     try {
       var jwt = JWTParser.parse(tokenValue);
       var claims = jwt.getJWTClaimsSet();
 
-      return (List<Integer>) claims.getClaim(CLAIM_INSTALLATIONS);
+      return (List<Long>) claims.getClaim(CLAIM_INSTALLATIONS);
 
     } catch (ParseException e) {
       logger.error("An error occurred while parsing a User Session token.", e);

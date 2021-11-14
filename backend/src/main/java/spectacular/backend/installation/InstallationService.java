@@ -33,7 +33,7 @@ public class InstallationService {
     return installationMapper.mapInstallation(gitHubInstallation);
   }
 
-  public GetInstallationsResult getInstallations(List<Integer> installationIds) {
+  public GetInstallationsResult getInstallations(List<Long> installationIds) {
     final var installations = installationIds.stream()
         .map(installationId -> this.appApiClient.getAppInstallation(installationId.toString()))
         .map(this.installationMapper::mapInstallation)
