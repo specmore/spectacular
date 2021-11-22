@@ -7,8 +7,8 @@ export const GITHUB_LOGIN_ROUTE = '/login/github';
 
 export const INSTALLATION_LIST_ROUTE = '/';
 
-export const INSTALLATION_CONTAINER_ROUTE = '/:org';
-export const CreateInstallationContainerLocation = (org: string): string => `/${org}/`;
+export const INSTALLATION_CONTAINER_ROUTE = '/:installationId';
+export const CreateInstallationContainerLocation = (installationId: number): string => `/${installationId}/`;
 
 export const CATALOGUE_CONTAINER_ROUTE = '/catalogue/:encodedId';
 export const CreateCatalogueContainerLocation = (encodedId: string): string => `/catalogue/${encodedId}/`;

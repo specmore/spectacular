@@ -12,7 +12,7 @@ interface InstallationItemProps {
 }
 
 const InstallationItem: FunctionComponent<InstallationItemProps> = ({ installation }) => {
-  const installationLocation = CreateInstallationContainerLocation(installation.owner);
+  const installationLocation = CreateInstallationContainerLocation(installation.id);
   return (
     <Item data-testid="interface-list-item-container">
       <Item.Image size="tiny" src={installation.ownerImageUrl} />
