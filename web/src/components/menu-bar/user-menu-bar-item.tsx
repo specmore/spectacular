@@ -1,6 +1,5 @@
-import React, { useState, useEffect, FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import { Dropdown } from 'semantic-ui-react';
-import { fetchUserInfo } from '../../api-client';
 import { useGetUserDetails } from '../../backend-api-client';
 
 const UserMenuBarItem: FunctionComponent = () => {
