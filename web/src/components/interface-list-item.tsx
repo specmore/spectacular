@@ -35,12 +35,17 @@ const InterfaceListItemError: FunctionComponent<SpecItemProps> = ({ specItem }) 
 );
 
 interface InterfaceListItemProps {
+  installationId: number;
   catalogueEncodedId: string;
   specEvolutionSummary: SpecEvolutionSummary;
 }
 
-const InterfaceListItemContainer: FunctionComponent<InterfaceListItemProps> = ({ catalogueEncodedId, specEvolutionSummary }) => {
-  const interfaceLocation = CreateInterfaceLocation(catalogueEncodedId, specEvolutionSummary.interfaceName);
+const InterfaceListItemContainer: FunctionComponent<InterfaceListItemProps> = ({
+  installationId,
+  catalogueEncodedId,
+  specEvolutionSummary,
+}) => {
+  const interfaceLocation = CreateInterfaceLocation(installationId, catalogueEncodedId, specEvolutionSummary.interfaceName);
   const latestAgreedSpecItem = specEvolutionSummary.latestAgreed;
   if (latestAgreedSpecItem.parseResult.errors.length > 0) {
     return (

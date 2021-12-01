@@ -7,15 +7,17 @@ export const GITHUB_LOGIN_ROUTE = '/login/github';
 
 export const INSTALLATION_LIST_ROUTE = '/';
 
-export const INSTALLATION_CONTAINER_ROUTE = '/:installationId';
-export const CreateInstallationContainerLocation = (installationId: number): string => `/${installationId}/`;
+export const INSTALLATION_CONTAINER_ROUTE = '/org/:installationId';
+export const CreateInstallationContainerLocation = (installationId: number): string => `/org/${installationId}/`;
 
-export const CATALOGUE_CONTAINER_ROUTE = '/catalogue/:encodedId';
-export const CreateCatalogueContainerLocation = (encodedId: string): string => `/catalogue/${encodedId}/`;
+export const CATALOGUE_CONTAINER_ROUTE = '/org/:installationId/catalogue/:encodedId';
+export const CreateCatalogueContainerLocation = (installationId: number, encodedId: string): string => (
+  `/org/${installationId}/catalogue/${encodedId}/`
+);
 
-export const CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE = '/catalogue/:encodedId/interface/:interfaceName';
-export const CreateInterfaceLocation = (encodedId: string, interfaceName: string): string => (
-  `/catalogue/${encodedId}/interface/${interfaceName}`
+export const CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE = '/org/:installationId/catalogue/:encodedId/interface/:interfaceName';
+export const CreateInterfaceLocation = (installationId: number, encodedId: string, interfaceName: string): string => (
+  `/org/${installationId}/catalogue/${encodedId}/interface/${interfaceName}/`
 );
 
 export const LOGIN_REDIRECT_RETURN_TO_PARAM_NAME = 'backTo';

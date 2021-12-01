@@ -42,7 +42,7 @@ const createInterfaceFileContentsPath = (
 ) => `/api/catalogues/${encodedId}/interfaces/${interfaceName}/file?ref=${refName}`;
 
 const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org }) => {
-  const { encodedId, interfaceName } = useParams();
+  const { installationId, encodedId, interfaceName } = useParams();
   const refName = getCurrentSpecRefViewed();
   const showSpecEvolution = isShowSpecEvolution();
 
@@ -86,7 +86,12 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
 
   return (
     <>
-      <LocationBar installationOwner={org} catalogue={catalogue} specEvolutionSummary={specEvolutionSummary} />
+      <LocationBar
+        installationId={installationId}
+        installationOwner={org}
+        catalogue={catalogue}
+        specEvolutionSummary={specEvolutionSummary}
+      />
       <div data-testid="interface-container-segment">
         <Segment vertical>
           <Container text>

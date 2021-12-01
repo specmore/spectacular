@@ -33,6 +33,11 @@ public class InstallationService {
     return installationMapper.mapInstallation(gitHubInstallation);
   }
 
+  public Installation getInstallation(Integer installationId) {
+    var gitHubInstallation = appApiClient.getAppInstallation(installationId.toString());
+    return installationMapper.mapInstallation(gitHubInstallation);
+  }
+
   public GetInstallationsResult getInstallations(List<Long> installationIds) {
     final var installations = installationIds.stream()
         .map(installationId -> this.appApiClient.getAppInstallation(installationId.toString()))

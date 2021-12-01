@@ -58,11 +58,12 @@ const CatalogueItemDetails: FunctionComponent<CatalogueItemDetailsProps> = ({ ca
 );
 
 interface CatalogueListItemProps {
+  installationId: number;
   catalogue: Catalogue;
 }
 
-const CatalogueListItem: FunctionComponent<CatalogueListItemProps> = ({ catalogue }) => {
-  const catalogueLink = CreateCatalogueContainerLocation(catalogue.encodedId);
+const CatalogueListItem: FunctionComponent<CatalogueListItemProps> = ({ installationId, catalogue }) => {
+  const catalogueLink = CreateCatalogueContainerLocation(installationId, catalogue.encodedId);
 
   if (catalogue.parseError) return (<CatalogueErrorItem catalogue={catalogue} />);
 

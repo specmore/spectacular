@@ -1,5 +1,6 @@
 package spectacular.backend.app;
 
+import static org.springframework.http.ResponseEntity.notFound;
 import static org.springframework.http.ResponseEntity.ok;
 
 import javax.validation.Valid;
@@ -14,6 +15,7 @@ import spectacular.backend.api.AppApi;
 import spectacular.backend.api.model.AppDetails;
 import spectacular.backend.api.model.AppLoginRequest;
 import spectacular.backend.api.model.GetInstallationsResult;
+import spectacular.backend.api.model.Installation;
 import spectacular.backend.api.model.UserDetails;
 import spectacular.backend.github.app.user.AppUserAuthenticationService;
 import spectacular.backend.installation.InstallationService;
@@ -59,6 +61,22 @@ public class AppController implements AppApi {
     final var clientId = this.appUserAuthenticationService.getClientId();
     final var appDetails = new AppDetails().clientId(clientId);
     return ok(appDetails);
+  }
+
+  @Override
+  public ResponseEntity<Installation> getInstallation(Integer installationId) {
+    final var securityPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    if (securityPrincipal instanceof Jwt) {
+      final var jwt = (Jwt) securityPrincipal;
+      final var installationIds = this.userSessionTokenService.getInstallationIds(jwt.getTokenValue());
+      if (installationIds.stream().anyMatch(userInstallationId -> userInstallationId.intValue() == installationId)) {
+        final var installation = this.installationService.getInstallation(installationId);
+        return ok(installation);
+      }
+
+      return notFound().build();
+    }
+    throw new RuntimeException("An error occurred while processing the user session.");
   }
 
   @Override

@@ -2,14 +2,14 @@ import React, { FunctionComponent } from 'react';
 import {
   Dimmer, Loader, Message, Container,
 } from 'semantic-ui-react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, useParams } from 'react-router-dom';
 import EmptyWelcomeItemImage from '../assets/images/empty-catalogue-item.png';
 import CatalogueContainer from './catalogue-container';
 import CatalogueList from './catalogue-list/catalogue-list';
-import NotFound from './not-found';
 import { CATALOGUE_CONTAINER_ROUTE, CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE, INSTALLATION_CONTAINER_ROUTE } from '../routes';
 import InterfaceContainer from './interface-container';
 import { useGetInstallation } from '../backend-api-client';
+import NotFound from './not-found';
 
 const InstallationContainerLoading: FunctionComponent = () => (
   <Container text>
@@ -33,7 +33,8 @@ const InstallationContainerError: FunctionComponent<InstallationContainerErrorPr
 );
 
 const InstallationContainer: FunctionComponent = () => {
-  const getInstallation = useGetInstallation({});
+  const { installationId } = useParams();
+  const getInstallation = useGetInstallation({ installationId });
   const { data: getInstallationResult, loading, error } = getInstallation;
 
   if (loading) {

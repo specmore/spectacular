@@ -1,16 +1,18 @@
 import React, { FunctionComponent } from 'react';
 import './location-bar.less';
 import { Link } from 'react-router-dom';
-import { CATALOGUE_LIST_ROUTE, CreateCatalogueContainerLocation, CreateInterfaceLocation } from '../routes';
+import { CreateInstallationContainerLocation, CreateCatalogueContainerLocation, CreateInterfaceLocation } from '../routes';
 import { Catalogue, SpecEvolutionSummary } from '../backend-api-client';
 
 interface LocationBarProps {
+  installationId: number;
   installationOwner: string;
   catalogue?: Catalogue;
   specEvolutionSummary?: SpecEvolutionSummary;
 }
 
 const LocationBar: FunctionComponent<LocationBarProps> = ({
+  installationId,
   installationOwner,
   catalogue,
   specEvolutionSummary,
@@ -22,12 +24,13 @@ const LocationBar: FunctionComponent<LocationBarProps> = ({
       element: (<span>Interface Catalogues</span>),
     });
   } else {
+    const installationLocation = CreateInstallationContainerLocation(installationId);
     breadcrumbList.push({
       id: 'interface-catalogues-link',
-      element: (<Link to={CATALOGUE_LIST_ROUTE}>Interface Catalogues</Link>),
+      element: (<Link to={installationLocation}>Interface Catalogues</Link>),
     });
 
-    const catalogueLocation = CreateCatalogueContainerLocation(catalogue.encodedId);
+    const catalogueLocation = CreateCatalogueContainerLocation(installationId, catalogue.encodedId);
     breadcrumbList.push({
       id: 'catalogue-title-text',
       element: (<Link to={catalogueLocation}>{catalogue.title}</Link>),
@@ -35,7 +38,7 @@ const LocationBar: FunctionComponent<LocationBarProps> = ({
 
     if (specEvolutionSummary) {
       const interfaceTitle = specEvolutionSummary.latestAgreed.parseResult.openApiSpec.title;
-      const interfaceLocation = CreateInterfaceLocation(catalogue.encodedId, specEvolutionSummary.interfaceName);
+      const interfaceLocation = CreateInterfaceLocation(installationId, catalogue.encodedId, specEvolutionSummary.interfaceName);
       breadcrumbList.push({
         id: 'interface-title-text',
         element: (<Link to={interfaceLocation}>{interfaceTitle}</Link>),

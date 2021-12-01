@@ -32,7 +32,7 @@ interface CatalogueContainerProps {
 }
 
 const CatalogueContainer: FunctionComponent<CatalogueContainerProps> = ({ org }) => {
-  const { encodedId } = useParams();
+  const { installationId, encodedId } = useParams();
   const getCatalogue = useGetCatalogue({ encodedId });
 
   const { data: getCatalogueResult, loading, error } = getCatalogue;
@@ -45,12 +45,12 @@ const CatalogueContainer: FunctionComponent<CatalogueContainerProps> = ({ org })
     content = (<CatalogueContainerError errorMessage={error.message} />);
   } else {
     catalogue = getCatalogueResult.catalogue;
-    content = (<CatalogueDetails catalogue={catalogue} />);
+    content = (<CatalogueDetails installationId={installationId} catalogue={catalogue} />);
   }
 
   return (
     <>
-      <LocationBar installationOwner={org} catalogue={catalogue} />
+      <LocationBar installationId={installationId} installationOwner={org} catalogue={catalogue} />
       <Segment vertical data-testid="catalogue-container-segment">
         <Container text>
           {content}

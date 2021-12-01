@@ -9,8 +9,9 @@ import InstallationContainer from '../installation-container';
 import MenuBar from '../menu-bar';
 import FooterBar from '../footer-bar';
 import GitHubLogin from '../login/github-login';
-import { GITHUB_LOGIN_ROUTE, INSTALLATION_LIST_ROUTE } from '../../routes';
+import { GITHUB_LOGIN_ROUTE, INSTALLATION_CONTAINER_ROUTE, INSTALLATION_LIST_ROUTE } from '../../routes';
 import { useGetAppDetails } from '../../backend-api-client';
+import NotFound from '../not-found';
 
 const AppContainerLoading: FunctionComponent = () => (
   <Container text>
@@ -58,8 +59,11 @@ const AppContainer: FunctionComponent = () => {
               <Route exact path={INSTALLATION_LIST_ROUTE}>
                 <InstallationSelectionContainer />
               </Route>
-              <Route path="*">
+              <Route path={INSTALLATION_CONTAINER_ROUTE}>
                 <InstallationContainer />
+              </Route>
+              <Route path="*">
+                <NotFound />
               </Route>
             </Switch>
           </div>
