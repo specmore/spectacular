@@ -102,19 +102,19 @@ paths:
   #           application/json:
   #             schema:
   #               $ref: '#/components/schemas/Installation'
-  /catalogues:
+  /catalogues/{installationId}:
     get:
       tags:
         - Catalogues
       description: Finds catalogues available to the user
       operationId: findCataloguesForUser
       parameters:
-        - name: org
-          in: query
-          description: The organisation
+        - name: installationId
+          in: path
+          description: The id of the specific installation of the Spectacular app
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         '200':
           description: Successful operation
@@ -122,13 +122,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FindCataloguesResult'
-  /catalogues/{encodedId}:
+  /catalogues/{installationId}/{encodedId}:
     get:
       tags:
         - Catalogues
       description: Gets a catalogue
       operationId: getCatalogue
       parameters:
+        - name: installationId
+          in: path
+          description: The id of the specific installation of the Spectacular app
+          required: true
+          schema:
+            type: integer
         - name: encodedId
           in: path
           description: The base64 encoded id of the Catalogue being fetched
@@ -149,13 +155,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundResponse'
-  /catalogues/{encodedId}/interfaces/{interfaceName}:
+  /catalogues/{installationId}/{encodedId}/interfaces/{interfaceName}:
     get:
       tags:
         - Interfaces
       description: Gets the details of an interface
       operationId: getInterfaceDetails
       parameters:
+        - name: installationId
+          in: path
+          description: The id of the specific installation of the Spectacular app
+          required: true
+          schema:
+            type: integer
         - name: encodedId
           in: path
           description: The base64 encoded id of the Catalogue being referenced
@@ -182,13 +194,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundResponse'
-  /catalogues/{encodedId}/interfaces/{interfaceName}/file:
+  /catalogues/{installationId}/{encodedId}/interfaces/{interfaceName}/file:
     get:
       tags:
         - Interfaces
       description: Gets the file contents of an interface
       operationId: getInterfaceFileContents
       parameters:
+        - name: installationId
+          in: path
+          description: The id of the specific installation of the Spectacular app
+          required: true
+          schema:
+            type: integer
         - name: encodedId
           in: path
           description: The base64 encoded id of the Catalogue being referenced

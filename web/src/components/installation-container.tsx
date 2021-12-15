@@ -49,13 +49,22 @@ const InstallationContainer: FunctionComponent = () => {
     <>
       <Switch>
         <Route exact path={INSTALLATION_CONTAINER_ROUTE}>
-          <CatalogueList org={getInstallationResult.owner} />
+          <CatalogueList
+            installationId={getInstallationResult.id}
+            org={getInstallationResult.owner}
+          />
         </Route>
         <Route exact path={[CATALOGUE_CONTAINER_ROUTE]}>
-          <CatalogueContainer org={getInstallationResult.owner} />
+          <CatalogueContainer
+            installationId={getInstallationResult.id}
+            org={getInstallationResult.owner}
+          />
         </Route>
         <Route exact path={[CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE]}>
-          <InterfaceContainer org={getInstallationResult.owner} />
+          <InterfaceContainer
+            installationId={getInstallationResult.id}
+            org={getInstallationResult.owner}
+          />
         </Route>
         <Route path="*">
           <NotFound />

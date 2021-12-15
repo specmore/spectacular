@@ -1,5 +1,4 @@
 import React, { FunctionComponent } from 'react';
-import { useParams } from 'react-router-dom';
 import {
   Item, Segment, Message, Header, Container, Placeholder,
 } from 'semantic-ui-react';
@@ -60,12 +59,12 @@ const CatalogueList: FunctionComponent<CatalogueListProps> = ({ installationId, 
 };
 
 interface CatalogueListContainerProps {
+  installationId: number;
   org: string;
 }
 
-const CatalogueListContainer: FunctionComponent<CatalogueListContainerProps> = ({ org }) => {
-  const { installationId } = useParams();
-  const findCataloguesForUser = useFindCataloguesForUser({ queryParams: { org } });
+const CatalogueListContainer: FunctionComponent<CatalogueListContainerProps> = ({ installationId, org }) => {
+  const findCataloguesForUser = useFindCataloguesForUser({ installationId });
   const { data: findCataloguesResult, loading, error } = findCataloguesForUser;
 
   let content = null;
