@@ -42,6 +42,11 @@ public class UserSessionTokenService {
     this.jwtDuration = jwtDuration;
   }
 
+  /**
+   * Extracts User Details from a user session token.
+   * @param token that represents a user's session
+   * @return the UserDetails extracted from the contents of the user session token
+   */
   public UserDetails populateUserDetailsFromSessionToken(String token) {
     try {
       var jwt = JWTParser.parse(token);
@@ -58,6 +63,13 @@ public class UserSessionTokenService {
     return null;
   }
 
+  /**
+   * Creates a user session token in the form of a signed JWT that encapsulates all the information specific to the user's session.
+   * @param userDetails describing the users profile details
+   * @param getInstallationsResult describing the installations of this application that the user has access to
+   * @return a string that contains the JWT encoded user session
+   * @throws JOSEException when a problem occurs with encoding and signing session as a JWT
+   */
   public String generateUserSessionToken(UserDetails userDetails, GetInstallationsResult getInstallationsResult) throws JOSEException {
     final var installationIds = getInstallationsResult.getInstallations().stream().map(Installation::getId).collect(
         Collectors.toList());
@@ -79,11 +91,19 @@ public class UserSessionTokenService {
     final var signedJwt = new SignedJWT(header, claims);
     signedJwt.sign(jwsSigner);
 
-    logger.info("Generated and signed new User Session JWT for User: '{}' and expiring at '{}'.", userDetails.getUsername(), claims.getExpirationTime());
+    logger.info("Generated and signed new User Session JWT for User: '{}' and expiring at '{}'.",
+        userDetails.getUsername(),
+        claims.getExpirationTime());
 
     return signedJwt.serialize();
   }
 
+  /**
+   * Extracts the installation ids that the user has access to from the user session token.
+   * @param tokenValue representing the JWT encoded user session
+   * @return a list of installation ids
+   */
+  @SuppressWarnings("unchecked")
   public List<Long> getInstallationIds(String tokenValue) {
     try {
       var jwt = JWTParser.parse(tokenValue);

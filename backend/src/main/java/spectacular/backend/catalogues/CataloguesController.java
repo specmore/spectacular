@@ -30,6 +30,12 @@ public class CataloguesController implements CataloguesApi {
   private final UserSessionTokenService userSessionTokenService;
   private final InstallationService installationService;
 
+  /**
+   * Controller for handling operations specific to the Interface Catalogue resource.
+   * @param catalogueService with which all catalogue resource operations are orchestrated.
+   * @param userSessionTokenService that provides functionality around handling user session tokens
+   * @param installationService with which App installation details can be retrieved.
+   */
   public CataloguesController(CatalogueService catalogueService, UserSessionTokenService userSessionTokenService,
                               InstallationService installationService) {
     this.catalogueService = catalogueService;
@@ -79,7 +85,10 @@ public class CataloguesController implements CataloguesApi {
   }
 
   @Override
-  public ResponseEntity<Object> getInterfaceFileContents(Integer installationId, byte[] encodedId, String interfaceName, @Valid String ref) {
+  public ResponseEntity<Object> getInterfaceFileContents(Integer installationId,
+                                                         byte[] encodedId,
+                                                         String interfaceName,
+                                                         @Valid String ref) {
     final var jwt = validateRequest(installationId);
 
     var decodedBytes = Base64.getDecoder().decode(encodedId);

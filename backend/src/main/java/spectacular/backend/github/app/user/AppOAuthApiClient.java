@@ -22,6 +22,11 @@ public class AppOAuthApiClient {
 
   private final RestTemplate restTemplate;
 
+  /**
+   * HTTP Client for making OAuth Workflow requests on behalf of the GitHub App.
+   * @param rootUrl the config value for the GitHub API root URL to call.
+   * @param restTemplateBuilder the Rest Template Builder with which to configure how HTTP requests will be made.
+   */
   public AppOAuthApiClient(@Value("${github.web.root-url}") String rootUrl,
                            RestTemplateBuilder restTemplateBuilder) {
     this.restTemplate = restTemplateBuilder
@@ -30,6 +35,11 @@ public class AppOAuthApiClient {
         .build();
   }
 
+  /**
+   * Retrieves an Access Token for a User that has completed a GitHub OAuth workflow.
+   * @param userAccessTokenRequest containing all the details to complete the user's OAuth workflow.
+   * @return a UserAccessTokenResult containing the access token and supporting metadata.
+   */
   public UserAccessTokenResult requestUserAccessToken(UserAccessTokenRequest userAccessTokenRequest) {
     UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(OAUTH_LOGIN_ACCESS_TOKEN_PATH);
 

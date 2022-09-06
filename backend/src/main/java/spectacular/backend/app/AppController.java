@@ -27,6 +27,13 @@ public class AppController implements AppApi {
   private final InstallationService installationService;
   private final String jwtCookieName;
 
+  /**
+   * Resources related to the GitHub App installation and user sessions.
+   * @param appUserAuthenticationService the service responsible for creating user sessions after a successful GitHub OAuth login workflow
+   * @param userSessionTokenService the service responsible for generating JWTs
+   * @param installationService the service providing installation details for this GitHub integration
+   * @param jwtCookieName the config value for the cookie name returned to the user agent
+   */
   public AppController(AppUserAuthenticationService appUserAuthenticationService,
                        UserSessionTokenService userSessionTokenService,
                        InstallationService installationService,

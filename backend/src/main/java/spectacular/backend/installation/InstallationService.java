@@ -38,6 +38,11 @@ public class InstallationService {
     return installationMapper.mapInstallation(gitHubInstallation);
   }
 
+  /**
+   * Gets the details of all installations of the app for a given set of installation ids.
+   * @param installationIds that are to be used to retrieve the installation details
+   * @return a GetInstallationsResult containing all the retrieved installations
+   */
   public GetInstallationsResult getInstallations(List<Long> installationIds) {
     final var installations = installationIds.stream()
         .map(installationId -> this.appApiClient.getAppInstallation(installationId.toString()))

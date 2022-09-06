@@ -21,6 +21,11 @@ public class AppUserApiClient {
 
   private final RestTemplate restTemplate;
 
+  /**
+   * HTTP Client for making GitHub API request under the context of a specific user that has logged into the GitHub App.
+   * @param rootUrl the config value for the GitHub API root URL to call.
+   * @param restTemplateBuilder the Rest Template Builder with which to configure how HTTP requests will be made.
+   */
   public AppUserApiClient(@Value("${github.api.root-url}") String rootUrl,
                           RestTemplateBuilder restTemplateBuilder) {
     this.restTemplate = restTemplateBuilder
@@ -29,6 +34,11 @@ public class AppUserApiClient {
         .build();
   }
 
+  /**
+   * Retrieves the details of the logged-in User.
+   * @param userAccessToken that was retrieved when the user completed their OAuth workflow.
+   * @return an Account object with all the users GitHub profile details
+   */
   public Account getUser(String userAccessToken) {
     UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(USER_PATH);
 
@@ -43,6 +53,11 @@ public class AppUserApiClient {
 
   }
 
+  /**
+   * Retrieves all the installations of this GitHub App this user has access to.
+   * @param userAccessToken that was retrieved when the user completed their OAuth workflow.
+   * @return a GetInstallationsResult object with a list of installations the user has access to.
+   */
   public GetInstallationsResult getInstallationsAccessibleByUser(String userAccessToken) {
     UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(USER_ACCESSIBLE_INSTALLATIONS_PATH);
 
@@ -51,7 +66,11 @@ public class AppUserApiClient {
     headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
     var entity = new HttpEntity<>(headers);
 
-    var response = restTemplate.exchange(uriComponentsBuilder.buildAndExpand().toUriString(), HttpMethod.GET, entity, GetInstallationsResult.class);
+    var response = restTemplate.exchange(
+        uriComponentsBuilder.buildAndExpand().toUriString(),
+        HttpMethod.GET,
+        entity,
+        GetInstallationsResult.class);
 
     return response.getBody();
   }

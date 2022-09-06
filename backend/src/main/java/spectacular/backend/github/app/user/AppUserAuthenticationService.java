@@ -20,10 +20,10 @@ public class AppUserAuthenticationService {
   private final UserSessionTokenService userSessionTokenService;
 
   /**
-   * A service for authenticating GitHub Users for a GitHub App.
-   * @param clientId a config value of the Client Id for the GitHub app representing this application instance
-   * @param appUserApiClient
-   * @param userSessionTokenService
+   * A service for orchestrating the authentication of GitHub Users for a GitHub App.
+   * @param clientId a config value of the Client ID for the GitHub App representing this application instance
+   * @param appUserApiClient the GitHub API client for making requests in the context of a User
+   * @param userSessionTokenService a service for generating user session tokens after a successful authentication
    */
   public AppUserAuthenticationService(@Value("${github.api.app.client-id}") String clientId,
                                       @Value("${github.api.app.client-secret}") String clientSecret,
@@ -37,6 +37,11 @@ public class AppUserAuthenticationService {
     this.userSessionTokenService = userSessionTokenService;
   }
 
+  /**
+   * Orchestrates the completion of a user authentication workflow and creation of a user session.
+   * @param code the code given back by the GitHub App OAuth workflow with which the final OAuth workflow step can be completed.
+   * @return the CreateUserSessionResult with the session token and user details
+   */
   public CreateUserSessionResult createUserSession(String code) {
     final var userAccessTokenRequest = new UserAccessTokenRequest(this.clientId, this.clientSecret, code);
     final var userAccessTokenResult = this.appOAuthApiClient.requestUserAccessToken(userAccessTokenRequest);
