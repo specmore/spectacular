@@ -21,7 +21,6 @@ const definePlugin = new webpack.DefinePlugin({
 });
 
 module.exports = () => {
-  console.log('SPECTACULAR_GITHUB_APP_INSTALLATION_ID: ', process.env.SPECTACULAR_GITHUB_APP_INSTALLATION_ID);
   console.log('VERSION: ', process.env.SEMVER);
   console.log('SHORTSHA: ', process.env.SHORTSHA);
 
@@ -92,9 +91,6 @@ module.exports = () => {
           target: 'http://localhost:5000', // actual api
           // target: 'http://localhost:5005', //wiremock
           pathRewrite: { '^/api': '' },
-          headers: {
-            'x-spec-installation-id': process.env.SPECTACULAR_GITHUB_APP_INSTALLATION_ID,
-          },
         },
       },
     },

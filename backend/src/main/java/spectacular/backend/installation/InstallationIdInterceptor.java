@@ -4,15 +4,17 @@ import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import spectacular.backend.github.app.AppInstallationContextProvider;
 
 @Component
 public class InstallationIdInterceptor extends HandlerInterceptorAdapter {
-  private static final String INSTALLATION_ID_HEADER_NAME = "x-spec-installation-id";
+  private static final String INSTALLATION_ID_PATH_PARAMETER = "installationId";
 
   private final AppInstallationContextProvider appInstallationContextProvider;
 
@@ -21,21 +23,16 @@ public class InstallationIdInterceptor extends HandlerInterceptorAdapter {
   }
 
   @Override
-  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-      throws Exception {
-    var installationIdHeaderValue = request.getHeader(INSTALLATION_ID_HEADER_NAME);
+  @SuppressWarnings("unchecked")
+  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
-    if (installationIdHeaderValue == null) {
-      var mapper = new ObjectMapper();
-      var errorMessage = new InstallationError("No '" + INSTALLATION_ID_HEADER_NAME + "' http request header was found.");
+    String installationId = pathVariables.get(INSTALLATION_ID_PATH_PARAMETER);
 
-      response.setStatus(SC_BAD_REQUEST);
-      response.setContentType(APPLICATION_JSON.toString());
-      response.getWriter().write(mapper.writeValueAsString(errorMessage));
-      return false;
+    if (installationId != null) {
+      this.appInstallationContextProvider.setInstallationId(installationId);
     }
 
-    this.appInstallationContextProvider.setInstallationId(installationIdHeaderValue);
     return true;
   }
 }
