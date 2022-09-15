@@ -1,4 +1,4 @@
-package spectacular.backend.installation;
+package spectacular.backend.app;
 
 import org.springframework.stereotype.Component;
 import spectacular.backend.api.model.Installation;

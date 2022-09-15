@@ -18,7 +18,6 @@ import spectacular.backend.api.model.GetInstallationsResult;
 import spectacular.backend.api.model.Installation;
 import spectacular.backend.api.model.UserDetails;
 import spectacular.backend.github.app.user.AppUserAuthenticationService;
-import spectacular.backend.installation.InstallationService;
 
 @RestController
 public class AppController implements AppApi {

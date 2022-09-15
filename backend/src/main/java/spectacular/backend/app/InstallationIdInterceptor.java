@@ -1,9 +1,5 @@
-package spectacular.backend.installation;
+package spectacular.backend.app;
 
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

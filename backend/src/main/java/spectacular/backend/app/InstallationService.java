@@ -1,4 +1,4 @@
-package spectacular.backend.installation;
+package spectacular.backend.app;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import spectacular.backend.api.model.GetInstallationsResult;
 import spectacular.backend.api.model.Installation;
 import spectacular.backend.github.app.AppApiClient;
-import spectacular.backend.github.app.AppInstallationContextProvider;
 
 @Service
 public class InstallationService {

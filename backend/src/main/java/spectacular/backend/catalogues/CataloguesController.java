@@ -1,15 +1,12 @@
 package spectacular.backend.catalogues;
 
-import static org.springframework.http.ResponseEntity.notFound;
 import static org.springframework.http.ResponseEntity.ok;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +19,7 @@ import spectacular.backend.app.UserSessionTokenService;
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError;
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemErrorType;
 import spectacular.backend.common.CatalogueId;
-import spectacular.backend.installation.InstallationService;
+import spectacular.backend.app.InstallationService;
 
 @RestController
 public class CataloguesController implements CataloguesApi {
