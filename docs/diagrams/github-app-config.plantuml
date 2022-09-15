@@ -38,17 +38,14 @@ package GitHub {
 }
 
 package Spectacular {
-    object UI {
-        GITHUB_APP_INSTALLATION_ID
-    }
-
-    object Auth {
-        LOGINSRV_GITHUB
+    object WebUI {
     }
 
     object Backend {
         GITHUB_APP_ID
         GITHUB_APP_PRIVATE_KEY_FILE_PATH
+        GITHUB_CLIENT_ID
+        GITHUB_CLIENT_SECRET
     }
 }
 
@@ -64,8 +61,6 @@ App ||-o{ Installation
 Installation }o--o{ Repository
 
 ' GitHub objects to Spectacular config mappings
-Installation ..> UI : "installation id"
-App ..> Auth : "client id and secret"
-App ..> Backend : "app id and private key"
+App ..> Backend : "app id, private key, client id and client secret"
 
 @enduml
