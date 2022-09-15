@@ -2,14 +2,8 @@
 This web project provides the [User Interface](../docs/architecture.md#web-ui) for the Spectacular tool. It consists of a JavaScript SPA web application and the necessary configuration to serve it (via a NGINX server or a Webpack dev server) alongside proxying requests to the backend components.
 
 ## Config
-The web project requires the following configuration Environment Variables to be set before starting the application:
-- `GITHUB_APP_INSTALLATION_ID`
-
-Please refer to the dedicated [configuration guide](../docs/configuration.md) for instruction on how to set these values.
-
-The following configuration values can also be changed from their defaults:
+The following configuration values can be changed from their defaults using Environment Variables:
 - `API_LOCATION` - The root/base url or the Backend Service API (defaults to `http://localhost:5000`)
-- `AUTH_LOCATION` - The root/base url or the User Authentication Service API (defaults to `http://localhost:5001`)
 
 ## Local Development and Testing
 
@@ -73,8 +67,7 @@ This component is purposefully kept relatively "dumb" with the exception of:
 Given the relatively simple needs of the UI, to keep the project simple, the choice has been made to not use and maintain any global application state stores (e.g. Redux). The different state needs of the application are addressed in the following ways:
 - Component state is used to hold any additional data pulled from the backend API required to populate a given visual component. This component state is maintained using [React Hooks](https://reactjs.org/docs/hooks-intro.html).
 - User journey state is kept and updated solely in the browser's location URL. This allows the application to be loaded at the exact same point of the user journey when reloading the page or when sharing the URL. This is managed using [React-Router](https://reacttraining.com/react-router/web/guides/quick-start) and allows components to access parameters stored in the URL  when loading by using `React-Router` hooks and to modify the URL using `React-Router` navigation link components.
-- The User context state is provided by the [User Authentication Service](../docs/architecture.md#user-authentication-service) in the form of a JWT stored in a cookie.
-- The context of which GitHub App Installation this instance of the UI is configured to serve is maintained and injected into the headers of each API request by the Reverse Proxy that is serving this web app.
+- The User context state is provided by the [Backend Service](../docs/architecture.md#backend-service) in the form of a JWT stored in a cookie.
 
 #### Type safety
 No React propTypes or other tool is used to offer some form of type safety when working with the data objects. There maybe a decision to move to generated TypeScript models created from the backend API spec in the future.
