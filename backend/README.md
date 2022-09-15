@@ -5,13 +5,15 @@ This component acts as a [Backend Service](../docs/architecture.md#backend-servi
 The backend project requires the following configuration Environment Variables to be set before starting the application:
 - `GITHUB_APP_ID`
 - `GITHUB_APP_PRIVATE_KEY_FILE_PATH`
-- `JWT_SHARED_SECRET` 
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+- `JWT_SHARED_SECRET`
 
 Please refer to the dedicated [configuration guide](../docs/configuration.md) for instruction on how to set these values.
 
 The following configuration values can also be changed from their defaults:
 - `GITHUB_API_ROOT_URL` - The root/base url of the GitHup API (defaults to `https://api.github.com`)
-- `JWT_COOKIE_NAME` - The cookie name shared with the [User Authentication Service](../docs/architecture.md#user-authentication-service) for storing user JWTs on the user's client agent and in each API request (defaults to `jwt_token`)
+- `JWT_COOKIE_NAME` - The unique name of the cookie for storing the user's JWT on their client agent and sent in each API request (defaults to `jwt_token`)
 
 ## Local Development and Testing
 
@@ -47,10 +49,10 @@ The objects in this project could be organised horizontally using the following 
 - Adaption layer for making API requests to other resources like GitHub's API
 
 However the project is organised vertically by the domain concerns instead, for example:
+- [App](src/main/java/spectacular/backend/app) - Responsible for handling request specific to this instance of the Spectacular app and the SCM integrations it has been configured with. This includes handling user login workflows.
 - [Catalogue Manifests](src/main/java/spectacular/backend/cataloguemanifest) - Responsible for finding and parsing [Catalogue Manifest files](../docs/catalogue-configuration.md).
 - [Catalogues](src/main/java/spectacular/backend/catalogues) - Responsible for collecting information about Interface Catalogues and returning detailed representations back to the user.
-- [GitHub](src/main/java/spectacular/backend/github) - An adaptor to the GitHub VCM system from which interface information is gathered.
-- [Installation](src/main/java/spectacular/backend/installation) - Responsible for returning information about the integration this instance of Spectacular has with the VCM system.
+- [GitHub](src/main/java/spectacular/backend/github) - An adaptor to the GitHub SCM from which interface information is gathered.
 - [Interfaces](src/main/java/spectacular/backend/interfaces) - Responsible for collecting information about a specific Interface and returning detailed representations back to the user.
 - [Security](src/main/java/spectacular/backend/security) - Responsible for supplying services to help secure the backend application.
 - [Spec Evolution](src/main/java/spectacular/backend/specevolution) - Responsible for collecting git file history data about an Interface's spec file and returning evolutionary timeline information back to the user.
