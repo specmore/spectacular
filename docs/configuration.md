@@ -40,11 +40,11 @@ The following Git hosting solution SSO is supported:
 After your GitHub App setup has been completed, the following configuration values need to be set for Spectacular to login users with their GitHub account.
 | Spectacular Component | Environment Variable Name | GitHub App Value |
 | ----------------------| ------------------------- | ---------------- |
-| Authentication Service | `LOGINSRV_GITHUB` | A single string of text following the pattern `client_id=<Client ID>,client_secret=<Client secret>`. Where the `<Client ID>` and `<Client secret>` tokens are substituted with the `Client ID` and `Client secret` values found on your GitHub App's "General" page after completing the [Registering a new GitHub App](git-integration.md#registering-a-new-github-app) setup step. |
+| Backend Service | `GITHUB_CLIENT_ID` | The `Client ID` value found on your GitHub App's "General" page after completing the [Registering a new GitHub App](git-integration.md#registering-a-new-github-app) setup step. |
+| Backend Service | `GITHUB_CLIENT_SECRET` | The `Client secret` value found on your GitHub App's "General" page after completing the [Registering a new GitHub App](git-integration.md#registering-a-new-github-app) setup step. |
 
 ## JWT Shared Secret
-Spectacular uses JWTs to authorise requests to the backend REST API from the Web UI frontend application. The JWTs are generated at the end of a successful user login process by the [Authentication Service](architecture.md#user-authentication-service). The [Backend Service](architecture.md#backend-service) and the Authentication Service are configured with the same "Shared Secret" to allow the Backend Service to verify the JWT signatures.
+Spectacular uses JWTs to authorise requests to the backend REST API from the Web UI frontend application. A JWT is generated at the end of a successful user login process by the [Backend Service](architecture.md#backend-service). A "Shared Secret" is used by the Backend Service to sign the JWTs it generates and to verify the JWTs it receives back to prevent tampering.
 | Spectacular Component | Environment Variable Name | Value |
 | ----------------------| ------------------------- | ---------------- |
-| Authentication Service | `LOGINSRV_JWT_SECRET` | A 32-byte text value. e.g. `this_test_shared_key_is_32_bytes` or `0c4ec70dbe9cceba51455c402b35d3a5`|
-| Backend Service | `JWT_SHARED_SECRET` | The same 32-byte text value as above |
+| Backend Service | `JWT_SHARED_SECRET` | A 32-byte text value. e.g. `this_test_shared_key_is_32_bytes` or `0c4ec70dbe9cceba51455c402b35d3a5`. It is important to set this value with something unique for each instance of Spectacular. Changing this value will invalidate all JWTs and user session, causing users to sign in again. |
