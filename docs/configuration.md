@@ -24,7 +24,6 @@ After your GitHub App setup has been completed, the following configuration valu
 | ----------------------| ------------------------- | ---------------- |
 | Backend Service | `GITHUB_APP_ID` | The `App ID` found on your GitHub App's "General" page after completing the [Registering a new GitHub App](git-integration.md#registering-a-new-github-app) setup step |
 | Backend Service | `GITHUB_APP_PRIVATE_KEY_FILE_PATH` | The file path to the location of a `.pem` Private Key file generated for your GitHub App in the [Generate Private Key](git-integration.md#generate-a-private-key) setup step |
-| Web UI | `GITHUB_APP_INSTALLATION_ID` | The ID of the installation of the GitHub App found in the URL after completing the [Allow access to your Repositories](git-integration.md#allow-access-to-your-repositories-create-an-app-installation) setup step |
 
 The diagram below show how the Spectacular configuration items above map to the values of the GitHub App entities created in GitHub for the integration.
 
