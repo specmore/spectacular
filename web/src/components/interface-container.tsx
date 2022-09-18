@@ -3,8 +3,8 @@ import {
   Message, Segment, Container, Placeholder, Header,
 } from 'semantic-ui-react';
 import { useParams } from 'react-router-dom';
-import SwaggerUI from 'swagger-ui-react';
-import 'swagger-ui-react/swagger-ui.css';
+// import SwaggerUI from 'swagger-ui-react';
+// import 'swagger-ui-react/swagger-ui.css';
 import { useGetInterfaceDetails } from '../backend-api-client';
 import LocationBar from './location-bar';
 import InterfaceDetails from './interface-details';
@@ -70,7 +70,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ instal
       specPreview = (
         <div data-testid="interface-container-swagger-ui">
           <CloseSpecButton />
-          <SwaggerUI url={interfaceFileContentsPath} docExpansion="list" />
+          {/* <SwaggerUI url={interfaceFileContentsPath} docExpansion="list" /> */}
         </div>
       );
     }
