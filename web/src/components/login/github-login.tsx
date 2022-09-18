@@ -2,7 +2,7 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { extractLoginCallbackURL, extractLoginRedirectReturnToPath } from '../../routes';
 import LoginStateService from './login-state-service';
-import { useCreateUserSession } from '../../backend-api-client';
+import { useCreateUserSession, useDeleteUserSession } from '../../backend-api-client';
 
 const GITHUB_LOGIN_LOCATION = 'https://github.com/login/oauth/authorize';
 
@@ -61,6 +61,9 @@ const GitHubLoginComponent: FunctionComponent<GitHubLoginComponentProps> = ({ cl
   const params = new URLSearchParams(search);
   const callbackCode = params.get('code');
   const returnedState = params.get('state');
+  const deleteUserSession = useDeleteUserSession({});
+  const [isUserLogoutComplete, setIsUserLogoutComplete] = useState(false);
+  const { mutate: logoutRequest, loading, error } = deleteUserSession;
 
   if (!callbackCode) {
     const returnTo = extractLoginRedirectReturnToPath();
@@ -73,12 +76,18 @@ const GitHubLoginComponent: FunctionComponent<GitHubLoginComponentProps> = ({ cl
     githubLoginParams.set('redirect_uri', loginCallbackUrl);
     githubLoginParams.set('state', loginState);
 
-    const loginLocation = `${GITHUB_LOGIN_LOCATION}?${githubLoginParams.toString()}`;
-    window.location.replace(loginLocation);
+    useEffect(() => {
+      logoutRequest().then(() => setIsUserLogoutComplete(true));
+    }, []);
+
+    if (isUserLogoutComplete) {
+      const loginLocation = `${GITHUB_LOGIN_LOCATION}?${githubLoginParams.toString()}`;
+      window.location.replace(loginLocation);
+    }
 
     return (
       <div>
-        Redirecting to GitHub Login...
+        Logging out...
       </div>
     );
   }

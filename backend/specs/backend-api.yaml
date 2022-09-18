@@ -42,6 +42,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDetails'
+    delete:
+      tags:
+        - App User
+      description: Logs any current Spectacular user out by delete their user session.
+      operationId: deleteUserSession
+      responses:
+        '204':
+          description: Successful operation
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: jwt_token=abcde12345; Path=/; HttpOnly
   /app/user:
     get:
       tags:

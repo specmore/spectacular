@@ -3,6 +3,7 @@ package spectacular.backend.app;
 import static org.springframework.http.ResponseEntity.notFound;
 import static org.springframework.http.ResponseEntity.ok;
 
+import java.time.Duration;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -53,6 +54,7 @@ public class AppController implements AppApi {
 
     final var cookie = ResponseCookie.from(jwtCookieName, createUserSessionResult.getUserSessionToken())
         .httpOnly(true)
+        .secure(true)
         .path("/")
         .sameSite("Strict")
         .build();
@@ -60,6 +62,21 @@ public class AppController implements AppApi {
     return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE, cookie.toString())
         .body(createUserSessionResult.getUserDetails());
+  }
+
+  @Override
+  public ResponseEntity<Void> deleteUserSession() {
+    final var cookie = ResponseCookie.from(jwtCookieName, null)
+        .httpOnly(true)
+        .secure(true)
+        .path("/")
+        .sameSite("Strict")
+        .maxAge(Duration.ZERO)
+        .build();
+
+    return ResponseEntity.noContent()
+        .header(HttpHeaders.SET_COOKIE, cookie.toString())
+        .build();
   }
 
   @Override
