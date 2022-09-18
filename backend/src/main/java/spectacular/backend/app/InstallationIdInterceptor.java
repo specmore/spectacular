@@ -23,10 +23,12 @@ public class InstallationIdInterceptor extends HandlerInterceptorAdapter {
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
     Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
-    String installationId = pathVariables.get(INSTALLATION_ID_PATH_PARAMETER);
+    if (pathVariables != null) {
+      String installationId = pathVariables.get(INSTALLATION_ID_PATH_PARAMETER);
 
-    if (installationId != null) {
-      this.appInstallationContextProvider.setInstallationId(installationId);
+      if (installationId != null) {
+        this.appInstallationContextProvider.setInstallationId(installationId);
+      }
     }
 
     return true;
