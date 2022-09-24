@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';
 import { RestfulProvider } from 'restful-react';
 import './index.less';
-import 'semantic-ui-less/semantic.less';
+import 'fomantic-ui-less/semantic.less';
 import { redirectToLogin } from './routes';
 import AppContainer from './components/app/app-container';
 

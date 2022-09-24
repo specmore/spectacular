@@ -84,3 +84,8 @@ This project uses the [Jest test framework](https://jestjs.io/). [React Testing 
 
 #### Code Style
 This project uses [ESLint](https://eslint.org/) to ensure code quality and style. It uses the [Airbnb JavaScript Styleguide](https://github.com/airbnb/javascript) config as a base.
+
+
+### Known Hacks
+#### Formantic UI / Semnatic UI Error
+As per https://github.com/Semantic-Org/Semantic-UI-React/issues/4227 using @semantic-ui-react/css-patch and postinstall script.
