@@ -42,7 +42,7 @@ module.exports = () => {
         },
         {
           test: /\.css$/,
-          use: ['style-loader', MiniCssExtractPlugin.loader, 'css-loader'],
+          use: [MiniCssExtractPlugin.loader, 'css-loader'],
         },
         { // Load fonts
           test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)/,
