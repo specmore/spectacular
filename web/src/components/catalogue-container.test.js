@@ -27,9 +27,11 @@ describe('CatalogueContainer component', () => {
     useGetCatalogueMock.mockReturnValueOnce(catalogueResponse);
 
     // when catalogue container component renders
-    const { findByTestId } = renderWithRouter(<CatalogueContainer />,
+    const { findByTestId } = renderWithRouter(
+      <CatalogueContainer />,
       CreateCatalogueContainerLocation(catalogue.encodedId),
-      CATALOGUE_CONTAINER_ROUTE);
+      CATALOGUE_CONTAINER_ROUTE,
+    );
 
     // then a catalogue container should be found
     expect(await findByTestId('catalogue-container-segment')).toBeInTheDocument();
@@ -54,9 +56,11 @@ describe('CatalogueContainer component', () => {
     useGetCatalogueMock.mockReturnValueOnce(getCatalogueResponse);
 
     // when catalogue container component renders
-    const { findByText } = renderWithRouter(<CatalogueContainer />,
+    const { findByText } = renderWithRouter(
+      <CatalogueContainer />,
       CreateCatalogueContainerLocation('someEncodedCatalogueId'),
-      CATALOGUE_CONTAINER_ROUTE);
+      CATALOGUE_CONTAINER_ROUTE,
+    );
 
     // then it contains an error message
     expect(await findByText('An error message.')).toBeInTheDocument();
@@ -70,9 +74,11 @@ describe('CatalogueContainer component', () => {
     useGetCatalogueMock.mockReturnValueOnce(getCatalogueResponse);
 
     // when catalogue container component renders
-    const { getByText, getByTestId } = renderWithRouter(<CatalogueContainer />,
+    const { getByText, getByTestId } = renderWithRouter(
+      <CatalogueContainer />,
       CreateCatalogueContainerLocation('someEncodedCatalogueId'),
-      CATALOGUE_CONTAINER_ROUTE);
+      CATALOGUE_CONTAINER_ROUTE,
+    );
 
     // then it contains a loading message
     expect(getByText('Loading Catalogue..')).toBeInTheDocument();

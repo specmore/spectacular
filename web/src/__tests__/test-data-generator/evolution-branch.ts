@@ -38,7 +38,6 @@ const generateEvolutionBranch = ({
   };
 };
 
-
 export default {
   generateEvolutionBranch,
 };

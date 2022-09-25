@@ -10,7 +10,6 @@ import {
   SHOW_EVOLUTION_QUERY_PARAM_VALUES,
 } from '../../routes';
 
-
 // mock out the actual spec evolution items
 jest.mock('./evolution-lines-item', () => jest.fn(() => null));
 jest.mock('./evolution-item-details', () => jest.fn(() => null));

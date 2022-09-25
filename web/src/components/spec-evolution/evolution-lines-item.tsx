@@ -9,7 +9,6 @@ interface EvolutionItemProps {
 const EvolutionLinesItem: FunctionComponent<EvolutionItemProps> = ({ evolutionItem, isMain }) => {
   const { pullRequest, branchName } = evolutionItem;
 
-
   let mainLineStyle = null;
   let upcomingReleaseLine = null;
 

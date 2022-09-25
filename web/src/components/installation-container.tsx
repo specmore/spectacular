@@ -46,31 +46,29 @@ const InstallationContainer: FunctionComponent = () => {
   }
 
   return (
-    <>
-      <Switch>
-        <Route exact path={INSTALLATION_CONTAINER_ROUTE}>
-          <CatalogueList
-            installationId={getInstallationResult.id}
-            org={getInstallationResult.owner}
-          />
-        </Route>
-        <Route exact path={[CATALOGUE_CONTAINER_ROUTE]}>
-          <CatalogueContainer
-            installationId={getInstallationResult.id}
-            org={getInstallationResult.owner}
-          />
-        </Route>
-        <Route exact path={[CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE]}>
-          <InterfaceContainer
-            installationId={getInstallationResult.id}
-            org={getInstallationResult.owner}
-          />
-        </Route>
-        <Route path="*">
-          <NotFound />
-        </Route>
-      </Switch>
-    </>
+    <Switch>
+      <Route exact path={INSTALLATION_CONTAINER_ROUTE}>
+        <CatalogueList
+          installationId={getInstallationResult.id}
+          org={getInstallationResult.owner}
+        />
+      </Route>
+      <Route exact path={[CATALOGUE_CONTAINER_ROUTE]}>
+        <CatalogueContainer
+          installationId={getInstallationResult.id}
+          org={getInstallationResult.owner}
+        />
+      </Route>
+      <Route exact path={[CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE]}>
+        <InterfaceContainer
+          installationId={getInstallationResult.id}
+          org={getInstallationResult.owner}
+        />
+      </Route>
+      <Route path="*">
+        <NotFound />
+      </Route>
+    </Switch>
   );
 };
 

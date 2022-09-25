@@ -1,7 +1,6 @@
 const STORAGE_KEY = 'loginState';
 const storage = window.sessionStorage;
 
-
 interface LoginState {
   randomNum: number;
   returnTo: string;

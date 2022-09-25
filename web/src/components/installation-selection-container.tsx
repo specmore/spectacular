@@ -60,7 +60,6 @@ const InstallationSelectionContainerError: FunctionComponent<InstallationSelecti
   </Container>
 );
 
-
 const InstallationSelectionContainer: FunctionComponent = () => {
   const getInstallations = useGetInstallations({});
   const { data: getInstallationsResult, loading, error } = getInstallations;

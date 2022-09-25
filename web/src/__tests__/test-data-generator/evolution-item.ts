@@ -23,7 +23,6 @@ const generateEvolutionItem = ({
   specItem,
 });
 
-
 export default {
   generateEvolutionItem,
 };

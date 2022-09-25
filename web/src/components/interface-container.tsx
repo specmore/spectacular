@@ -11,15 +11,17 @@ import InterfaceDetails from './interface-details';
 import { CloseSpecButton, getCurrentSpecRefViewed, isShowSpecEvolution } from '../routes';
 import SpecEvolutionContainer from './spec-evolution/spec-evolution-container';
 
-const InterfaceContainerLoading = () => (
-  <>
-    <Header as="h2">Loading Interface..</Header>
-    <Placeholder data-testid="interface-container-placeholder">
-      <Placeholder.Line />
-      <Placeholder.Line />
-    </Placeholder>
-  </>
-);
+function InterfaceContainerLoading() {
+  return (
+    <>
+      <Header as="h2">Loading Interface..</Header>
+      <Placeholder data-testid="interface-container-placeholder">
+        <Placeholder.Line />
+        <Placeholder.Line />
+      </Placeholder>
+    </>
+  );
+}
 
 interface InterfaceContainerErrorProps {
   errorMessage: string;

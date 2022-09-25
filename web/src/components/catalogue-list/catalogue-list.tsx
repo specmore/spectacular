@@ -10,14 +10,16 @@ import LocationBar from '../location-bar';
 import './catalogue-list.less';
 import { TOPIC_SELECTION_QUERY_PARAM_NAME } from '../../routes';
 
-const CatalogueListLoading = () => (
-  <Placeholder data-testid="catalogue-list-placeholder">
-    <Placeholder.Header image>
-      <Placeholder.Line />
-      <Placeholder.Line />
-    </Placeholder.Header>
-  </Placeholder>
-);
+function CatalogueListLoading() {
+  return (
+    <Placeholder data-testid="catalogue-list-placeholder">
+      <Placeholder.Header image>
+        <Placeholder.Line />
+        <Placeholder.Line />
+      </Placeholder.Header>
+    </Placeholder>
+  );
+}
 
 interface CatalogueListErrorProps {
   errorMessage: string;

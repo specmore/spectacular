@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 import { SpecItem, SpecEvolutionSummary } from '../backend-api-client';
 import { CreateInterfaceLocation, OpenSpecItemContentPageButton } from '../routes';
 
-
 interface SpecItemProps {
   specItem: SpecItem;
 }

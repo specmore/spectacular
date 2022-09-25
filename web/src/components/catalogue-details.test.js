@@ -31,7 +31,6 @@ describe('CatalogueDetails component', () => {
     expect(InterfaceListItemMock).toHaveBeenCalledTimes(2);
   });
 
-
   test('renders a catalogue details error message when an error is given', async () => {
     // given a catalogue item with an error
     const errorMessage = 'An error occurred while parsing the catalogue manifest yaml file. The following field is missing: bla bla bla';
