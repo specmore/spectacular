@@ -8,7 +8,7 @@ import {
   CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE,
   VIEW_SPEC_QUERY_PARAM_NAME,
   SHOW_EVOLUTION_QUERY_PARAM_NAME,
-  SHOW_EVOLUTION_QUERY_PARAM_VALUES,
+  ShowEvolutionQueryParamValues,
   CreateInterfaceLocation,
 } from '../routes';
 import { useGetInterfaceDetails as useGetInterfaceDetailsMock } from '../backend-api-client';
@@ -112,7 +112,7 @@ describe('InterfaceContainer component', () => {
 
     // and show spec evolution is set
     const interfaceLocation = CreateInterfaceLocation(catalogueId, interfaceName);
-    const location = `${interfaceLocation}?${SHOW_EVOLUTION_QUERY_PARAM_NAME}=${SHOW_EVOLUTION_QUERY_PARAM_VALUES.SHOW}`;
+    const location = `${interfaceLocation}?${SHOW_EVOLUTION_QUERY_PARAM_NAME}=${ShowEvolutionQueryParamValues.SHOW}`;
 
     // when interface container component renders
     const { findByTestId } = renderWithRouter(

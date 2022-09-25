@@ -7,7 +7,7 @@ import EvolutionLinesItemMock from './evolution-lines-item';
 import EvolutionItemDetailsMock from './evolution-item-details';
 import {
   SHOW_EVOLUTION_QUERY_PARAM_NAME,
-  SHOW_EVOLUTION_QUERY_PARAM_VALUES,
+  ShowEvolutionQueryParamValues,
 } from '../../routes';
 
 // mock out the actual spec evolution items
@@ -56,7 +56,7 @@ describe('SpecEvolutionBranchContainer component', () => {
     const evolutionBranch = Generator.EvolutionBranch.generateEvolutionBranch({ numberPullRequests: 1, numberPreviousVersions: 1 });
 
     // and the show previous versions query parameter is set
-    const location = `?${SHOW_EVOLUTION_QUERY_PARAM_NAME}=${SHOW_EVOLUTION_QUERY_PARAM_VALUES.SHOW_WITH_PREVIOUS_VERSIONS}`;
+    const location = `?${SHOW_EVOLUTION_QUERY_PARAM_NAME}=${ShowEvolutionQueryParamValues.SHOW_WITH_PREVIOUS_VERSIONS}`;
 
     // when SpecEvolutionBranchContainer renders a main branch without the show previous versions query parameter
     const { getByTestId } = renderWithRouter(<SpecEvolutionBranchContainer evolutionBranch={evolutionBranch} isMain />, location);

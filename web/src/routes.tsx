@@ -26,10 +26,15 @@ export const VIEW_SPEC_QUERY_PARAM_NAME = 'ref';
 export const TOPIC_SELECTION_QUERY_PARAM_NAME = 'topics';
 
 export const SHOW_EVOLUTION_QUERY_PARAM_NAME = 'show-evolution';
-export enum SHOW_EVOLUTION_QUERY_PARAM_VALUES {
+export enum ShowEvolutionQueryParamValues {
   SHOW = 'true',
   SHOW_WITH_PREVIOUS_VERSIONS = 'with-previous-versions',
 }
+
+// export enum SHOW_EVOLUTION_QUERY_PARAM_VALUES {
+//   Show = 'true',
+//   ShowWithPreviousVersion = 'with-previous-versions',
+// }
 
 export const useQuery = (): URLSearchParams => new URLSearchParams(useLocation().search);
 
