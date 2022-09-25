@@ -7,17 +7,15 @@ import CatalogueDetails from './catalogue-details';
 import { useGetCatalogue } from '../backend-api-client';
 import LocationBar from './location-bar';
 
-function CatalogueContainerLoading() {
-  return (
-    <>
-      <Header as="h2">Loading Catalogue..</Header>
-      <Placeholder data-testid="catalogue-container-placeholder">
-        <Placeholder.Line />
-        <Placeholder.Line />
-      </Placeholder>
-    </>
-  );
-}
+const CatalogueContainerLoading = () => (
+  <>
+    <Header as="h2">Loading Catalogue..</Header>
+    <Placeholder data-testid="catalogue-container-placeholder">
+      <Placeholder.Line />
+      <Placeholder.Line />
+    </Placeholder>
+  </>
+);
 
 interface CatalogueContainerErrorProps {
   errorMessage: string;

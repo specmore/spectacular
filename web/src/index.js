@@ -15,17 +15,15 @@ const onAPIError = (error) => {
   }
 };
 
-function Index() {
-  return (
-    <RestfulProvider base="/api" onError={onAPIError}>
-      <Router>
-        <QueryParamProvider ReactRouterRoute={Route}>
-          <AppContainer />
-        </QueryParamProvider>
-      </Router>
-    </RestfulProvider>
-  );
-}
+const Index = () => (
+  <RestfulProvider base="/api" onError={onAPIError}>
+    <Router>
+      <QueryParamProvider ReactRouterRoute={Route}>
+        <AppContainer />
+      </QueryParamProvider>
+    </Router>
+  </RestfulProvider>
+);
 
 ReactDOM.render(<Index />, document.getElementById('root'));
 
