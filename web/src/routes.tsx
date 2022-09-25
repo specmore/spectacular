@@ -31,11 +31,6 @@ export enum ShowEvolutionQueryParamValues {
   SHOW_WITH_PREVIOUS_VERSIONS = 'with-previous-versions',
 }
 
-// export enum SHOW_EVOLUTION_QUERY_PARAM_VALUES {
-//   Show = 'true',
-//   ShowWithPreviousVersion = 'with-previous-versions',
-// }
-
 export const useQuery = (): URLSearchParams => new URLSearchParams(useLocation().search);
 
 const addQueryParam = (name: string, value: string): string => {
@@ -155,7 +150,7 @@ export const getCurrentSpecRefViewed = (): string => useQuery().get(VIEW_SPEC_QU
 export const isShowSpecEvolution = (): boolean => useQuery().get(SHOW_EVOLUTION_QUERY_PARAM_NAME) != null;
 
 export const ViewSpecEvolutionLinkButton: FunctionComponent = () => {
-  const expandSpecEvolutionLocation = addQueryParam(SHOW_EVOLUTION_QUERY_PARAM_NAME, SHOW_EVOLUTION_QUERY_PARAM_VALUES.SHOW);
+  const expandSpecEvolutionLocation = addQueryParam(SHOW_EVOLUTION_QUERY_PARAM_NAME, ShowEvolutionQueryParamValues.SHOW);
   const isSelected = isShowSpecEvolution();
 
   return (
@@ -192,12 +187,12 @@ export const CloseSpecEvolutionButton: FunctionComponent = () => {
 };
 
 export const isShowSpecEvolutionPreviousVersions = (): boolean => useQuery().get(SHOW_EVOLUTION_QUERY_PARAM_NAME)
-=== SHOW_EVOLUTION_QUERY_PARAM_VALUES.SHOW_WITH_PREVIOUS_VERSIONS;
+=== ShowEvolutionQueryParamValues.SHOW_WITH_PREVIOUS_VERSIONS;
 
 export const ShowSpecEvolutionPreviousVersionsToggleButton: FunctionComponent = () => {
   const isShowing = isShowSpecEvolutionPreviousVersions();
-  const newQueryParamValue = isShowing ? SHOW_EVOLUTION_QUERY_PARAM_VALUES.SHOW
-    : SHOW_EVOLUTION_QUERY_PARAM_VALUES.SHOW_WITH_PREVIOUS_VERSIONS;
+  const newQueryParamValue = isShowing ? ShowEvolutionQueryParamValues.SHOW
+    : ShowEvolutionQueryParamValues.SHOW_WITH_PREVIOUS_VERSIONS;
   const toggleLocation = addQueryParam(SHOW_EVOLUTION_QUERY_PARAM_NAME, newQueryParamValue);
   const angleIconDirection = isShowing ? 'angle down' : 'angle right';
 
