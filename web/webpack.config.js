@@ -23,6 +23,7 @@ const definePlugin = new webpack.DefinePlugin({
 
 const esLintPlugin = new ESLintPlugin({
   extensions: ['js', 'jsx', 'ts', 'tsx'],
+  failOnWarning: false
 });
 
 module.exports = () => {
@@ -45,11 +46,11 @@ module.exports = () => {
         },
         { // Load fonts
           test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)/,
-          use: 'url-loader',
+          type: 'asset/resource',
         },
         { // Load other files, images etc
           test: /\.(png|j?g|gif|ico)?$/,
-          use: 'url-loader',
+          type: 'asset/resource',
         },
         {
           test: /\.less$/,
@@ -79,7 +80,7 @@ module.exports = () => {
       publicPath: '/',
     },
     devServer: {
-      disableHostCheck: true,
+      allowedHosts: 'all',
       historyApiFallback: {
         disableDotRule: true,
       },
