@@ -8,7 +8,7 @@ The following configuration values can be changed from their defaults using Envi
 ## Local Development and Testing
 
 ### Development Environment Requirements:
-- [Node.js v10](https://nodejs.org/en/download/releases/) or above
+- [Node.js v12](https://nodejs.org/en/download/releases/) or above
 
 This project uses different Node.js packages. To ensure all these packages are installed, please run the following command before trying to use any of the tasks below:
 ```
