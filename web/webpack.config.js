@@ -3,6 +3,7 @@ require('dotenv').config({ path: '../.env' });
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const webpack = require('webpack');
 
 const htmlPlugin = new HtmlWebPackPlugin({
@@ -20,6 +21,10 @@ const definePlugin = new webpack.DefinePlugin({
   SHORTSHA: JSON.stringify(process.env.SHORTSHA),
 });
 
+const esLintPlugin = new ESLintPlugin({
+  extensions: ['js', 'jsx', 'ts', 'tsx'],
+});
+
 module.exports = () => {
   console.log('VERSION: ', process.env.SEMVER);
   console.log('SHORTSHA: ', process.env.SHORTSHA);
@@ -27,14 +32,6 @@ module.exports = () => {
   return {
     module: {
       rules: [
-        {
-          enforce: 'pre',
-          test: /\.(js|jsx|ts|tsx)$/,
-          exclude: /node_modules/,
-          use: {
-            loader: 'eslint-loader',
-          },
-        },
         {
           test: /\.(js|jsx|ts|tsx)$/,
           exclude: /node_modules/,
@@ -75,7 +72,7 @@ module.exports = () => {
         ),
       },
     },
-    plugins: [definePlugin, htmlPlugin, miniCssExtractPlugin],
+    plugins: [definePlugin, htmlPlugin, miniCssExtractPlugin, esLintPlugin],
     output: {
       filename: '[name].[contenthash].js',
       path: path.resolve(__dirname, 'dist'),

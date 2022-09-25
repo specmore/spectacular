@@ -4,7 +4,8 @@ env:
   jest/globals: true
 extends:
   - 'plugin:react/recommended'
-  - airbnb-typescript
+  - 'airbnb'
+  - 'airbnb-typescript'
   - 'plugin:@typescript-eslint/recommended'
 globals:
   Atomics: readonly
@@ -19,9 +20,10 @@ parserOptions:
   sourceType: module
   project: ./tsconfig.json
 plugins:
-  - react
-  - jest
+  - 'react'
+  - 'jest'
   - '@typescript-eslint'
+  - 'import'
 rules: 
   linebreak-style: 0
   react/prop-types: 0
@@ -30,6 +32,9 @@ rules:
   max-len: 
     - 2
     - code: 140
-  "@typescript-eslint/camelcase": off
+  react/function-component-definition:
+    - 2
+    - namedComponents: "arrow-function"
+      unnamedComponents: "arrow-function"
 ignorePatterns:
  - backend-api-client.tsx
