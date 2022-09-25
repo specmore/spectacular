@@ -31,7 +31,9 @@ interface CatalogueDetailsProps {
 const CatalogueDetails: FunctionComponent<CatalogueDetailsProps> = ({ installationId, catalogue }) => (
   <div data-testid="catalogue-details-container">
     <Header as="h2">{catalogue.title}</Header>
-    <p>{catalogue.topics && catalogue.topics.map((topic) => (<Label key={topic} color="grey">{topic}</Label>))}</p>
+    <div style={{ paddingBottom: '1em' }}>
+      {catalogue.topics && catalogue.topics.map((topic) => (<Label key={topic} color="grey">{topic}</Label>))}
+    </div>
     <p>{catalogue.description}</p>
     <Header as="h3">Interface List</Header>
     <Item.Group divided data-testid="catalogue-details-interface-list">
