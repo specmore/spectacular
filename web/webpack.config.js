@@ -84,6 +84,12 @@ module.exports = () => {
       historyApiFallback: {
         disableDotRule: true,
       },
+      client: {
+        overlay: {
+          errors: true,
+          warnings: false,
+        },
+      },
       proxy: {
         '/api': {
           target: 'http://localhost:5000', // actual api
