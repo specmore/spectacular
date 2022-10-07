@@ -3,7 +3,7 @@
 describe('End to End test without login', function() {
     beforeEach(function() {
         // given a valid logged in user
-        cy.setCookie('jwt_token', 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwYnVybHMiLCJwaWN0dXJlIjoiaHR0cHM6Ly9hdmF0YXJzMi5naXRodWJ1c2VyY29udGVudC5jb20vdS8xMTUwMjI4ND92PTQiLCJuYW1lIjoiUGF0cmljayBCdXJscyIsIm9yaWdpbiI6ImdpdGh1YiIsImV4cCI6MTY3NTY3NjE1OTl9.Y1m5NpBOBeW239wpnxliBLYRFqVonfDFNYvJxXP19SKCUny_PkMAytFjFcYrVWIA0N01-ndnD0YhHxMCTkMM_A')
+        cy.setCookie('jwt_token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYnVybHMiLCJmdWxsX25hbWUiOiJUZXN0IFVzZXIiLCJvcmlnaW4iOiJnaXRodWIiLCJpbnN0YWxsYXRpb25zIjpbMTAzNTEwMjBdLCJwcm9maWxlX2ltYWdlX3VybCI6Imh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS8xMTUwMjI4ND92PTQiLCJleHAiOjE2NzU2NzYxNTk5fQ.HHqNq0AJJFopsDBK-0K6ZTt6SYSIpZ4aYQQ82eDUVLA')
 
         // when visiting the home page
         cy.visit('/')
@@ -11,7 +11,7 @@ describe('End to End test without login', function() {
 
     it('Shows menu bar with logged in user name', function() {
         // then the user menu item is shown with the user's display name
-        cy.get('[data-testid=user-menu-bar-item] .text').should('have.text', 'Patrick Burls')
+        cy.get('[data-testid=user-menu-bar-item] .text').should('have.text', 'Test User')
 
         // when the user menu item is clicked
         cy.get('[data-testid=user-menu-bar-item]').click()
@@ -21,6 +21,15 @@ describe('End to End test without login', function() {
     })
 
     it('Journey to view an interface', function() {
+        // then no location bar should be shown
+        cy.get('[data-testid=location-bar]').should('not.exist')
+
+        // and the installation selection list should be shown with 1 children item
+        cy.get('[data-testid="installation-list-item-group"]').children().should('have.length', 1)
+
+        // when selecting the 'specmore' installation item heading
+        cy.contains('specmore').click()
+
         // then Interface Catalogues location should be shown
         cy.get('[data-testid=location-bar]').contains('specmore > Interface Catalogues')
 
@@ -113,6 +122,15 @@ describe('End to End test without login', function() {
     })
 
     it('Filtering the catalogue list by topic', function() {
+        // then no location bar should be shown
+        cy.get('[data-testid=location-bar]').should('not.exist')
+
+        // and the installation selection list should be shown with 1 children item
+        cy.get('[data-testid="installation-list-item-group"]').children().should('have.length', 1)
+
+        // when selecting the 'specmore' installation item heading
+        cy.contains('specmore').click()
+        
         // then Interface Catalogues topic selection list should be shown
         cy.get('[data-testid=topic-selection-list-container]')
 

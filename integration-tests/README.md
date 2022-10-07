@@ -25,7 +25,7 @@ First change working directory to the [ui-e2e](ui-e2e/) folder.
 
 Then open (or run) cypress. For example using the npm package:
 ```
-npx cypress@4.8.0 open
+npx cypress@10.9.0 open
 ```
 
 ## Resources
