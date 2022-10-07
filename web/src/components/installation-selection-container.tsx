@@ -14,7 +14,7 @@ interface InstallationItemProps {
 const InstallationItem: FunctionComponent<InstallationItemProps> = ({ installation }) => {
   const installationLocation = CreateInstallationContainerLocation(installation.id);
   return (
-    <Item data-testid="interface-list-item-container">
+    <Item data-testid="installation-list-item-container">
       <Item.Image size="tiny" src={installation.ownerImageUrl} />
       <Item.Content verticalAlign="middle">
         <Item.Header as={Link} to={installationLocation}>
