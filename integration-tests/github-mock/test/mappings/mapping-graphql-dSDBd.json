@@ -1,0 +1,36 @@
+{
+  "id" : "7229612b-bd4c-348b-9c92-613d1e1879f0",
+  "request" : {
+    "url" : "/graphql",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "equalToJson" : "{\"query\":\"query { \\n  repository(owner: \\\"specmore\\\", name:\\\"specs-test-tags\\\") {\\n    nameWithOwner url\\n    refs(refPrefix:\\\"refs/heads/\\\", first:100, query:\\\"master\\\") {\\n      totalCount\\n      nodes {\\n        name\\n        target {\\n            oid\\n        }\\n      }\\n    }\\n  }\\n}\"}",
+      "ignoreArrayOrder" : true,
+      "ignoreExtraElements" : true
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-graphql-dSDBd.json",
+    "headers" : {
+      "Server" : "GitHub.com",
+      "Date" : "Fri, 07 Oct 2022 23:35:21 GMT",
+      "Content-Type" : "application/json; charset=utf-8",
+      "X-GitHub-Media-Type" : "github.v4",
+      "X-RateLimit-Limit" : "5000",
+      "X-RateLimit-Remaining" : "4852",
+      "X-RateLimit-Reset" : "1665188015",
+      "X-RateLimit-Used" : "148",
+      "X-RateLimit-Resource" : "graphql",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "0",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "Vary" : "Accept-Encoding, Accept, X-Requested-With",
+      "X-GitHub-Request-Id" : "FD3B:190E:2D19787:2DC940A:6340B7B9"
+    }
+  },
+  "uuid" : "7229612b-bd4c-348b-9c92-613d1e1879f0"
+}

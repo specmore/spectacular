@@ -1,0 +1,30 @@
+{
+  "id" : "f80d52dc-5553-3534-a12d-f30f2cb602aa",
+  "request" : {
+    "url" : "/repos/specmore/specs-test-manifest-error/collaborators/pburls",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 204,
+    "bodyFileName" : "body-repos-specmore-specs-test-manifest-error-collaborators-pburls-LiWJj.txt",
+    "headers" : {
+      "Server" : "GitHub.com",
+      "Date" : "Fri, 07 Oct 2022 23:35:12 GMT",
+      "X-GitHub-Media-Type" : "github.v3",
+      "X-RateLimit-Limit" : "5000",
+      "X-RateLimit-Remaining" : "4857",
+      "X-RateLimit-Reset" : "1665187524",
+      "X-RateLimit-Used" : "143",
+      "X-RateLimit-Resource" : "core",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "0",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "Vary" : "Accept-Encoding, Accept, X-Requested-With",
+      "X-GitHub-Request-Id" : "FD3B:190E:2D17C69:2DC7861:6340B7B0"
+    }
+  },
+  "uuid" : "f80d52dc-5553-3534-a12d-f30f2cb602aa"
+}

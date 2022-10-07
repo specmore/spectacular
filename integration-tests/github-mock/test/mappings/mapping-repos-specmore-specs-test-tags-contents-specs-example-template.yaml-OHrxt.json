@@ -1,0 +1,34 @@
+{
+  "id" : "30d9ae1d-709f-365b-9994-20fb13edd565",
+  "request" : {
+    "url" : "/repos/specmore/specs-test-tags/contents/specs/example-template.yaml?ref=example-template-next-major-version",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-repos-specmore-specs-test-tags-contents-specs-example-template.yaml-OHrxt.json",
+    "headers" : {
+      "Server" : "GitHub.com",
+      "Date" : "Fri, 07 Oct 2022 23:35:25 GMT",
+      "Content-Type" : "application/json; charset=utf-8",
+      "Cache-Control" : "private, max-age=60, s-maxage=60",
+      "Vary" : [ "Accept, Authorization, Cookie, X-GitHub-OTP", "Accept-Encoding, Accept, X-Requested-With" ],
+      "ETag" : "W/\"999028c1454922139f83f977a692b9f21e2951ba\"",
+      "Last-Modified" : "Sun, 28 Feb 2021 21:50:06 GMT",
+      "X-GitHub-Media-Type" : "github.v3",
+      "X-RateLimit-Limit" : "5000",
+      "X-RateLimit-Remaining" : "4837",
+      "X-RateLimit-Reset" : "1665187524",
+      "X-RateLimit-Used" : "163",
+      "X-RateLimit-Resource" : "core",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "0",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "X-GitHub-Request-Id" : "FD3B:190E:2D1A338:2DC9FEE:6340B7BD"
+    }
+  },
+  "uuid" : "30d9ae1d-709f-365b-9994-20fb13edd565"
+}
