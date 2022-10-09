@@ -48,8 +48,8 @@ const removeQueryParam = (name: string): string => {
 };
 
 export const redirectToLogin = (): void => {
-  console.debug('expired token');
-  console.debug(`current location:${window.location.pathname}`);
+  // console.debug('expired token');
+  // console.debug(`current location:${window.location.pathname}`);
 
   const redirectParams = new URLSearchParams();
   redirectParams.append(LOGIN_REDIRECT_RETURN_TO_PARAM_NAME, window.location.pathname);
@@ -67,14 +67,6 @@ export const extractLoginCallbackURL = (): string => {
   const { location } = window;
   return `${location.protocol}//${location.host}${location.pathname}`;
 };
-
-// export const BackToCatalogueListLinkButton: FunctionComponent = () => (
-//   <Button icon compact labelPosition="left" as={Link} to={CATALOGUE_LIST_ROUTE} data-testid="back-to-catalogue-list-button">
-//     Catalogue List
-//     {' '}
-//     <Icon name="chevron left" />
-//   </Button>
-// );
 
 interface ViewSpecLinkButtonProps {
   refName: string;
