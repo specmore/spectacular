@@ -8,7 +8,7 @@ import {
   CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE,
   VIEW_SPEC_QUERY_PARAM_NAME,
   SHOW_EVOLUTION_QUERY_PARAM_NAME,
-  SHOW_EVOLUTION_QUERY_PARAM_VALUES,
+  ShowEvolutionQueryParamValues,
   CreateInterfaceLocation,
 } from '../routes';
 import { useGetInterfaceDetails as useGetInterfaceDetailsMock } from '../backend-api-client';
@@ -24,6 +24,7 @@ jest.mock('./spec-evolution/spec-evolution-container', () => jest.fn(() => null)
 describe('InterfaceContainer component', () => {
   test('successful fetch displays interface', async () => {
     // given a unique catalogueId and interfaceName
+    const installationId = 1234;
     const catalogueId = 'someEncodedCatalogueId';
     const interfaceName = 'someInterface1';
 
@@ -38,9 +39,11 @@ describe('InterfaceContainer component', () => {
     useGetInterfaceDetailsMock.mockReturnValue(getInterfaceResult);
 
     // when interface container component renders
-    const { findByTestId } = renderWithRouter(<InterfaceContainer org="test-org" />,
-      CreateInterfaceLocation(catalogueId, interfaceName),
-      CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE);
+    const { findByTestId } = renderWithRouter(
+      <InterfaceContainer installationId={installationId} org="test-org" />,
+      CreateInterfaceLocation(installationId, catalogueId, interfaceName),
+      CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE,
+    );
 
     // then a interface container should be found
     expect(await findByTestId('interface-container-segment')).toBeInTheDocument();
@@ -62,9 +65,11 @@ describe('InterfaceContainer component', () => {
     useGetInterfaceDetailsMock.mockReturnValueOnce(getInterfaceResult);
 
     // when interface container component renders
-    const { findByText } = renderWithRouter(<InterfaceContainer org="test-org" />,
-      CreateInterfaceLocation('someEncodedCatalogueId', 'someInterfaceName'),
-      CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE);
+    const { findByText } = renderWithRouter(
+      <InterfaceContainer installationId={1234} org="test-org" />,
+      CreateInterfaceLocation(1234, 'someEncodedCatalogueId', 'someInterfaceName'),
+      CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE,
+    );
 
     // then it contains an error message
     expect(await findByText('An error message.')).toBeInTheDocument();
@@ -78,9 +83,11 @@ describe('InterfaceContainer component', () => {
     useGetInterfaceDetailsMock.mockReturnValueOnce(getInterfaceResult);
 
     // when interface container component renders
-    const { getByText, getByTestId } = renderWithRouter(<InterfaceContainer org="test-org" />,
-      CreateInterfaceLocation('someEncodedCatalogueId', 'someInterfaceName'),
-      CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE);
+    const { getByText, getByTestId } = renderWithRouter(
+      <InterfaceContainer installationId={1234} org="test-org" />,
+      CreateInterfaceLocation(1234, 'someEncodedCatalogueId', 'someInterfaceName'),
+      CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE,
+    );
 
     // then it contains a loading message
     expect(getByText('Loading Interface..')).toBeInTheDocument();
@@ -91,6 +98,7 @@ describe('InterfaceContainer component', () => {
 
   test('spec evolution is shown when a selected', async () => {
     // given a unique catalogueId and interfaceName
+    const installationId = 1234;
     const catalogueId = 'someEncodedCatalogueId';
     const interfaceName = 'someInterface1';
 
@@ -105,13 +113,15 @@ describe('InterfaceContainer component', () => {
     useGetInterfaceDetailsMock.mockReturnValue(getInterfaceResult);
 
     // and show spec evolution is set
-    const interfaceLocation = CreateInterfaceLocation(catalogueId, interfaceName);
-    const location = `${interfaceLocation}?${SHOW_EVOLUTION_QUERY_PARAM_NAME}=${SHOW_EVOLUTION_QUERY_PARAM_VALUES.SHOW}`;
+    const interfaceLocation = CreateInterfaceLocation(installationId, catalogueId, interfaceName);
+    const location = `${interfaceLocation}?${SHOW_EVOLUTION_QUERY_PARAM_NAME}=${ShowEvolutionQueryParamValues.SHOW}`;
 
     // when interface container component renders
-    const { findByTestId } = renderWithRouter(<InterfaceContainer org="test-org" />,
+    const { findByTestId } = renderWithRouter(
+      <InterfaceContainer installationId={installationId} org="test-org" />,
       location,
-      CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE);
+      CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE,
+    );
 
     // then a interface container should be found
     expect(await findByTestId('interface-container-segment')).toBeInTheDocument();
@@ -122,6 +132,7 @@ describe('InterfaceContainer component', () => {
 
   test('swagger UI is shown when a spec file ref is set', async () => {
     // given a unique catalogueId and interfaceName
+    const installationId = 1234;
     const catalogueId = 'someEncodedCatalogueId';
     const interfaceName = 'someInterface1';
 
@@ -137,7 +148,7 @@ describe('InterfaceContainer component', () => {
 
     // and interface location with ref
     const refName = 'some-branch';
-    const interfaceLocation = CreateInterfaceLocation(catalogueId, interfaceName);
+    const interfaceLocation = CreateInterfaceLocation(installationId, catalogueId, interfaceName);
     const location = `${interfaceLocation}?${VIEW_SPEC_QUERY_PARAM_NAME}=${refName}`;
 
     // and a mocked spec file fetch response
@@ -145,9 +156,11 @@ describe('InterfaceContainer component', () => {
     global.fetch = jest.fn().mockImplementation(() => responsePromise);
 
     // when interface container component renders
-    const { findByTestId } = renderWithRouter(<InterfaceContainer org="test-org" />,
+    const { findByTestId } = renderWithRouter(
+      <InterfaceContainer installationId={installationId} org="test-org" />,
       location,
-      CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE);
+      CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE,
+    );
 
     // then a catalogue container should be found
     expect(await findByTestId('interface-container-segment')).toBeInTheDocument();
@@ -156,10 +169,12 @@ describe('InterfaceContainer component', () => {
     expect(await findByTestId('interface-container-swagger-ui')).toBeInTheDocument();
 
     // and file contents should have been fetched
-    const url = `/api/catalogues/${catalogueId}/interfaces/${interfaceName}/file?ref=${refName}`;
+    const url = `/api/catalogues/${installationId}/${catalogueId}/interfaces/${interfaceName}/file?ref=${refName}`;
     expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(global.fetch).toHaveBeenCalledWith(url,
-      expect.objectContaining({ url }));
+    expect(global.fetch).toHaveBeenCalledWith(
+      url,
+      expect.objectContaining({ url }),
+    );
 
     global.fetch.mockClear();
   });

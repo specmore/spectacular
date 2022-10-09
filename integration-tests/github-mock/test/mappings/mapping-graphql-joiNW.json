@@ -1,0 +1,36 @@
+{
+  "id" : "d79c860e-889f-30d8-9cba-9f3bc183bd9d",
+  "request" : {
+    "url" : "/graphql",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "equalToJson" : "{\"query\":\"query {\\n    repository(owner: \\\"specmore\\\", name:\\\"specs-test-tags\\\") {\\n        nameWithOwner\\n        url\\n        pullRequests(first: 100, baseRefName: \\\"master\\\", states: [OPEN]) {\\n            totalCount\\n            nodes {\\n                number\\n                url\\n                updatedAt\\n                headRef { name repository { nameWithOwner url } }\\n                baseRefName\\n                labels(first: 100) {\\n                    totalCount\\n                    nodes { name }\\n                }\\n                files(first:100) {\\n                    totalCount\\n                    nodes { path }\\n                }\\n                title\\n            }\\n        }\\n    }\\n}\"}",
+      "ignoreArrayOrder" : true,
+      "ignoreExtraElements" : true
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-graphql-joiNW.json",
+    "headers" : {
+      "Server" : "GitHub.com",
+      "Date" : "Fri, 07 Oct 2022 23:35:22 GMT",
+      "Content-Type" : "application/json; charset=utf-8",
+      "X-GitHub-Media-Type" : "github.v4",
+      "X-RateLimit-Limit" : "5000",
+      "X-RateLimit-Remaining" : "4850",
+      "X-RateLimit-Reset" : "1665188015",
+      "X-RateLimit-Used" : "150",
+      "X-RateLimit-Resource" : "graphql",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "0",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "Vary" : "Accept-Encoding, Accept, X-Requested-With",
+      "X-GitHub-Request-Id" : "FD3B:190E:2D198A6:2DC9539:6340B7B9"
+    }
+  },
+  "uuid" : "d79c860e-889f-30d8-9cba-9f3bc183bd9d"
+}

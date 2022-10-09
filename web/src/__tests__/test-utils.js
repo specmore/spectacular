@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';

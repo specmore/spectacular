@@ -4,12 +4,96 @@ info:
   description: The RESTful API for the Spectacular tool's Backend Service.
   version: 0.1.0
 paths:
-  /installation:
+  /app:
     get:
       tags:
-        - Installation
-      description: Gets the details of this installation of the Spectacular app
+        - App
+      description: Gets the details of the Spectacular app registration
+      operationId: getAppDetails
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppDetails'
+  /app/login:
+    post:
+      tags:
+        - App User
+      description: Creates a spectacular user session from a temporary code provided by GitHub after a user completed an OAuth web flow against the Spectacular app registration
+      operationId: createUserSession
+      requestBody:
+        description: The user authentication parameters
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppLoginRequest'
+      responses:
+        '200':
+          description: Successful operation
+          headers: 
+            Set-Cookie:
+              schema: 
+                type: string
+                example: jwt_token=abcde12345; Path=/; HttpOnly
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetails'
+    delete:
+      tags:
+        - App User
+      description: Logs any current Spectacular user out by delete their user session.
+      operationId: deleteUserSession
+      responses:
+        '204':
+          description: Successful operation
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: jwt_token=abcde12345; Path=/; HttpOnly
+  /app/user:
+    get:
+      tags:
+        - App User
+      description: Gets the details of the currently logged in user
+      operationId: getUserDetails
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetails'
+  /app/installations:
+    get:
+      tags:
+        - App
+      description: Gets the installations accessible to the currently logged in user
+      operationId: getInstallations
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetInstallationsResult'
+  /app/installations/{installationId}:
+    get:
+      tags:
+        - App
+      description: Gets the details of a specific installation of the Spectacular app
       operationId: getInstallation
+      parameters:
+        - name: installationId
+          in: path
+          description: The id of the specific installation of the Spectacular app
+          required: true
+          schema:
+            type: integer
       responses:
         '200':
           description: Successful operation
@@ -17,19 +101,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Installation'
-  /catalogues:
+  /catalogues/{installationId}:
     get:
       tags:
         - Catalogues
       description: Finds catalogues available to the user
       operationId: findCataloguesForUser
       parameters:
-        - name: org
-          in: query
-          description: The organisation
+        - name: installationId
+          in: path
+          description: The id of the specific installation of the Spectacular app
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         '200':
           description: Successful operation
@@ -37,13 +121,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FindCataloguesResult'
-  /catalogues/{encodedId}:
+  /catalogues/{installationId}/{encodedId}:
     get:
       tags:
         - Catalogues
       description: Gets a catalogue
       operationId: getCatalogue
       parameters:
+        - name: installationId
+          in: path
+          description: The id of the specific installation of the Spectacular app
+          required: true
+          schema:
+            type: integer
         - name: encodedId
           in: path
           description: The base64 encoded id of the Catalogue being fetched
@@ -64,13 +154,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundResponse'
-  /catalogues/{encodedId}/interfaces/{interfaceName}:
+  /catalogues/{installationId}/{encodedId}/interfaces/{interfaceName}:
     get:
       tags:
         - Interfaces
       description: Gets the details of an interface
       operationId: getInterfaceDetails
       parameters:
+        - name: installationId
+          in: path
+          description: The id of the specific installation of the Spectacular app
+          required: true
+          schema:
+            type: integer
         - name: encodedId
           in: path
           description: The base64 encoded id of the Catalogue being referenced
@@ -97,13 +193,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundResponse'
-  /catalogues/{encodedId}/interfaces/{interfaceName}/file:
+  /catalogues/{installationId}/{encodedId}/interfaces/{interfaceName}/file:
     get:
       tags:
         - Interfaces
       description: Gets the file contents of an interface
       operationId: getInterfaceFileContents
       parameters:
+        - name: installationId
+          in: path
+          description: The id of the specific installation of the Spectacular app
+          required: true
+          schema:
+            type: integer
         - name: encodedId
           in: path
           description: The base64 encoded id of the Catalogue being referenced
@@ -137,6 +239,40 @@ components:
   schemas:
     NotFoundResponse:
       type: string
+    AppDetails:
+      type: object
+      properties:
+        clientId:
+          type: string
+      required:
+        - clientId
+    UserDetails:
+      type: object
+      properties:
+        username:
+          type: string
+        fullName:
+          type: string
+        profileImageUrl:
+          type: string
+      required:
+        - username
+    AppLoginRequest:
+      type: object
+      properties:
+        userCode:
+          type: string
+      required:
+        - userCode
+    GetInstallationsResult:
+      type: object
+      properties:
+        installations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Installation'
+      required:
+        - installations
     Installation:
       type: object
       properties:
@@ -144,8 +280,11 @@ components:
           type: integer
         owner:
           type: string
+        ownerImageUrl:
+          type: string
       required:
         - id
+        - owner
     FindCataloguesResult:
       type: object
       properties:

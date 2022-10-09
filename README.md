@@ -19,8 +19,9 @@ You can get Spectacular App up and running locally connected to our demo catalog
 
 1. Clone [the Spectacular project repository](https://github.com/specmore/spectacular) to your computer
 2. Run the `start-demo` script
+3. Navigate to `http://localhost` in your web browser
 
-For example, on Mac:
+For example, on Mac or Linux:
 ```shell
 $ git clone git@github.com:specmore/spectacular.git
 $ cd spectacular
@@ -71,7 +72,6 @@ The [docker-compose.yml](docker-compose.yml) requires 6 environment variables (b
 For example:
 ```
 SPECTACULAR_GITHUB_APP_ID=12345
-SPECTACULAR_GITHUB_APP_INSTALLATION_ID=987654
 SPECTACULAR_GITHUB_APP_PRIVATE_KEY_FILE_PATH=c:/temp/spectacular-app.private-key.pem
 SPECTACULAR_GITHUB_CLIENT_ID=Iv1.41eb20b07bce2547
 SPECTACULAR_GITHUB_CLIENT_SECRET=3dd2b1d461df1688dfdd32169cc8075e19c4f59a

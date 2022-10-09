@@ -5,13 +5,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Account {
   private final String login;
   private final int id;
-  @SuppressWarnings("MemberName")
-  private final String avatar_url;
+  private final String avatarUrl;
+  private final String name;
 
-  public Account(@JsonProperty("login") String login, @JsonProperty("id") int id, @JsonProperty("avatar_url") String avatar_url) {
+  public Account(@JsonProperty("login") String login,
+                 @JsonProperty("id") int id,
+                 @JsonProperty("avatar_url") String avatarUrl,
+                 @JsonProperty("name") String name) {
     this.login = login;
     this.id = id;
-    this.avatar_url = avatar_url;
+    this.avatarUrl = avatarUrl;
+    this.name = name;
   }
 
   public String getLogin() {
@@ -22,7 +26,11 @@ public class Account {
     return id;
   }
 
-  public String getAvatar_url() {
-    return avatar_url;
+  public String getAvatarUrl() {
+    return avatarUrl;
+  }
+
+  public String getName() {
+    return name;
   }
 }

@@ -26,7 +26,6 @@ describe('EvolutionItemDetails component', () => {
     expect(ViewSpecLinkButtonMock).toHaveBeenCalledTimes(1);
   });
 
-
   test('evolution item with specItem htmlUrl renders a OpenSpecItemContentPageButton', async () => {
     const specItem = testDataGenerator.SpecItem.generateSpecItem();
     const evolutionItem = { specItem };
@@ -38,7 +37,6 @@ describe('EvolutionItemDetails component', () => {
     // then a OpenSpecItemContentPageButtonMock is shown
     expect(OpenSpecItemContentPageButtonMock).toHaveBeenCalledTimes(1);
   });
-
 
   test('evolution item with tags behind the branch head renders an old version tag', async () => {
     // given a spec evolution item on with a tag without a branch name on a main branch
@@ -54,7 +52,6 @@ describe('EvolutionItemDetails component', () => {
     expect(tagLabel).toHaveClass('old-version');
   });
 
-
   test('evolution item with tag on the branch head renders a latest agreed style tag', async () => {
     // given a spec evolution item on with a tag with a branch name on a main branch
     const evolutionItem = { tags: ['a-tag'], branchName: 'a-branch' };
@@ -68,7 +65,6 @@ describe('EvolutionItemDetails component', () => {
     expect(tagLabel).toBeInTheDocument();
     expect(tagLabel).toHaveClass('latest-agreed');
   });
-
 
   test('evolution item with tag a release branch renders an upcoming release style tag', async () => {
     // given a spec evolution item on with a tag on a non-main branch
@@ -84,7 +80,6 @@ describe('EvolutionItemDetails component', () => {
     expect(tagLabel).toHaveClass('upcoming-release');
   });
 
-
   test('evolution item on the branch head of the main branch renders a latest agreed styled branch name label', async () => {
     // given a spec evolution item on with a branch name on a main branch
     const evolutionItem = { branchName: 'a-branch' };
@@ -98,7 +93,6 @@ describe('EvolutionItemDetails component', () => {
     expect(branchNameLabel).toBeInTheDocument();
     expect(branchNameLabel).toHaveClass('latest-agreed');
   });
-
 
   test('evolution item on a branch head with a successful file parse result render a file version label', async () => {
     // given a successful openapi file parse result
@@ -116,7 +110,6 @@ describe('EvolutionItemDetails component', () => {
     expect(branchNameLabel).toBeInTheDocument();
     expect(branchNameLabel).toHaveClass('latest-agreed');
   });
-
 
   test('evolution item for a pull request renders a button with the PR number and a div with the title', async () => {
     // given a spec evolution item for a pull request

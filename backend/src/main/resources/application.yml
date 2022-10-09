@@ -4,6 +4,8 @@ github:
   api:
     app:
       id: ${GITHUB_APP_ID:testId}
+      client-id: ${GITHUB_CLIENT_ID:testClientId}
+      client-secret: ${GITHUB_CLIENT_SECRET:testClientSecret}
       jwt-signing-key-file-path: ${GITHUB_APP_PRIVATE_KEY_FILE_PATH:testPath}
       jwt-duration: PT9S
     root-url: ${GITHUB_API_ROOT_URL:https://api.github.com}
@@ -14,11 +16,12 @@ security:
     jwt:
       signature-secret: ${JWT_SHARED_SECRET:this_test_shared_key_is_32_bytes}
       cookie-name: ${JWT_COOKIE_NAME:jwt_token}
+      duration: PT2H
 management:
   endpoints:
     web:
       exposure:
-        include: info, health, metrics
+        include: info, health, metrics, loggers
 #logging:
 #  level:
 #    root: DEBUG

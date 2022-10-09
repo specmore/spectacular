@@ -6,6 +6,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
@@ -34,8 +35,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   @Bean
   public JwtDecoder jwtDecoder() {
     byte[] secretBytes = jwtSigningSecret.getBytes(StandardCharsets.UTF_8);
-    SecretKey secretKey = new SecretKeySpec(secretBytes, "HmacSHA512");
-    return NimbusJwtDecoder.withSecretKey(secretKey).macAlgorithm(MacAlgorithm.HS512).build();
+    SecretKey secretKey = new SecretKeySpec(secretBytes, "HmacSHA256");
+    return NimbusJwtDecoder.withSecretKey(secretKey).macAlgorithm(MacAlgorithm.HS256).build();
+  }
+
+  @Override
+  public void configure(WebSecurity web) throws Exception {
+    web
+        .ignoring()
+        .antMatchers("/app", "/app/login");
   }
 
   @Override

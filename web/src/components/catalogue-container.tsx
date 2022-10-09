@@ -28,12 +28,13 @@ const CatalogueContainerError: FunctionComponent<CatalogueContainerErrorProps> =
 );
 
 interface CatalogueContainerProps {
+  installationId: number;
   org: string;
 }
 
-const CatalogueContainer: FunctionComponent<CatalogueContainerProps> = ({ org }) => {
+const CatalogueContainer: FunctionComponent<CatalogueContainerProps> = ({ installationId, org }) => {
   const { encodedId } = useParams();
-  const getCatalogue = useGetCatalogue({ encodedId });
+  const getCatalogue = useGetCatalogue({ installationId, encodedId });
 
   const { data: getCatalogueResult, loading, error } = getCatalogue;
 
@@ -45,12 +46,12 @@ const CatalogueContainer: FunctionComponent<CatalogueContainerProps> = ({ org })
     content = (<CatalogueContainerError errorMessage={error.message} />);
   } else {
     catalogue = getCatalogueResult.catalogue;
-    content = (<CatalogueDetails catalogue={catalogue} />);
+    content = (<CatalogueDetails installationId={installationId} catalogue={catalogue} />);
   }
 
   return (
     <>
-      <LocationBar installationOwner={org} catalogue={catalogue} />
+      <LocationBar installationId={installationId} installationOwner={org} catalogue={catalogue} />
       <Segment vertical data-testid="catalogue-container-segment">
         <Container text>
           {content}

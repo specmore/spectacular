@@ -1,0 +1,28 @@
+{
+  "id" : "aa2ea863-f4e5-37c8-b5e8-b840eead6a5e",
+  "request" : {
+    "url" : "/app/installations/10351020",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-app-installations-10351020-yMLBj.json",
+    "headers" : {
+      "Server" : "GitHub.com",
+      "Date" : "Fri, 07 Oct 2022 23:35:03 GMT",
+      "Content-Type" : "application/json; charset=utf-8",
+      "Cache-Control" : "public, max-age=60, s-maxage=60",
+      "Vary" : [ "Accept", "Accept-Encoding, Accept, X-Requested-With" ],
+      "ETag" : "W/\"af649e905a49efaf3b022c73464b8678a86130ac70bb5300879ffc32e4bfdace\"",
+      "X-GitHub-Media-Type" : "github.v3; param=machine-man-preview; format=json",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "0",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "X-GitHub-Request-Id" : "FD3B:190E:2D160BD:2DC5C67:6340B7A7"
+    }
+  },
+  "uuid" : "aa2ea863-f4e5-37c8-b5e8-b840eead6a5e"
+}

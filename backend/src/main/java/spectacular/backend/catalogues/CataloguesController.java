@@ -1,48 +1,64 @@
 package spectacular.backend.catalogues;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import spectacular.backend.api.CataloguesApi;
 import spectacular.backend.api.model.FindCataloguesResult;
 import spectacular.backend.api.model.GetCatalogueResult;
 import spectacular.backend.api.model.GetInterfaceResult;
+import spectacular.backend.app.UserSessionTokenService;
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError;
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemErrorType;
 import spectacular.backend.common.CatalogueId;
+import spectacular.backend.app.InstallationService;
 
 @RestController
 public class CataloguesController implements CataloguesApi {
   private final CatalogueService catalogueService;
+  private final UserSessionTokenService userSessionTokenService;
+  private final InstallationService installationService;
 
-  public CataloguesController(CatalogueService catalogueService) {
+  /**
+   * Controller for handling operations specific to the Interface Catalogue resource.
+   * @param catalogueService with which all catalogue resource operations are orchestrated.
+   * @param userSessionTokenService that provides functionality around handling user session tokens
+   * @param installationService with which App installation details can be retrieved.
+   */
+  public CataloguesController(CatalogueService catalogueService, UserSessionTokenService userSessionTokenService,
+                              InstallationService installationService) {
     this.catalogueService = catalogueService;
+    this.userSessionTokenService = userSessionTokenService;
+    this.installationService = installationService;
   }
 
   @Override
-  public ResponseEntity<FindCataloguesResult> findCataloguesForUser(@NotNull @Valid String org) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    var catalogues = catalogueService.findCataloguesForOrgAndUser(org, authentication.getName());
-    var findCataloguesResult = new FindCataloguesResult()
-        .catalogues(catalogues);
-    return ResponseEntity.ok(findCataloguesResult);
+  public ResponseEntity<FindCataloguesResult> findCataloguesForUser(Integer installationId) {
+    final var jwt = validateRequest(installationId);
+
+    final var installation = this.installationService.getInstallation(installationId);
+    final var catalogues = catalogueService.findCataloguesForOrgAndUser(installation.getOwner(), jwt.getSubject());
+    final var findCataloguesResult = new FindCataloguesResult().catalogues(catalogues);
+    return ok(findCataloguesResult);
   }
 
   @Override
-  public ResponseEntity<GetCatalogueResult> getCatalogue(byte[] encoded) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+  public ResponseEntity<GetCatalogueResult> getCatalogue(Integer installationId, byte[] encoded) {
+    final var jwt = validateRequest(installationId);
+
     var decodedBytes = Base64.getDecoder().decode(encoded);
     var combinedId = new String(decodedBytes);
     var catalogueId = CatalogueId.createFrom(combinedId);
 
-    var getCatalogueForUserResult = catalogueService.getCatalogueForUser(catalogueId, authentication.getName());
+    var getCatalogueForUserResult = catalogueService.getCatalogueForUser(catalogueId, jwt.getSubject());
 
     handleAnyError(getCatalogueForUserResult.getError());
 
@@ -51,13 +67,14 @@ public class CataloguesController implements CataloguesApi {
   }
 
   @Override
-  public ResponseEntity<GetInterfaceResult> getInterfaceDetails(byte[] encodedId, String interfaceName) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+  public ResponseEntity<GetInterfaceResult> getInterfaceDetails(Integer installationId, byte[] encodedId, String interfaceName) {
+    final var jwt = validateRequest(installationId);
+
     var decodedBytes = Base64.getDecoder().decode(encodedId);
     var combinedId = new String(decodedBytes);
     var catalogueId = CatalogueId.createFrom(combinedId);
 
-    var getInterfaceDetailsResult = this.catalogueService.getInterfaceDetails(catalogueId, interfaceName, authentication.getName());
+    var getInterfaceDetailsResult = this.catalogueService.getInterfaceDetails(catalogueId, interfaceName, jwt.getSubject());
 
     handleAnyError(getInterfaceDetailsResult.getError());
 
@@ -65,8 +82,12 @@ public class CataloguesController implements CataloguesApi {
   }
 
   @Override
-  public ResponseEntity<Object> getInterfaceFileContents(byte[] encodedId, String interfaceName, @Valid String ref) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+  public ResponseEntity<Object> getInterfaceFileContents(Integer installationId,
+                                                         byte[] encodedId,
+                                                         String interfaceName,
+                                                         @Valid String ref) {
+    final var jwt = validateRequest(installationId);
+
     var decodedBytes = Base64.getDecoder().decode(encodedId);
     var combinedId = new String(decodedBytes);
     var catalogueId = CatalogueId.createFrom(combinedId);
@@ -76,7 +97,7 @@ public class CataloguesController implements CataloguesApi {
           catalogueId,
           interfaceName,
           ref,
-          authentication.getName());
+          jwt.getSubject());
 
       handleAnyError(getInterfaceFileContentsResult.getError());
 
@@ -89,6 +110,21 @@ public class CataloguesController implements CataloguesApi {
           .status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("An unexpected error occurred while decoding the file contents.");
     }
+  }
+
+  private Jwt validateRequest(Integer installationId) {
+    final var securityPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    if (!(securityPrincipal instanceof Jwt)) {
+      throw new RuntimeException("An error occurred while processing the user session.");
+    }
+
+    final var jwt = (Jwt) securityPrincipal;
+    final var installationIds = this.userSessionTokenService.getInstallationIds(jwt.getTokenValue());
+    if (installationIds.stream().noneMatch(userInstallationId -> userInstallationId.intValue() == installationId)) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Installation Id not found.");
+    }
+
+    return jwt;
   }
 
   private void handleAnyError(ConfigurationItemError configurationItemError) {

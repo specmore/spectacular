@@ -12,7 +12,6 @@ cloud "Spectacular" {
         artifact "Web SPA static files" as webUI
     }
     component "Backend Service" as backendService
-    component "Authentication Service" as authService
 }
 
 component "GitHub API" as github
@@ -20,9 +19,7 @@ component "GitHub API" as github
 user --> userAgent
 userAgent --> reverseProxy
 reverseProxy --> backendService : /api/*
-reverseProxy --> authService : /login
 
 backendService --> github
-authService --> github
 
 @enduml

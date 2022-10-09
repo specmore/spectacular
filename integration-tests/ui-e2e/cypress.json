@@ -1,9 +1,0 @@
-{
-    "baseUrl": "http://localhost:8080",
-    "defaultCommandTimeout": 10000,
-    "reporter": "junit",
-    "reporterOptions": {
-        "mochaFile": "cypress/results/tests.xml",
-        "testsuitesTitle": "cypress e2e tests"
-    }
-}

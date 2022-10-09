@@ -1,0 +1,28 @@
+{
+  "id" : "71fc8ede-ba78-3067-9938-2d74f05aa178",
+  "request" : {
+    "url" : "/app/installations/10351020/access_tokens",
+    "method" : "POST"
+  },
+  "response" : {
+    "status" : 201,
+    "bodyFileName" : "body-app-installations-10351020-access_tokens-L9gCn.json",
+    "headers" : {
+      "Server" : "GitHub.com",
+      "Date" : "Fri, 07 Oct 2022 23:35:08 GMT",
+      "Content-Type" : "application/json; charset=utf-8",
+      "Cache-Control" : "public, max-age=60, s-maxage=60",
+      "Vary" : [ "Accept", "Accept-Encoding, Accept, X-Requested-With" ],
+      "ETag" : "\"056d6da60ce618f07b9ff12e9f13e5f45b36b090386d8b414bc1c2a952fe34cb\"",
+      "X-GitHub-Media-Type" : "github.v3; param=machine-man-preview; format=json",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "0",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "X-GitHub-Request-Id" : "FD3B:190E:2D170DE:2DC6CCD:6340B7AC"
+    }
+  },
+  "uuid" : "71fc8ede-ba78-3067-9938-2d74f05aa178"
+}

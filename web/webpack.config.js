@@ -3,6 +3,7 @@ require('dotenv').config({ path: '../.env' });
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const webpack = require('webpack');
 
 const htmlPlugin = new HtmlWebPackPlugin({
@@ -20,22 +21,18 @@ const definePlugin = new webpack.DefinePlugin({
   SHORTSHA: JSON.stringify(process.env.SHORTSHA),
 });
 
+const esLintPlugin = new ESLintPlugin({
+  extensions: ['js', 'jsx', 'ts', 'tsx'],
+  failOnWarning: false
+});
+
 module.exports = () => {
-  console.log('SPECTACULAR_GITHUB_APP_INSTALLATION_ID: ', process.env.SPECTACULAR_GITHUB_APP_INSTALLATION_ID);
   console.log('VERSION: ', process.env.SEMVER);
   console.log('SHORTSHA: ', process.env.SHORTSHA);
 
   return {
     module: {
       rules: [
-        {
-          enforce: 'pre',
-          test: /\.(js|jsx|ts|tsx)$/,
-          exclude: /node_modules/,
-          use: {
-            loader: 'eslint-loader',
-          },
-        },
         {
           test: /\.(js|jsx|ts|tsx)$/,
           exclude: /node_modules/,
@@ -45,15 +42,15 @@ module.exports = () => {
         },
         {
           test: /\.css$/,
-          use: ['style-loader', MiniCssExtractPlugin.loader, 'css-loader'],
+          use: [MiniCssExtractPlugin.loader, 'css-loader'],
         },
         { // Load fonts
           test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)/,
-          use: 'url-loader',
+          type: 'asset/resource',
         },
         { // Load other files, images etc
           test: /\.(png|j?g|gif|ico)?$/,
-          use: 'url-loader',
+          type: 'asset/resource',
         },
         {
           test: /\.less$/,
@@ -76,28 +73,28 @@ module.exports = () => {
         ),
       },
     },
-    plugins: [definePlugin, htmlPlugin, miniCssExtractPlugin],
+    plugins: [definePlugin, htmlPlugin, miniCssExtractPlugin, esLintPlugin],
     output: {
       filename: '[name].[contenthash].js',
       path: path.resolve(__dirname, 'dist'),
       publicPath: '/',
     },
     devServer: {
-      disableHostCheck: true,
+      allowedHosts: 'all',
       historyApiFallback: {
         disableDotRule: true,
+      },
+      client: {
+        overlay: {
+          errors: true,
+          warnings: false,
+        },
       },
       proxy: {
         '/api': {
           target: 'http://localhost:5000', // actual api
           // target: 'http://localhost:5005', //wiremock
           pathRewrite: { '^/api': '' },
-          headers: {
-            'x-spec-installation-id': process.env.SPECTACULAR_GITHUB_APP_INSTALLATION_ID,
-          },
-        },
-        '/login': {
-          target: 'http://localhost:5001',
         },
       },
     },

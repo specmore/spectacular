@@ -30,10 +30,11 @@ const CatalogueListError: FunctionComponent<CatalogueListErrorProps> = ({ errorM
 );
 
 interface CatalogueListProps {
+  installationId: number;
   catalogues: Catalogue[];
 }
 
-const CatalogueList: FunctionComponent<CatalogueListProps> = ({ catalogues }) => {
+const CatalogueList: FunctionComponent<CatalogueListProps> = ({ installationId, catalogues }) => {
   const [selectedTopics] = useQueryParam(TOPIC_SELECTION_QUERY_PARAM_NAME, ArrayParam);
   const cataloguesFilteredByTopic = catalogues.filter((catalogue) => {
     if (!selectedTopics) return true;
@@ -48,7 +49,9 @@ const CatalogueList: FunctionComponent<CatalogueListProps> = ({ catalogues }) =>
       </div>
       <div className="catalogue-list">
         <Item.Group divided data-testid="catalogue-list-item-group">
-          {cataloguesFilteredByTopic.map((catalogue) => (<CatalogueListItem key={catalogue.encodedId} catalogue={catalogue} />))}
+          {cataloguesFilteredByTopic.map((catalogue) => (
+            <CatalogueListItem key={catalogue.encodedId} installationId={installationId} catalogue={catalogue} />
+          ))}
         </Item.Group>
       </div>
     </div>
@@ -56,11 +59,12 @@ const CatalogueList: FunctionComponent<CatalogueListProps> = ({ catalogues }) =>
 };
 
 interface CatalogueListContainerProps {
+  installationId: number;
   org: string;
 }
 
-const CatalogueListContainer: FunctionComponent<CatalogueListContainerProps> = ({ org }) => {
-  const findCataloguesForUser = useFindCataloguesForUser({ queryParams: { org } });
+const CatalogueListContainer: FunctionComponent<CatalogueListContainerProps> = ({ installationId, org }) => {
+  const findCataloguesForUser = useFindCataloguesForUser({ installationId });
   const { data: findCataloguesResult, loading, error } = findCataloguesForUser;
 
   let content = null;
@@ -69,12 +73,12 @@ const CatalogueListContainer: FunctionComponent<CatalogueListContainerProps> = (
   } else if (error) {
     content = (<CatalogueListError errorMessage={error.message} />);
   } else {
-    content = (<CatalogueList catalogues={findCataloguesResult.catalogues} />);
+    content = (<CatalogueList installationId={installationId} catalogues={findCataloguesResult.catalogues} />);
   }
 
   return (
     <>
-      <LocationBar installationOwner={org} />
+      <LocationBar installationId={installationId} installationOwner={org} />
       <Segment vertical>
         <Container>
           <Header as="h3">Available Interface Catalogues</Header>

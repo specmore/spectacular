@@ -32,21 +32,23 @@ const InterfaceContainerError: FunctionComponent<InterfaceContainerErrorProps> =
 );
 
 interface InterfaceContainerProps {
+  installationId: number;
   org: string;
 }
 
 const createInterfaceFileContentsPath = (
+  installationId: number,
   encodedId: string,
   interfaceName: string,
   refName: string,
-) => `/api/catalogues/${encodedId}/interfaces/${interfaceName}/file?ref=${refName}`;
+) => `/api/catalogues/${installationId}/${encodedId}/interfaces/${interfaceName}/file?ref=${refName}`;
 
-const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org }) => {
+const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ installationId, org }) => {
   const { encodedId, interfaceName } = useParams();
   const refName = getCurrentSpecRefViewed();
   const showSpecEvolution = isShowSpecEvolution();
 
-  const getInterfaceDetails = useGetInterfaceDetails({ encodedId, interfaceName });
+  const getInterfaceDetails = useGetInterfaceDetails({ installationId, encodedId, interfaceName });
   const { data: getInterfaceResult, loading, error } = getInterfaceDetails;
 
   let catalogue = null;
@@ -64,7 +66,7 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
     content = (<InterfaceDetails specEvolutionSummary={specEvolutionSummary} />);
 
     if (refName) {
-      const interfaceFileContentsPath = createInterfaceFileContentsPath(encodedId, interfaceName, refName);
+      const interfaceFileContentsPath = createInterfaceFileContentsPath(installationId, encodedId, interfaceName, refName);
       specPreview = (
         <div data-testid="interface-container-swagger-ui">
           <CloseSpecButton />
@@ -86,7 +88,12 @@ const InterfaceContainer: FunctionComponent<InterfaceContainerProps> = ({ org })
 
   return (
     <>
-      <LocationBar installationOwner={org} catalogue={catalogue} specEvolutionSummary={specEvolutionSummary} />
+      <LocationBar
+        installationId={installationId}
+        installationOwner={org}
+        catalogue={catalogue}
+        specEvolutionSummary={specEvolutionSummary}
+      />
       <div data-testid="interface-container-segment">
         <Segment vertical>
           <Container text>

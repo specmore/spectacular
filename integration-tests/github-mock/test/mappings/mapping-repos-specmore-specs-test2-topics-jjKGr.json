@@ -1,0 +1,33 @@
+{
+  "id" : "8469f27a-09fe-3280-9573-d2f41536c4f6",
+  "request" : {
+    "url" : "/repos/specmore/specs-test2/topics",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "body-repos-specmore-specs-test2-topics-jjKGr.json",
+    "headers" : {
+      "Server" : "GitHub.com",
+      "Date" : "Fri, 07 Oct 2022 23:35:11 GMT",
+      "Content-Type" : "application/json; charset=utf-8",
+      "Cache-Control" : "private, max-age=60, s-maxage=60",
+      "Vary" : [ "Accept, Authorization, Cookie, X-GitHub-OTP", "Accept-Encoding, Accept, X-Requested-With" ],
+      "ETag" : "W/\"c6dfd712a6fc1009e8da22b4661f2d2615e22d84827874cd4f8e647868ebcc1d\"",
+      "X-GitHub-Media-Type" : "github.mercy-preview; format=json",
+      "X-RateLimit-Limit" : "5000",
+      "X-RateLimit-Remaining" : "4858",
+      "X-RateLimit-Reset" : "1665187524",
+      "X-RateLimit-Used" : "142",
+      "X-RateLimit-Resource" : "core",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options" : "deny",
+      "X-Content-Type-Options" : "nosniff",
+      "X-XSS-Protection" : "0",
+      "Referrer-Policy" : "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy" : "default-src 'none'",
+      "X-GitHub-Request-Id" : "FD3B:190E:2D17B44:2DC7749:6340B7AF"
+    }
+  },
+  "uuid" : "8469f27a-09fe-3280-9573-d2f41536c4f6"
+}

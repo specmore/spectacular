@@ -24,19 +24,23 @@ const CatalogueError: FunctionComponent<CatalogueErrorProps> = ({ catalogue }) =
 );
 
 interface CatalogueDetailsProps {
+  installationId: number;
   catalogue: Catalogue;
 }
 
-const CatalogueDetails: FunctionComponent<CatalogueDetailsProps> = ({ catalogue }) => (
+const CatalogueDetails: FunctionComponent<CatalogueDetailsProps> = ({ installationId, catalogue }) => (
   <div data-testid="catalogue-details-container">
     <Header as="h2">{catalogue.title}</Header>
-    <p>{catalogue.topics && catalogue.topics.map((topic) => (<Label key={topic} color="grey">{topic}</Label>))}</p>
+    <div style={{ paddingBottom: '1em' }}>
+      {catalogue.topics && catalogue.topics.map((topic) => (<Label key={topic} color="grey">{topic}</Label>))}
+    </div>
     <p>{catalogue.description}</p>
     <Header as="h3">Interface List</Header>
     <Item.Group divided data-testid="catalogue-details-interface-list">
       {catalogue.specEvolutionSummaries.map((specEvolutionSummary) => (
         <InterfaceListItem
           key={specEvolutionSummary.interfaceName}
+          installationId={installationId}
           catalogueEncodedId={catalogue.encodedId}
           specEvolutionSummary={specEvolutionSummary}
         />
@@ -46,14 +50,15 @@ const CatalogueDetails: FunctionComponent<CatalogueDetailsProps> = ({ catalogue 
 );
 
 interface CatalogueDetailsContainerProps {
+  installationId: number;
   catalogue: Catalogue;
 }
 
-const CatalogueDetailsContainer: FunctionComponent<CatalogueDetailsContainerProps> = ({ catalogue }) => {
+const CatalogueDetailsContainer: FunctionComponent<CatalogueDetailsContainerProps> = ({ installationId, catalogue }) => {
   if (catalogue.parseError) return (<CatalogueError catalogue={catalogue} />);
 
   return (
-    <CatalogueDetails catalogue={catalogue} />
+    <CatalogueDetails installationId={installationId} catalogue={catalogue} />
   );
 };
 

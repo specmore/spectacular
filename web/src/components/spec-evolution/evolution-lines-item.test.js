@@ -22,7 +22,6 @@ describe('EvolutionLinesItem component', () => {
     expect(mainBranchLine).toHaveClass('old-version');
   });
 
-
   test('main branch evolution items on the branch head renders a lasted agreed main branch line', async () => {
     // given a spec evolution item on the main branch on the branch head
     const evolutionItem = {
@@ -42,7 +41,6 @@ describe('EvolutionLinesItem component', () => {
     const mainBranchLine = evolutionLines.children[0];
     expect(mainBranchLine).toHaveClass('latest-agreed');
   });
-
 
   test('main branch pull request evolution items render a lasted agreed main branch line and change proposal line', async () => {
     // given a spec evolution item for a pull request to the main branch
@@ -68,7 +66,6 @@ describe('EvolutionLinesItem component', () => {
     expect(pullRequestLine).toHaveClass('change-proposal');
   });
 
-
   test('non-main branch evolution items render a hidden main branch line and release branch line', async () => {
     // given a spec evolution item not on the main branch
     const evolutionItem = {};
@@ -90,7 +87,6 @@ describe('EvolutionLinesItem component', () => {
     const upcomingReleaseLine = evolutionLines.children[1];
     expect(upcomingReleaseLine).toHaveClass('upcoming-release');
   });
-
 
   test('non-main branch pull request evolution items render a hidden main branch line and release branch line', async () => {
     // given a spec evolution item for a pull request not to the main branch

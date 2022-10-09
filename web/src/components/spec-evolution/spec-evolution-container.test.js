@@ -5,7 +5,6 @@ import { renderWithRouter } from '../../__tests__/test-utils';
 import Generator from '../../__tests__/test-data-generator';
 import SpecEvolutionBranchContainerMock from './spec-evolution-branch';
 
-
 // mock out the actual spec evolution branch items
 jest.mock('./spec-evolution-branch', () => jest.fn(() => null));
 
