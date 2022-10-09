@@ -71,7 +71,7 @@ $ ./scripts/start-dev.sh [SERVICE...]
 ```
 Batch:
 ```powershell
-$ ..\scripts\start-auth.bat [SERVICE...]
+$ ..\scripts\start-dev.bat [SERVICE...]
 ```
 
 The table below shows you the different options for building and running each architectural component locally on your development machine.
@@ -79,11 +79,10 @@ The table below shows you the different options for building and running each ar
 | ----------------------| ------------------------- | ---------------- |
 | Web UI | [Development Environment Requirements](web/README.md#development-environment-requirements) | `web` |
 | Backend Service | [Development Environment Requirements](backend/README.md#development-environment-requirements) | `backend` |
-| Auth Service | **N/A - 3rd party component** | `auth` |
 
-For example, you may wish to make changes to the [Web UI](web/) component by:
-1. Starting the Auth and Backend services in containers using `$ ./scripts/start-dev.sh auth backend`
-2. Build and run the Web UI using `npm run start`
+For example, you may wish to make changes to the [Web UI](web/) component only by:
+1. Starting the Backend services in containers using `$ ./scripts/start-dev.sh backend` (also achievable using `npm run start-deps`)
+2. Building and running the Web UI locally using `npm run start`
 
 **WIP**
 

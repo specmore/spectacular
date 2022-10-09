@@ -7,7 +7,6 @@ services:
             dockerfile: ./docker/Dockerfile-web
         environment:
             - API_LOCATION=http://backend
-            - AUTH_LOCATION=http://auth:8080
     backend:
         image: spectacular-backend
         build: 

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "A spectacular tool for collaborating on interface specifications.",
   "scripts": {
-    "start-deps": "docker-compose -f ../docker-compose.yml -f ../docker-compose.dev.yml --env-file ../.env up auth backend",
+    "start-deps": "docker-compose -f ../docker-compose.yml -f ../docker-compose.dev.yml --env-file ../.env up backend",
     "start": "webpack-dev-server --mode development --open",
     "build": "webpack --mode production",
     "test": "jest",
