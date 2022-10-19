@@ -74,6 +74,13 @@ paths:
         - App
       description: Gets the installations accessible to the currently logged in user
       operationId: getInstallations
+      parameters:
+        - name: catalogueEncodedId
+          in: query
+          description: A base64 encoded id of a Catalogue that belongs to an installation
+          schema:
+            type: string
+            format: byte
       responses:
         '200':
           description: Successful operation

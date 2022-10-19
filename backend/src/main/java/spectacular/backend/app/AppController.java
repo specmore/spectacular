@@ -4,6 +4,7 @@ import static org.springframework.http.ResponseEntity.notFound;
 import static org.springframework.http.ResponseEntity.ok;
 
 import java.time.Duration;
+import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +19,7 @@ import spectacular.backend.api.model.AppLoginRequest;
 import spectacular.backend.api.model.GetInstallationsResult;
 import spectacular.backend.api.model.Installation;
 import spectacular.backend.api.model.UserDetails;
+import spectacular.backend.common.CatalogueId;
 import spectacular.backend.github.app.user.AppUserAuthenticationService;
 
 @RestController
@@ -103,12 +105,18 @@ public class AppController implements AppApi {
   }
 
   @Override
-  public ResponseEntity<GetInstallationsResult> getInstallations() {
+  public ResponseEntity<GetInstallationsResult> getInstallations(@Valid byte[] catalogueEncodedId) {
     final var securityPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     if (securityPrincipal instanceof Jwt) {
       final var jwt = (Jwt) securityPrincipal;
       final var installationIds = this.userSessionTokenService.getInstallationIds(jwt.getTokenValue());
-      final var getInstallationsResult = this.installationService.getInstallations(installationIds);
+
+      Optional<CatalogueId> catalogueQuery = Optional.empty();
+      if (catalogueEncodedId != null && catalogueEncodedId.length > 0) {
+        catalogueQuery = Optional.of(CatalogueId.createFromBase64(catalogueEncodedId));
+      }
+
+      final var getInstallationsResult = this.installationService.getInstallations(installationIds, catalogueQuery);
       return ok(getInstallationsResult);
     }
     throw new RuntimeException("An error occurred while processing the user session.");

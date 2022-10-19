@@ -54,9 +54,7 @@ public class CataloguesController implements CataloguesApi {
   public ResponseEntity<GetCatalogueResult> getCatalogue(Integer installationId, byte[] encoded) {
     final var jwt = validateRequest(installationId);
 
-    var decodedBytes = Base64.getDecoder().decode(encoded);
-    var combinedId = new String(decodedBytes);
-    var catalogueId = CatalogueId.createFrom(combinedId);
+    var catalogueId = CatalogueId.createFromBase64(encoded);
 
     var getCatalogueForUserResult = catalogueService.getCatalogueForUser(catalogueId, jwt.getSubject());
 
@@ -70,9 +68,7 @@ public class CataloguesController implements CataloguesApi {
   public ResponseEntity<GetInterfaceResult> getInterfaceDetails(Integer installationId, byte[] encodedId, String interfaceName) {
     final var jwt = validateRequest(installationId);
 
-    var decodedBytes = Base64.getDecoder().decode(encodedId);
-    var combinedId = new String(decodedBytes);
-    var catalogueId = CatalogueId.createFrom(combinedId);
+    var catalogueId = CatalogueId.createFromBase64(encodedId);
 
     var getInterfaceDetailsResult = this.catalogueService.getInterfaceDetails(catalogueId, interfaceName, jwt.getSubject());
 
@@ -88,9 +84,7 @@ public class CataloguesController implements CataloguesApi {
                                                          @Valid String ref) {
     final var jwt = validateRequest(installationId);
 
-    var decodedBytes = Base64.getDecoder().decode(encodedId);
-    var combinedId = new String(decodedBytes);
-    var catalogueId = CatalogueId.createFrom(combinedId);
+    var catalogueId = CatalogueId.createFromBase64(encodedId);
 
     try {
       var getInterfaceFileContentsResult = this.catalogueService.getInterfaceFileContents(

@@ -1,10 +1,13 @@
 package spectacular.backend.app;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import spectacular.backend.api.model.GetInstallationsResult;
 import spectacular.backend.api.model.Installation;
+import spectacular.backend.common.CatalogueId;
 import spectacular.backend.github.app.AppApiClient;
 
 @Service
@@ -34,9 +37,11 @@ public class InstallationService {
    * @param installationIds that are to be used to retrieve the installation details
    * @return a GetInstallationsResult containing all the retrieved installations
    */
-  public GetInstallationsResult getInstallations(List<Long> installationIds) {
+  public GetInstallationsResult getInstallations(List<Long> installationIds, Optional<CatalogueId> catalogueId) {
     final var installations = installationIds.stream()
         .map(installationId -> this.appApiClient.getAppInstallation(installationId.toString()))
+        .filter(installation -> catalogueId.isEmpty() ||
+            Objects.equals(catalogueId.get().getRepositoryId().getOwner(), installation.getAccount().getLogin()))
         .map(this.installationMapper::mapInstallation)
         .collect(Collectors.toList());
     return new GetInstallationsResult().installations(installations);
