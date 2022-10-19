@@ -54,7 +54,7 @@ const AppContainer: FunctionComponent = () => {
       <Route path="*">
         <div className="content-container">
           <MenuBar />
-          <div className="main-content">
+          <div className="main-content" data-testid="app-container">
             <Switch>
               <Route exact path={INSTALLATION_LIST_ROUTE}>
                 <InstallationSelectionContainer />
