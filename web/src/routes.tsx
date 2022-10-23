@@ -20,7 +20,14 @@ export const CreateInterfaceLocation = (installationId: number, encodedId: strin
   `/org/${installationId}/catalogue/${encodedId}/interface/${interfaceName}/`
 );
 
+export interface OldV2CatalogueContainerRouteParams {
+  encodedId: string
+}
 export const OLD_V2_CATALOGUE_CONTAINER_ROUTE = '/catalogue/:encodedId';
+
+export interface OldV2CatalogueContainerWithSpecLocationRouteParams extends OldV2CatalogueContainerRouteParams {
+  interfaceName: string,
+}
 export const OLD_V2_CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE = '/catalogue/:encodedId/interface/:interfaceName';
 
 export const LOGIN_REDIRECT_RETURN_TO_PARAM_NAME = 'backTo';
