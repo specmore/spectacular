@@ -1,5 +1,6 @@
 package spectacular.backend.common;
 
+import java.util.Base64;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import spectacular.backend.cataloguemanifest.model.Catalogue;
@@ -73,6 +74,12 @@ public class CatalogueId extends CatalogueManifestId {
 
 
     return new CatalogueId(repository, path, name);
+  }
+
+  public static CatalogueId createFromBase64(byte[] encodedId) {
+    var decodedBytes = Base64.getDecoder().decode(encodedId);
+    var combinedId = new String(decodedBytes);
+    return createFrom(combinedId);
   }
 
   @Override
