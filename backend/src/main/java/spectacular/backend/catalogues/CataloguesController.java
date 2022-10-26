@@ -3,7 +3,6 @@ package spectacular.backend.catalogues;
 import static org.springframework.http.ResponseEntity.ok;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Base64;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +14,11 @@ import spectacular.backend.api.CataloguesApi;
 import spectacular.backend.api.model.FindCataloguesResult;
 import spectacular.backend.api.model.GetCatalogueResult;
 import spectacular.backend.api.model.GetInterfaceResult;
+import spectacular.backend.app.InstallationService;
 import spectacular.backend.app.UserSessionTokenService;
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemError;
 import spectacular.backend.cataloguemanifest.configurationitem.ConfigurationItemErrorType;
 import spectacular.backend.common.CatalogueId;
-import spectacular.backend.app.InstallationService;
 
 @RestController
 public class CataloguesController implements CataloguesApi {
