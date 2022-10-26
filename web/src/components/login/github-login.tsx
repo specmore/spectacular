@@ -45,6 +45,17 @@ const GitHubLoginCreateUserSessionComponent: FunctionComponent<CreateUserSession
     );
   }
 
+  if (error) {
+    // console.error(error);
+    return (
+      <div>
+        GitHub login failed with error: &lsquo
+        {error.message}
+        &rsquo.
+      </div>
+    );
+  }
+
   return (
     <div>
       GitHub login successful. Processing...

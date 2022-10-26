@@ -46,6 +46,11 @@ public class AppUserAuthenticationService {
     final var userAccessTokenRequest = new UserAccessTokenRequest(this.clientId, this.clientSecret, code);
     final var userAccessTokenResult = this.appOAuthApiClient.requestUserAccessToken(userAccessTokenRequest);
 
+    if (userAccessTokenResult.getAccessToken() == null) {
+      // Something went wrong.
+      throw new OAuthUserAccessTokenErrorException(code);
+    }
+
     var user = this.appUserApiClient.getUser(userAccessTokenResult.getAccessToken());
     var installations = this.appUserApiClient.getInstallationsAccessibleByUser(userAccessTokenResult.getAccessToken());
     var userDetails = new UserDetails()
