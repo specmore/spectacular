@@ -38,9 +38,9 @@ const GitHubLoginCreateUserSessionComponent: FunctionComponent<CreateUserSession
     history.replace(returnToLocation);
     return (
       <div>
-        User Session created for &lsquo
+        User Session created for &lsquo;
         {userDetails.username}
-        &rsquo.
+        &rsquo;.
       </div>
     );
   }
@@ -49,9 +49,9 @@ const GitHubLoginCreateUserSessionComponent: FunctionComponent<CreateUserSession
     // console.error(error);
     return (
       <div>
-        GitHub login failed with error: &lsquo
-        {error.message}
-        &rsquo.
+        GitHub login failed with error: &lsquo;
+        {error.data.message}
+        &rsquo;
       </div>
     );
   }
