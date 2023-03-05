@@ -8,8 +8,9 @@ public class OAuthUserAccessTokenErrorException extends RuntimeException {
    * @param code the OAuth code received back from GitHub at the end of the OAuth workflow
    */
   public OAuthUserAccessTokenErrorException(String code) {
-    super("GitHub AppOAuthApiClient requestUserAccessToken call failed to retrieve an user access token for OAuth code: " + code +
-        ". Check if the client secret is correct or maybe a fraudulent code was used.");
+    super("An error occurred while completing a GitHub user login. " +
+        "The application's GitHub OAuth client secret may not yet be configured correctly or the OAuth code provided ('" +
+        code + "') may have expired or be fraudulent.");
     this.code = code;
   }
 
