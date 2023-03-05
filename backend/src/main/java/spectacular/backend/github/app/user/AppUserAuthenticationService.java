@@ -35,6 +35,7 @@ public class AppUserAuthenticationService {
     this.appUserApiClient = appUserApiClient;
     this.appOAuthApiClient = appOAuthApiClient;
     this.userSessionTokenService = userSessionTokenService;
+    logger.info("Initialised AppUserAuthenticationService for GitHub App with OAuth Client Id '{}'.", clientId);
   }
 
   /**
