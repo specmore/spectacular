@@ -42,6 +42,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDetails'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
     delete:
       tags:
         - App User
@@ -511,3 +517,17 @@ components:
       required:
         - number
         - branchName
+    ErrorDetails:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
