@@ -94,10 +94,16 @@ const GitHubLoginComponent: FunctionComponent<GitHubLoginComponentProps> = ({ cl
     if (isUserLogoutComplete) {
       const loginLocation = `${GITHUB_LOGIN_LOCATION}?${githubLoginParams.toString()}`;
       window.location.replace(loginLocation);
+
+      return (
+        <div data-testid="redirecting-container">
+          Redirecting to GitHub...
+        </div>
+      );
     }
 
     return (
-      <div>
+      <div data-testid="logging-out-container">
         Logging out...
       </div>
     );
