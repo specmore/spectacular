@@ -3,6 +3,9 @@ import { Button, Icon, Popup } from 'semantic-ui-react';
 import { Link, useLocation } from 'react-router-dom';
 import { SpecItem } from './backend-api-client';
 
+export const LOGIN_ROUTE = '/login';
+export const LOGOUT_ROUTE = '/login?logout';
+
 export const GITHUB_LOGIN_ROUTE = '/login/github';
 
 export const INSTALLATION_LIST_ROUTE = '/';
@@ -77,6 +80,13 @@ export const extractLoginCallbackURL = (): string => {
   const { location } = window;
   return `${location.protocol}//${location.host}${location.pathname}`;
 };
+
+export const GitHubLoginButton: FunctionComponent = () => (
+  <Button icon labelPosition="left" as={Link} to={GITHUB_LOGIN_ROUTE}>
+    <Icon name="github" />
+    GitHub Login
+  </Button>
+);
 
 interface ViewSpecLinkButtonProps {
   refName: string;

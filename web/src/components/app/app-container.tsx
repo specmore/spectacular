@@ -24,9 +24,11 @@ import {
   OLD_V2_CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE,
   CreateCatalogueContainerLocation,
   CreateInterfaceLocation,
+  LOGIN_ROUTE,
 } from '../../routes';
 import { useGetAppDetails, useGetInstallations } from '../../backend-api-client';
 import NotFound from '../not-found';
+import LoginContainer from '../login/login-container';
 
 const AppContainerLoading: FunctionComponent = () => (
   <Container text style={{ paddingTop: '5em' }}>
@@ -89,6 +91,9 @@ const AppContainer: FunctionComponent = () => {
 
   return (
     <Switch>
+      <Route exact path={LOGIN_ROUTE}>
+        <LoginContainer clientId={getAppDetailsResult.clientId} />
+      </Route>
       <Route exact path={GITHUB_LOGIN_ROUTE}>
         <GitHubLogin clientId={getAppDetailsResult.clientId} />
       </Route>
