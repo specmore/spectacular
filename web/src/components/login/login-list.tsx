@@ -13,7 +13,7 @@ interface LoginListProps {
 const LoginList: FunctionComponent<LoginListProps> = ({ loginUrl }) => (
   <div data-testid="login-list-container">
     <Header>Welcome</Header>
-    <p>Please log in using an option below to continue</p>
+    <p>To continue inside, please use a log in method below:</p>
     <GitHubLoginButton loginUrl={loginUrl} />
   </div>
 );
