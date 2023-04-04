@@ -3,14 +3,18 @@ import { useLocation } from 'react-router-dom';
 import {
   Header,
 } from 'semantic-ui-react';
-import { GitHubLoginButton } from '../../routes';
 import { useDeleteUserSession } from '../../backend-api-client';
+import { GitHubLoginButton } from './routes';
 
-const LoginList: FunctionComponent = () => (
+interface LoginListProps {
+  loginUrl: string;
+}
+
+const LoginList: FunctionComponent<LoginListProps> = ({ loginUrl }) => (
   <div data-testid="login-list-container">
     <Header>Welcome</Header>
     <p>Please log in using an option below to continue</p>
-    <GitHubLoginButton />
+    <GitHubLoginButton loginUrl={loginUrl} />
   </div>
 );
 
@@ -20,7 +24,7 @@ const LoggingOut: FunctionComponent = () => (
   </div>
 );
 
-const LoginListContainer: FunctionComponent = () => {
+const LoginListContainer: FunctionComponent<LoginListProps> = ({ loginUrl }) => {
   const deleteUserSession = useDeleteUserSession({});
   const [isUserLogoutComplete, setIsUserLogoutComplete] = useState(false);
   const { mutate: logoutRequest } = deleteUserSession;
@@ -37,7 +41,7 @@ const LoginListContainer: FunctionComponent = () => {
 
   if (isLogout && !isUserLogoutComplete) return (<LoggingOut />);
 
-  return (<LoginList />);
+  return (<LoginList loginUrl={loginUrl} />);
 };
 
 export default LoginListContainer;

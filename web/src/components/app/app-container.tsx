@@ -14,9 +14,7 @@ import InstallationSelectionContainer from '../installation-selection-container'
 import InstallationContainer from '../installation-container';
 import MenuBar from '../menu-bar';
 import FooterBar from '../footer-bar';
-import GitHubLogin from '../login/github-login';
 import {
-  GITHUB_LOGIN_ROUTE,
   INSTALLATION_CONTAINER_ROUTE,
   INSTALLATION_LIST_ROUTE,
   OLD_V2_CATALOGUE_CONTAINER_ROUTE,
@@ -91,11 +89,8 @@ const AppContainer: FunctionComponent = () => {
 
   return (
     <Switch>
-      <Route exact path={LOGIN_ROUTE}>
+      <Route path={LOGIN_ROUTE}>
         <LoginContainer clientId={getAppDetailsResult.clientId} />
-      </Route>
-      <Route exact path={GITHUB_LOGIN_ROUTE}>
-        <GitHubLogin clientId={getAppDetailsResult.clientId} />
       </Route>
       <Route path="*">
         <div className="content-container">

@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { extractLoginCallbackURL, extractLoginRedirectReturnToPath } from '../../routes';
+import { extractLoginRedirectReturnToPath } from '../../routes';
+import { extractLoginCallbackURL } from './routes';
 import LoginStateService from './login-state-service';
 import GitHubLoginCreateUserSession from './github-login-create-user-session';
 import GitHubLoginClearUserSession from './github-login-clear-user-session';
@@ -49,12 +50,13 @@ const GitHubLoginComponent: FunctionComponent<GitHubLoginComponentProps> = ({ cl
   }
 
   const returnToLocation = LoginStateService.getReturnToLocation();
-  const returnToRedirection = () => {
-    history.replace(returnToLocation);
+  const loginCompleteRedirection = () => {
+    const redirectLocation = returnToLocation !== 'null' ? returnToLocation : '/';
+    history.replace(redirectLocation);
   };
 
   return (
-    <GitHubLoginCreateUserSession code={callbackCode} redirector={returnToRedirection} />
+    <GitHubLoginCreateUserSession code={callbackCode} redirector={loginCompleteRedirection} />
   );
 };
 
