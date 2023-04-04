@@ -4,7 +4,6 @@ import { extractLoginRedirectReturnToPath } from '../../routes';
 import { extractLoginCallbackURL } from './routes';
 import LoginStateService from './login-state-service';
 import GitHubLoginCreateUserSession from './github-login-create-user-session';
-import GitHubLoginClearUserSession from './github-login-clear-user-session';
 
 const GITHUB_LOGIN_LOCATION = 'https://github.com/login/oauth/authorize';
 
@@ -30,14 +29,8 @@ const GitHubLoginComponent: FunctionComponent<GitHubLoginComponentProps> = ({ cl
     githubLoginParams.set('redirect_uri', loginCallbackUrl);
     githubLoginParams.set('state', loginState);
 
-    const githubRedirection = () => {
-      const loginLocation = `${GITHUB_LOGIN_LOCATION}?${githubLoginParams.toString()}`;
-      window.location.replace(loginLocation);
-    };
-
-    return (
-      <GitHubLoginClearUserSession redirector={githubRedirection} />
-    );
+    const loginLocation = `${GITHUB_LOGIN_LOCATION}?${githubLoginParams.toString()}`;
+    window.location.replace(loginLocation);
   }
 
   const isReturnedStateValid = LoginStateService.isReturnedStateValid(returnedState);

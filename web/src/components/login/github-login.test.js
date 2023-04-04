@@ -4,17 +4,25 @@ import { renderWithRouter } from '../../__tests__/test-utils';
 import GitHubLogin from './github-login';
 import LoginStateServiceMock from './login-state-service';
 import GitHubLoginCreateUserSessionMock from './github-login-create-user-session';
-import GitHubLoginClearUserSessionMock from './github-login-clear-user-session';
 
 // mocks
 jest.mock('./login-state-service');
 jest.mock('./github-login-create-user-session', () => jest.fn(() => null));
-jest.mock('./github-login-clear-user-session', () => jest.fn(() => null));
+
+const { location } = window;
+
+beforeAll(() => {
+  delete window.location;
+  window.location = { replace: jest.fn() };
+});
 
 afterEach(() => {
   LoginStateServiceMock.isReturnedStateValid.mockClear();
   GitHubLoginCreateUserSessionMock.mockClear();
-  GitHubLoginClearUserSessionMock.mockClear();
+});
+
+afterAll(() => {
+  window.location = location;
 });
 
 describe('GitHubLogin component', () => {
@@ -24,8 +32,8 @@ describe('GitHubLogin component', () => {
     // when GitHub Login component renders
     renderWithRouter(<GitHubLogin clientId="testClientId" />);
 
-    // then the GitHubLoginClearUserSessionMock component is shown
-    expect(GitHubLoginClearUserSessionMock).toHaveBeenCalledTimes(1);
+    // then the redirect to GitHub is done
+    expect(window.location.replace).toHaveBeenCalledTimes(1);
   });
 
   test('after return from GitHub login with callback code and invalid state shows login error', async () => {
