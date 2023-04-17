@@ -35,6 +35,7 @@ public class AppUserAuthenticationService {
     this.appUserApiClient = appUserApiClient;
     this.appOAuthApiClient = appOAuthApiClient;
     this.userSessionTokenService = userSessionTokenService;
+    logger.info("Initialised AppUserAuthenticationService for GitHub App with OAuth Client Id '{}'.", clientId);
   }
 
   /**
@@ -45,6 +46,11 @@ public class AppUserAuthenticationService {
   public CreateUserSessionResult createUserSession(String code) {
     final var userAccessTokenRequest = new UserAccessTokenRequest(this.clientId, this.clientSecret, code);
     final var userAccessTokenResult = this.appOAuthApiClient.requestUserAccessToken(userAccessTokenRequest);
+
+    if (userAccessTokenResult.getAccessToken() == null) {
+      // Something went wrong.
+      throw new OAuthUserAccessTokenErrorException(code);
+    }
 
     var user = this.appUserApiClient.getUser(userAccessTokenResult.getAccessToken());
     var installations = this.appUserApiClient.getInstallationsAccessibleByUser(userAccessTokenResult.getAccessToken());

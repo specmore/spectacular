@@ -14,9 +14,7 @@ import InstallationSelectionContainer from '../installation-selection-container'
 import InstallationContainer from '../installation-container';
 import MenuBar from '../menu-bar';
 import FooterBar from '../footer-bar';
-import GitHubLogin from '../login/github-login';
 import {
-  GITHUB_LOGIN_ROUTE,
   INSTALLATION_CONTAINER_ROUTE,
   INSTALLATION_LIST_ROUTE,
   OLD_V2_CATALOGUE_CONTAINER_ROUTE,
@@ -24,9 +22,11 @@ import {
   OLD_V2_CATALOGUE_CONTAINER_WITH_SPEC_LOCATION_ROUTE,
   CreateCatalogueContainerLocation,
   CreateInterfaceLocation,
+  LOGIN_ROUTE,
 } from '../../routes';
 import { useGetAppDetails, useGetInstallations } from '../../backend-api-client';
 import NotFound from '../not-found';
+import LoginContainer from '../login/login-container';
 
 const AppContainerLoading: FunctionComponent = () => (
   <Container text style={{ paddingTop: '5em' }}>
@@ -89,8 +89,8 @@ const AppContainer: FunctionComponent = () => {
 
   return (
     <Switch>
-      <Route exact path={GITHUB_LOGIN_ROUTE}>
-        <GitHubLogin clientId={getAppDetailsResult.clientId} />
+      <Route path={LOGIN_ROUTE}>
+        <LoginContainer clientId={getAppDetailsResult.clientId} />
       </Route>
       <Route path="*">
         <div className="content-container">

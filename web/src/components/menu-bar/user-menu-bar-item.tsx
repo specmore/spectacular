@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Dropdown } from 'semantic-ui-react';
 import { useGetUserDetails } from '../../backend-api-client';
-import { redirectToLogin } from '../../routes';
+import { LOGOUT_ROUTE } from '../../routes';
 
 const UserMenuBarItem: FunctionComponent = () => {
   const getUserDetails = useGetUserDetails({});
@@ -14,7 +14,7 @@ const UserMenuBarItem: FunctionComponent = () => {
           <Dropdown.Item as="a" href={getUserDetailsResult.profileImageUrl}>
             {`Signed in as ${getUserDetailsResult.username}`}
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => redirectToLogin()}>Sign out</Dropdown.Item>
+          <Dropdown.Item as="a" href={LOGOUT_ROUTE}>Sign out</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     );

@@ -43,7 +43,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   public void configure(WebSecurity web) throws Exception {
     web
         .ignoring()
-        .antMatchers("/app", "/app/login");
+        .antMatchers("/app", "/app/login", "/error");
   }
 
   @Override

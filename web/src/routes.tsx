@@ -3,8 +3,12 @@ import { Button, Icon, Popup } from 'semantic-ui-react';
 import { Link, useLocation } from 'react-router-dom';
 import { SpecItem } from './backend-api-client';
 
+export const LOGIN_ROUTE = '/login';
+export const LOGOUT_ROUTE = '/login?logout';
+
 export const GITHUB_LOGIN_ROUTE = '/login/github';
 
+export const APP_ROOT_ROUTE = '/';
 export const INSTALLATION_LIST_ROUTE = '/';
 
 export const INSTALLATION_CONTAINER_ROUTE = '/org/:installationId';
@@ -71,11 +75,6 @@ export const extractLoginRedirectReturnToPath = (): string => {
   const { search } = useLocation();
   const redirectParams = new URLSearchParams(search);
   return redirectParams.get(LOGIN_REDIRECT_RETURN_TO_PARAM_NAME);
-};
-
-export const extractLoginCallbackURL = (): string => {
-  const { location } = window;
-  return `${location.protocol}//${location.host}${location.pathname}`;
 };
 
 interface ViewSpecLinkButtonProps {

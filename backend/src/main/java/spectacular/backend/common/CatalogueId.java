@@ -76,6 +76,11 @@ public class CatalogueId extends CatalogueManifestId {
     return new CatalogueId(repository, path, name);
   }
 
+  /**
+   * Creates a CatalogueId object from a base64 encoded string.
+   * @param encodedId the base64 encoded string with all the CatalogueId information
+   * @return a CatalogueId object populated with the information encoded into the base64 string
+   */
   public static CatalogueId createFromBase64(byte[] encodedId) {
     var decodedBytes = Base64.getDecoder().decode(encodedId);
     var combinedId = new String(decodedBytes);
