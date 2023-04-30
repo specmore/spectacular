@@ -48,4 +48,4 @@ ENV API_LOCATION=http://backend
 COPY --from=build /usr/src/app/dist /usr/share/nginx/html
 
 # Copy web config template
-COPY default.conf.template /etc/nginx/templates/
+COPY web/default.conf.template /etc/nginx/templates/
