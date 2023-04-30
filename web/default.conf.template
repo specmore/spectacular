@@ -3,7 +3,7 @@ log_format with_header '$remote_addr - $remote_user [$time_local] '
                        '"$http_referer" "$http_user_agent"';
 
 server {
-    listen       80 default_server;
+    listen       ${PORT} default_server;
     server_name  localhost;
 
     access_log /var/log/nginx/access.log with_header;
